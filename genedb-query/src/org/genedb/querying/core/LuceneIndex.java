@@ -21,14 +21,19 @@ import javax.annotation.PostConstruct;
 
 public class LuceneIndex {
 
-    private static final int DEFAULT_MAX_RESULTS=Integer.MAX_VALUE-3;
+    private static final int DEFAULT_MAX_RESULTS = 1000000;
 
     private int maxResults = DEFAULT_MAX_RESULTS;
 
 
+    public int getMaxResults() {
+        return maxResults;
+    }
+
+
     public void setMaxResults(int maxResults) {
         if (maxResults <= 1 || maxResults > Integer.MAX_VALUE - 3) {
-            throw new IllegalArgumentException("The maximum number of results must be a positive integer less than " + (Integer.MAX_VALUE-3));
+            throw new IllegalArgumentException("The maximum number of results must be a positive integer less than " + (Integer.MAX_VALUE-3)+". Beware of running out of memory well before that");
         }
         this.maxResults = maxResults;
     }
