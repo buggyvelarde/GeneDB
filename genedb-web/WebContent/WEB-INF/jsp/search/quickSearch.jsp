@@ -86,34 +86,7 @@
                                         </td>
                               </c:if>
                                    <td aligh=left>
-                                    <c:choose>
-                                        <c:when test="${empty resultsSize && fn:length(taxonGroup)==0 }">
-                                            <font color="red">
-                                            No
-                                            <c:choose>
-                                                <c:when test="${fn:contains(query.searchText, '*')}">Wildcard</c:when>
-                                                 <c:otherwise>Exact</c:otherwise>
-                                            </c:choose>
-                                             match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b> or in other organisms.
-                                             </font>
-                                        </c:when>
-                                        <c:when test="${empty resultsSize && fn:length(taxonGroup)>0}">
-                                            <font color="red">
-                                              No
-                                              <c:choose>
-                                                <c:when test="${fn:contains(query.searchText, '*')}">Wildcard</c:when>
-                                                 <c:otherwise>Exact</c:otherwise>
-                                            </c:choose>
-                                              match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, however the following ${fn:length(taxonGroup)} organisms have matches.
-                                              </font>
-                                        </c:when>
-                                        <c:when test="${not empty resultsSize && fn:length(taxonGroup)==1}">
-                                            All ${resultsSize} matches for <b>${query.searchText}</b>, found in organism <b>${taxonNodeName}</b>.
-                                        </c:when>
-                                        <c:when test="${not empty resultsSize && fn:length(taxonGroup)>1}">
-                                            ${resultsSize} matches found in ${fn:length(taxonGroup)} organisms.
-                                        </c:when>
-                                     </c:choose>
+                                    <db:quicksearchmessage/>
                                  </td>
 
                             </tr>
