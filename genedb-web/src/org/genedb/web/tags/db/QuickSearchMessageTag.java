@@ -1,5 +1,8 @@
 package org.genedb.web.tags.db;
 
+import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
+
 import java.io.IOException;
 import java.util.TreeMap;
 
@@ -8,6 +11,9 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNameType;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 
 public class QuickSearchMessageTag extends SimpleTagSupport {
@@ -27,6 +33,8 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         
         String currentTaxonName = (String)getJspContext().findAttribute("taxonNodeName");
         
+        currentTaxonName = checkForHtmlShortName(currentTaxonName);
+        
         String message = null;
         if (noResultsFound(resultsSize, taxonGroup)){
             message = printNoResultsFound(query, currentTaxonName);
@@ -44,6 +52,23 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         if (!StringUtils.isEmpty(message)){
             getJspContext().getOut().write(message);
         }
+    }
+    
+    /**
+     * Check for Html Short and return if present, else return the current as it is
+     * @param currentTaxonName
+     * @return
+     */
+    private String checkForHtmlShortName(String currentTaxonName){
+        TaxonNodeManager taxonNodeManager = (TaxonNodeManager) getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
+        TaxonNode node = taxonNodeManager.getTaxonNodeForLabel(currentTaxonName);
+        if(node!= null){
+            String htmlShort = node.getName(TaxonNameType.HTML_SHORT);        
+            if (!StringUtils.isEmpty(htmlShort)){
+                return htmlShort;
+            }
+        }
+        return currentTaxonName;
     }
     
     /**
@@ -92,17 +117,17 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         }else{
             sb.append(" Exact");
         }
-        sb.append(" match found for <b>");
+        sb.append(" match found for <i><b>");
         sb.append(query.getSearchText());
-        sb.append("</b>");
-        sb.append(" in <b>");
+        sb.append("</b></i>");
+        sb.append(" in <i><b>");
         if (StringUtils.isEmpty(currentTaxonNodeName)
                 || (!StringUtils.isEmpty(currentTaxonNodeName)
                         && currentTaxonNodeName.equalsIgnoreCase("root"))){
             currentTaxonNodeName = "all organism";
         }
         sb.append(currentTaxonNodeName);
-        sb.append("</b></font>");
+        sb.append("</b></i></font>");
         return sb.toString();
     }
     
@@ -118,17 +143,17 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         }else{
             sb.append(" Exact");
         }
-        sb.append(" match found for <b>");
+        sb.append(" match found for <i><b>");
         sb.append(query.getSearchText());
-        sb.append("</b>");
-        sb.append(" in <b>");
+        sb.append("</b></i>");
+        sb.append(" in <i><b>");
         if (StringUtils.isEmpty(currentTaxonNodeName)
                 || (!StringUtils.isEmpty(currentTaxonNodeName)
                         && currentTaxonNodeName.equalsIgnoreCase("root"))){
             currentTaxonNodeName = "all organism";
         }
         sb.append(currentTaxonNodeName);
-        sb.append("</b>");
+        sb.append("</b></i>");
         sb.append(", however the following ");
         sb.append(taxonGroup.size());
         sb.append(" organisms have matches.");
@@ -146,19 +171,19 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
     private String printResultsFound(QuickSearchQuery query, String currentTaxonNodeName, int resultsSize){
         StringBuffer sb = new StringBuffer();   
         if (StringUtils.isEmpty(currentTaxonNodeName)){
-            sb.append("Found");
+            sb.append("Found ");
             sb.append(resultsSize);
-            sb.append(" matches for <b>");
+            sb.append(" matches for <i><b>");
             sb.append(query.getSearchText());
-            sb.append("</b>.");
+            sb.append("</b></i>.");
         }else{   
             sb.append("All ");
             sb.append(resultsSize);
             sb.append(" matches for <b>");
             sb.append(query.getSearchText());
-            sb.append("</b>, found in organism <b>");
+            sb.append("</b>, found in organism <i><b>");
             sb.append(currentTaxonNodeName);
-            sb.append("</b>.");
+            sb.append("</b></i>.");
         }
         return sb.toString();
     }
@@ -173,7 +198,7 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         StringBuffer sb = new StringBuffer();
         sb.append(resultsSize);
         sb.append(" matches found in ");
-        sb.append(resultsSize);
+        sb.append(taxonGroup.size());
         sb.append(" organisms.");
         return sb.toString();
         
