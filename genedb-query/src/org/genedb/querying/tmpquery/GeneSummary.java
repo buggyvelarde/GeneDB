@@ -5,6 +5,13 @@ import java.io.Serializable;
 public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     private String systematicId;
 
+    private String displayId;
+
+    public String getDisplayId() {
+        return displayId;
+    }
+
+
     private String taxonDisplayName;
 
     private String product;
@@ -36,10 +43,11 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     }
 
     public void setSystematicId(String systematicId) {
+        this.systematicId = systematicId;
         String munged = removeSuffix(systematicId, ":pep");
         munged = removeSuffix(munged, ":mRNA");
         munged = removeSuffix(munged, ":pseudogenic_transcript");
-        this.systematicId = munged;
+        this.displayId = munged;
     }
 
     private String removeSuffix(String original, String suffix) {
@@ -104,6 +112,12 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
             return 1;
         }
         return this.systematicId.compareTo(other.getSystematicId());
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("sysid='%s', displayId='%s', taxon='%s', product='%s'", systematicId, displayId, taxonDisplayName, product);
     }
 
 }
