@@ -86,13 +86,16 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         }
         queries.add(bq);
 
-        BooleanQuery bq2= new BooleanQuery();
-        bq2.add(geneQuery, Occur.SHOULD);
-        bq2.add(new TermQuery(new Term("type.name","mRNA")), Occur.SHOULD);
+        // Add type restrictions
+        TermQuery mRNAQuery = new TermQuery(new Term("type.name","mRNA"));
         if (pseudogenes) {
+            BooleanQuery bq2= new BooleanQuery();
+            bq2.add(mRNAQuery, Occur.SHOULD);
             bq2.add(pseudogeneQuery, Occur.SHOULD);
+            queries.add(bq2);
+        } else {
+            queries.add(mRNAQuery);
         }
-        queries.add(bq2);
         // queries.add(isCurrentQuery);
     }
 
