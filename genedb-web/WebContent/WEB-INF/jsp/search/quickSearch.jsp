@@ -68,7 +68,7 @@
 
                               <c:if test="${fn:length(taxonGroup)>1}">
                                       <td align=right>
-                                        <div class="taxonIFrame">
+                                        <div id="taxonFrameId" class="taxonIFrame">
                                           <db:quicksearchtaxons
                                             currentTaxonNodeName="${taxonNodeName}"
                                             hasResult="${not empty resultsSize}"
