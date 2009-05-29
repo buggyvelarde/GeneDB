@@ -14,7 +14,7 @@
         <format:genePageSection  className="whiteBox">
             <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
                    <display:column title="Systematic ids" style="width: 100px;">
-                    <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum+firstResultIndex}&resultsLength=${fn:length(results)-1}&key=${key}">${row.displayId}</a>
+                    <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum+firstResultIndex-1}&resultsLength=${fn:length(results)-1}&key=${key}">${row.displayId}</a>
                    </display:column>
                 <display:column title="Organism" style="width: 150px;">
                     <i><db:taxonname label="${row.taxonDisplayName}" taxonNameType="HTML_SHORT"/></i>

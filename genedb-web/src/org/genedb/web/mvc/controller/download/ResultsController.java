@@ -76,9 +76,11 @@ public class ResultsController {
         logger.debug("pName is '"+pName+"'");
         String startString = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
         logger.debug("The start string is '"+startString+"'");
-        int start = 0;
+
+        // Use 1-based index for start and end
+        int start = 1;
         if (startString != null) {
-            start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH;
+            start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH + 1;
         }
 
         int end = start + DEFAULT_LENGTH;
@@ -95,14 +97,14 @@ public class ResultsController {
         logger.debug("The number of results retrived from cache is '"+results.size()+"'");
         logger.debug("The end marker, before adjustment, is '"+end+"'");
 
-        if (end >= results.size()) {
-            end = results.size() - 1;
+        if (end > results.size()) {
+            end = results.size();
         }
 
 
         boolean justSome = true;
         List<GeneSummary> subset;
-        if (start == 1 && end == results.size()-1) {
+        if (start == 1 && end == results.size()) {
             subset = results;
             justSome = false;
             logger.debug("The \"subset\" is all of the results!");

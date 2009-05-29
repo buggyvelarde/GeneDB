@@ -141,7 +141,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 StringUtils.hasText(nlb.getKey()) &&
                 (nlb.getResultsLength() > 0) &&
                 (nlb.getIndex() > 0) &&
-                nlb.getIndex() < nlb.getResultsLength()) {
+                nlb.getIndex() <= nlb.getResultsLength()) {
 
             model.put("key", nlb.getKey());
             model.put("index", nlb.getIndex());

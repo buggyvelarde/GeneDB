@@ -4,7 +4,7 @@
     &nbsp;Gene ${index} of ${resultsLength} Search Results.&nbsp;
     <c:choose>
         <c:when test="${index != '1'}">
-            <a href="ResultsNavigator?index=0&key=${key}">First</a>
+            <a href="ResultsNavigator?index=1&key=${key}">First</a>
         </c:when>
         <c:otherwise>
             First
