@@ -94,7 +94,6 @@
           <input type="hidden" name="pseudogenes" value="true"/>
           <input type="hidden" name="product" value="true"/>
           <input type="hidden" name="allNames" value="true"/>
-          <input type="hidden" name="q" value="quickSearchQuery" />
           <input id="query" name="searchText" value="" type="text" align="middle"/>
           <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
         </form>
