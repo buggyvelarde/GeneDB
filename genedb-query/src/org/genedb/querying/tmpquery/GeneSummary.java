@@ -120,4 +120,18 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
         return String.format("sysid='%s', displayId='%s', taxon='%s', product='%s'", systematicId, displayId, taxonDisplayName, product);
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        return systematicId.equals(((GeneSummary)obj).getSystematicId());
+    }
+
+
+    @Override
+    public int hashCode() {
+        return systematicId.hashCode();
+    }
+
+
+
 }
