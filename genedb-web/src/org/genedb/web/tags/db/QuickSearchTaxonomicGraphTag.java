@@ -183,7 +183,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
 
         // Get the leafs where a match is found
         if (quickSearchTaxonNode.getChildren().size() == 0 && quickSearchTaxonNode.getMatch() != 0) {
-            tree = "<li style=\"width: 150px;\">" + createUrlHref(quickSearchTaxonNode, contextPath) + "</li>\n";
+            tree = "<li>" + createUrlHref(quickSearchTaxonNode, contextPath) + "</li>\n";
 
             // Get parent nodes where a descendant has a match
         } else if (isMatchFoundInDescendant(quickSearchTaxonNode)) {
