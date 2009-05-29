@@ -146,11 +146,11 @@ public abstract class LuceneQuery implements Query {
             for (org.apache.lucene.search.Query query : queries) {
                 booleanQuery.add(new BooleanClause(query, Occur.MUST));
             }
-            logger.error(String.format("Lucene query is '%s'", booleanQuery.toString()));
             hits = luceneIndex.search(booleanQuery);
+            logger.error(String.format("Lucene query is '%s', results size is '%d'", booleanQuery.toString(), hits.totalHits));
         } else {
-            logger.error(String.format("Lucene query is '%s'", queries.get(0).toString()));
             hits = luceneIndex.search(queries.get(0));
+            logger.error(String.format("Lucene query is '%s', results size is '%d'", queries.get(0).toString(), hits.totalHits));
         }
         return hits;
     }

@@ -86,6 +86,11 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         // Get the current taxon name
         String taxonName = findTaxonName(query);
         String resultsKey = null;
+
+        logger.debug("The number of results is '"+quickSearchQueryResults.getResults().size());
+
+
+
         switch (quickSearchQueryResults.getQuickResultType()) {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
             logger.debug("No results found for query");
@@ -95,6 +100,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         case SINGLE_RESULT_IN_CURRENT_TAXON:
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
             cacheResults(gs, query, QUERY_NAME, session.getId());
+            logger.debug("The result is "+gs.get(0));
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
 
         case MULTIPLE_RESULTS_IN_CURRENT_TAXON:

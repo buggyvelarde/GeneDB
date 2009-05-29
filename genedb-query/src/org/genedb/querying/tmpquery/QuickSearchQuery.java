@@ -11,6 +11,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -57,38 +58,41 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         String tokens[] = searchText.trim().split("\\s");
-        if (tokens != null && tokens.length > 1) {
-            BooleanQuery bq = new BooleanQuery();
-            if (allNames) {
+
+        BooleanQuery bq = new BooleanQuery();
+
+        if (allNames) {
+            if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
                     pq.add(new Term("allNames", token));
                 }
                 bq.add(pq, Occur.SHOULD);
+            } else {
+                bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
-            if (product) {
+        }
+
+        if (product) {
+            if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
                     pq.add(new Term("product", token));
                 }
                 bq.add(pq, Occur.SHOULD);
-            }
-            queries.add(bq);
-
-        } else {
-            BooleanQuery bq = new BooleanQuery();
-            if (allNames) {
-                bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
-            }
-            if (product) {
+            } else {
                 bq.add(new WildcardQuery(new Term("product", tokens[0].toLowerCase())), Occur.SHOULD);
             }
-            queries.add(bq);
         }
+        queries.add(bq);
 
+        BooleanQuery bq2= new BooleanQuery();
+        bq2.add(geneQuery, Occur.SHOULD);
+        bq2.add(new TermQuery(new Term("type.name","mRNA")), Occur.SHOULD);
         if (pseudogenes) {
-            queries.add(geneOrPseudogeneQuery);
+            bq2.add(pseudogeneQuery, Occur.SHOULD);
         }
+        queries.add(bq2);
         // queries.add(isCurrentQuery);
     }
 
