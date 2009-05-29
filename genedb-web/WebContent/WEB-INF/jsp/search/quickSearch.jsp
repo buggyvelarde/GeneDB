@@ -68,20 +68,17 @@
 
                               <c:if test="${fn:length(taxonGroup)>1}">
                                       <td align=right>
+                                        <div class="taxonIFrame">
+                                          <db:quicksearchtaxons
+                                            currentTaxonNodeName="${taxonNodeName}"
+                                            hasResult="${not empty resultsSize}"
+                                            taxonGroup="${taxonGroup}"
+                                            allNames="${query.allNames}"
+                                            product="${query.product}"
+                                            pseudogenes="${query.pseudogenes}"
+                                            searchText="${query.searchText}" />
+                                        </div>
 
-                                            <iframe align=right
-                                                src="<c:url value="/QuickSearchQuery">
-                                                 <c:param name="q" value="none"/>
-                                                 <c:param name="taxons" value="${taxonNodeName}"/>
-                                                 <c:param name="hasresults" value="${not empty resultsSize}"/>
-                                                 <c:param name="searchText" value="${query.searchText}"/>
-                                                 <c:param name="pseudogenes" value="${query.pseudogenes}"/>
-                                                 <c:param name="allNames" value="${query.allNames}"/>
-                                                 <c:param name="product" value="${query.product}"/>
-                                            </c:url>"
-                                                frameborder="1"
-                                                width="300" height="140" align="left">
-                                            </iframe>
 
                                         </td>
                               </c:if>

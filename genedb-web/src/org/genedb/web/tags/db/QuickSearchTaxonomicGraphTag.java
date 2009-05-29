@@ -30,6 +30,14 @@ import org.genedb.db.taxon.TaxonNodeManager;
 public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
 
     private String top = "Root"; // FIXME
+    private String currentTaxonNodeName;
+    private TreeMap<String, Integer> taxonGroup;
+    private String hasResult;
+
+    private String searchText;
+    private String allNames;
+    private String pseudogenes;
+    private String product;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -38,11 +46,11 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
 
         TaxonNodeManager tnm = (TaxonNodeManager) getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
 
-        String currentTaxonNodeName = pageContext.getRequest().getParameter("taxons");
-
-        TreeMap<String, Integer> taxonGroup = (TreeMap) getJspContext().findAttribute("taxonGroup");
-
-        String hasResult = pageContext.getRequest().getParameter("hasresults");
+//        currentTaxonNodeName = pageContext.getRequest().getParameter("taxons");
+//
+//        taxonGroup = (TreeMap) getJspContext().findAttribute("taxonGroup");
+//
+//        hasResult = pageContext.getRequest().getParameter("hasresults");
 
         boolean displayAllMatchingTaxonsWhenResultsEmpty = taxonGroup != null && taxonGroup.size() > 0
                 && hasResult != null && hasResult.equals("false");
@@ -71,7 +79,8 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         // Get the writer
         JspWriter out = getJspContext().getOut();
 
-        String htmlList = transform(quickSearchTaxonNode, pageContext.getRequest());
+        String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
+        String htmlList = transform(quickSearchTaxonNode, contextPath);
 
         out.write(htmlList);
     }
@@ -166,15 +175,15 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
      * @param quickSearchTaxonNode
      * @param sb
      */
-    public String transform(QuickSearchTaxonNode quickSearchTaxonNode, ServletRequest request) {
+    public String transform(QuickSearchTaxonNode quickSearchTaxonNode, String contextPath) {
         String tree = "";
         for (QuickSearchTaxonNode child : quickSearchTaxonNode.getChildren()) {
-            tree = tree + transform(child, request);
+            tree = tree + transform(child, contextPath);
         }
 
         // Get the leafs where a match is found
         if (quickSearchTaxonNode.getChildren().size() == 0 && quickSearchTaxonNode.getMatch() != 0) {
-            tree = "<li style=\"width: 150px;\">" + createUrlHref(quickSearchTaxonNode, request) + "</li>\n";
+            tree = "<li style=\"width: 150px;\">" + createUrlHref(quickSearchTaxonNode, contextPath) + "</li>\n";
 
             // Get parent nodes where a descendant has a match
         } else if (isMatchFoundInDescendant(quickSearchTaxonNode)) {
@@ -212,22 +221,21 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
      * @param value
      * @return
      */
-    private String createUrlHref(QuickSearchTaxonNode quickSearchTaxonNode, ServletRequest request) {
-        StringBuffer sb = new StringBuffer();
+    private String createUrlHref(QuickSearchTaxonNode quickSearchTaxonNode, String contextPath) {
+        StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"");
-        sb.append(((HttpServletRequest) request).getContextPath());
         sb.append("/QuickSearchQuery");
         sb.append("?q=quickSearchQuery");
         sb.append("&taxons=");
         sb.append(quickSearchTaxonNode.getLabel());
         sb.append("&searchText=");
-        sb.append(request.getParameter("searchText"));
+        sb.append(searchText);
         sb.append("&allNames=");
-        sb.append(request.getParameter("allNames"));
+        sb.append(allNames);
         sb.append("&pseudogenes=");
-        sb.append(request.getParameter("pseudogenes"));
+        sb.append(pseudogenes);
         sb.append("&product=");
-        sb.append(request.getParameter("product"));
+        sb.append(product);
         sb.append("\"");
         sb.append(" target=\"_parent\">");
         sb.append("<small>");
@@ -241,7 +249,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         sb.append("</small>");
         return sb.toString();
     }
-    
+
     /**
      * Re-format label with a dot after first character of the Organism name
      * @param displayLabel
@@ -303,5 +311,37 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
                 return String.format("<ul>\n%s</ul>", values);
             }
         }
+    }
+
+    public void setCurrentTaxonNodeName(String currentTaxonNodeName) {
+        this.currentTaxonNodeName = currentTaxonNodeName;
+    }
+
+    public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
+        this.taxonGroup = taxonGroup;
+    }
+
+    public void setHasResult(String hasResult) {
+        this.hasResult = hasResult;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
+    }
+
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+    }
+
+    public void setAllNames(String allNames) {
+        this.allNames = allNames;
+    }
+
+    public void setPseudogenes(String pseudogenes) {
+        this.pseudogenes = pseudogenes;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
     }
 }

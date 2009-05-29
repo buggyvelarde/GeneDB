@@ -485,3 +485,12 @@ color:#000000;
 font-weight:normal;
 font-style:normal;
 }
+
+.taxonIFrame {
+	border: 1px solid #D3D3D3;
+    width: 300px;
+    height: 140px;
+    overflow: auto;
+    text-align: left;
+}
+

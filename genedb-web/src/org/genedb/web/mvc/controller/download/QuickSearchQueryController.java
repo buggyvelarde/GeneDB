@@ -8,12 +8,11 @@ import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, params = "q=quickSearchQuery")
+    @RequestMapping(method = RequestMethod.GET)
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
         QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
@@ -58,19 +57,19 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         return findDestinationView(query, model, quickSearchQueryResults, session);
     }
-
-    @RequestMapping(method = RequestMethod.GET, params = "q=none")
-    public String displayTaxonGroup(ServletRequest request, @RequestParam("searchText") String searchText,
-            @RequestParam("pseudogenes") String pseudogenes, @RequestParam("allNames") String allNames,
-            @RequestParam("product") String product, Model model) {
-
-        model.addAttribute("searchText", searchText.trim());
-        model.addAttribute("pseudogenes", pseudogenes);
-        model.addAttribute("allNames", allNames);
-        model.addAttribute("product", product);
-        String view = "search/quickSearchTaxons";
-        return view;
-    }
+//
+//    @RequestMapping(method = RequestMethod.GET, params = "q=none")
+//    public String displayTaxonGroup(ServletRequest request, @RequestParam("searchText") String searchText,
+//            @RequestParam("pseudogenes") String pseudogenes, @RequestParam("allNames") String allNames,
+//            @RequestParam("product") String product, Model model) {
+//
+//        model.addAttribute("searchText", searchText.trim());
+//        model.addAttribute("pseudogenes", pseudogenes);
+//        model.addAttribute("allNames", allNames);
+//        model.addAttribute("product", product);
+//        String view = "search/quickSearchTaxons";
+//        return view;
+//    }
 
     /**
      *

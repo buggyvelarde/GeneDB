@@ -103,13 +103,47 @@
    <name>quicksearchtaxons</name>
    <tag-class>org.genedb.web.tags.db.QuickSearchTaxonomicGraphTag</tag-class>
    <body-content>empty</body-content>
-       <attribute>
+   <attribute>
        <name>top</name>
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
+           <attribute>
+       <name>currentTaxonNodeName</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+           <attribute>
+       <name>taxonGroup</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+           <attribute>
+       <name>hasResult</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>searchText</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>allNames</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>pseudogenes</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>product</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
  </tag>
-
 
  <tag>
    <name>taxonname</name>
@@ -126,13 +160,13 @@
         <required>true</required>
        </attribute>
  </tag>
- 
+
  <tag>
    <name>quicksearchmessage</name>
    <tag-class>org.genedb.web.tags.db.QuickSearchMessageTag</tag-class>
    <body-content>empty</body-content>
  </tag>
- 
+
 
  <tag>
    <name>simplehomepageselect</name>
