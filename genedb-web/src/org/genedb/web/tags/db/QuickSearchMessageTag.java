@@ -144,14 +144,22 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
      * @return
      */
     private String printResultsFound(QuickSearchQuery query, String currentTaxonNodeName, int resultsSize){
-        StringBuffer sb = new StringBuffer();      
-        sb.append("All ");
-        sb.append(resultsSize);
-        sb.append(" matches for <b>");
-        sb.append(query.getSearchText());
-        sb.append("</b>, found in organism <b>");
-        sb.append(currentTaxonNodeName);
-        sb.append("</b>.");
+        StringBuffer sb = new StringBuffer();   
+        if (StringUtils.isEmpty(currentTaxonNodeName)){
+            sb.append("Found");
+            sb.append(resultsSize);
+            sb.append(" matches for <b>");
+            sb.append(query.getSearchText());
+            sb.append("</b>.");
+        }else{   
+            sb.append("All ");
+            sb.append(resultsSize);
+            sb.append(" matches for <b>");
+            sb.append(query.getSearchText());
+            sb.append("</b>, found in organism <b>");
+            sb.append(currentTaxonNodeName);
+            sb.append("</b>.");
+        }
         return sb.toString();
     }
     
