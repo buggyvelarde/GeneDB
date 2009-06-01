@@ -33,40 +33,55 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.springframework.util.StringUtils;
 
-//import skt.swing.SwingUtil;
-//import skt.swing.search.IncrementalSearchKeyListener;
-//import skt.swing.search.ListFindAction;
+import skt.swing.SwingUtil;
+import skt.swing.search.IncrementalSearchKeyListener;
+import skt.swing.search.ListFindAction;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.BorderFactory;
 
 
 /**
@@ -86,27 +101,40 @@ public class ProductRationaliser implements JograPlugin {
     private JList fromList;
     private JList toList;
     private JTextField textField;
+    private JTextField idField;
+    private JProgressBar pbar = new JProgressBar();
+   
     private JLabel productCountLabel;
     private List<String> userSelection; //Organisms or class of organisms selected by user
     private TaxonNode taxonNode = null;
     private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
     private JLabel scopeLabel = new JLabel("Scope: All organisms"); //Label showing user's selection. Default: View all
     private Jogra jogra; //Jogra object in this application context
+    private boolean showEVC;
+    private boolean showSysID;
+    private HashMap<Integer, List<String>> idMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of systematic IDs
+    private HashMap<Integer, List<String>> evcMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of evidence codes
+    private List<Product> products = new ArrayList<Product>();
+    
+    private  final JTextArea information = new JTextArea(10,10);
 
+    
    /* Essential setter method */
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
     }
+    
+ 
 
     /**
      * Fetch the product list from the database and set that as the model for both lists.
      */
     private void initModels() {
-        System.out.println("PR: Inside initModels method");
-        userSelection = jogra.getChosenOrganism();
+       
+        userSelection = jogra.getChosenOrganism();  
         taxonList.clear();
-        System.out.println("PR: Getting selection from Jogra " + userSelection);
-        if(userSelection!=null && userSelection.size()!=0){ //&& !userSelection.equalsIgnoreCase("root")){
+        logger.info("Product Rationalier: Inside initModels() method. Getting selection from Jogra " + userSelection);
+        if(userSelection!=null && userSelection.size()!=0 && !userSelection.contains("root")){
            scopeLabel.setText("Scope: " + StringUtils.collectionToCommaDelimitedString(userSelection)); //Else, label will continue to have 'Scope: All organisms'
            for(String s: userSelection){
                taxonList.add(taxonNodeManager.getTaxonNodeForLabel(s));
@@ -114,20 +142,41 @@ public class ProductRationaliser implements JograPlugin {
         }else{ //If there are no selections, get all products
             taxonList.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
         }
-
-
+      
+        
         logger.info("Taxons resulting from user selection (or lack of a user selection) is: " + taxonList.toString());
-        List<Product> products = productService.getProductList(taxonList);
+        products = productService.getProductList(taxonList); 
         Product[] productArray = new Product[products.size()];
-
+      
         int i=0;
         for (Product product : products) {
+            /* Also get systematic IDs for this product if the relevant checkbox has been ticked */
+            if(isShowSysID()){
+               logger.info("Getting systematic IDs for " + product.getId());
+               idMap.put(product.getId(), (List<String>)productService.getSystematicIDs(product));
+            }
+            if(isShowEVC()){
+               List<String> temp =  productService.getEvidenceCodes(product);
+               evcMap.put(product.getId(),temp);  //(List<String>)productService.getEvidenceCodes(product)); 
+               logger.info("Evidence codes for " + product.toString() + " " + StringUtils.collectionToCommaDelimitedString(temp));
+            }
             productArray[i] = product;
             i++;
         }
         fromList.setListData(productArray);
         toList.setListData(productArray);
         productCountLabel.setText(products.size()+" Products");
+        //Clear other textboxes
+        if(isShowSysID()){
+            idField.setText("");
+        }else{
+            idField.setText("(not enabled)");
+            idField.setEnabled(false);
+        }
+        
+        textField.setText("");
+        pbar.setIndeterminate(false);
+       
     }
 
 
@@ -139,74 +188,82 @@ public class ProductRationaliser implements JograPlugin {
     public JFrame getMainPanel() {
         fromList = new JList();
         toList = new JList();
-        //filterBox = new JCheckBox("Only products annotated to genes", true);
+        
+        if(isShowEVC()){ //If user has requested to view evidence codes, then use different renderer so that items with evidence codes are displayed in different colour
+            ColorRenderer cr = new ColorRenderer();
+            fromList.setCellRenderer(cr);
+            toList.setCellRenderer(cr);
+        }
+    
         productCountLabel = new JLabel("No. of products");
         textField = new JTextField(20);
-        textField.setBackground(Color.LIGHT_GRAY);
         textField.setForeground(Color.BLUE);
-        //textField.setPreferredSize(new Dimension(50,35));
-
-        //Retrieving the user's chosen organism name (if any) from the Jogra object
-        //TO DO: Also make this listen to events in Organism Tree so that as the user selects different organisms, the rationaliser can react accordingly
-      /*  try{
-            userSelection = jogra.getChosenOrganism();
-            System.out.println("PR: Getting selection from Jogra " + userSelection);
-            if(userSelection!=null && !userSelection.equals("")){ //&& !userSelection.equalsIgnoreCase("root")){
-                scopeLabel.setText("Scope: " + userSelection); //Else, label will continue to have 'Scope: All'
-            }
-        }catch(Exception e){
-            logger.debug("Error fetching information from Jogra object: " + e);
-        } */
-        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected
+        
+        idField = new JTextField(20);
+        idField.setEditable(false);
+        idField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        idField.setForeground(Color.DARK_GRAY);
+              
+        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected 
         fromList.setPrototypeCellValue(A_LONG_STRING);
-        //ListFindAction findAction = new ListFindAction(true);
+        ListFindAction findAction = new ListFindAction(true);
         SyncAction fromSync = new SyncAction(fromList, toList, KeyStroke.getKeyStroke("RIGHT"));
-        //SwingUtil.installActions(fromList, new Action[]{
-        //    fromSync,
-        //    findAction,
-        //    new ListFindAction(false)
-        //});
-        //fromList.addKeyListener(new IncrementalSearchKeyListener(findAction));
+        SwingUtil.installActions(fromList, new Action[]{
+            fromSync,
+            findAction,
+            new ListFindAction(false)
+        });
+        fromList.addKeyListener(new IncrementalSearchKeyListener(findAction));
 
         toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
         toList.setPrototypeCellValue(A_LONG_STRING);
         SyncAction toSync = new SyncAction(toList, fromList, KeyStroke.getKeyStroke("LEFT"));
-        //SwingUtil.installActions(toList, new Action[]{
-        //        toSync,
-        //        findAction,
-        //        new ListFindAction(false)
-        //    });
-
+        SwingUtil.installActions(toList, new Action[]{
+                toSync,
+                findAction,
+                new ListFindAction(false)
+            });
+        
         toList.addListSelectionListener(new ListSelectionListener() {
-
             @Override
-            public void valueChanged(ListSelectionEvent arg0) {
-                logger.info("Inside valueChanged method in toList listener. Setting textfield with chosen product name for user to edit.");
-                textField.setText(((Product)toList.getSelectedValue()).toString());
-            }
-
+            public void valueChanged(ListSelectionEvent e) {
+                if(toList.getSelectedValue()!=null){
+                    textField.setText(((Product)toList.getSelectedValue()).toString());
+                }
+                if(isShowSysID()){
+                   idField.setText(StringUtils.collectionToCommaDelimitedString(idMap.get(((Product)toList.getSelectedValue()).getId())));
+                }
+             }
         });
-
-
-        //toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
-        //InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
-        // List keystrokes in the component and in all parent input maps
-        //list(map, map.allKeys());
-        initModels();
-
-        final JFrame ret = new JFrame();
+       toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
+       
+       initModels();
+        
+        final JFrame ret = new JFrame();   
         ret.setTitle(WINDOW_TITLE);
         ret.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         ret.setLayout(new BorderLayout());
+        
+        /* MENU */
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Help");
+        menu.setMnemonic(KeyEvent.VK_H);
+        JMenuItem menuItem1 = new JMenuItem("About");
+        menuItem1.setMnemonic(KeyEvent.VK_A);
+        menu.add(menuItem1);
+        menuBar.add(menu);
+        ret.setJMenuBar(menuBar);
 
-
+        /* TO and FROM lists */
         Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
         center.add(Box.createHorizontalStrut(5)); //Invisible fixed-width component
+        
         Box leftPane = Box.createVerticalBox();
         leftPane.add(new JLabel("From"));
         leftPane.add(new JScrollPane(fromList));
         center.add(leftPane);
         center.add(Box.createHorizontalStrut(3));
+        
         Box rightPane = Box.createVerticalBox();
         rightPane.add(new JLabel("To"));
         rightPane.add(new JScrollPane(toList));
@@ -214,80 +271,163 @@ public class ProductRationaliser implements JograPlugin {
         center.add(Box.createHorizontalStrut(5));
 
         ret.add(center, BorderLayout.CENTER);
-        Box buttons = Box.createVerticalBox();
+        
+        /*Buttons and information boxes */
+        Box main = Box.createVerticalBox();
+        TitledBorder border = BorderFactory.createTitledBorder("Information");
+        border.setTitleColor(Color.DARK_GRAY);
+       
+        
+        /* Information box */
+        Box info = Box.createVerticalBox();
+        
+        Box scope = Box.createHorizontalBox();
+        scope.add(Box.createHorizontalStrut(5));
+        scope.add(scopeLabel);
+        scope.add(Box.createHorizontalGlue());
+        
+        Box productCount = Box.createHorizontalBox();
+        productCount.add(Box.createHorizontalStrut(5));
+        productCount.add(productCountLabel);
+        productCount.add(Box.createHorizontalGlue());
+        
+        Box sysIDBox = Box.createHorizontalBox();
+        sysIDBox.add(Box.createHorizontalStrut(5));
+        JLabel label2 = new JLabel("Systematic IDs");
+        sysIDBox.add(label2);
+        sysIDBox.add(Box.createHorizontalStrut(5));
+        sysIDBox.add(idField);
+        sysIDBox.add(Box.createHorizontalGlue());
+        
+        
+        info.add(scope);
+        info.add(productCount);
+        info.add(sysIDBox);
+        info.setBorder(border);
+        
+        /* Add a new term box */
 
-        Box localButtons = Box.createHorizontalBox();
-
-        //localButtons.add(filterBox);
-        localButtons.add(Box.createHorizontalStrut(5));
-        localButtons.add(productCountLabel);
-        localButtons.add(Box.createHorizontalStrut(5));
-        localButtons.add(scopeLabel);
-        localButtons.add(Box.createHorizontalStrut(10));
-//        JButton syncLeftToRight = new JButton(">>");
-//        localButtons.add(syncLeftToRight);
-//        localButtons.add(Box.createHorizontalStrut(5));
-//        JButton syncRightToLeft = new JButton("<<");
-//        localButtons.add(syncRightToLeft);
-//        localButtons.add(Box.createHorizontalGlue());
-        /* Label & textfield*/
-        JLabel label = new JLabel("Add");
-        //label.setLabelFor(textField);
-        localButtons.add(label);
-        localButtons.add(textField);
-
-        buttons.add(localButtons);
-
+        Box newTerm = Box.createHorizontalBox();
+        newTerm.add(Box.createHorizontalStrut(5));
+        JLabel label1 = new JLabel("Edit");
+        newTerm.add(label1);
+        newTerm.add(textField);
+        newTerm.add(Box.createHorizontalGlue());
+        border = BorderFactory.createTitledBorder("Rationalise to a new term");
+        border.setTitleColor(Color.DARK_GRAY);
+        newTerm.setBorder(border);
+        
+        /* Action buttons */
         Box actionButtons = Box.createHorizontalBox();
         actionButtons.add(Box.createHorizontalGlue());
         JButton refresh = new JButton("Refresh");
         refresh.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                initModels(); // FIXME
+                initModels();//See if this can be fixed
             }
         });
         actionButtons.add(refresh);
         actionButtons.add(Box.createHorizontalStrut(10));
-
+              
         JButton speeling = new JButton(new FindClosestMatchAction());
         actionButtons.add(speeling);
         actionButtons.add(Box.createHorizontalStrut(10));
 
         RationaliserAction ra = new RationaliserAction();
         JButton go = new JButton(ra);
-
         actionButtons.add(go);
+              
+        /* Progress bar */
+       
+        pbar.setStringPainted(true);
+        pbar.setBackground(Color.WHITE);
+        pbar.setPreferredSize(new Dimension(1,1));
+        
+        //actionButtons.add(pbar);
         actionButtons.add(Box.createHorizontalGlue());
-        buttons.add(actionButtons);
-
+        
+        /* Show more information toggle */
+        Box buttonBox = Box.createHorizontalBox();
+        final JButton toggle = new JButton("Show information >>");
+      
+        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(toggle);
+        buttonBox.add(Box.createHorizontalGlue());
+        
+        JTextArea information = new JTextArea(10,10);
+        Box textBox = Box.createHorizontalBox();
+       
+        final JScrollPane scrollPane = new JScrollPane(information);
+        scrollPane.setPreferredSize(new Dimension(800,100));
+        scrollPane.setVisible(false);
+        textBox.add(Box.createHorizontalStrut(5));
+        textBox.add(scrollPane); //, BorderLayout.WEST);
+      
+        
+        ActionListener actionListener = new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent){
+                if(toggle.getText().equals("Show information >>")){
+                    scrollPane.setVisible(true);
+                    toggle.setText("Hide information <<");
+                    ret.setPreferredSize(new Dimension(800,900));
+                    pbar.setIndeterminate(true);
+                    ret.pack();
+                    
+                    
+                }else if(toggle.getText().equals("Hide information <<")){
+                    scrollPane.setVisible(false);
+                    pbar.setIndeterminate(false);
+                    toggle.setText("Show information >>");
+                    ret.setPreferredSize(new Dimension(800,800));
+                    ret.pack();
+                }
+            }
+        };
+        toggle.addActionListener(actionListener);
+        
+        main.add(Box.createVerticalStrut(5));
+        main.add(info);
+        main.add(Box.createVerticalStrut(5));
+        main.add(newTerm);
+        main.add(Box.createVerticalStrut(5));
+        main.add(actionButtons);
+        main.add(Box.createVerticalStrut(10));
+        main.add(buttonBox);
+        main.add(textBox);
+        
         JLabel hints = new JLabel("<html><i><ol>"+
                 "<li>Use the left or right arrow, as appropriate, to sync the selection" +
                 "<li>Use CTRL+i to start an incremental search, then the UP/DOWN arrows" +
                 "</ol></i></html>");
-
-
-        buttons.add(hints);
-
-        ret.add(buttons, BorderLayout.SOUTH);
-
+        
+        ret.add(main, BorderLayout.SOUTH);
+        ret.setPreferredSize(new Dimension(800,800));
         ret.pack();
-
+     
         return ret;
     }
+    
+    
+    
     /**
      * Supply a JPanel which will be displayed in the main Jogra window
      */
 
     public JPanel getMainWindowPlugin() {
         final JPanel ret = new JPanel();
-        final JButton temp = new JButton("Load Product Rationaliser");
-        temp.addActionListener(new ActionListener() {
+        final JButton loadButton = new JButton("Load Product Rationaliser");
+        final JCheckBox showEVCFilter = new JCheckBox("Highlight products with evidence codes", false);
+        final JCheckBox showSysIDFilter = new JCheckBox("Retrieve systematic IDs for products", false);
+        loadButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent ae) {
                 System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "' 1");
                 new SwingWorker<JFrame, Void>() {
 
                     @Override
                     protected JFrame doInBackground() throws Exception {
+                        ret.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        setShowEVC(showEVCFilter.isSelected());
+                        setShowSysID(showSysIDFilter.isSelected());
                         return makeWindow();
                     }
 
@@ -301,16 +441,38 @@ public class ProductRationaliser implements JograPlugin {
                         } catch (final ExecutionException exp) {
                             exp.printStackTrace();
                         }
+                        ret.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     }
                 }.execute();
             }
         });
-        ret.add(temp);
+        Box verticalBox = Box.createVerticalBox();
+        verticalBox.add(loadButton);
+        verticalBox.add(showEVCFilter);
+        verticalBox.add(showSysIDFilter);
+           
+        ret.add(verticalBox);
         return ret;
     }
 
     public String getName() {
         return WINDOW_TITLE;
+    }
+    
+    public void setShowEVC(boolean value){
+        showEVC = value;
+    }
+    
+    public boolean isShowEVC(){
+        return showEVC;
+    }
+    
+    public void setShowSysID(boolean value){
+        showSysID = value;
+    }
+    
+    public boolean isShowSysID(){
+        return showSysID;
     }
 
     public boolean isSingletonByDefault() {
@@ -326,9 +488,9 @@ public class ProductRationaliser implements JograPlugin {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
        /* JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
         if (lookup == null) {
-            lookup = getMainPanel();
+            lookup = getMainPanel(); 
         } */
-        JFrame lookup = getMainPanel(); //Always getting a new frame since it has to pick up variable organism (correct later: NDS)
+        JFrame lookup = getMainPanel(); //Always getting a new frame since it has to pick up variable organism (improve efficiency later: NDS)
         return lookup;
     }
 
@@ -352,6 +514,7 @@ public class ProductRationaliser implements JograPlugin {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            
             Product from = (Product) fromList.getSelectedValue();
 
             int match = findClosestMatch(from.toString(), fromList.getSelectedIndex(), toList.getModel());
@@ -359,6 +522,7 @@ public class ProductRationaliser implements JograPlugin {
                 toList.setSelectedIndex(match);
                 toList.ensureIndexIsVisible(match);
             }
+            
         }
 
         int findClosestMatch(String in, int fromIndex, ListModel list) {
@@ -418,6 +582,7 @@ public class ProductRationaliser implements JograPlugin {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+          
             Product to = (Product) toList.getSelectedValue(); //Product (from list) to be rationalised into
             String text = textField.getText(); //Corrected name (if provided)
             Object[] from = fromList.getSelectedValues(); // Products to be merged into above product
@@ -426,19 +591,26 @@ public class ProductRationaliser implements JograPlugin {
                 old.add((Product)o); //old contains products that will be merged/removed
             }
             MethodResult result = productService.rationaliseProduct(to, old, text);
-
-
+            
+            
             // If rationalising did not work, then display pop-up message with information
             if(result.isSuccessful()){
-                JOptionPane.showMessageDialog(null,result.getSuccessMsg());
-                initModels(); //If rationalised, refresh views
+                //JOptionPane.showMessageDialog(null,result.getSuccessMsg());
+               // products.removeAll(old);
+                information.setText(result.getSuccessMsg());
+                initModels(); //If rationalised, refresh views - too slow
+               /* toList.setListData(products.toArray());
+                fromList.setListData(products.toArray());
+                toList.repaint();
+                fromList.repaint(); */
             }else{
                 //JOptionPane.showMessageDialog(getMainPanel(), result.getErrorMsg()); //If not, then display error and then refresh view
                 //initModels();
                 logger.debug("Cannot rationalise");
-
+                
             }
-
+           
+           
         }
 
         @Override
@@ -455,6 +627,53 @@ public class ProductRationaliser implements JograPlugin {
         }
 
     }
+    
+    
+    /**
+     * Class to generate the product names in the JList in a different colour if they have evidence codes
+     * It also sets the ToolTipText to have the evidence codes
+     * Added by NDS on 22.5.2009
+     */
+    class ColorRenderer extends DefaultListCellRenderer {
+        Product current;
+        
+        /** Creates a new instance of ColorRenderer */
+        public ColorRenderer() { }
+          
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+
+          super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+          /* The value here will be a product. If this product have evidence codes, set the text to green */
+          if(value instanceof Product){
+              current = (Product)value;
+              List<String> tempevc = evcMap.get(current.getId());
+              if(tempevc!=null && !tempevc.isEmpty()){
+                  setForeground(Color.BLUE);
+
+              }
+              
+          }
+        
+          return this;
+        }
+        
+        /* When mouse hovers over the list item, the user will be able to see the evidence codes related to that product (via a ToolTip)*/
+        public String getToolTipText(MouseEvent event){
+            
+            if(current!=null && (current.toString()).equals(super.getText())){ //Checking if we have a product and that it is the right one
+                System.out.println("Yes! It is a product");
+                List<String> tempevc = evcMap.get(current.getId());
+                if(tempevc!=null && !tempevc.isEmpty()){
+                    String results = StringUtils.collectionToDelimitedString(tempevc, "/n");
+                    System.out.println(results);
+                    return results;
+
+                }
+            }
+            return new String();
+        }
+    }
+          
 
 
     /**
@@ -722,6 +941,11 @@ public class ProductRationaliser implements JograPlugin {
     public void process(List<String> newArgs) {
         // TODO Auto-generated method stub
 
+    }
+    
+    @Override
+    public void setJogra(Jogra jogra) {
+        this.jogra = jogra;
     }
 
 
