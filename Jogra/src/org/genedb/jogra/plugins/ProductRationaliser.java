@@ -49,6 +49,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -98,26 +99,25 @@ public class ProductRationaliser implements JograPlugin {
 
     private ProductService productService;
     private TaxonNodeManager taxonNodeManager; //Added in order to get corresponding taxonNodes
+    private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
+    private List<String> userSelection; //Organisms or class of organisms selected by user
+    private Jogra jogra; //Jogra object in this application context
+    private boolean showEVC; //Show Evidence codes?
+    private boolean showSysID; //Show systematic IDs?
+    private HashMap<Integer, List<String>> idMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of systematic IDs
+    private HashMap<Integer, List<String>> evcMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of evidence codes
+    private List<Product> products = new ArrayList<Product>(); //All products
+    private Product[] productArray;
+    
+    /*Variables related to the user interface */
     private JList fromList;
     private JList toList;
     private JTextField textField;
     private JTextField idField;
-    private JProgressBar pbar = new JProgressBar();
-   
     private JLabel productCountLabel;
-    private List<String> userSelection; //Organisms or class of organisms selected by user
-    private TaxonNode taxonNode = null;
-    private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
     private JLabel scopeLabel = new JLabel("Scope: All organisms"); //Label showing user's selection. Default: View all
-    private Jogra jogra; //Jogra object in this application context
-    private boolean showEVC;
-    private boolean showSysID;
-    private HashMap<Integer, List<String>> idMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of systematic IDs
-    private HashMap<Integer, List<String>> evcMap = new HashMap<Integer, List<String>>(); // Key = cvtermid, Value = List of evidence codes
-    private List<Product> products = new ArrayList<Product>();
+    private JTextArea information = new JTextArea(10,10);
     
-    private  final JTextArea information = new JTextArea(10,10);
-
     
    /* Essential setter method */
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
@@ -127,14 +127,14 @@ public class ProductRationaliser implements JograPlugin {
  
 
     /**
-     * Fetch the product list from the database and set that as the model for both lists.
+     * Fetch the product list from the database and set that as the model for both the toList and fromList
      */
     private void initModels() {
        
         userSelection = jogra.getChosenOrganism();  
         taxonList.clear();
-        logger.info("Product Rationalier: Inside initModels() method. Getting selection from Jogra " + userSelection);
-        if(userSelection!=null && userSelection.size()!=0 && !userSelection.contains("root")){
+        logger.info("Product Rationaliser: Inside initModels() method. Getting selection from Jogra " + userSelection);
+        if(userSelection!=null && userSelection.size()!=0 && !userSelection.contains("root")){ // 'root' with a simple r causes problems
            scopeLabel.setText("Scope: " + StringUtils.collectionToCommaDelimitedString(userSelection)); //Else, label will continue to have 'Scope: All organisms'
            for(String s: userSelection){
                taxonList.add(taxonNodeManager.getTaxonNodeForLabel(s));
@@ -143,22 +143,17 @@ public class ProductRationaliser implements JograPlugin {
             taxonList.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
         }
       
-        
-        logger.info("Taxons resulting from user selection (or lack of a user selection) is: " + taxonList.toString());
         products = productService.getProductList(taxonList); 
-        Product[] productArray = new Product[products.size()];
+        productArray = new Product[products.size()];
       
         int i=0;
         for (Product product : products) {
-            /* Also get systematic IDs for this product if the relevant checkbox has been ticked */
-            if(isShowSysID()){
-               logger.info("Getting systematic IDs for " + product.getId());
+            
+            if(isShowSysID()){ /* Get systematic IDs for this product if the relevant checkbox has been ticked */
                idMap.put(product.getId(), (List<String>)productService.getSystematicIDs(product));
             }
-            if(isShowEVC()){
-               List<String> temp =  productService.getEvidenceCodes(product);
-               evcMap.put(product.getId(),temp);  //(List<String>)productService.getEvidenceCodes(product)); 
-               logger.info("Evidence codes for " + product.toString() + " " + StringUtils.collectionToCommaDelimitedString(temp));
+            if(isShowEVC()){ /* Get evidence codes for this product if the relevant checkbox has been ticked */
+               evcMap.put(product.getId(),productService.getEvidenceCodes(product));  
             }
             productArray[i] = product;
             i++;
@@ -166,17 +161,15 @@ public class ProductRationaliser implements JograPlugin {
         fromList.setListData(productArray);
         toList.setListData(productArray);
         productCountLabel.setText(products.size()+" Products");
-        //Clear other textboxes
+        //Re-set other textboxes
         if(isShowSysID()){
             idField.setText("");
         }else{
             idField.setText("(not enabled)");
             idField.setEnabled(false);
         }
-        
         textField.setText("");
-        pbar.setIndeterminate(false);
-       
+          
     }
 
 
@@ -277,7 +270,6 @@ public class ProductRationaliser implements JograPlugin {
         TitledBorder border = BorderFactory.createTitledBorder("Information");
         border.setTitleColor(Color.DARK_GRAY);
        
-        
         /* Information box */
         Box info = Box.createVerticalBox();
         
@@ -298,15 +290,13 @@ public class ProductRationaliser implements JograPlugin {
         sysIDBox.add(Box.createHorizontalStrut(5));
         sysIDBox.add(idField);
         sysIDBox.add(Box.createHorizontalGlue());
-        
-        
+                
         info.add(scope);
         info.add(productCount);
         info.add(sysIDBox);
         info.setBorder(border);
         
-        /* Add a new term box */
-
+        /* Add a box to edit the name of a product */
         Box newTerm = Box.createHorizontalBox();
         newTerm.add(Box.createHorizontalStrut(5));
         JLabel label1 = new JLabel("Edit");
@@ -323,7 +313,9 @@ public class ProductRationaliser implements JograPlugin {
         JButton refresh = new JButton("Refresh");
         refresh.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                initModels();//See if this can be fixed
+                ret.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                initModels();//This refreshes lists from the database
+                ret.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         });
         actionButtons.add(refresh);
@@ -336,14 +328,6 @@ public class ProductRationaliser implements JograPlugin {
         RationaliserAction ra = new RationaliserAction();
         JButton go = new JButton(ra);
         actionButtons.add(go);
-              
-        /* Progress bar */
-       
-        pbar.setStringPainted(true);
-        pbar.setBackground(Color.WHITE);
-        pbar.setPreferredSize(new Dimension(1,1));
-        
-        //actionButtons.add(pbar);
         actionButtons.add(Box.createHorizontalGlue());
         
         /* Show more information toggle */
@@ -353,30 +337,24 @@ public class ProductRationaliser implements JograPlugin {
         buttonBox.add(Box.createHorizontalStrut(5));
         buttonBox.add(toggle);
         buttonBox.add(Box.createHorizontalGlue());
-        
-        JTextArea information = new JTextArea(10,10);
+               
         Box textBox = Box.createHorizontalBox();
        
         final JScrollPane scrollPane = new JScrollPane(information);
         scrollPane.setPreferredSize(new Dimension(800,100));
         scrollPane.setVisible(false);
         textBox.add(Box.createHorizontalStrut(5));
-        textBox.add(scrollPane); //, BorderLayout.WEST);
+        textBox.add(scrollPane); 
       
-        
         ActionListener actionListener = new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
                 if(toggle.getText().equals("Show information >>")){
                     scrollPane.setVisible(true);
                     toggle.setText("Hide information <<");
                     ret.setPreferredSize(new Dimension(800,900));
-                    pbar.setIndeterminate(true);
                     ret.pack();
-                    
-                    
                 }else if(toggle.getText().equals("Hide information <<")){
                     scrollPane.setVisible(false);
-                    pbar.setIndeterminate(false);
                     toggle.setText("Show information >>");
                     ret.setPreferredSize(new Dimension(800,800));
                     ret.pack();
@@ -395,11 +373,11 @@ public class ProductRationaliser implements JograPlugin {
         main.add(buttonBox);
         main.add(textBox);
         
-        JLabel hints = new JLabel("<html><i><ol>"+
+       /* JLabel hints = new JLabel("<html><i><ol>"+
                 "<li>Use the left or right arrow, as appropriate, to sync the selection" +
                 "<li>Use CTRL+i to start an incremental search, then the UP/DOWN arrows" +
                 "</ol></i></html>");
-        
+        */
         ret.add(main, BorderLayout.SOUTH);
         ret.setPreferredSize(new Dimension(800,800));
         ret.pack();
@@ -585,27 +563,36 @@ public class ProductRationaliser implements JograPlugin {
           
             Product to = (Product) toList.getSelectedValue(); //Product (from list) to be rationalised into
             String text = textField.getText(); //Corrected name (if provided)
-            Object[] from = fromList.getSelectedValues(); // Products to be merged into above product
+            Object[] from = fromList.getSelectedValues(); // Products to be rationalised
             List<Product> old = new ArrayList<Product>();
             for (Object o : from) {
-                old.add((Product)o); //old contains products that will be merged/removed
+                old.add((Product)o); 
             }
             MethodResult result = productService.rationaliseProduct(to, old, text);
-            
-            
-            // If rationalising did not work, then display pop-up message with information
             if(result.isSuccessful()){
-                //JOptionPane.showMessageDialog(null,result.getSuccessMsg());
-               // products.removeAll(old);
-                information.setText(result.getSuccessMsg());
-                initModels(); //If rationalised, refresh views - too slow
-               /* toList.setListData(products.toArray());
+                System.out.println("Message: " + result.getSuccessMsg() );
+                List<Product> add = productService.getProductsToAdd();
+                List<Product> remove = productService.getProductsToRemove();
+    
+                if(add!=null){
+                    products.addAll(add);
+                }
+                if(remove!=null){
+                    products.removeAll(remove);
+                }
+            
+                
+                toList.setListData(products.toArray()); //TO DO: Try to sort this array first
                 fromList.setListData(products.toArray());
+                information.setText(information.getText().concat(result.getSuccessMsg()));
+          
                 toList.repaint();
-                fromList.repaint(); */
+                fromList.repaint();
+             
+             
             }else{
-                //JOptionPane.showMessageDialog(getMainPanel(), result.getErrorMsg()); //If not, then display error and then refresh view
-                //initModels();
+                
+                information.setText("There was an error while trying to rationalise the selected products.");
                 logger.debug("Cannot rationalise");
                 
             }
@@ -661,7 +648,6 @@ public class ProductRationaliser implements JograPlugin {
         public String getToolTipText(MouseEvent event){
             
             if(current!=null && (current.toString()).equals(super.getText())){ //Checking if we have a product and that it is the right one
-                System.out.println("Yes! It is a product");
                 List<String> tempevc = evcMap.get(current.getId());
                 if(tempevc!=null && !tempevc.isEmpty()){
                     String results = StringUtils.collectionToDelimitedString(tempevc, "/n");
