@@ -6,7 +6,7 @@
              relative to here rather than the importing project. -->
   <dirname property="imported.basedir.access" file="${ant.file.genedb-access}"/>
 
-  <!-- <import file="${imported.basedir.access}/test.xml"/> -->
+  <import file="${imported.basedir.access}/test.xml"/>
 
   <import file="${imported.basedir.access}/../genedb-libs/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-db/build.xml"/>

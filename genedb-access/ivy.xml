@@ -12,12 +12,7 @@
       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
       <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
-
-
-
-      <!--
-      <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
-      <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" />
-      <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" /> -->
+      
+      <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
     </dependencies>
 </ivy-module>
