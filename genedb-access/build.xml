@@ -182,12 +182,13 @@
               <pathelement location="${imported.basedir.access}/lib/postgresql-8.3-603.jdbc4.jar"/>
            </classpath>
 
-            select feature.uniquename
+            delete
             from feature
-            join analysisfeature using (feature_id)
-            join analysis using (analysis_id)
-            join organism using (organism_id)
-            where organism.common_name = 'dummy'
+            using analysisfeature join analysis using (analysis_id)
+            , organism
+            where analysisfeature.feature_id = feature.feature_id
+            and feature.organism_id = organism.organism_id
+            and organism.common_name = 'dummy'
             and feature.type_id = (
               select cvterm_id
               from cvterm join cv using (cv_id)
