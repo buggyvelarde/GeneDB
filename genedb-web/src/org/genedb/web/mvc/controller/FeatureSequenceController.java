@@ -21,10 +21,12 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.util.Pair;
+import org.genedb.util.SequenceUtils;
 
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
@@ -86,17 +88,29 @@ public class FeatureSequenceController {
             exon.getFeatureLocs();
         }
 
+        boolean reverseCompliment = false;
+        if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
+            reverseCompliment = true;
+        }
+
         // geneSequence - from UTR to UTR inclusive, with introns
-        model.put("gene_sequence", transcript.getGene().getResidues()); // formerly unspliced
+        String geneSequence = transcript.getGene().getResidues();
+        if (reverseCompliment) {
+           geneSequence = SequenceUtils.reverseComplement(geneSequence);
+        }
+        model.put("gene_sequence", geneSequence); // formerly unspliced
         //Transcript - from UTR to UTR inclusive, without introns
         model.put("transcript", transcript.getResidues()); // formerly spliced
         //CDS - exons
+
+
+
         SortedSet<AbstractExon> exons = transcript.getExons();
         StringBuilder sb = new StringBuilder();
         for (AbstractExon exon : exons) {
-        	String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax());
-			sb.append(seq);
-		}
+            String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
+            sb.append(seq);
+        }
         model.put("cds", sb.toString());
 
         //model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
