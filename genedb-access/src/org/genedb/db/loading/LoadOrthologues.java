@@ -10,6 +10,7 @@ import org.gmod.schema.feature.ProteinMatch;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -442,9 +443,18 @@ class OrthologuesLoader {
         session.persist(clusterFeature);
 
         for (int polypeptideId: polypeptideIds) {
-            session.persist(
-                clusterFeature.addOrthologue(
-                    (Polypeptide) session.get(Polypeptide.class, polypeptideId)));
+//            session.persist(
+//                clusterFeature.addOrthologue(
+//                    (Polypeptide) session.get(Polypeptide.class, polypeptideId)));
+
+            logger.trace("Loading polypeptide " + polypeptideId);
+            Polypeptide p = (Polypeptide) session.load(Polypeptide.class, polypeptideId);
+
+            logger.trace("Adding orthologue to cluster");
+            FeatureRelationship fr = clusterFeature.addOrthologue(p);
+
+            logger.trace("Persisting FeatureRelationship");
+            session.persist(fr);
         }
     }
 

@@ -857,6 +857,7 @@ class EmblLoader {
             } else {
                 this.transcript = gene.makeTranscript(getTranscriptClass(), transcriptUniqueName, location.getFmin(), location.getFmax());
             }
+            session.persist(transcript);
 
             focalFeature = transcript;
             if (transcript instanceof ProductiveTranscript) {
@@ -892,7 +893,7 @@ class EmblLoader {
 
                 logger.debug(String.format("Adding %s '%s' for transcript", synonymType, synonymString));
                 Synonym synonym = synonymManager.getSynonym(synonymType, synonymString);
-                transcript.addSynonym(synonym, isCurrent, /*isInternal:*/ false);
+                session.persist(transcript.addSynonym(synonym, isCurrent, /*isInternal:*/ false));
             }
         }
 

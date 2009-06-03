@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -302,6 +303,8 @@ public class FeatureTester {
 
         private GeneTester boundaries() {
             int strand = 0, fmin = Integer.MAX_VALUE, fmax = Integer.MIN_VALUE;
+            Collection<Transcript> transcripts = gene.getTranscripts();
+            Assert.notEmpty(transcripts, String.format("Gene '%s' has no transcripts", gene));
             for (Transcript transcript: gene.getTranscripts()) {
                 assertEquals(gene.getPrimarySourceFeature(), transcript.getPrimarySourceFeature());
 
@@ -326,6 +329,7 @@ public class FeatureTester {
                     fail(String.format("Gene '%s' has inconsistent strand directions on its transcripts"));
                 }
             }
+
             assertEquals(gene.getFmin(), fmin);
             assertEquals(gene.getFmax(), fmax);
             assertEquals(gene.getStrand(), strand);

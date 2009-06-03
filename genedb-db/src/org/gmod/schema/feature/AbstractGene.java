@@ -6,6 +6,8 @@ import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -110,6 +112,7 @@ public abstract class AbstractGene extends Region {
                 int fmin, int fmax) {
         logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
             transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         if (fmax < fmin) {
             throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
@@ -130,6 +133,7 @@ public abstract class AbstractGene extends Region {
         }
 
         T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
+        session.persist(transcript);
         for (FeatureLoc featureLoc: getFeatureLocs()) {
             featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
                 featureLoc.getFmin() + relativeFmax,
@@ -147,6 +151,7 @@ public abstract class AbstractGene extends Region {
             logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
                 polypeptideUniqueName, getUniqueName()));
             Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
+            session.persist(polypeptide);
             for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
                 featureLoc.getSourceFeature().addLocatedChild(polypeptide, featureLoc.getFmin(), featureLoc.getFmax(),
                     featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());

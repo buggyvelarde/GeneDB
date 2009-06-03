@@ -16,8 +16,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.search.annotations.DocumentId;
@@ -92,25 +90,6 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
 @Table(name = "feature")
-/*
- * The filter 'excludeObsoleteFeatures' does what its name would suggest.
- * (The genedb-web project enables this filter by default.)
- *
- * In fact, even with this filter enabled, it is possible to retrieve
- * obsolete features in certain roundabout ways -- but don't rely on that,
- * because it's subject to change. If you want obsolete features, disable
- * the filter.
- *
- * At the time of writing, it applies to:<ul>
- * <li> The entity Feature
- * <li> The entity FeatureCvTerm
- * <li> The entity FeatureRelationship
- * <li> The collections Feature.featureRelationshipsForSubjectId and Feature.featureRelationshipsForObjectId
- * </ul>
- * -rh11
- */
-@FilterDef(name="excludeObsoleteFeatures")
-@Filter(name="excludeObsoleteFeatures", condition="not is_obsolete")
 @Indexed
 public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs {
 
@@ -191,23 +170,10 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "sourceFeature")
     private Set<FeatureLoc> featureLocsForSrcFeatureId;
 
-    /*
-     * These collections respect the excludeObsoleteFeatures filter.
-     * Note that they rely on the specific name-mangling convention
-     * that Hibernate uses, so they might need to be changed when
-     * upgrading to a newer version of Hibernate, if this changes.
-     *
-     * Furthermore, they rely on the fact that the FeatureRelationship
-     * properties featureBySubjectId and featureByObjectId are
-     * fetched eagerly. If they were not, we'd need a nested query
-     * instead here.
-     */
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "objectFeature")
-    @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     protected Set<FeatureRelationship> featureRelationshipsForObjectId;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "subjectFeature")
-    @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     protected Set<FeatureRelationship> featureRelationshipsForSubjectId;
 
 

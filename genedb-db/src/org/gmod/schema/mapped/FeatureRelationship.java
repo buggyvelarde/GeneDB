@@ -5,7 +5,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import org.gmod.schema.utils.propinterface.PropertyI;
 
-import org.hibernate.annotations.Filter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -14,7 +13,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,7 +26,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationship")
-@Filter(name="excludeObsoleteFeatures", condition="2 = (select count(*) from feature where feature.feature_id in (subject_id, object_id) and not feature.is_obsolete)")
 public class FeatureRelationship implements Serializable,PropertyI {
 
     // Fields
@@ -43,30 +40,13 @@ public class FeatureRelationship implements Serializable,PropertyI {
      * The obvious reason is for performance: in almost every case when fetching a
      * relationship, we're interested in the features it relates, so it makes sense
      * to fetch them at the same time.
-     *
-     * However, there are also two more subtle reasons:<ol>
-     * <li> If they were lazily-fetched, the associated objects would
-     *      necessarily be objects of a Hibernate wrapper class, so it
-     *      would be impossible to do tests such as
-     *      <code>rel.getFeatureByObjectId() instanceof ProductiveTranscript</code>
-     *      and the like, because the wrapper objects can't respect the
-     *      hierarchy of feature classes.
-     * <li> The condition used, when the excludeObsoleteFeatures filter is
-     *      active, to restrict Feature.featureRelationshipsForSubjectId and
-     *      Feature.featureRelationshipsForObjectId, relies on the fact that
-     *      the corresponding query also retrieves the associated features.
-     *      It does so only because of the eager fetching here. If these
-     *      properties were to be lazily fetched, that condition would need
-     *      to be replaced by a less efficient nested subquery (which might
-     *      well cancel out any perceived advantages of lazy fetching here).
-     * </ol>
      */
 
-    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToOne//(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature subjectFeature;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToOne//(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "object_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature objectFeature;
 
