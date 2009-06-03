@@ -83,12 +83,15 @@ public class BrowseCategoryController {
         return formView;
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"category","taxons"})
+    @RequestMapping(method = RequestMethod.POST)
     public ModelAndView setUpForm(
             BrowseCategoryController.BrowseCategoryBean bean,
             HttpSession session,
             Model model) {
         logger.warn("Called method 2");
+        
+        model.addAttribute("categories", BrowseCategory.values());
+        model.addAttribute("browseCategory", bean);
 
         //Clear session of any search result
         session.removeAttribute(RESULTS_ATTR);
@@ -103,15 +106,16 @@ public class BrowseCategoryController {
         String orgName = "Root";
         List<String> orgNames = new ArrayList<String>();
         if (taxons != null && taxons.length > 0) {
-            orgName = taxons[0].getLabel();
-            orgNames.add(orgName);
+            for (TaxonNode tn : taxons) {
+                orgNames.addAll(tn.getAllChildrenNames());
+            }
         }
         List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames);
 
         if (results.isEmpty()) {
             logger.info("result is null");
-            //be.reject("no.results");
-            // FIXME return showForm(request, response, be);
+            model.addAttribute("noResultFound", true);
+            return new ModelAndView(formView, "browseCategory", bean);
         }
         logger.debug(results.get(0));
 
