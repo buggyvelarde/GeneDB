@@ -1,10 +1,9 @@
 package org.genedb.jogra.services;
 
-import java.util.List;
 import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeManager;
-
 import org.genedb.jogra.domain.Product;
+
+import java.util.List;
 
 public interface ProductService {
 
@@ -19,5 +18,16 @@ public interface ProductService {
    // MethodResult rationaliseProduct(Product newProduct, List<Product> products);
     /* Modified method that also takes any corrected text provided by the user*/
     MethodResult rationaliseProduct(Product newProduct, List<Product> products, String correctedText);
+    
+    /* Method to retrieve systematic IDs for a given product */
+    List<String> getSystematicIDs(Product product);
+    
+    /* Method to retrieve evidence codes for a given product */
+    List<String> getEvidenceCodes(Product product);
+    
+    /* Improve later */
+    List<Product> getProductsToAdd();
+    
+    List<Product> getProductsToRemove();
 
 }
