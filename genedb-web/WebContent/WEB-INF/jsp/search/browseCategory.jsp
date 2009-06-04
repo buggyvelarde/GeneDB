@@ -11,7 +11,7 @@
 
 <div id="geneDetails">
   <format:genePageSection id="browseCategory" className="whiteBox">
-    <form:form action="BrowseCategory" commandName="browseCategory" method="post">
+    <form:form action="BrowseCategory" commandName="browseCategory" method="get">
             <table>
                 <tr>
                     <td width=180>

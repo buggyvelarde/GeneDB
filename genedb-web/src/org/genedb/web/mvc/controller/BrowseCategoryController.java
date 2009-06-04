@@ -83,7 +83,7 @@ public class BrowseCategoryController {
         return formView;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.GET, params = {"category","taxons"})
     public ModelAndView setUpForm(
             BrowseCategoryController.BrowseCategoryBean bean,
             HttpSession session,
