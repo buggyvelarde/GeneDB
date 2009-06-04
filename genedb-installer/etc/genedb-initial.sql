@@ -202,6 +202,10 @@ update db set urlprefix='http://cmr.jcvi.org/cgi-bin/CMR/HmmReport.cgi?hmm_acc='
 update db set urlprefix='http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_='
     where name='OPI';
 
+-- This is deliberately a relative URL as it redirects via our site
+update db set urlprefix='/DbLinkRedirector?db=EC&acc='
+    where name='EC';
+
 update db set urlprefix='http://www.expasy.org/cgi-bin/sprot-search-de?'
             , description='The SwissProt database'
     where name='SP';

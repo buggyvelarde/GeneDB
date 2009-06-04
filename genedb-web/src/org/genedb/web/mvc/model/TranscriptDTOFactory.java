@@ -345,6 +345,15 @@ public class TranscriptDTOFactory {
                     fdx.getDbXRef().getAccession(),
                     fdx.getDbXRef().getDb().getUrlPrefix()));
         }
+
+        // Special case for EC numbers which are stored as featureprops
+        for (FeatureProp featureProp : polypeptide.getFeaturePropsFilteredByCvNameAndTermName("genedb_misc", "EC_number")) {
+            dbXRefDTOs.add(new DbXRefDTO("EC",
+                    featureProp.getValue(),
+                    "/DbLinkRedirector?db=EC&acc="));
+        }
+
+
         if (dbXRefDTOs.size() > 0) {
             transcriptDTO.setDbXRefDTOs(dbXRefDTOs);
         }
