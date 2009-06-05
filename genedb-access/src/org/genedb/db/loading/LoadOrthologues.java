@@ -80,7 +80,7 @@ public class LoadOrthologues extends FileProcessor {
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.ortho");
 
-        String analysisProgram = getRequiredProperty("load.analysis.program");
+        String analysisProgram = getPropertyWithDefault("load.analysis.program", null);
         String analysisProgramVersion = getPropertyWithDefault("load.analysis.programVersion", null);
         String analysisAlgorithm = getPropertyWithDefault("load.analysis.algorithm", null);
 
