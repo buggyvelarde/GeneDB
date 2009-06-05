@@ -84,7 +84,7 @@ public class LoadOrthologues extends FileProcessor {
         String analysisProgramVersion = getPropertyWithDefault("load.analysis.programVersion", null);
         String analysisAlgorithm = getPropertyWithDefault("load.analysis.algorithm", null);
 
-        String datasetName = getRequiredProperty("load.dataset");
+        String datasetName = getPropertyWithDefault("load.dataset", null);
 
         boolean geneNames = hasProperty("load.orthologues.geneNames");
         boolean notFoundNotFatal = hasProperty("load.orthologues.notFoundNotFatal");
