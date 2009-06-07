@@ -17,21 +17,15 @@
       <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
       <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="default->*"/>
 
-
+      <!-- The Hibernate Search package in the Spring repository hasn't been updated yet. So we include it, and a couple 
+      of dependencies explicitly. -->
       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
       <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
 
       <!--  Used by test.deployment-build.xml  -->
-      <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" />
+      <!-- <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" /> -->
 
 
-      <!--  We don't need these jars because they're already included in Tomcat, and
-            if they are deployed to the webapp then they cause conflicts. -->
-            <!--
-      <exclude artifact="com.springsource.javax.el" conf="default"/>
-      <exclude artifact="com.springsource.javax.servlet" conf="default"/>
-      <exclude artifact="com.springsource.javax.servlet.jsp" conf="default"/>
--->
     </dependencies>
 </ivy-module>
