@@ -1,5 +1,8 @@
 package org.genedb.querying.tmpquery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 import org.hibernate.validator.NotEmpty;
@@ -37,7 +40,13 @@ public class GeneLocationQuery extends OrganismHqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName from Feature f inner join f.featureLocs fl where fl.sourceFeature.uniqueName=:topLevelFeatureName and fl.fmin >= :min and fl.fmax <= :max @ORGANISM@ order by f.organism, f.uniqueName";
+        return "select f.uniqueName " +
+        		"from Feature f inner join f.featureLocs fl " +
+        		"where fl.sourceFeature.uniqueName=:topLevelFeatureName " +
+        		"and fl.fmin >= :min " +
+        		"and fl.fmax <= :max @ORGANISM@ " +
+        		RESTRICT_TO_TRANSCRIPTS + //FIX_ME
+        		"order by f.organism, f.uniqueName";
     }
 
 
@@ -93,8 +102,7 @@ public class GeneLocationQuery extends OrganismHqlQuery {
         super.populateQueryWithParams(query);
         query.setString("topLevelFeatureName", topLevelFeatureName);
         query.setInteger("min", min);
-        query.setInteger("max", max);
-    }
+        query.setInteger("max", max);    }
 
 
     @Override
