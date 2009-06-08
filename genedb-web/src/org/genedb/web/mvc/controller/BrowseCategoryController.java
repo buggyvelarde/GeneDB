@@ -106,6 +106,7 @@ public class BrowseCategoryController {
         String orgName = "Root";
         List<String> orgNames = new ArrayList<String>();
         if (taxons != null && taxons.length > 0) {
+            orgName = taxons[0].getLabel();
             for (TaxonNode tn : taxons) {
                 orgNames.addAll(tn.getAllChildrenNames());
             }
