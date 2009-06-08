@@ -928,11 +928,6 @@ public class ProductRationaliser implements JograPlugin {
         // TODO Auto-generated method stub
 
     }
-    
-    @Override
-    public void setJogra(Jogra jogra) {
-        this.jogra = jogra;
-    }
 
 
 }
