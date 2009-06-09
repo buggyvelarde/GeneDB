@@ -13,7 +13,10 @@ and (
         )
     ) or (
         organism.genus = 'Plasmodium'
-        and organism.species in ('berghei', 'berghei (3x coverage)', 'chabaudi')
+        and organism.species in ('berghei', 'berghei (3x coverage)')
+    ) or (
+        organism.genus = 'Streptococcus'
+        and organism.species in ('pneumoniae TIGR4', 'pneumoniae D39')
     )
 )
 ;
