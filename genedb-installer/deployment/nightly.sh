@@ -29,28 +29,28 @@ done
 
 
 # Run incremental updates
-cd ${CVS}/genedb_web/
+#cd ${CVS}/genedb_web/
 #ant -Ddeploy=nightly incremental_update
 
-if [$? -eq 1 ]; then
+#if [$? -eq 1 ]; then
   #Failure
-  echo "Nightly update has failed during incremental updates"
-  mkdir $INVESTIGATION
-  mv $NIGHTLY/cache $INVESTIGATION
-  mv $NIGHTLY/lucene $INVESTIGATION
-  pg_dump -c nightly > ${INVESTIGATION}/dump.sql
-  mv $SAFETY/cache $NIGHTLY
-  mv $SAFETY/lucene $NIGHTLY
-  psql nightly < ${SAFETY}/dump.sql
-fi
+#  echo "Nightly update has failed during incremental updates"
+#  mkdir $INVESTIGATION
+#  mv $NIGHTLY/cache $INVESTIGATION
+#  mv $NIGHTLY/lucene $INVESTIGATION
+#  mv $SAFETY/cache $NIGHTLY
+#  pg_dump -c nightly > ${INVESTIGATION}/dump.sql
+#  mv $SAFETY/lucene $NIGHTLY
+#  psql nightly < ${SAFETY}/dump.sql
+#fi
 
 
 
 
 # Success
-Extract the sequence ids from the copy, and update the production db
+#Extract the sequence ids from the copy, and update the production db
 
-echo "Nightly update completed - attempting to deploy web server"
+#echo "Nightly update completed - attempting to deploy web server"
 
 #Deploy the nightly web server into position
 #ant -Ddeploy=nightly final_deploy
