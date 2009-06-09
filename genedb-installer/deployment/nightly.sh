@@ -3,7 +3,7 @@
 NIGHTLY=/nfs/pathdb/genedb/nightly
 SAFETY=${NIGHTLY}/backup
 INVESTIGATION=${NIGHTLY}/failed
-CVS=`basename $0`/../..
+CVS=`basename "$0"`/../..
 
 mkdir $SAFETY
 rm -fr $SAFETY/*
