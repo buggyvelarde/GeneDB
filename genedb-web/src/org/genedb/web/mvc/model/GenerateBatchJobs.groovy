@@ -8,7 +8,7 @@ unset DISPLAY
 cd /nfs/pathdb/genedb/staging/cvs/genedb-ng/genedb-web
 '''
 
-def queueName = "normal";
+def queueName = "basement";
 
 String baseDir = "/nfs/pathdb/genedb/staging/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
