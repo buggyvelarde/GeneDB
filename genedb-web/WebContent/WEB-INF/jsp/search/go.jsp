@@ -5,28 +5,38 @@
     <st:init />
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
+
+
+
+<br>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form commandName="query" action="Query" method="GET">
         <input type="hidden" name="q" value="go" />
+        
             <table>
                 <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
+                    <td width=180>
+                        <br><big><b>GO Search:&nbsp;</b></big>
+                    </td>
+                    <td width=180>
+                        <b>Organism:</b>
+                        <br><db:simpleselect />
+                        <br><font color="red"><form:errors path="taxons" /></font>
+                    </td>
+                    <td width=180>
+                        <b>GO Id:</b>
+                        <br><form:input id="go" path="search"/>
+                        <br><font color="red"><form:errors path="search" /></font>
+                    </td>
+                    <td>
+                        <br><input type="submit" value="Submit" />
                     </td>
                 </tr>
                 <tr>
-                  <td>GO:</td>
-                  <td>
-                    <form:input id="go" path="search"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td colspan="2">
-                    <input type="submit" value="Submit" />
-                  </td>
-                  <td>&nbsp;</td>
+                    <td></td>
+                    <td colspan=3><font color="red"><form:errors  /></td>
+                    <td></td>
                 </tr>
             </table>
 
