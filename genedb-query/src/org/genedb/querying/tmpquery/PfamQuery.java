@@ -42,14 +42,13 @@ public class PfamQuery extends OrganismLuceneQuery {
             }
         } else {
             if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("allNames",search.toLowerCase())), Occur.SHOULD);
+                bq.add(new TermQuery(new Term("pfam",search.toLowerCase())), Occur.SHOULD);
             } else {
-                bq.add(new WildcardQuery(new Term("allNames", search.toLowerCase())), Occur.SHOULD);
+                bq.add(new WildcardQuery(new Term("pfam", search.toLowerCase())), Occur.SHOULD);
             }
         }
 
         queries.add(bq);
-        queries.add(geneQuery);
 
     }
 

@@ -2,6 +2,7 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -412,7 +413,19 @@ public class Polypeptide extends Region {
         }
         return ret;
     }
-
+    
+    @Transient
+    @Field(index=Index.TOKENIZED, store=Store.NO)
+    public String getPfam(){
+        StringBuilder ret = new StringBuilder();
+        for (PolypeptideDomain domain : this.getDomains()) {
+            DbXRef dbXRef = domain.getDbXRef();
+            if(dbXRef.getDb().getName().equals("Pfam")){
+                ret.append(String.format("%s %s", dbXRef.getAccession(), dbXRef.getDescription()));
+            }
+        }
+        return ret.length() > 0 ? ret.toString() : null;
+    }
     /**
      * Get a collection of the ProteinMatch features that represent similarities
      * between this polypeptide and another (as defined by a /similarity qualifier
