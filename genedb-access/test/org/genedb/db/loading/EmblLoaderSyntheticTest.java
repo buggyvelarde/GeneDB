@@ -62,7 +62,9 @@ public class EmblLoaderSyntheticTest {
                   "super1_tRNA1", "Tc00.1047053511907.50")
               .uniqueNames(Pseudogene.class, "s1")
               .uniqueNames(Gene.class, "s2", "s3", "s4", "s5", "Smp_124050", "super1_tRNA1",
-                  "Tc00.1047053511907.50");
+                  "Tc00.1047053511907.50")
+              .uniqueNames(Contig.class, "con1a", "con2c", "con3g", "con4t", "con5a",
+                  "con6c_reversed", "con7g", "con8t");
     }
 
     @Test

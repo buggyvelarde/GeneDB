@@ -427,13 +427,21 @@ class EmblLoader {
             if (location instanceof EmblLocation.External) {
                 EmblLocation.External externalLocation = (EmblLocation.External) location;
                 int contigLength = externalLocation.simple.getLength();
+                String contigUniqueName = externalLocation.accession;
+                Contig contig = createContig(pos, contigLength, contigUniqueName);
+                contigsByStart.put(pos, contig);
 
-                logger.debug(String.format("Creating contig '%s' at %d-%d", externalLocation.accession, pos, pos + contigLength));
-                Contig contig = TopLevelFeature.make(Contig.class, externalLocation.accession, organism);
-                contig.setResidues(topLevelFeature.getResidues(pos, pos + contigLength));
-                session.persist(contig);
-                topLevelFeature.addLocatedChild(contig, pos, pos + contigLength, (short) 0, 0);
+                pos += contigLength;
+            } else if (location instanceof EmblLocation.Complement) {
+                EmblLocation complementedLocation = ((EmblLocation.Complement) location).location;
+                if (!(complementedLocation instanceof EmblLocation.External)) {
+                    throw new DataError("The CO section should contain only external references and gaps");
+                }
+                EmblLocation.External externalComplementedLocation = (EmblLocation.External) complementedLocation;
 
+                int contigLength = externalComplementedLocation.simple.getLength();
+                String contigUniqueName = externalComplementedLocation.accession + "_reversed";
+                Contig contig = createContig(pos, contigLength, contigUniqueName);
                 contigsByStart.put(pos, contig);
 
                 pos += contigLength;
@@ -451,6 +459,21 @@ class EmblLoader {
                 throw new DataError("The CO section should contain only external references and gaps");
             }
         }
+    }
+
+    /**
+     * @param pos
+     * @param contigLength
+     * @param contigUniqueName
+     * @return
+     */
+    private Contig createContig(int pos, int contigLength, String contigUniqueName) {
+        logger.debug(String.format("Creating contig '%s' at %d-%d", contigUniqueName, pos, pos + contigLength));
+        Contig contig = TopLevelFeature.make(Contig.class, contigUniqueName, organism);
+        contig.setResidues(topLevelFeature.getResidues(pos, pos + contigLength));
+        session.persist(contig);
+        topLevelFeature.addLocatedChild(contig, pos, pos + contigLength, (short) 0, 0);
+        return contig;
     }
 
     private void locate(Feature feature, EmblLocation location) {

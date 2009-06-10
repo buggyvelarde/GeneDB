@@ -164,7 +164,7 @@ FT                   /note="This is a gap that has a note"
 FT                   /note="And this is a cow with an itchy throat"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
-CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
+CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),complement(con6c.1:1..200),
 CO   gap(10),con7g.1:1..200,gap(50),con8t.1:1..90)
 XX
 SQ   Sequence 1200 BP; 300 A; 300 C; 300 G; 190 T; 110 other;
