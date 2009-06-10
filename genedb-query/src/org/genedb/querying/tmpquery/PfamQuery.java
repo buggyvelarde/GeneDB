@@ -5,6 +5,7 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -33,13 +34,16 @@ public class PfamQuery extends OrganismLuceneQuery {
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-
+        String tokens[] = search.trim().split("\\s");
         BooleanQuery bq = new BooleanQuery();
-        if(StringUtils.containsWhitespace(search)) {
-            for(String term : search.split(" ")) {
-                bq.add(new TermQuery(new Term("product",term.toLowerCase()
-                    )), Occur.SHOULD);
+        
+        if (tokens.length > 1) {
+            PhraseQuery pq = new PhraseQuery();
+            for (String token : tokens) {
+                pq.add(new Term("pfam", token));
             }
+            bq.add(pq, Occur.SHOULD);
+            
         } else {
             if (search.indexOf('*') == -1) {
                 bq.add(new TermQuery(new Term("pfam",search.toLowerCase())), Occur.SHOULD);
