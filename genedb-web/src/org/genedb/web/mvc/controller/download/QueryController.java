@@ -1,33 +1,30 @@
 package org.genedb.web.mvc.controller.download;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.util.MutableInteger;
+import org.genedb.web.mvc.controller.WebConstants;
+
+import org.apache.log4j.Logger;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
-import org.genedb.querying.core.Query;
-import org.genedb.querying.core.QueryException;
-import org.genedb.querying.core.QueryFactory;
-import org.genedb.querying.tmpquery.GeneSummary;
-import org.genedb.web.mvc.controller.WebConstants;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.google.common.collect.Maps;
 
 
 @Controller
@@ -42,11 +39,15 @@ public class QueryController extends AbstractGeneDBFormController{
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
+    
+    
+    private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
         return "redirect:/QueryList";
     }
+
 
     @RequestMapping(method = RequestMethod.GET , params= "q")
     public String processForm(
@@ -75,6 +76,14 @@ public class QueryController extends AbstractGeneDBFormController{
             return "search/"+queryName;
         }
 
+        MutableInteger count;
+        if (numQueriesRun.containsKey(queryName)) {
+            count = numQueriesRun.get(queryName);
+        } else {
+            count = new MutableInteger(0);
+        }
+        count.increment(1);
+        
         //Validate initialised form
         query.validate(query, errors);
         if (errors.hasErrors()) {
@@ -84,7 +93,7 @@ public class QueryController extends AbstractGeneDBFormController{
         }
 
         logger.debug("Validator found no errors");
-        List results = query.getResults();
+        @SuppressWarnings("unchecked") List<Object> results = query.getResults();
 
         //Suppress item in results
         suppressResultItem(suppress, results);
@@ -105,7 +114,7 @@ public class QueryController extends AbstractGeneDBFormController{
      * @return
      */
     private String findDestinationView(
-            String queryName, Query query, Model model, List results, HttpSession session){
+            String queryName, Query query, Model model, List<Object> results, HttpSession session){
 
         //Get the current taxon name
         String taxonName = findTaxonName(query);
@@ -167,6 +176,11 @@ public class QueryController extends AbstractGeneDBFormController{
                 logger.warn("Trying to remove '" + suppress + "' from results (as a result of an n-others call but it isn't present");
             }
         }
+    }
+
+    @ManagedAttribute(description="The no. of times each query has been attempted to be run")
+    public Map<String, MutableInteger> getNumQueriesRun() {
+        return numQueriesRun;
     }
 
 }
