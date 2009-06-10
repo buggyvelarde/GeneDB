@@ -43,7 +43,7 @@ public class QueryController extends AbstractGeneDBFormController{
     
     private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, params="newSearch")
     public String setUpForm() {
         return "redirect:/QueryList";
     }
