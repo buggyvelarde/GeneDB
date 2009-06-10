@@ -443,10 +443,6 @@ class OrthologuesLoader {
         session.persist(clusterFeature);
 
         for (int polypeptideId: polypeptideIds) {
-//            session.persist(
-//                clusterFeature.addOrthologue(
-//                    (Polypeptide) session.get(Polypeptide.class, polypeptideId)));
-
             logger.trace("Loading polypeptide " + polypeptideId);
             Polypeptide p = (Polypeptide) session.load(Polypeptide.class, polypeptideId);
 
