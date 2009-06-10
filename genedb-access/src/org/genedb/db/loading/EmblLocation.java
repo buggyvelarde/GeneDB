@@ -21,6 +21,10 @@ public abstract class EmblLocation {
     /**
      * A regular expression that matches an EMBL &lt;symbol&gt;, as defined in
      * Appendix II of the feature table definition.
+     *
+     * (Update: In the Apr 2009 version 8.1 of the feature table definition,
+     * the BNF appendix has been removed. The permitted characters are still
+     * listed in section 3.1.)
      */
     private static final String symbol = "[A-Za-z0-9_\\-'*]*[A-Za-z][A-Za-z0-9_\\-'*]*";
 
