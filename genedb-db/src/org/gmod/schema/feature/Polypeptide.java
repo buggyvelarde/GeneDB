@@ -421,7 +421,7 @@ public class Polypeptide extends Region {
         for (PolypeptideDomain domain : this.getDomains()) {
             DbXRef dbXRef = domain.getDbXRef();
             if(dbXRef.getDb().getName().equals("Pfam")){
-                ret.append(String.format("%s %s", dbXRef.getAccession(), dbXRef.getDescription()));
+                ret.append(String.format("%s %s ", dbXRef.getAccession(), dbXRef.getDescription()));
             }
         }
         return ret.length() > 0 ? ret.toString() : null;
