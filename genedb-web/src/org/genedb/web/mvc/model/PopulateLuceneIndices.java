@@ -150,6 +150,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
         }
+        logger.trace("Leaving indexFeatures");
     }
 
 
@@ -163,7 +164,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
         FullTextSession session = newSession(10);
         //Transaction transaction = session.beginTransaction();
-        logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
         //transaction.commit();
         session.close();
@@ -171,12 +171,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
         }
+        logger.trace("Leaving indexFeatures ("+featureClass+")");
     }
 
     public void indexFeatures() {
         for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
             indexFeatures(featureClass, numBatches);
         }
+        logger.trace("Leaving indexFeatures");
     }
 
     public boolean updateAllCaches(ChangeSet changeSet) {
@@ -357,6 +359,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             }
         }
         results.close();
+        logger.trace("Leaving batchIndexFeatures");
         return failedToLoad;
     }
 
@@ -460,6 +463,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
         indexer.setIndexBaseDirectory(iga.getIndexDirectory());
 
         indexer.indexFeatures();
+        logger.trace("Leaving main");
+        System.exit(0);
     }
 
 
