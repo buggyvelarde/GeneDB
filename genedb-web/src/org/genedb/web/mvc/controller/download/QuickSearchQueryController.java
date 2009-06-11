@@ -46,8 +46,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
         
-        if (query==null 
-                || (query!= null && StringUtils.isEmpty(query.getSearchText()))){
+        if (query==null){
             return "redirect:/QueryList";
         }
 
@@ -55,6 +54,10 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         model.addAttribute("query", query);
         logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
         initialiseQueryForm(query, request);
+        
+        if (query!= null && StringUtils.isEmpty(query.getSearchText())){
+            return "redirect:/QueryList";
+        }
 
         QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();
 
