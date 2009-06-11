@@ -1,9 +1,12 @@
 package org.genedb.querying.tmpquery;
 
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.TermQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @QueryClass(
@@ -11,7 +14,7 @@ import java.util.Map;
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
-public class GeneTypeQuery extends OrganismHqlQuery {
+public class GeneTypeQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=2,
@@ -19,11 +22,19 @@ public class GeneTypeQuery extends OrganismHqlQuery {
     )
     private String type = "mRNA";
 
+
     @Override
-    protected String getHql() {
-        return "select f.uniqueName from Feature f where f.type.name=:type @ORGANISM@ order by f.organism, f.uniqueName";
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
     }
 
+    @Override
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
+        queries.add(
+                new TermQuery(
+                        new Term("type.name", type)));
+    }
+    
     @Override
     public Map<String, Object> prepareModelData() {
         Map<String, String> typeMap = new HashMap<String, String>();
@@ -51,16 +62,7 @@ public class GeneTypeQuery extends OrganismHqlQuery {
 
     @Override
     protected String[] getParamNames() {
-        String[] superParamNames = super.getParamNames();
-        String[] thisQuery = new String[] {"type"};
-        return arrayAppend(superParamNames, thisQuery);
-    }
-
-
-    @Override
-    protected void populateQueryWithParams(org.hibernate.Query query) {
-        super.populateQueryWithParams(query);
-        query.setString("type", type);
+        return new String[] {"type"};
     }
 
 }
