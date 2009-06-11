@@ -26,11 +26,16 @@
                         <br><form:input id="search" path="search"/>
                         <br><font color="red"><form:errors path="search" /></font>
                     </td>
+                     <td>
+                         <b>Pseudogene:</b>
+                          <br><form:checkbox id="nameProduct" path="pseudogenes" />
+                      </td>
+                      <td>&nbsp;&nbsp;&nbsp;</td>
                     <td>
                         <br><input type="submit" value="Submit" />
                     </td>
-                </tr>
-                <tr>
+			     </tr>
+			     <tr>
                     <td></td>
                     <td colspan=3><font color="red"><form:errors  /></td>
                     <td></td>
