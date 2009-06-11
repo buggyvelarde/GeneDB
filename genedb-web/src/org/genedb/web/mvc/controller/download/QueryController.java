@@ -43,12 +43,33 @@ public class QueryController extends AbstractGeneDBFormController{
     
     private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
 
-    @RequestMapping(method = RequestMethod.GET, params="newSearch")
+    @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
         return "redirect:/QueryList";
     }
 
 
+    @RequestMapping(method = RequestMethod.GET, params="newSearch, q")
+    public String processFormFirstPass(
+            @RequestParam(value="q") String queryName,
+            ServletRequest request,
+            HttpSession session,
+            Model model) throws QueryException {
+
+        Query query = findQueryType(queryName, session);
+        if (query==null){
+            return "redirect:/QueryList";
+        }
+
+        //Initialise model data somehow
+        model.addAttribute("query", query);
+        populateModelData(model, query);
+
+        model.addAttribute("taxonNodeName", findTaxonName(query));
+        return "search/"+queryName;
+    }    
+    
+    
     @RequestMapping(method = RequestMethod.GET , params= "q")
     public String processForm(
             @RequestParam(value="q") String queryName,
