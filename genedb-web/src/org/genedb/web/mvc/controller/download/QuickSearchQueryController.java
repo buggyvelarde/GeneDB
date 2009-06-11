@@ -7,6 +7,7 @@ import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,6 +45,11 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
         QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
+        
+        if (query==null 
+                || (query!= null && StringUtils.isEmpty(query.getSearchText()))){
+            return "redirect:/QueryList";
+        }
 
         // Initialise model data somehow
         model.addAttribute("query", query);
