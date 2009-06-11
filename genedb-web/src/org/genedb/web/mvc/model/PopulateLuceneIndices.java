@@ -1,9 +1,7 @@
 package org.genedb.web.mvc.model;
 
 import org.genedb.db.audit.ChangeSet;
-import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
@@ -25,10 +23,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.SearchFactory;
-import org.hibernate.search.event.FullTextIndexEventListener;
 import org.hibernate.search.reader.ReaderProvider;
 import org.hibernate.search.store.DirectoryProvider;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,23 +33,15 @@ import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
-import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
 import java.io.Console;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
@@ -122,53 +110,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
     private String hibernateDriverClass = "org.postgresql.Driver";
 
-    private Map<SessionFactory, FullTextSession> sessionMap = Maps.newHashMap();
 
 
     public PopulateLuceneIndices() {
         // Default constructor
     }
-
-
-    /**
-     * Get a session factory configured with the database connection information
-     * for this instance, and the supplied batch size.
-     *
-     * @param batchSize
-     * @return
-     */
-//    private SessionFactory getSessionFactory(Integer batchSize) {
-//        if (sessionFactoryByBatchSize.containsKey(batchSize)) {
-//            return sessionFactoryByBatchSize.get(batchSize);
-//        }
-//
-//        ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
-//        cfg.setDataSource(getDataSource());
-//
-//        cfg.addPackage("org.gmod.schema.mapped");
-//        cfg.addPackage("org.gmod.schema.feature");
-//
-//        cfg.setProperty("hibernate.dialect", getHibernateDialect());
-//        cfg.setProperty("hibernate.connection.driver_class", getHibernateDriverClass());
-//        cfg.setProperty("hibernate.connection.username", getUserName());
-//        cfg.setProperty("hibernate.connection.password", getPassword());
-//        cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
-//
-//        cfg.setProperty("hibernate.search.default.directory_provider",
-//        "org.hibernate.search.store.FSDirectoryProvider");
-//        cfg.setProperty("hibernate.search.worker.batch_size", String.valueOf(batchSize));
-//        cfg.setProperty("hibernate.search.default.indexBase", indexBaseDirectory);
-//
-//        FullTextIndexEventListener ft = new FullTextIndexEventListener();
-//        cfg.setListener("post-insert", ft);
-//        cfg.setListener("post-update", ft);
-//        cfg.setListener("post-delete", ft);
-//
-//        //cfg.configure();
-//        SessionFactory sessionFactory = cfg.buildSessionFactory();
-//        sessionFactoryByBatchSize.put(batchSize, sessionFactory);
-//        return sessionFactory;
-//    }
 
     /**
      * Create a new FullTextSession, configured with the supplied sessionFactory.
@@ -186,7 +132,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             System.exit(65);
         }
         logger.info("sessionFactory is "+sessionFactory);
-        FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
+        FullTextSession session = Search.getFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
@@ -214,11 +160,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param featureClass
      * @param numBatches
      */
-    public void indexFeatures(Class<? extends Feature> featureClass) {
+    public void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
         FullTextSession session = newSession(10);
         //Transaction transaction = session.beginTransaction();
         logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-        Set<Integer> failed = batchIndexFeatures(featureClass, -1, session);
+        Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
         //transaction.commit();
         session.close();
 
@@ -229,7 +175,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public void indexFeatures() {
         for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
-            indexFeatures(featureClass);
+            indexFeatures(featureClass, numBatches);
         }
     }
 
@@ -284,11 +230,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
         FullTextSession session = newSession(10);
         SearchFactory searchFactory = session.getSearchFactory();
         ReaderProvider rp = searchFactory.getReaderProvider();
-        DirectoryProvider[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
-        if (directoryProviders ==  null || directoryProviders.length != 1) {
+        DirectoryProvider<?>[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
+        if (directoryProviders ==  null || directoryProviders.length < 1) {
             throw new RuntimeException("Unable to open a directory provider");
         }
-        IndexReader reader = rp.openReader(directoryProviders[0]);
+        IndexReader reader = rp.openReader(directoryProviders);
 
         for (Integer id : ids) {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
