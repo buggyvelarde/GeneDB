@@ -1,0 +1,16 @@
+finaldest.webapps=/nfs/pathdb/genedb/staging/webapps/ROOT
+webAppRootKey=genedb.pfalciparum.root
+
+dbhost=pathdbsrv1-dmz
+dbport=5432
+dbname=pfalciparum
+dbuser=genedb_ro
+dbpassword=
+
+lucene.indexDirectory=/nfs/pathdb/genedb/pfalciparum/lucene
+cacheDirectory=/nfs/pathdb/genedb/pfalciparum/cache
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+resultsCacheDirectory=/tmp/results_pfalciparum
+
+diagram.fontFile=file:///nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
