@@ -108,6 +108,30 @@ public class Polypeptide extends Region {
         return products;
     }
 
+    /**
+     * FIX_ME - This method is duplicated (and also in the ProductiveTranscript class)
+     * @return
+     */
+    @Transient
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsTabSeparatedString() {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        List<String> products = getProducts();
+        if (products == null) {
+            return null;
+        }
+        for (String product: getProducts()) {
+            if (first) {
+                first = false;
+            } else {
+                ret.append('\t');
+            }
+            ret.append(product);
+        }
+        return ret.toString();
+    }
+
     public void addProduct(String product) {
         addCvTerm("genedb_products", product);
     }
