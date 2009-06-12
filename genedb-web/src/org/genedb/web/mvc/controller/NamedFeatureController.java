@@ -23,7 +23,9 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
+import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
+import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.Transcript;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
 import com.sleepycat.collections.StoredIterator;
+import com.sleepycat.collections.StoredMap;
 
 /**
  * Looks up a feature by unique name
@@ -73,6 +77,8 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private ModelBuilder modelBuilder;
     private HistoryManagerFactory hmFactory;
 
+    private ResultsCacheFactory resultsCacheFactory;
+
 
     @Override
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
@@ -84,6 +90,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             NameLookupBean nlb, BindingResult be) throws Exception {
 
         logger.debug("Trying to find NamedFeature of '"+nlb.getName()+"'");
+        
+        //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params 
+        if (!isCurrentCacheValid(request, "key")){
+            logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
+            String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+            HashMap<String, Object> model = Maps.newHashMap();
+            model.put("name", nlb.getName());
+            return new ModelAndView(new RedirectView("NamedFeature", true), model);
+        }
 
         Feature feature = sequenceDao.getFeatureByUniqueName(nlb.getName(), Feature.class);
         if (feature == null) {
@@ -160,6 +175,25 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         }
 
         return new ModelAndView(viewName, model);
+    }
+    
+    /**
+     * This is to help verify if the current session key used to access the GeneSummary search results is still alive
+     * @return
+     * @param request Servlet Request
+     * @param paramName Servlet Request Param Name
+     * @return
+     */
+    private boolean isCurrentCacheValid(HttpServletRequest request, String paramName){
+        String key = request.getParameter(paramName);
+        if (StringUtils.hasText(key)){
+            StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();            
+            if (storedMap==null 
+                    || (storedMap!= null && storedMap.get(key)==null)){
+                return false;
+            }
+        }
+        return true;
     }
 
     // TODO
@@ -276,6 +310,14 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     public void setFormView(String formView) {
         this.formView = formView;
+    }
+
+    public ResultsCacheFactory getResultsCacheFactory() {
+        return resultsCacheFactory;
+    }
+
+    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+        this.resultsCacheFactory = resultsCacheFactory;
     }
 
 }

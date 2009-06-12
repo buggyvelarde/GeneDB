@@ -332,6 +332,7 @@
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
     </bean>
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
