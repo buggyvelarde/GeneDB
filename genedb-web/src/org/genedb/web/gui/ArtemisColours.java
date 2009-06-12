@@ -102,9 +102,21 @@ public class ArtemisColours {
      * @return the corresponding colour
      */
     public static Color getColour(Integer i) {
-        if (i == null)
+        if (i == null) {
             return getDefaultColour();
-        return cols[i];
+        }
+        Color ret = null;
+        try {
+            ret = cols[i];
+        }
+        catch (RuntimeException exp) {
+            System.err.println("Unable to find colour for "+i);
+            return getDefaultColour();
+        }
+        if (ret == null) {
+            return getDefaultColour();
+        }
+        return ret;
     }
 
     /**
