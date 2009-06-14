@@ -33,7 +33,7 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
             String product, String topLevelFeatureName, int left) {
         setSystematicId(systematicId);
         this.taxonDisplayName = taxonDisplayName;
-        this.product = product;
+        setProduct(product);
         this.topLevelFeatureName = topLevelFeatureName;
         this.left = left;
     }
@@ -70,7 +70,7 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     }
 
     public void setProduct(String product) {
-        this.product = product;
+        this.product = product.replaceAll("\\t", ";");
     }
 
     public String getTopLevelFeatureName() {
