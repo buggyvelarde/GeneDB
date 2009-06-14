@@ -21,7 +21,7 @@
         <div class="sideHeading"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
+        <c:if test="${dto.hasProperGeneName}">
             <tr>
                 <td class="label">Gene Name</td>
                 <td class="value">${dto.geneName}</td>
