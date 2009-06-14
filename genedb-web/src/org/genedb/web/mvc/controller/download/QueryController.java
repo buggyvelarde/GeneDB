@@ -49,7 +49,7 @@ public class QueryController extends AbstractGeneDBFormController{
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, params="newSearch, q")
+    @RequestMapping(method = RequestMethod.GET, params={"newSearch", "q"})
     public String processFormFirstPass(
             @RequestParam(value="q") String queryName,
             ServletRequest request,
