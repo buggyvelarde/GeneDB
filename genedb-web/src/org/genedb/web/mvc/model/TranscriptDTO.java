@@ -56,7 +56,7 @@ public class TranscriptDTO implements Serializable {
     private String uniqueName;
 
     
-    public boolean hasProperGeneName() {
+    public boolean isProperGeneName() {
         //<c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
         
         if (getGeneName() == null) {
