@@ -19,6 +19,7 @@ public class TranscriptDTO implements Serializable {
 
     private Map<String,Object> algorithmData;
 
+    private int transcriptId;
     private boolean anAlternateTranscript;
     private List<String> clusterIds;
     private List<String> comments;
@@ -54,6 +55,18 @@ public class TranscriptDTO implements Serializable {
     private String typeDescription;
     private String uniqueName;
 
+    
+    public boolean hasProperGeneName() {
+        //<c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
+        
+        if (getGeneName() == null) {
+            return false;
+        }
+        if (getUniqueName().matches(getGeneName()+":\\w+")) {
+            return false;
+        }
+        return true;
+    }
 
     public Map<String, Object> getAlgorithmData() {
         return algorithmData;
@@ -318,6 +331,10 @@ public class TranscriptDTO implements Serializable {
     public void setStrand(short strand) {
         this.strand = strand;
     }
+    
+    public Short getStrand() {
+        return strand;
+    }
 
     public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
@@ -356,6 +373,14 @@ public class TranscriptDTO implements Serializable {
             return Collections.emptyList();
         }
         return list;
+    }
+
+    public int getTranscriptId() {
+        return transcriptId;
+    }
+
+    public void setTranscriptId(int transcriptId) {
+        this.transcriptId = transcriptId;
     }
 
 }
