@@ -23,6 +23,8 @@
   <path id="access-classpath">
       <fileset dir="${imported.basedir.access}/lib">
         <include name="*.jar"/>
+        <exclude name="*-sources-*"/>
+        <exclude name="*-sources.jar"/>
       </fileset>
   </path>
 
@@ -345,6 +347,12 @@
     </target>
     <target name="adhoc-query-nonverbose" unless="verbose">
         <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath"/>
+    </target>
+    
+    <target name="install" depends="access-fulljar" if="installDir">
+        <copy flatten="true" todir="${installDir}" verbose="true">
+            <path refid="exec-classpath"/>
+        </copy>
     </target>
 
 </project>
