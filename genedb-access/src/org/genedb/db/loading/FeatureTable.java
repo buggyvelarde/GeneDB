@@ -311,7 +311,15 @@ class FeatureTable extends EmblFile.Section {
 
     private List<Feature> features = new ArrayList<Feature>();
     public Iterable<Feature> getFeatures() {
-        return features;
+        List<Feature> nonIgnoredFeatures = new ArrayList<Feature>();
+        for (Feature feature: features) {
+            if (isFeatureIgnored(feature)) {
+                logger.info(String.format("Ignoring '%s' feature at line %d", feature.type, feature.lineNumber));
+            } else {
+                nonIgnoredFeatures.add(feature);
+            }
+        }
+        return nonIgnoredFeatures;
     }
 
     private Feature currentFeature = null;
@@ -442,9 +450,29 @@ class FeatureTable extends EmblFile.Section {
         return even;
     }
 
+    private Set<String> ignoredFeatureTypes = new HashSet<String>();
     private Set<String> ignoredQualifiers = new HashSet<String>();
     private Map<String,Set<String>> ignoredQualifiersByFeatureType
         = new HashMap<String,Set<String>>();
+
+    private boolean isFeatureIgnored(Feature feature) {
+        return ignoredFeatureTypes.contains(feature.type);
+    }
+
+    /**
+     * Ignore the named qualifier, i.e. do not return any values
+     * for the qualifier from
+     * {@link Feature#getQualifierValue(String)}
+     * or {@link Feature#getQualifierValues(String...)}. Ignored
+     * qualifiers are still returned by {@link Feature#getUnusedQualifiers()}
+     * and {@link Feature#getUnusedQualifierNames()}.
+     *
+     * @param qualifier the name of the qualifier to ignore
+     */
+    public void ignoreFeature(String featureType) {
+        logger.info(String.format("Ignoring features of type '%s'", featureType));
+        ignoredFeatureTypes.add(featureType);
+    }
 
     private boolean isQualifierIgnored(String featureType, String qualifier) {
         if (ignoredQualifiers.contains(qualifier)) {

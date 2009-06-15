@@ -114,6 +114,7 @@ class EmblLoader {
     private boolean reportUnusedQualifiers = true;
     private boolean goTermErrorsAreNotFatal = false;
 
+    private Collection<String> ignoredFeatures = new HashSet<String>();
     private Collection<String> ignoredQualifiers = new HashSet<String>();
     private Map<String,Collection<String>> ignoredQualifiersByFeatureType = new HashMap<String,Collection<String>>();
 
@@ -213,6 +214,15 @@ class EmblLoader {
     }
 
     /**
+     * Ignore features of the named type.
+     *
+     * @param feature the name of the feature type to ignore
+     */
+    public void ignoreFeature(String featureType) {
+        ignoredFeatures.add(featureType);
+    }
+
+    /**
      * Ignore the named qualifier.
      *
      * @param qualifier the name of the qualifier to ignore
@@ -236,7 +246,10 @@ class EmblLoader {
         }
     }
 
-    private void propagateIgnoredQualifiers(FeatureTable featureTable) {
+    private void propagateIgnoreFeaturesAndQualifiers(FeatureTable featureTable) {
+        for (String featureType: ignoredFeatures) {
+            featureTable.ignoreFeature(featureType);
+        }
         for (String qualifier: ignoredQualifiers) {
             featureTable.ignoreQualifier(qualifier);
         }
@@ -262,7 +275,7 @@ class EmblLoader {
      * @throws DataError if a data problem is discovered
      */
     public void load(EmblFile emblFile) throws DataError {
-        propagateIgnoredQualifiers(emblFile.getFeatureTable());
+        propagateIgnoreFeaturesAndQualifiers(emblFile.getFeatureTable());
 
         TopLevelFeature topLevelFeature;
         try {

@@ -68,6 +68,10 @@ public abstract class EmblLocation {
     public abstract int getFmin();
     public abstract int getFmax();
 
+    public boolean isExternal() {
+        return false;
+    }
+
     public List<EmblLocation> getParts() {
         return Collections.singletonList(this);
     }
@@ -110,6 +114,10 @@ public abstract class EmblLocation {
             }
             return Arrays.asList(ret);
         }
+        @Override
+        public boolean isExternal() {
+            return location.isExternal();
+        }
     }
 
     /**
@@ -121,7 +129,7 @@ public abstract class EmblLocation {
         protected abstract String operator();
         private int fmin = Integer.MAX_VALUE, fmax = Integer.MIN_VALUE;
         protected void add(EmblLocation location) throws DataError {
-            if (! (location instanceof Gap)) {
+            if (! (location instanceof Gap) && !location.isExternal()) {
                 int locationFmin = location.getFmin();
                 int locationFmax = location.getFmax();
                 int locationStrand = location.getStrand();
@@ -191,6 +199,15 @@ public abstract class EmblLocation {
                 ret.addAll(location.getParts());
             }
             return ret;
+        }
+        @Override
+        public boolean isExternal() {
+            for (EmblLocation location: locations) {
+                if (location.isExternal()) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -262,6 +279,11 @@ public abstract class EmblLocation {
             }
         }
 
+        @Override
+        public boolean isExternal() {
+            return true;
+        }
+
     }
 
     static class Simple extends EmblLocation {
@@ -320,8 +342,12 @@ public abstract class EmblLocation {
                 }
                 return new Simple(base-1, base);
             } else {
+                // This is an unusual error, since under most circumstances we won't even
+                // try to parse a string as a SimpleLocation unless it looks like one. However
+                // there is at least one exception to this: the local part of an External location
+                // is parsed as a
                 throw new SyntaxError(String.format(
-                    "Failed to parse simple location '%s'. This should never happen.", locationString));
+                    "Failed to parse simple location '%s'", locationString));
             }
         }
         @Override

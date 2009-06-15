@@ -70,6 +70,8 @@ public class LoadEmbl extends FileProcessor {
      *                  to ignore. The qualifier name may be prefixed with a feature type, for example
      *                  <code>-Dload.ignoreQualifiers=CDS:similarity</code> would cause all /similarity
      *                  qualifiers on CDS features to be ignored.
+     *    <li> <code>load.ignoreFeatures</code> may be set to a comma-separated list of feature types
+     *                  to ignore.
      * </ul>
      *
      * @param args ignored
@@ -90,19 +92,21 @@ public class LoadEmbl extends FileProcessor {
         boolean goTermErrorsAreNotFatal = hasProperty("load.goTermErrorsAreNotFatal");
         boolean quickAndDirty = hasProperty("load.quickAndDirty");
         String ignoreQualifiers = getPropertyWithDefault("load.ignoreQualifiers", null);
+        String ignoreFeatures = getPropertyWithDefault("load.ignoreFeatures", null);
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
                    "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%b, goTermErrorsAreNotFatal=%b," +
-                   "ignoreQualifiers=%s",
+                   "ignoreQualifiers=%s, ignoreFeatures=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType, sloppyControlledCuration, goTermErrorsAreNotFatal, ignoreQualifiers));
+                   topLevelFeatureType, sloppyControlledCuration, goTermErrorsAreNotFatal,
+                   ignoreQualifiers, ignoreFeatures));
 
         if (quickAndDirty) {
             ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
         }
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName, overwriteExisting,
             topLevelFeatureType, sloppyControlledCuration, goTermErrorsAreNotFatal,
-            ignoreQualifiers);
+            ignoreQualifiers, ignoreFeatures);
         if (quickAndDirty) {
             loadEmbl.quickAndDirty();
         }
@@ -112,8 +116,10 @@ public class LoadEmbl extends FileProcessor {
 
     private EmblLoader loader;
     private static final Pattern ignoreQualifiersPattern = Pattern.compile("\\G(?:(\\w+):)?(\\w+)(?:,|\\Z)");
+    private static final Pattern ignoreFeaturesPattern = Pattern.compile("\\G\\s*(\\S+)\\s*(?:,|\\Z)");
     private LoadEmbl(String organismCommonName, String overwriteExistingString, String topLevelFeatureType,
-            boolean sloppyControlledCuration, boolean goTermErrorsAreNotFatal, String ignoreQualifiers) {
+            boolean sloppyControlledCuration, boolean goTermErrorsAreNotFatal, String ignoreQualifiers,
+            String ignoreFeatures) {
         EmblLoader.OverwriteExisting overwriteExisting;
         if (overwriteExistingString.equals("yes")) {
             overwriteExisting = EmblLoader.OverwriteExisting.YES;
@@ -166,6 +172,13 @@ public class LoadEmbl extends FileProcessor {
             }
             if (end < ignoreQualifiersMatcher.regionEnd()) {
                 throw new RuntimeException("Failed to parse load.ignoreQualifiers: " + ignoreQualifiers);
+            }
+        }
+
+        if (ignoreFeatures != null) {
+            Matcher ignoreFeaturesMatcher = ignoreFeaturesPattern.matcher(ignoreFeatures);
+            while (ignoreFeaturesMatcher.find()) {
+                loader.ignoreFeature(ignoreFeaturesMatcher.group(1));
             }
         }
     }

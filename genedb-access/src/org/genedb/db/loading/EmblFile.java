@@ -111,15 +111,15 @@ public class EmblFile {
         String identifier = matcher.group(1);
         String data = matcher.group(2);
 
-        if (!identifier.equals(currentSectionIdentifier)) {
-            if (currentSection != null) {
-                currentSection.finished();
-            }
-            currentSectionIdentifier = identifier;
-            currentSection = createSection(identifier);
-            sections.add(currentSection);
-        }
         try {
+            if (!identifier.equals(currentSectionIdentifier)) {
+                if (currentSection != null) {
+                    currentSection.finished();
+                }
+                currentSectionIdentifier = identifier;
+                currentSection = createSection(identifier);
+                sections.add(currentSection);
+            }
             currentSection.addData(lineNumber, data);
         } catch (ParsingException e) {
             e.setLocation(inputFile, lineNumber);
