@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +47,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Maps;
 import com.sleepycat.collections.StoredMap;
@@ -85,18 +85,19 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     }
 
     @RequestMapping(method=RequestMethod.GET)
-    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response,
+    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response, HttpSession session, 
             NameLookupBean nlb, BindingResult be) throws Exception {
 
         logger.debug("Trying to find NamedFeature of '"+nlb.getName()+"'");
         
         //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params 
-        if (!isCurrentCacheValid(request, "key")){
+        if (session == null) {
+            logger.warn("There is no session - redirecting to force one.");
+            return new ModelAndView("redirect:/NamedFeature?name="+nlb.getName());
+        }
+        if (!isCurrentCacheValid(nlb.getKey(), session)){
             logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
-            String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
-            HashMap<String, Object> model = Maps.newHashMap();
-            model.put("name", nlb.getName());
-            return new ModelAndView(new RedirectView("NamedFeature", true), model);
+            return new ModelAndView("redirect:/NamedFeature?name="+nlb.getName());
         }
 
         Feature feature = sequenceDao.getFeatureByUniqueName(nlb.getName(), Feature.class);
@@ -136,7 +137,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         cacheHit++;
         logger.trace("dto cache hit for '"+feature.getUniqueName());
-        HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
+        HistoryManager hm = hmFactory.getHistoryManager(session);
         HistoryItem autoBasket = hm.getHistoryItemByType(HistoryType.AUTO_BASKET);
         logger.debug(String.format("Basket is '%s'", autoBasket));
         hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
@@ -178,27 +179,23 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     
     /**
      * This is to help verify if the current session key used to access the GeneSummary search results is still alive
-     * @return
-     * @param request Servlet Request
-     * @param paramName Servlet Request Param Name
-     * @return
+     * @param session the current session ,possibly null
+     * @param key 
+     * @return true, if there is no key, or if the key exists and is from the 
+     * correct session and is in the results cache
      */
-    private boolean isCurrentCacheValid(HttpServletRequest request, String paramName){
-        String key = request.getParameter(paramName);
-        if (StringUtils.hasText(key)){
-            StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();            
-            if (storedMap==null 
-                    || (storedMap!= null && storedMap.get(key)==null)){
-                return false;
-            }
+    private boolean isCurrentCacheValid(String key, HttpSession session){
+        if (!StringUtils.hasLength(key)) {
+            return true;
         }
-        return true;
-    }
-
-    // TODO
-    private ModelAndView showForm(HttpServletRequest request,
-            HttpServletResponse response, BindingResult be) {
-        return new ModelAndView("/Query?q=allNameProduct");
+        if (session == null) {
+            return false;
+        }
+        if (!key.startsWith(session.getId())) {
+            return false;
+        }
+        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();            
+        return storedMap.containsKey(key);
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
