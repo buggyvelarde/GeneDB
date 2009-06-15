@@ -133,10 +133,6 @@
         <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
     </bean>
     
-    
-    <bean name="smallPopulateLuceneIndices" class="org.genedb.web.mvc.model.SmallPopulateLuceneIndices">
-        <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
-    </bean>
 
 
     <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
