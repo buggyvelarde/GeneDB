@@ -5,12 +5,12 @@ export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
-cd /nfs/pathdb/genedb/staging/cvs/genedb-ng/genedb-web
+cd "/nfs/pathdb/.hudson/jobs/GeneDB Nightly Build/workspace/genedb-ng/genedb-web"
 '''
 
 def queueName = "basement";
 
-String baseDir = "/nfs/pathdb/genedb/staging/bulk/${args[0]}"
+String baseDir = "/nfs/pathdb/genedb/nightly/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
 new File("${baseDir}/output").mkdir()
 
@@ -39,11 +39,11 @@ for (org in orgs) {
 
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -Ddeploy=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
+        antLine="ant -Dconfig=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
         break;
 
     case "DTO":
-        antLine="ant -Ddeploy=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
+        antLine="ant -Dconfig=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
         new File("${baseDir}/output/${org}").mkdir()
         break
 
@@ -59,7 +59,7 @@ for (org in orgs) {
     "chmod 755 ${scriptName}".execute()
 
     print "${org} "
-    Process p = ["ssh", "pcs4", "bsub -q ${queueName} -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
+    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
     def sout = new StringBuffer()
     def serr = new StringBuffer()
     p.consumeProcessOutput(sout, serr)
