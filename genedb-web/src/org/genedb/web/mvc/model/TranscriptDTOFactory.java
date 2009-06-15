@@ -256,7 +256,7 @@ public class TranscriptDTOFactory {
 
     }
 
-    // TODO What happens wrt time last accessioned
+    // TODO Can the login be made prettier ie more obvious
     private void populateLastModified(TranscriptDTO transcriptDTO, Transcript transcript, Polypeptide polypeptide) {
             Timestamp date = transcript.getTimeLastModified();
 
@@ -264,6 +264,9 @@ public class TranscriptDTOFactory {
                 Timestamp polypeptideDate = polypeptide.getTimeLastModified();
                 if (date == null && polypeptideDate == null) {
                     return;
+                }
+                if (date == null && polypeptideDate != null) {
+                    date = polypeptideDate;
                 }
                 if (polypeptideDate != null && polypeptideDate.after(date)) {
                     date = polypeptideDate;
