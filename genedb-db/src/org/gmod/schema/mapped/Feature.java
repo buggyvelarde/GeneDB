@@ -393,7 +393,17 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         return this.timeAccessioned;
     }
 
+    /**	 
+     * Return the last modified timestamp, if the feature has been modified since loading. This is defined as the 'time last modified' =	 
+     * 'time last accessioned'.	 
+     *	 
+     * @return the time last modified, or null if the feature hasn't been modified since creation	 
+     */
+
     public Timestamp getTimeLastModified() {
+	if (this.timeLastModified.compareTo(this.timeAccessioned) == 0) {	 
+	    return null;	 
+	}
         return this.timeLastModified;
     }
 
