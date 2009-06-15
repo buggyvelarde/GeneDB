@@ -53,7 +53,7 @@ public class AbstractGeneDBFormController {
 
 
     protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, String sessionId) {
-        String key = sessionId + Integer.toString(System.identityHashCode(gs)); // CHECKME
+        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
         StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
         ResultEntry re = new ResultEntry();
         re.numOfResults = gs.size();
