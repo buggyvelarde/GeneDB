@@ -4,7 +4,7 @@ webAppRootKey=genedb.staging.root
 dbhost=pathdbsrv1-dmz
 dbport=5432
 dbname=nightly
-dbuser=pathdb
+dbuser=genedb_ro
 dbpassword=
 
 lucene.indexDirectory=/nfs/pathdb/genedb/nightly/lucene
