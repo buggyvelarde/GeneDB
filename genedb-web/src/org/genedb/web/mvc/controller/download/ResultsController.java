@@ -94,7 +94,7 @@ public class ResultsController {
         ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
         List<GeneSummary> results = resultEntry.results;
 
-        logger.debug("The number of results retrived from cache is '"+results.size()+"'");
+        logger.debug("The number of results retrieved from cache is '"+results.size()+"'");
         logger.debug("The end marker, before adjustment, is '"+end+"'");
 
         if (end > results.size()) {
