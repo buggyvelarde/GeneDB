@@ -66,6 +66,10 @@
         <listener-class>org.genedb.web.mvc.controller.DbXRefListener</listener-class>
     </listener>
 
+    <listener>
+        <listener-class>org.genedb.web.mvc.controller.ResultCacheSessionListener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>UriSessionIdFilter</filter-name>
           <filter-class>org.genedb.web.filters.UriSessionIdFilter</filter-class>
@@ -235,4 +239,9 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDistributor</url-pattern>
      </servlet-mapping>
+     
+      <session-config>
+        <session-timeout>30</session-timeout> 
+    </session-config>
+     
 </web-app>
