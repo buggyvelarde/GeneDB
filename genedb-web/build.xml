@@ -275,6 +275,19 @@
         </java>
     </target>
 
+    <target name="_SmallLuceneIndex" depends="check-config, compile-web">
+        <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.SmallPopulateLuceneIndices">
+            <classpath>
+              <path refid="web-classpath"/>
+              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-o Tbruceibrucei427 -i /tmp/lucene-tmp ${dbname}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+	
     <target name="LuceneIndex" depends="check-config, iajc-web">
            <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
@@ -453,6 +466,21 @@
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <arg value="/nfs/pathdb/genedb/${indexSet}/cache" />
+      </java>
+    </target>
+	
+
+    <target name="runTranscriptAnalyzer2" depends="compile-web">
+      <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer2">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/Users/art/Documents/more-workspaces/tomcat-workspace/cache Pchabaudi" />
       </java>
     </target>
 
