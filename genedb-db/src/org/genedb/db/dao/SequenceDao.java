@@ -31,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
+
 @Transactional
 public class SequenceDao extends BaseDao {
 
@@ -691,7 +694,6 @@ public class SequenceDao extends BaseDao {
      */
 
     private CvTerm polypeptideDomainType;
-    private CvTerm scoreType;
     private CvTerm descriptionType;
     /**
      * Create a new polypeptide domain feature
@@ -708,11 +710,31 @@ public class SequenceDao extends BaseDao {
      */
     public PolypeptideDomain createPolypeptideDomain(String domainUniqueName, Polypeptide polypeptide,
             String score, String description, int start, int end, DbXRef dbxref) {
+	return createPolypeptideDomain(domainUniqueName, polypeptide, score, description, start, end,
+				       dbxref, null, null);
+    }
+
+    /**
+     * Create a new polypeptide domain feature
+     *
+     * @param domainUniqueName
+     * @param polypeptide the polypeptide to which this domain feature should be attached
+     * @param score an indication, from the algorithm that predicted this domain,
+     *          of the confidence of the prediction. Usually a number.
+     * @param description description of the domain
+     * @param start the start of the domain, relative to the polypeptide, in interbase coordinates
+     * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
+     * @param dbxref a database reference for this domain, if applicable. Can be null.
+     * @param evalue the E-value assigned to this domain by the prediction algorithm. Can be null.
+     * @param program the name of the program used to predict the domain
+     * @param programVersion the version number (or name) of the program
+     * @return the newly-created polypeptide domain
+     */
+    public PolypeptideDomain createPolypeptideDomain(String domainUniqueName, Polypeptide polypeptide,
+            String score, String description, int start, int end, DbXRef dbxref, String evalue,
+	    Analysis analysis) {
         if (polypeptideDomainType == null) {
             polypeptideDomainType = cvDao.getCvTermByNameAndCvName("polypeptide_domain", "sequence");
-        }
-        if (scoreType == null) {
-            scoreType = cvDao.getCvTermByNameAndCvName("score", "null");
         }
         if (descriptionType == null) {
             descriptionType = cvDao.getCvTermByNameAndCvName("description", "feature_property");
@@ -723,15 +745,21 @@ public class SequenceDao extends BaseDao {
         FeatureLoc domainLoc = new FeatureLoc(polypeptide, domain, start, false, end, false, (short)0/*strand*/, null, 0, 0);
         domain.addFeatureLoc(domainLoc);
 
-        FeatureProp scoreProp = new FeatureProp(domain, scoreType, score, 0);
-        domain.addFeatureProp(scoreProp);
 
         FeatureProp descriptionProp = new FeatureProp(domain, descriptionType, description, 0);
         domain.addFeatureProp(descriptionProp);
 
         domain.setDbXRef(dbxref);
 
-        persist(domain);
+	// Add analysisfeature
+	//if (program != null) {
+	//    if (programVersion == null) {
+	//	throw new NullPointerException("programVersion");
+	//    }
+	    domain.createAnalysisFeature(analysis, score, evalue);
+	    //} 
+
+	persist(domain);
 
         return domain;
         // TODO Add interproDbxref as additional parameter?
