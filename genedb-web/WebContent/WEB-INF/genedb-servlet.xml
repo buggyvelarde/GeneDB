@@ -73,6 +73,8 @@
         <property name="readOnly" value="false" />
     </bean>
 
+
+
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
@@ -193,6 +195,8 @@
 
     <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
     </bean>
+
+    <bean id="DbLinkRedirect" class="org.genedb.web.mvc.controller.DbLinkRedirectController" />
 
     <bean id="HistoryController"
       class="org.genedb.web.mvc.controller.HistoryController">

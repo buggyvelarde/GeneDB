@@ -78,6 +78,8 @@
         <filter-name>UriSessionIdFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+  
 
     <servlet>
         <servlet-name>headless-test</servlet-name>
@@ -173,6 +175,10 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/DbLinkRedirect</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/OrganismChooser</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
@@ -239,9 +245,4 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDistributor</url-pattern>
      </servlet-mapping>
-     
-      <session-config>
-        <session-timeout>30</session-timeout> 
-    </session-config>
-     
 </web-app>

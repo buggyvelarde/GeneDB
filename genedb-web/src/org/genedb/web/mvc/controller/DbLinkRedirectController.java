@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 
 @Controller
-@RequestMapping("DbLinkRedirect")
+@RequestMapping("/DbLinkRedirect")
 public class DbLinkRedirectController {
 
     private static final Logger logger = Logger.getLogger(DbLinkRedirectController.class);

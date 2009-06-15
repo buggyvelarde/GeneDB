@@ -31,6 +31,11 @@
 
 
 
+    <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
+        <property name="rootDirectory" value="${resultsCacheDirectory}"/>
+        <property name="readOnly" value="false" />
+        <property name="allowCreate" value="true" />
+    </bean>
 
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
@@ -127,6 +132,11 @@
     <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
         <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
     </bean>
+    
+    
+    <bean name="smallPopulateLuceneIndices" class="org.genedb.web.mvc.model.SmallPopulateLuceneIndices">
+        <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
+    </bean>
 
 
     <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
@@ -147,14 +157,5 @@
     </bean>
 
     <bean name="fullTextIndexEventListener" class="org.hibernate.search.event.FullTextIndexEventListener" />
-    
-    
-
-
-    <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
-        <property name="rootDirectory" value="${resultsCacheDirectory}"/>
-        <property name="readOnly" value="false" />
-        <property name="allowCreate" value="true" />
-    </bean>
 
 </beans>
