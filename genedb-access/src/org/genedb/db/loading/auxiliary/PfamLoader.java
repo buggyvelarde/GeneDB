@@ -189,7 +189,7 @@ public class PfamLoader extends Loader {
 
 	    PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(domainUniqueName, polypeptide, 
 										      row.score,row.acc.getDescription(), row.fmin, row.fmax, 
-										      dbxref, row.evalue, row.nativeProg, analysisProgramVersion, analysis);
+										      dbxref, row.evalue, analysis);
 	    
             // link to Pfam dbxref if applicable
             if (pfamDbxref != null) {
