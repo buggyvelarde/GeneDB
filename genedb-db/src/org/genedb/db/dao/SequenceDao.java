@@ -752,12 +752,9 @@ public class SequenceDao extends BaseDao {
         domain.setDbXRef(dbxref);
 
 	// Add analysisfeature
-	//if (program != null) {
-	//    if (programVersion == null) {
-	//	throw new NullPointerException("programVersion");
-	//    }
+	if (analysis != null) {
 	    domain.createAnalysisFeature(analysis, score, evalue);
-	    //} 
+	} 
 
 	persist(domain);
 
