@@ -1,11 +1,11 @@
 finaldest.webapps=/nfs/pathdb/genedb/staging/webapps/ROOT
 webAppRootKey=genedb.staging.root
 
-dbhost=pathdbsrv1-dmz
+dbhost=pgsrv2
 dbport=5432
 dbname=nightly
-dbuser=genedb_ro
-dbpassword=
+dbuser=genedb
+dbpassword=genedb
 
 lucene.indexDirectory=/nfs/pathdb/genedb/nightly/lucene
 cacheDirectory=/nfs/pathdb/genedb/nightly/cache
