@@ -87,6 +87,7 @@ while (jobList.size() > 0) {
                 println("WORKED The script ${baseDir}/scripts/${job}.script has run")
             } else {
                 worked = false
+                finishedJobs.add(job)
                 println("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
             }
         } else {
