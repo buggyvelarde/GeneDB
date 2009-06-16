@@ -8,7 +8,7 @@ unset DISPLAY
 cd "/nfs/pathdb/.hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-ng/genedb-web"
 '''
 
-def queueName = "basement";
+def queueName = "yesterday";
 
 String baseDir = "/nfs/pathdb/genedb/nightly/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
@@ -90,7 +90,7 @@ while (jobList.size() > 0) {
                 println("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
             }
         } else {
-            System.err.print("Still waiting on ${job}")
+            System.err.print(" ${job}")
         }
     } 
     for (job in finishedJobs) {
