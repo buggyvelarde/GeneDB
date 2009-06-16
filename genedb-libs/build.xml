@@ -49,11 +49,11 @@
 
 
     <target name="libs-init">
-        <init-target project="genedb-libs" />
+        <init-target project="libs" />
     </target>
 
   <target name="populate-lib-dirs">
-      <antcall target="populate-lib-dir"/>
+      <antcall target="lib-populate-lib-dir"/>
       <populate directory="genedb-access"/>
       <populate directory="genedb-db"/>
       <populate directory="genedb-domain"/>
