@@ -76,7 +76,7 @@ println "All jobs submitted - waiting for them to finish"
 boolean worked = true
 def scriptDir = new File(baseDir, "scripts")
 while (jobList.size() > 0) {
-    sleep 5*60;
+    sleep 300000; // 5 *60*1000
     
     List finishedJobs = new ArrayList()
     for (job in jobList) {
