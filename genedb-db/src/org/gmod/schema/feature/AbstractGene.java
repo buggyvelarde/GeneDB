@@ -6,6 +6,7 @@ import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
@@ -13,6 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -36,6 +40,24 @@ public abstract class AbstractGene extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+
+//    @Transient
+//    public List<Transcript> getTranscripts() {
+//        List<Transcript> ret = new ArrayList<Transcript>();
+//
+//        for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
+//            Feature transcript = relationship.getSubjectFeature();
+//            if (transcript instanceof Transcript) {
+//                ret.add((Transcript) transcript);
+//            }
+//        }
+//
+//        return ret;
+//    }
+    
+    private transient Transcript firstTranscripts;
+ 
+
     /**
      * Get a collection of this gene's transcripts.
      * @return a collection of this gene's transcripts
@@ -53,6 +75,37 @@ public abstract class AbstractGene extends Region {
 
         return ret;
     }
+    
+    @Transient
+    public Transcript getFirstTranscript() {
+        if (firstTranscripts != null) {
+            return firstTranscripts;
+        }
+        
+        List<Transcript> temp = new ArrayList<Transcript>();
+
+        for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
+            Feature transcript = relationship.getSubjectFeature();
+            if (transcript instanceof Transcript) {
+                temp.add((Transcript) transcript);
+            }
+        }
+        
+        //find first item in sorted list
+        if (temp.size() > 1){
+            Transcript tempTanscript = temp.get(0);
+            for(Transcript t : temp){
+                if (tempTanscript.getUniqueName().compareTo(t.getUniqueName()) > 0){
+                    tempTanscript = t;
+                }
+            }
+            firstTranscripts = tempTanscript;
+        }else if (temp.size() == 1){        
+            firstTranscripts = temp.get(0);
+        }
+        return firstTranscripts;
+    }
+    
 
     @Transient
     public abstract String getProductsAsTabSeparatedString();

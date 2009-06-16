@@ -28,7 +28,7 @@ public class Transcript extends Region {
 
     private static Logger logger = Logger.getLogger(Transcript.class);
     @Transient
-    private AbstractGene gene;
+    protected AbstractGene gene;
 
     Transcript() {
         // empty

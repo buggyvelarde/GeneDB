@@ -4,11 +4,13 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -146,4 +148,54 @@ public abstract class ProductiveTranscript extends Transcript {
         return super.createExon(exonUniqueName, fmin, fmax, phase);
     }
 
+    
+    @Transient
+    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    public String getAllTranscriptNames() {
+        StringBuilder allNames = new StringBuilder();
+        
+        //gene name like say PGKC should be indexed on it's transcript
+        if (gene!= null && gene.getName() != null) {
+            allNames.append(' ');
+            allNames.append(gene.getName());
+            allNames.append(' ');
+            
+            //
+            if(gene.getName().contains("-")){
+                allNames.append(' ');
+                allNames.append(gene.getName().replaceAll("-", ""));
+                allNames.append(' ');
+                
+                allNames.append(gene.getName().replaceAll("-", " "));
+                allNames.append(' ');
+            }
+            
+        }
+        
+        
+        //Process Unique Name
+        String uniqueName = getUniqueName();
+        
+        //if say Smp_000030.1:mRNA is uniqueName, then add Smp_000030 and  Smp_000030.1    
+        int before = uniqueName.toLowerCase().indexOf(":");
+        String firstPart = uniqueName.substring(0, before);
+            
+        //add something like Smp_000030.1
+        allNames.append(' ');
+        allNames.append(firstPart);          
+        allNames.append(' ');
+            
+        if (this.getGene().getTranscripts().size() > 1) {
+            // Multiply spliced
+            Transcript first = getGene().getFirstTranscript();
+            if (first.getUniqueName().equals(getUniqueName())) {
+                allNames.append(' ');
+                allNames.append(this.getGene().getUniqueName());
+                allNames.append(' ');
+            }
+              
+        }
+        System.out.println("*******prodT: " + allNames.toString());
+        return allNames.toString();
+    }
 }
