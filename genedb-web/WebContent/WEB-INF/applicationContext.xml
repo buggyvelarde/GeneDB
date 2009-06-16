@@ -95,6 +95,8 @@
             <prop key="hibernate.hbm2dll.auto">validate</prop>
             <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
             <prop key="hibernate.bytecode.provider">javassist</prop>
+            <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+            <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
         </props>
      </property>
     </bean>
