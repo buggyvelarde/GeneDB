@@ -31,6 +31,8 @@ if (args.length >= 3) {
     sql.close()
 }
 
+List jobList = new ArrayList();
+
 for (org in orgs) {
 
     def antLine
@@ -51,22 +53,57 @@ for (org in orgs) {
         throw new RuntimeException("Don't know how to run '${args[0]}'")
     }
 
+    jobList.add(org)
 
-    String scriptName = "${baseDir}/scripts/script.${args[0]}.${org}"
+    String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)
     script << boilerPlate
     script << antLine + '\n'
     "chmod 755 ${scriptName}".execute()
 
     print "${org} "
-    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
-    def sout = new StringBuffer()
-    def serr = new StringBuffer()
-    p.consumeProcessOutput(sout, serr)
-    p.waitFor()
+    //Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 786432 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
+    //def sout = new StringBuffer()
+    //def serr = new StringBuffer()
+    //p.consumeProcessOutput(sout, serr)
+    //p.waitFor()
     //println "Output: ${sout}"
     //println "Error: ${serr}"
 }
 
-println ""
+println "All jobs submitted - waiting for them to finish"
 
+boolean worked = true
+def scriptDir = new File(${baseDir}, "scripts")
+while (jobList.size() > 0) {
+    sleep 5;
+    
+    List finishedJobs = new ArrayList()
+    for (job in jobList) {
+        File f = new File("${baseDir}/scripts/${job}.script.err")
+        if (f.exists()) {
+            if (f.length() == 0) {
+                finishedJobs.add(job)
+                println("WORKED The script ${baseDir}/scripts/${job}.script has run")
+            } else {
+                worked = false
+                println("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
+            }
+        } else {
+            System.err.println("Still waiting on ${job}")
+        }
+    } 
+    for (job in finishedJobs) {
+        jobList.remove(job)
+    }
+}
+
+if (worked) {
+    System.exit(0)
+}
+
+System.exit(101)
+
+
+
+}
