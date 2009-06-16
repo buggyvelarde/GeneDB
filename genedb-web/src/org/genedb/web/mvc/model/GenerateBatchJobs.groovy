@@ -62,11 +62,11 @@ for (org in orgs) {
     "chmod 755 ${scriptName}".execute()
 
     print "${org} "
-    //Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 786432 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
-    //def sout = new StringBuffer()
-    //def serr = new StringBuffer()
-    //p.consumeProcessOutput(sout, serr)
-    //p.waitFor()
+    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 786432 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
+    def sout = new StringBuffer()
+    def serr = new StringBuffer()
+    p.consumeProcessOutput(sout, serr)
+    p.waitFor()
     //println "Output: ${sout}"
     //println "Error: ${serr}"
 }
@@ -90,12 +90,13 @@ while (jobList.size() > 0) {
                 println("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
             }
         } else {
-            System.err.println("Still waiting on ${job}")
+            System.err.print("Still waiting on ${job}")
         }
     } 
     for (job in finishedJobs) {
         jobList.remove(job)
     }
+    System.err.println(" ");
 }
 
 if (worked) {
