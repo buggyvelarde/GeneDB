@@ -74,15 +74,15 @@ for (org in orgs) {
 println "All jobs submitted - waiting for them to finish"
 
 boolean worked = true
-def scriptDir = new File(${baseDir}, "scripts")
+def scriptDir = new File(baseDir, "scripts")
 while (jobList.size() > 0) {
-    sleep 5;
+    sleep 5*60;
     
     List finishedJobs = new ArrayList()
     for (job in jobList) {
         File f = new File("${baseDir}/scripts/${job}.script.err")
         if (f.exists()) {
-            if (f.length() == 0) {
+            if (f.size() == 0) {
                 finishedJobs.add(job)
                 println("WORKED The script ${baseDir}/scripts/${job}.script has run")
             } else {
