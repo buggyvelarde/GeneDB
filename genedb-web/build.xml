@@ -500,8 +500,8 @@
 
 
     <target name="runMergeLuceneIndices" depends="check-config, compile-web">
-      <deltree dir="/nfs/pathdb/genedb/staging/bulk/Lucene/destination" />
-      <mkdir dir="/nfs/pathdb/genedb/staging/bulk/Lucene/destination" />
+      <deltree dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <mkdir dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
       <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
         <classpath>
           <path refid="web-classpath"/>
@@ -511,7 +511,7 @@
         </classpath>
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <arg line="/nfs/pathdb/genedb/staging/bulk/Lucene/destination /nfs/pathdb/genedb/staging/bulk/Lucene/output"/>
+        <arg line="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination /nfs/pathdb/genedb/nightly/bulk/Lucene/output"/>
       </java>
     </target>
 
