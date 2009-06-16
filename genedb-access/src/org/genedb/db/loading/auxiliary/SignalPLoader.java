@@ -58,7 +58,9 @@ public class SignalPLoader extends Loader {
 
         sequenceDao.persist(new FeatureProp(polypeptide, predictionTerm, hit.getType(), 0));
         sequenceDao.persist(new FeatureProp(polypeptide, peptideProbabilityTerm, hit.getPeptideProbability(), 0));
-        sequenceDao.persist(new FeatureProp(polypeptide, anchorProbabilityTerm, hit.getAnchorProbability(), 0));
+        if (hit.getAnchorProbability() != null) {
+            sequenceDao.persist(new FeatureProp(polypeptide, anchorProbabilityTerm, hit.getAnchorProbability(), 0));
+        }
 
         if (hit.getType().equals("Signal peptide")) {
             SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(),
@@ -106,7 +108,7 @@ class SignalPFile {
         ">(.*)\n"+
         "Prediction: (Non-secretory protein|Signal peptide|Signal anchor)\n"+
         "Signal peptide probability: (\\d\\.\\d{3})\n"+
-        "Signal anchor probability: (\\d\\.\\d{3})\n"+
+        "(?:Signal anchor probability: (\\d\\.\\d{3})\n)?"+
         "Max cleavage site probability: (\\d\\.\\d{3}) between pos\\. (-1|\\d+) and  ?(\\d+)\n"
     );
     private void parseSummary(CharSequence summary) {
