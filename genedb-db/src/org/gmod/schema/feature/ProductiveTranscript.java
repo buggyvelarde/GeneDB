@@ -1,17 +1,18 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
+
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 
-import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.List;
+import java.sql.Timestamp;import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -24,6 +25,8 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class ProductiveTranscript extends Transcript {
+    
+    private transient Logger logger = Logger.getLogger(ProductiveTranscript.class);
 
     ProductiveTranscript() {
         // empty
@@ -151,6 +154,7 @@ public abstract class ProductiveTranscript extends Transcript {
     
     @Transient
     @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    @Analyzer(impl = AllNamesAnalyzer.class)
     public String getAllTranscriptNames() {
         StringBuilder allNames = new StringBuilder();
         
@@ -169,7 +173,7 @@ public abstract class ProductiveTranscript extends Transcript {
                 allNames.append(gene.getName().replaceAll("-", " "));
                 allNames.append(' ');
             }
-            
+            logger.debug("Transcript's gene name: " + gene.getName());
         }
         
         
@@ -184,6 +188,7 @@ public abstract class ProductiveTranscript extends Transcript {
         allNames.append(' ');
         allNames.append(firstPart);          
         allNames.append(' ');
+        logger.debug("Transcript's name: " + firstPart);
             
         if (this.getGene().getTranscripts().size() > 1) {
             // Multiply spliced
@@ -192,10 +197,10 @@ public abstract class ProductiveTranscript extends Transcript {
                 allNames.append(' ');
                 allNames.append(this.getGene().getUniqueName());
                 allNames.append(' ');
+                logger.debug("First Transcript' other name: " + this.getGene().getUniqueName());
             }
               
         }
-        System.out.println("*******prodT: " + allNames.toString());
         return allNames.toString();
     }
 }

@@ -1,5 +1,6 @@
 package org.gmod.schema.mapped;
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
@@ -18,6 +19,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -753,6 +755,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
      */
     @Transient
     @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    @Analyzer(impl = AllNamesAnalyzer.class)
     String getAllNames() {
         StringBuilder allNames = new StringBuilder();
         if (getName() != null) {

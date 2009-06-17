@@ -56,22 +56,23 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     }
 
     @Override
-    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-        String tokens[] = searchText.trim().split("\\s");
-
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){  
         BooleanQuery bq = new BooleanQuery();
-
+        
+        String tokens[] = searchText.trim().split("\\s");
+        
         if (allNames) {
             if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
-                    pq.add(new Term("allNames", token));
+                    pq.add(new Term("allNames", token.toLowerCase()));
                 }
                 bq.add(pq, Occur.SHOULD);
             } else {
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
         }
+        
 
         if (product) {
             if (tokens.length > 1) {
