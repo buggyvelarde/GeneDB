@@ -62,7 +62,7 @@ for (org in orgs) {
     "chmod 755 ${scriptName}".execute()
 
     print "${org} "
-    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 786432 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
+    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
     def sout = new StringBuffer()
     def serr = new StringBuffer()
     p.consumeProcessOutput(sout, serr)
