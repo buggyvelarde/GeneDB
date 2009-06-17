@@ -1,5 +1,29 @@
 package org.genedb.jogra.services;
 
+/* Helper service for Jogra (and other applications) to get a username & password, and validate them for a given database. It does so by trying to create a
+ * JDBC db connection and catching any errors. Sample usage:
+
+        DatabaseLogin dblogin = new DatabaseLogin();
+        dblogin.addInstance("pathogens", "jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot");
+        dblogin.addInstance("pathogens-test", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
+      
+        try {
+            dblogin.validateUser();
+        } catch (SQLException exp) {
+            exp.printStackTrace();
+            System.exit(65);
+        } catch (AbortException exp) {
+            System.exit(65);
+        }
+
+        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword());
+ 
+ *
+ * NDS + ART
+ * May-2009
+ */
+import org.genedb.jogra.drawing.Jogra;
+
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
@@ -7,45 +31,36 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.Vector;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.google.common.collect.Maps;
 
-
-/* Helper service for Jogra (and other applications) to get a username & password, and validate them for a given database. It does so by trying to create a
- * JDBC db connection and catching any errors. Sample usage:
-
-        DatabaseLogin dblogin = new DatabaseLogin("jdbc:postgresql://localhost:5432/dbname);
-        boolean validUser = dblogin.validateUser();
-        if(validUser){
-            String username = dblogin.getUsername();
-            String password = dblogin.getPassword();
-        }
- *
- *
- *
- * NDS
- * 12-May-2009
- */
 public class DatabaseLogin {
 
     private static final Logger logger = Logger.getLogger(DatabaseLogin.class);
 
     private JTextField userField;
     private JPasswordField passwordField;
+    private JComboBox databaseNames;
     private LinkedHashMap<String, String> instances = Maps.newLinkedHashMap();
+    private Vector<String> dbnames = new Vector<String>();
 
 
     public void validateUser() throws SQLException, AbortException {
 
         userField = new JTextField(10);
-        String defaultUsername = System.getenv("USER")+"@sanger.ac.uk";
-        userField.setText(defaultUsername);
+        //String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; //Commented for now since the JAR for webstart is not signed and does not like this operation
+        //userField.setText(defaultUsername);
         passwordField = new JPasswordField(10);
-        Object[] array = { "Username", userField, "Password", passwordField };
+        databaseNames = new JComboBox(dbnames);
+        databaseNames.setSelectedIndex(0);
+                    
+        Object[] array = { "Username", userField, "Password", passwordField, "Database", databaseNames };
 
         while (true) {
             int value = JOptionPane.showOptionDialog(null, array, "Database login",
@@ -83,7 +98,7 @@ public class DatabaseLogin {
      */
     private boolean checkLogin() throws SQLException {
         try {
-            String dbName = instances.get("pathogens");
+            String dbName = instances.get(databaseNames.getSelectedItem());
             Connection c = DriverManager.getConnection(dbName, userField.getText(),
                     new String(passwordField.getPassword()));
             c.close();
@@ -99,6 +114,7 @@ public class DatabaseLogin {
 
     public void addInstance(String name, String jdbcConnection) {
         instances.put(name, jdbcConnection);
+        dbnames.add(name);
     }
 
 
