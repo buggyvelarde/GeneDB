@@ -4,6 +4,7 @@ import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.SignalPeptide;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.Analysis;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -14,16 +15,51 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignalPLoader extends Loader {
     private static final Logger logger = Logger.getLogger(SignalPLoader.class);
 
+    String analysisProgramVersion;
+    private Analysis analysis;
+
+   @Override
+    protected Set<String> getOptionNames() {
+	Set<String> options = new HashSet<String>();
+	Collections.addAll(options, "signalp-version");
+        return options;
+    }
+
+    @Override
+    protected boolean processOption(String optionName, String optionValue) {
+
+	if (optionName.equals("signalp-version")) {
+	    analysisProgramVersion = optionValue;
+	    return true;
+	}
+        return false;
+    }
+
+
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         loadTerms();
+
+	if (analysisProgramVersion == null) {
+	    throw new IllegalArgumentException("Property load.analysis.programVersion is required");
+	}
+
+	// Add analysis 
+	analysis = new Analysis();
+	analysis.setProgram("signalp");
+	analysis.setProgramVersion(analysisProgramVersion);
+	sequenceDao.persist(analysis);
 
         SignalPFile file = new SignalPFile(inputStream);
 
@@ -63,8 +99,9 @@ public class SignalPLoader extends Loader {
         }
 
         if (hit.getType().equals("Signal peptide")) {
+
             SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(),
-                hit.getCleavageSiteProbability());
+                hit.getCleavageSiteProbability(), analysis);
             sequenceDao.persist(signalPeptide);
         }
     }
