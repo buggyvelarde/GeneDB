@@ -726,8 +726,8 @@ public class SequenceDao extends BaseDao {
      * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
      * @param dbxref a database reference for this domain, if applicable. Can be null.
      * @param evalue the E-value assigned to this domain by the prediction algorithm. Can be null.
-     * @param program the name of the program used to predict the domain
-     * @param programVersion the version number (or name) of the program
+     * @param analysis the analysis object to which to which the polypeptide domain should 
+                by attached via an analysisfeature
      * @return the newly-created polypeptide domain
      */
     public PolypeptideDomain createPolypeptideDomain(String domainUniqueName, Polypeptide polypeptide,
@@ -821,6 +821,11 @@ public class SequenceDao extends BaseDao {
     private CvTerm signalPeptideType;
     private CvTerm cleavageSiteProbabilityType;
     public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
+	
+	return createSignalPeptide(polypeptide, loc, probability, null);
+    }
+
+    public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability, Analysis analysis) {
         if (signalPeptideType == null) {
             signalPeptideType = cvDao.getCvTermByDbAcc("sequence", "0000418");
         }
@@ -836,6 +841,13 @@ public class SequenceDao extends BaseDao {
         FeatureProp probabilityProp = new FeatureProp(signalPeptide, cleavageSiteProbabilityType, probability, 0);
         signalPeptide.addFeatureProp(probabilityProp);
 
+	// Add analysisfeature
+	if (analysis != null) {
+	    signalPeptide.createAnalysisFeature(analysis);
+	} 
+	else {
+            throw new RuntimeException("Could not create analysisfeature because analysis object is null");
+	}
         return signalPeptide;
     }
 
