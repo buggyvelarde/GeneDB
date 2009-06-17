@@ -275,7 +275,7 @@
 
     <target name="load-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="tmhmmloader ${file}"/>
+            <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
@@ -305,7 +305,7 @@
 
     <target name="load-signalp" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="signalploader ${file}"/>
+            <arg line="signalploader --signalp-version=${load.analysis.programVersion}  ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
