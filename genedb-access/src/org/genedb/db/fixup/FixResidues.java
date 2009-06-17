@@ -662,7 +662,7 @@ public class FixResidues {
                 String.format("More than one row affected by insert of featureprop for feature %d", transcript.featureId));
         }
         } catch (SQLException e) {
-            if (e.getMessage().startsWith("ERROR: duplicate key violates unique constraint")) {
+            if (e.getMessage().startsWith("ERROR: duplicate key value violates unique constraint")) {
                 debug("Feature is already marked as fragmentary (SQL state: %s)", e.getSQLState());
             } else {
                 throw e;
