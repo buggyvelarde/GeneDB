@@ -138,6 +138,18 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+        try {
+            System.err.println("autocommit was "+session.connection().getAutoCommit());
+            session.connection().setAutoCommit(false);
+            System.err.println("autocommit is "+session.connection().getAutoCommit());
+        } catch (HibernateException e1) {
+            e1.printStackTrace();
+            System.exit(1);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+            System.exit(1);
+        }
+        
         return session;
     }
 
@@ -329,21 +341,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if (numBatches > 0) {
             criteria.setMaxResults(numBatches * BATCH_SIZE);
         }
-        
-        try {
-            System.err.println("autocommit was "+session.connection().getAutoCommit());
-            session.connection().setAutoCommit(false);
-        } catch (HibernateException e1) {
-            e1.printStackTrace();
-            System.exit(1);
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-            System.exit(1);
-        }
+       
 
+        System.err.println("About to call scroll");
         ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
+        System.err.println("Just called scroll");
 
-        logger.info(String.format("Indexing %s", featureClass));
+        logger.error(String.format("Indexing %s", featureClass));
         int thisBatchCount = 0;
         Set<Integer> thisBatch = new HashSet<Integer>();
 
