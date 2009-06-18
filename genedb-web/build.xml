@@ -263,7 +263,7 @@
     </target>
 
     <target name="_LuceneIndex" depends="check-config">
-        <java fork="true" maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="web-classpath"/>
               <pathelement location="${imported.basedir.web}/ant-build/classes"/>
