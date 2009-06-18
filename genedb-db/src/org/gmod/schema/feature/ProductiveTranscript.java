@@ -5,6 +5,7 @@ import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
 import org.hibernate.search.annotations.Analyzer;
@@ -169,11 +170,17 @@ public abstract class ProductiveTranscript extends Transcript {
                 allNames.append(' ');
                 allNames.append(gene.getName().replaceAll("-", ""));
                 allNames.append(' ');
-                
-                allNames.append(gene.getName().replaceAll("-", " "));
-                allNames.append(' ');
             }
             logger.debug("Transcript's gene name: " + gene.getName());
+        }
+        
+        if(gene!= null && gene.getSynonyms().size()>0){
+            for (Synonym synonym : gene.getSynonyms()){
+                allNames.append(' ');
+                allNames.append(synonym.getName());
+                allNames.append(' ');
+                logger.debug("Transcript's gene synonym: " + synonym.getName());
+            } 
         }
         
         
