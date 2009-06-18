@@ -71,7 +71,7 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
 
     public void setProduct(String product) {
         if (product != null) {
-            this.product = product.replaceAll("\\t", ";");
+            this.product = product.replaceAll("\\t", " ; ");
         }
     }
 
