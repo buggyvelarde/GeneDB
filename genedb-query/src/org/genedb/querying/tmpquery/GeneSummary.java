@@ -70,7 +70,9 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     }
 
     public void setProduct(String product) {
-        this.product = product.replaceAll("\\t", ";");
+        if (product != null) {
+            this.product = product.replaceAll("\\t", ";");
+        }
     }
 
     public String getTopLevelFeatureName() {
