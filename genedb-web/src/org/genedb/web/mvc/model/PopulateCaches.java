@@ -182,7 +182,7 @@ public class PopulateCaches {
         return iterator;
     }
 
-    DtoDb dtoDb;
+    //DtoDb dtoDb;
     
     private void populateDtoCache(AbstractGene gene) {
         for (Transcript transcript : gene.getTranscripts()) {
