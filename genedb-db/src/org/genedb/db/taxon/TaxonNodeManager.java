@@ -30,7 +30,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class TaxonNodeManager implements InitializingBean {
     private PhylogenyDao phylogenyDao;
     private SessionFactory sessionFactory;
 
-    private boolean isFindPhylonodeWithOrganismFeatures=true;
 
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -101,9 +99,7 @@ public class TaxonNodeManager implements InitializingBean {
         //System.err.println("Session is '"+session+"'");
 
         //Initialise phylonodes with organism features
-        //if (isFindPhylonodeWithOrganismFeatures){
-            findPhylonodeWithOrganismFeatures();
-        //}
+        findPhylonodeWithOrganismFeatures();
 
         }
         finally {
@@ -238,15 +234,6 @@ public class TaxonNodeManager implements InitializingBean {
             dupes.addAll(taxonNode.getAllChildrenNames());
         }
         return new ArrayList<String>(dupes);
-    }
-
-    public boolean isFindPhylonodeWithOrganismFeatures() {
-        return isFindPhylonodeWithOrganismFeatures;
-    }
-
-    public void setFindPhylonodeWithOrganismFeatures(
-            boolean isFindPhylonodeWithOrganismFeatures) {
-        this.isFindPhylonodeWithOrganismFeatures = isFindPhylonodeWithOrganismFeatures;
     }
 
 }
