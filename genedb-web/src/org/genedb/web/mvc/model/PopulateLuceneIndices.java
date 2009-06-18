@@ -5,6 +5,7 @@ import org.genedb.db.audit.ChangeSet;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
@@ -87,6 +88,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     static {
         INDEXED_CLASSES.add(AbstractGene.class);
         INDEXED_CLASSES.add(Transcript.class);
+        INDEXED_CLASSES.add(MRNA.class);
         INDEXED_CLASSES.add(Polypeptide.class);
         INDEXED_CLASSES.add(Gap.class);
         // Add feature types here, if a new type of feature should be indexed.
