@@ -345,7 +345,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
         hql += " order by featureId";
         Query q = session.createQuery(hql);
-        q.setParameter("type", featureClass);
+        q.setParameter("type", featureClass.getName());
         if (organism != null) {
             q.setParameter("organism", organism);
             //criteria.createCriteria("organism")
