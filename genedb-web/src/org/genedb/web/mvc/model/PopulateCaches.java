@@ -106,8 +106,9 @@ public class PopulateCaches {
     /**
      * @param session
      */
+    @Transactional
     private void populateCacheForTopLevelFeatures() {
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        Session session = SessionFactoryUtils.getSession(sessionFactory, true);
         long start = System.currentTimeMillis();
 
         Iterator<Feature> topLevelFeatures = getTopLevelFeatures();
@@ -181,10 +182,13 @@ public class PopulateCaches {
         return iterator;
     }
 
+    DtoDb dtoDb;
+    
     private void populateDtoCache(AbstractGene gene) {
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoMap.put(transcript.getFeatureId(), dto);
+            //dtoDb.persistDTO(dto, transcript.getFeatureId());
         }
     }
 
