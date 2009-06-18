@@ -333,7 +333,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
         Criteria criteria = session.createCriteria(featureClass);
-        criteria.add(Restrictions.eq("obsolete", false)); // Do not index obsolete features
+        criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
         if (organism != null) {
             criteria.createCriteria("organism")
             .add( Restrictions.eq("commonName", organism));
@@ -343,39 +343,52 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
        
 
-        System.err.println("About to call scroll");
-        ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
-        System.err.println("Just called scroll");
-
         logger.error(String.format("Indexing %s", featureClass));
-        int thisBatchCount = 0;
-        Set<Integer> thisBatch = new HashSet<Integer>();
+        
+        int firstResult = 0;
+        boolean more = true;
+        
+        while (more) {
+        
+            criteria.setFirstResult(firstResult);
+            
+            int thisBatchCount = 0;
+            Set<Integer> thisBatch = new HashSet<Integer>();
+        
+            @SuppressWarnings("unchecked") List<Feature> features = criteria.list();
 
-        for (int i = 1; results.next(); i++) {
-            Feature feature = (Feature) results.get(0);
-            thisBatch.add(feature.getFeatureId());
+            for (Feature feature : features) {
+                thisBatch.add(feature.getFeatureId());
 
-            boolean failed = false;
-            try {
-                logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
-                    feature.getClass()));
-                session.index(feature);
-            } catch (Exception e) {
-                logger.error("Batch failed", e);
-                failed = true;
-            }
-
-            if (failed || ++thisBatchCount == BATCH_SIZE) {
-                logger.info(String.format("Indexed %d of %s", i, featureClass));
-                session.clear();
-                thisBatchCount = 0;
-                if (failed) {
-                    failedToLoad.addAll(thisBatch);
+                boolean failed = false;
+                try {
+                    logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
+                            feature.getClass()));
+                    session.index(feature);
+                } catch (Exception exp) {
+                    logger.error("Batch failed", exp);
+                    failed = true;
                 }
-                thisBatch = new HashSet<Integer>();
+                
+                if (failed || ++thisBatchCount == BATCH_SIZE) {
+                    logger.info(String.format("Indexed %d of %s", firstResult+thisBatchCount, featureClass));
+                    thisBatchCount = 0;
+                    if (failed) {
+                        failedToLoad.addAll(thisBatch);
+                    } else {
+                        session.flushToIndexes();
+                    }
+                    session.clear();
+                    thisBatch = new HashSet<Integer>();
+                }
+            }
+            firstResult += BATCH_SIZE;
+            
+            if (features.size() < BATCH_SIZE) {
+                more = false;
             }
         }
-        results.close();
+            
         logger.trace("Leaving batchIndexFeatures");
         return failedToLoad;
     }
