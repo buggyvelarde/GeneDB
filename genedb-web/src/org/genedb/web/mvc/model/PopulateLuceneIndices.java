@@ -334,7 +334,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
         
-        String hql = "from feature where obsolete=false and type.name=:type";
+        String hql = "from Feature where obsolete=false and type.name=:type";
         
         //Criteria criteria = session.createCriteria(featureClass);
         //criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
