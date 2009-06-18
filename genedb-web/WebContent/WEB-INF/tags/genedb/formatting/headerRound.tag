@@ -153,27 +153,27 @@
                                     <li class="yuimenuitem"> <%-- Genes By Location --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
                                     </li>
-                                    <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
+                                    <%-- <li class="yuimenuitem">  Genes By Prediction Method 
                                         <font color="gray">By Prediction Method</font>
-                                    </li>
+                                    </li> --%>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <font color="gray">By Molecular Mass</font>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <font color="gray">By No. TM domains</font>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By No. TM domains</a>
                                     </li>
-                                    <li class="yuimenuitem"> <%-- Motif Search --%>
+                                    <%-- <li class="yuimenuitem">  Motif Search 
                                         <font color="gray">Motif Search</font>
-                                    </li>
+                                    </li> --%>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
                                     </li>
-                                    <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
+                                     <%-- class="yuimenuitem"> Proteins By Annotation Status 
                                         <font color="gray">By Annotation Status</font>
-                                    </li>
+                                    </li> --%>
                                 </ul>
                             </div>
                         </div>
