@@ -334,12 +334,12 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
         
-        String hql = "select from feature where obsolete=false and type=:type";
+        String hql = "from feature where obsolete=false and type.name=:type";
         
         //Criteria criteria = session.createCriteria(featureClass);
         //criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
         if (organism != null) {
-            hql += " and organism = :organism";
+            hql += " and organism.commonName = :organism";
             //criteria.createCriteria("organism")
             //.add( Restrictions.eq("commonName", organism));
         }
