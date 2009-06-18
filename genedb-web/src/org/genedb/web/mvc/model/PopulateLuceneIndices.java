@@ -16,6 +16,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
@@ -332,16 +333,28 @@ public class PopulateLuceneIndices implements IndexUpdater {
             int numBatches, FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
-        Criteria criteria = session.createCriteria(featureClass);
-        criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
+        
+        String hql = "select from feature where obsolete=false and type=:type";
+        
+        //Criteria criteria = session.createCriteria(featureClass);
+        //criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
         if (organism != null) {
-            criteria.createCriteria("organism")
-            .add( Restrictions.eq("commonName", organism));
+            hql += " and organism = :organism";
+            //criteria.createCriteria("organism")
+            //.add( Restrictions.eq("commonName", organism));
         }
-        if (numBatches > 0) {
-            criteria.setMaxResults(numBatches * BATCH_SIZE);
+        hql += " order by featureId";
+        Query q = session.createQuery(hql);
+        q.setParameter("type", featureClass);
+        if (organism != null) {
+            q.setString("organism", organism);
+            //criteria.createCriteria("organism")
+            //.add( Restrictions.eq("commonName", organism));
         }
-       
+        //if (numBatches > 0) {
+        //    q.setMaxResults(numBatches * BATCH_SIZE);
+        //}
+        q.setMaxResults(BATCH_SIZE);
 
         logger.error(String.format("Indexing %s", featureClass));
         
@@ -350,12 +363,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
         
         while (more) {
         
-            criteria.setFirstResult(firstResult);
+            q.setFirstResult(firstResult);
             
             int thisBatchCount = 0;
             Set<Integer> thisBatch = new HashSet<Integer>();
         
-            @SuppressWarnings("unchecked") List<Feature> features = criteria.list();
+            System.err.println("About to call list");
+            @SuppressWarnings("unchecked") List<Feature> features = q.list();
+            System.err.println("called list");
 
             for (Feature feature : features) {
                 thisBatch.add(feature.getFeatureId());
