@@ -31,7 +31,7 @@ public class DisplayDateTag extends SimpleTagSupport {
         PageContext pc = (PageContext) getJspContext();
         JspWriter out = pc.getOut();
         String displayDate = DateFormat.getDateInstance(DateFormat.LONG).format(date);
-        logger.error(String.format("Displaying '%l' as '%s'", time, displayDate));
+        logger.error(String.format("Displaying '%f' as '%s'", time, displayDate));
         out.println(message + " " + displayDate);
     }
 
