@@ -182,7 +182,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         //Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
         //transaction.commit();
-        session.close();
+        //session.close();
 
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
