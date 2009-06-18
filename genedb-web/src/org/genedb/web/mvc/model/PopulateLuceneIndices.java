@@ -178,8 +178,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param featureClass
      * @param numBatches
      */
-    public void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
-        FullTextSession session = newSession(10);
+    public void indexFeatures(Class<? extends Feature> featureClass, int numBatches, FullTextSession session) {
         //Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
         //transaction.commit();
@@ -192,9 +191,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
     }
 
     public void indexFeatures() {
+        FullTextSession session = newSession(10);
         for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
-            indexFeatures(featureClass, numBatches);
+            indexFeatures(featureClass, numBatches, session);
         }
+        session.close();
         logger.trace("Leaving indexFeatures");
     }
 
