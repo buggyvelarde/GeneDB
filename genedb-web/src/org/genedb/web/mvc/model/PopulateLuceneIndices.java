@@ -15,6 +15,7 @@ import org.apache.lucene.index.Term;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
@@ -36,6 +37,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 
 import java.io.Console;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -326,6 +328,17 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
         if (numBatches > 0) {
             criteria.setMaxResults(numBatches * BATCH_SIZE);
+        }
+        
+        try {
+            System.err.println("autocommit was "+session.connection().getAutoCommit());
+            session.connection().setAutoCommit(false);
+        } catch (HibernateException e1) {
+            e1.printStackTrace();
+            System.exit(1);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+            System.exit(1);
         }
 
         ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
