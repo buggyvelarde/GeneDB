@@ -31,6 +31,7 @@ import org.hibernate.search.store.DirectoryProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
@@ -86,11 +87,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private static final Collection<Class<? extends Feature>> INDEXED_CLASSES
     = new ArrayList<Class<? extends Feature>>();
     static {
-        INDEXED_CLASSES.add(AbstractGene.class);
+        //INDEXED_CLASSES.add(AbstractGene.class);
         INDEXED_CLASSES.add(Transcript.class);
-        INDEXED_CLASSES.add(MRNA.class);
-        INDEXED_CLASSES.add(Polypeptide.class);
-        INDEXED_CLASSES.add(Gap.class);
+        //INDEXED_CLASSES.add(Polypeptide.class);
+        //INDEXED_CLASSES.add(Gap.class);
         // Add feature types here, if a new type of feature should be indexed.
         // Don't forget to update the class doc comment!
     }
@@ -141,35 +141,20 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-        try {
-            System.err.println("autocommit was "+session.connection().getAutoCommit());
-            session.connection().setAutoCommit(false);
-            System.err.println("autocommit is "+session.connection().getAutoCommit());
-        } catch (HibernateException e1) {
-            e1.printStackTrace();
-            System.exit(1);
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-            System.exit(1);
-        }
+//        try {
+//            System.err.println("autocommit was "+session.connection().getAutoCommit());
+//            session.connection().setAutoCommit(false);
+//            System.err.println("autocommit is "+session.connection().getAutoCommit());
+//        } catch (HibernateException e1) {
+//            e1.printStackTrace();
+//            System.exit(1);
+//        } catch (SQLException e1) {
+//            e1.printStackTrace();
+//            System.exit(1);
+//        }
         
         return session;
     }
-
-
-    public void indexFeatures(List<Integer> featureIds) {
-        FullTextSession session = newSession(10);
-        //Transaction transaction = session.beginTransaction();
-        Set<Integer> failed = batchIndexFeatures(featureIds, session);
-        //transaction.commit();
-        session.close();
-
-        if (failed.size() > 0) {
-            reindexFailedFeatures(failed);
-        }
-        logger.trace("Leaving indexFeatures");
-    }
-
 
     /**
      * Index features of the specified class. First of all indexes the features
@@ -198,6 +183,146 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.close();
         logger.trace("Leaving indexFeatures");
     }
+
+
+    /**
+     * Attempt to index features in batches. Returns identifiers of the features
+     * that failed to be indexed. (An exception processing a feature will cause
+     * the whole batch to fail, so it's worth trying to reindex failed features
+     * one-by-one.)
+     *
+     * @param featureClass the class of features to index
+     * @param numBatches the number of batches to process. If zero or negative,
+     *                process all
+     * @param session
+     * @return a set of featureIds of the features that failed to be indexed
+     */
+    @Transactional
+
+    private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
+            int numBatches, FullTextSession session) {
+
+        Set<Integer> failedToLoad = new HashSet<Integer>();
+        
+        String hql = "select featureId from "+featureClass.getName()+" where obsolete=false";
+        
+        if (organism != null) {
+            hql += " and organism.commonName = '"+organism +"'";
+            //  q.setParameter("organism", organism);
+        }
+        Query idQuery = session.createQuery(hql);
+        
+        //if (numBatches > 0) {
+        //    q.setMaxResults(numBatches * BATCH_SIZE);
+        //}
+        //q.setMaxResults(BATCH_SIZE);
+
+        logger.info(String.format("Indexing %s", featureClass));
+        
+        @SuppressWarnings("unchecked") List<Integer> allIds = idQuery.list();
+        
+        int batchCount = 0;
+        int start = 0;
+        int end = start + BATCH_SIZE;
+        
+        while (start < allIds.size()) {
+            if (end > allIds.size()) {
+                end = allIds.size();
+            }
+            
+            List<Integer> thisBatch = allIds.subList(start, end);
+            
+            String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
+            
+            Query q2 = session.createQuery("from "+featureClass.getName()+" where featureId in ("+ids+")");
+            
+            @SuppressWarnings("unchecked") List<Feature> features = q2.list();
+            
+            boolean failed = false;
+            for (Feature feature : features) {
+                try {
+                    logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(), feature.getClass()));
+                    session.index(feature);
+                } catch (Exception exp) {
+                    logger.error("Batch failed", exp);
+                    failed = true;
+                }
+            }
+          
+            batchCount++;
+            logger.info(String.format("Indexed '%d' of '%d' of type '%s'", batchCount*BATCH_SIZE, allIds.size(), featureClass));
+
+            if (failed) {
+                failedToLoad.addAll(thisBatch);
+            } else {
+                session.flushToIndexes();
+            }
+            session.clear();
+            
+            start = end;
+            end = start + BATCH_SIZE;
+        }
+            
+        logger.trace("Leaving batchIndexFeatures");
+        return failedToLoad;
+    }
+
+
+    /**
+     * Attempt to index the provided features individually
+     * (i.e. in batches of one). Used to reindex failures
+     * from a batch indexing run.
+     *
+     * @param failed a set of features to reindex
+     * @throws Exception
+     */
+    private void reindexFailedFeatures(Set<Integer> failed) {
+        logger.info("Attempting to reindex failed features");
+        FullTextSession session = newSession(1);
+        Transaction transaction = session.beginTransaction();
+        for (int featureId : failed) {
+            logger.debug(String.format("Attempting to index feature %d", featureId));
+            Feature feature = (Feature) session.load(Feature.class, featureId);
+            logger.debug(String.format("Loaded feature '%s'", feature.getUniqueName()));
+            try {
+                session.index(feature);
+                logger.debug("Feature successfully indexed");
+            } catch (Exception exp) {
+                String msg = String.format("Failed to index feature '%s' on the second attempt", feature.getUniqueName());
+                if (failFast) {
+                    throw new RuntimeException(msg, exp);
+                }
+                logger.info(msg, exp);
+            }
+            session.clear();
+        }
+        transaction.commit();
+        session.close();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void indexFeatures(List<Integer> featureIds) {
+        FullTextSession session = newSession(10);
+        //Transaction transaction = session.beginTransaction();
+        Set<Integer> failed = batchIndexFeatures(featureIds, session);
+        //transaction.commit();
+        session.close();
+
+        if (failed.size() > 0) {
+            reindexFailedFeatures(failed);
+        }
+        logger.trace("Leaving indexFeatures");
+    }
+
+
+
 
     public boolean updateAllCaches(ChangeSet changeSet) {
         // Ignore changes to top level feature
@@ -315,133 +440,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
         logger.info(String.format("C. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return failedToLoad;
-    }
-
-
-    /**
-     * Attempt to index features in batches. Returns identifiers of the features
-     * that failed to be indexed. (An exception processing a feature will cause
-     * the whole batch to fail, so it's worth trying to reindex failed features
-     * one-by-one.)
-     *
-     * @param featureClass the class of features to index
-     * @param numBatches the number of batches to process. If zero or negative,
-     *                process all
-     * @param session
-     * @return a set of featureIds of the features that failed to be indexed
-     */
-    @Transactional
-
-    private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
-            int numBatches, FullTextSession session) {
-
-        Set<Integer> failedToLoad = new HashSet<Integer>();
-        
-        String hql = "from Feature where obsolete=false and type.name=:type";
-        
-        //Criteria criteria = session.createCriteria(featureClass);
-        //criteria.add(Restrictions.eq("obsolete", false)); // Don't index obsolete features
-        if (organism != null) {
-            hql += " and organism.commonName = :organism";
-            //criteria.createCriteria("organism")
-            //.add( Restrictions.eq("commonName", organism));
-        }
-        hql += " order by featureId";
-        Query q = session.createQuery(hql);
-        q.setParameter("type", featureClass.getName());
-        if (organism != null) {
-            q.setParameter("organism", organism);
-            //criteria.createCriteria("organism")
-            //.add( Restrictions.eq("commonName", organism));
-        }
-        //if (numBatches > 0) {
-        //    q.setMaxResults(numBatches * BATCH_SIZE);
-        //}
-        q.setMaxResults(BATCH_SIZE);
-
-        logger.error(String.format("Indexing %s", featureClass));
-        
-        int firstResult = 0;
-        boolean more = true;
-        
-        while (more) {
-        
-            q.setFirstResult(firstResult);
-            
-            int thisBatchCount = 0;
-            Set<Integer> thisBatch = new HashSet<Integer>();
-        
-            System.err.println("About to call list");
-            @SuppressWarnings("unchecked") List<Feature> features = q.list();
-            System.err.println("called list");
-
-            for (Feature feature : features) {
-                thisBatch.add(feature.getFeatureId());
-
-                boolean failed = false;
-                try {
-                    logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
-                            feature.getClass()));
-                    session.index(feature);
-                } catch (Exception exp) {
-                    logger.error("Batch failed", exp);
-                    failed = true;
-                }
-                
-                if (failed || ++thisBatchCount == BATCH_SIZE) {
-                    logger.info(String.format("Indexed %d of %s", firstResult+thisBatchCount, featureClass));
-                    thisBatchCount = 0;
-                    if (failed) {
-                        failedToLoad.addAll(thisBatch);
-                    } else {
-                        session.flushToIndexes();
-                    }
-                    session.clear();
-                    thisBatch = new HashSet<Integer>();
-                }
-            }
-            firstResult += BATCH_SIZE;
-            
-            if (features.size() < BATCH_SIZE) {
-                more = false;
-            }
-        }
-            
-        logger.trace("Leaving batchIndexFeatures");
-        return failedToLoad;
-    }
-
-
-    /**
-     * Attempt to index the provided features individually
-     * (i.e. in batches of one). Used to reindex failures
-     * from a batch indexing run.
-     *
-     * @param failed a set of features to reindex
-     * @throws Exception
-     */
-    private void reindexFailedFeatures(Set<Integer> failed) {
-        logger.info("Attempting to reindex failed features");
-        FullTextSession session = newSession(1);
-        Transaction transaction = session.beginTransaction();
-        for (int featureId : failed) {
-            logger.debug(String.format("Attempting to index feature %d", featureId));
-            Feature feature = (Feature) session.load(Feature.class, featureId);
-            logger.debug(String.format("Loaded feature '%s'", feature.getUniqueName()));
-            try {
-                session.index(feature);
-                logger.debug("Feature successfully indexed");
-            } catch (Exception exp) {
-                String msg = String.format("Failed to index feature '%s' on the second attempt", feature.getUniqueName());
-                if (failFast) {
-                    throw new RuntimeException(msg, exp);
-                }
-                logger.info(msg, exp);
-            }
-            session.clear();
-        }
-        transaction.commit();
-        session.close();
     }
 
 
