@@ -296,11 +296,12 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
 
     /* Instantiating the application/Jogra bean */
-    public static Jogra instantiate(String userName, char[] password) throws IOException {
+    public static Jogra instantiate(String userName, char[] password, String url) throws IOException {
         PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
         Properties properties = new Properties();
         properties.setProperty("Jogra.username", userName);
         properties.setProperty("Jogra.password", new String(password));
+        properties.setProperty("Jogra.url", url);
         configurer.setProperties(properties);
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
@@ -383,54 +384,13 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
     /* Main method that calls the DBLogin application and, if valid user, calls methods to display main Jogra frame */
     public static void main(final String[] args) throws Exception {
-       /* final DatabaseLogin dblogin = new DatabaseLogin("jdbc:postgresql://localhost:5432/nds");
-
-        try{
-            new SwingWorker<String, String>() {
-
-                protected String doInBackground() throws Exception {
-
-                  System.out.println("Inside doInBackground method");
-                  dblogin.validateUser();
-
-                  return new String("");
-                }
-
-
-                protected void done(){
-                    System.out.println("Inside done method");
-                    try{
-                    Jogra application = new Jogra();
-                    if(dblogin.isValid()){
-                        application.setUsername(dblogin.getUsername());
-                        application.setPassword(dblogin.getPassword());
-                        application = Jogra.instantiate();
-                        application.testTransactions();
-                        application.init();
-                        application.makeMain();
-                        application.showMain();
-                        if (args.length > 0) {
-                            application.newActivation(args);
-                        }
-                    }
-                    }catch(Exception e){
-                        //Handle exceptions better
-                        logger.debug(e);
-                    }
-                }
-
-            }.execute();
-        }catch(Exception e){ //handle exceptions better later
-            System.out.println(e);
-        } */
-
-
-
-
+   
         DatabaseLogin dblogin = new DatabaseLogin();
-        dblogin.addInstance("pathogens", "jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot");
-        dblogin.addInstance("pathogens-test", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
-
+        
+        dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
+        dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
+        dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
+        
         try {
             dblogin.validateUser();
         } catch (SQLException exp) {
@@ -441,7 +401,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
 
 
-        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword());
+        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword(), dblogin.getDBUrl());
         application.testTransactions();
         application.init();
         application.makeMain();
