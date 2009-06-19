@@ -37,6 +37,7 @@ import javax.swing.SwingWorker;
 
 import org.bushe.swing.event.EventBus;
 import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
@@ -126,5 +127,11 @@ public class RunIntegrityCheck implements JograPlugin {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void setJogra(Jogra jogra) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }
