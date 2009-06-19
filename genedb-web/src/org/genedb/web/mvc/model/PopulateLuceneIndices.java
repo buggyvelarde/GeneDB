@@ -87,10 +87,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private static final Collection<Class<? extends Feature>> INDEXED_CLASSES
     = new ArrayList<Class<? extends Feature>>();
     static {
-        //INDEXED_CLASSES.add(AbstractGene.class);
+        INDEXED_CLASSES.add(AbstractGene.class);
         INDEXED_CLASSES.add(Transcript.class);
-        //INDEXED_CLASSES.add(Polypeptide.class);
-        //INDEXED_CLASSES.add(Gap.class);
+        INDEXED_CLASSES.add(Polypeptide.class);
+        INDEXED_CLASSES.add(Gap.class);
         // Add feature types here, if a new type of feature should be indexed.
         // Don't forget to update the class doc comment!
     }
@@ -234,9 +234,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
             
             String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
             
-            Query q2 = session.createQuery("from "+featureClass.getName()+" where featureId in ("+ids+")");
+            Query featureQuery = session.createQuery("from "+featureClass.getName()+" where featureId in ("+ids+")");
             
-            @SuppressWarnings("unchecked") List<Feature> features = q2.list();
+            @SuppressWarnings("unchecked") List<Feature> features = featureQuery.list();
             
             boolean failed = false;
             for (Feature feature : features) {
