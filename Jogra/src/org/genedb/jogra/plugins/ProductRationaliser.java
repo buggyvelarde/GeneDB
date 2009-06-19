@@ -56,6 +56,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.InputMap;
@@ -67,9 +68,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -78,11 +77,9 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.BorderFactory;
 
 
 /**
@@ -97,6 +94,7 @@ public class ProductRationaliser implements JograPlugin {
     private static final String A_LONG_STRING = "This is the maximum product width we show";
     private static final Logger logger = Logger.getLogger(ProductRationaliser.class);
 
+    /* Variables for functionality */   
     private ProductService productService;
     private TaxonNodeManager taxonNodeManager; //Added in order to get corresponding taxonNodes
     private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
@@ -223,7 +221,7 @@ public class ProductRationaliser implements JograPlugin {
                 if(toList.getSelectedValue()!=null){
                     textField.setText(((Product)toList.getSelectedValue()).toString());
                 }
-                if(isShowSysID()){
+                if(isShowSysID() && toList.getSelectedValue()!=null){
                    idField.setText(StringUtils.collectionToCommaDelimitedString(idMap.get(((Product)toList.getSelectedValue()).getId())));
                 }
              }
@@ -570,10 +568,9 @@ public class ProductRationaliser implements JograPlugin {
             }
             MethodResult result = productService.rationaliseProduct(to, old, text);
             if(result.isSuccessful()){
-                System.out.println("Message: " + result.getSuccessMsg() );
                 List<Product> add = productService.getProductsToAdd();
                 List<Product> remove = productService.getProductsToRemove();
-    
+                //For the interface, make changes in the lists rather than extracting the products again from the database (too slow)    
                 if(add!=null){
                     products.addAll(add);
                 }
@@ -581,9 +578,10 @@ public class ProductRationaliser implements JograPlugin {
                     products.removeAll(remove);
                 }
             
-                
-                toList.setListData(products.toArray()); //TO DO: Try to sort this array first
-                fromList.setListData(products.toArray());
+                Object[] productArray = products.toArray();
+                Arrays.sort(productArray); //TO DO: Is this ordering the same as what is returned by the SQL query?
+                toList.setListData(productArray); 
+                fromList.setListData(productArray);
                 information.setText(information.getText().concat(result.getSuccessMsg()));
           
                 toList.repaint();
@@ -927,6 +925,11 @@ public class ProductRationaliser implements JograPlugin {
     public void process(List<String> newArgs) {
         // TODO Auto-generated method stub
 
+    }
+    
+    @Override
+    public void setJogra(Jogra jogra) {
+        this.jogra = jogra;
     }
 
 
