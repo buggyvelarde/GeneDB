@@ -102,7 +102,7 @@ public class OrganismTree implements JograPlugin {
         checkboxTree.addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
                 if(e.isCheckedPath()){
-                    button.setText("Continue");
+                    button.setText("Select");
                     button.setEnabled(true);
                 }
             }
@@ -113,16 +113,17 @@ public class OrganismTree implements JograPlugin {
             public void actionPerformed(ActionEvent actionEvent){
 
                 try{
-                    userSelection.clear();
+                    userSelection.clear(); //Clear any previous selections
                     TreePath tp[] = checkboxTree.getCheckingRoots();
-
                     for(TreePath p: tp){
                         userSelection.add(p.getLastPathComponent().toString());
+                        System.out.println("Added: " + p.getLastPathComponent().toString());
                     }
                     frame.setVisible(false); //Make frame disappear
                     //frame.dispose(); //Or should frame be disposed??
-                    jogra.setChosenOrganism(userSelection); //Tell Jogra about the user's selection
+                   
                     EventBus.publish("selection", userSelection); //EventBus publish mechanism here needs to be tested later
+                    //jogra.setChosenOrganism(userSelection); //Tell Jogra about the user's selection
                     logger.info("ORGANISM TREE: User selected " + userSelection.toString());
                 }catch(Exception e){ //handle exceptions better
                     logger.debug(e);
@@ -192,6 +193,12 @@ public class OrganismTree implements JograPlugin {
      */
     public void process(List<String> newArgs){
         //What is this meant to do?
+    }
+
+    @Override
+    public void setJogra(Jogra jogra) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
