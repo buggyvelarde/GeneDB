@@ -51,30 +51,66 @@
     </target>
 
     <!-- create .jar -->
-    <target name="Jogra-fulljar" depends="Jogra-compile"
-        description="Create an unsigned JAR">
-        <pathconvert property="classpath-for-manifest" pathsep=" "
-            refid="Jogra-classpath" />
-        <jar-target project="Jogra">
-            <manifest>
-                <attribute name="Implementation-Title" value="Jogra" />
-                <attribute name="Implementation-Version" value="${version}" />
-                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
-                <attribute name="Class-Path" value="${classpath-for-manifest}" />
-            </manifest>
-        </jar-target>
-    </target>
+	
+	<path id="Jogra-manifest-classpath">
+		        <fileset dir="${imported.basedir.Jogra}/lib">
+		            <include name="*.jar" />
+		        </fileset>
+				<fileset dir="${imported.basedir.Jogra}/${dist.dir}">
+					<include name="genedb-db.jar" />
+				</fileset>
+			 	<!-- pathelement location="${Jogra.jar}" /-->
+	</path>
+		
+	<!-- Create a jar -->
+	
+	 <target name="Jogra-fulljar" depends="Jogra-compile"
+	        description="Create an unsigned JAR">
+	        <pathconvert property="classpath-for-manifest" pathsep=" "
+	            refid="Jogra-classpath" />
+	        <jar-target project="Jogra">
+	            <manifest>
+	                <attribute name="Implementation-Title" value="Jogra" />
+	                <attribute name="Implementation-Version" value="${version}" />
+	                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
+	                <attribute name="Class-Path" value="${classpath-for-manifest}" />        <!-- "resources.jar" --> 
+	            </manifest>
+	        </jar-target>
+	    </target>
+	
+	
+	<!-- Sign jar created above -->
 
     <target name="Jogra-signed-jar" depends="Jogra-fulljar"
         description="Create a signed JAR">
         <signjar jar="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"
-            signedjar="${imported.basedir.Jogra}/${dist-dir}/Jogra-signed.jar"
-            alias="Jogra" storepass="Jogra-pw" />
+            signedjar="${imported.basedir.Jogra}/${dist.dir}/Jogra-signed.jar"
+            alias="Jogra" storepass="Jogra-pw" keypass="Jogra-pw"/>
+    	
     </target>
 
     <target name="Jogra-run" depends="Jogra-fulljar">
         <echo message="${Jogra-classpath}" />
         <java fork="true" jar="${Jogra.jar}" classpathref="Jogra-classpath" />
     </target>
+	
+	
+		
+	<!-- Putting all the jars Jogra depends on into one jar file -->
+	<target name="combine-jars">
+		<jar destfile="resources.jar" >
+		    <zipgroupfileset dir="${imported.basedir.Jogra}/lib" includes="**/*.jar,${genedb-db.jar},${java.home}/lib/javaws.jar" excludes="package.html,LICENSE.*,LICENCE, META-INF,MANIFEST.*" />
+		</jar>
+	</target>
+	
+	<!-- Signing all the jars inside the lib directory -->
+	<target name="sign-jars">  
+		<signjar alias="Jogra" keypass="Jogra-pw" storepass="Jogra-pw">   
+	    <fileset dir="${imported.basedir.Jogra}/lib" includes="**/*.jar" />  
+	</signjar>  
+	</target> 
+	
+	
+	
 
 </project>
