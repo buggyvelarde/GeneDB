@@ -39,6 +39,7 @@
   <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
     <property name="productService" ref="productService" />
      <property name="taxonNodeManager" ref="taxonNodeManager" />
+     <property name="jogra" ref="application" /> <!--  remove after fixing event bus publish method 26.5.09 NDS -->
   </bean>
 
   <bean name="productService" class="org.genedb.jogra.services.SqlProductService">
@@ -50,7 +51,8 @@
 <!--        <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" /> -->
 <!--        <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" /> -->
 <!--        Local copy to test. Change later [NDS] -->
-            <property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" />
+            <!-- property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" /-->
+            <property name="url" value="jdbc:postgresql://localhost:5432/nds" />
             <property name="username" value="${Jogra.username}"/>
             <property name="password" value="${Jogra.password}" />
             <!--  property name="username" value='nds'/>
@@ -75,6 +77,7 @@
 
   <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree" >
   <property name="taxonNodeManager" ref="taxonNodeManager" />
+   <property name="jogra" ref="application" /> <!--  remove after fixing event bus publish method 26.5.09 NDS -->
   </bean>
 
 
