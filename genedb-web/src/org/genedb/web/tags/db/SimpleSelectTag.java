@@ -97,10 +97,10 @@ public class SimpleSelectTag extends AbstractHomepageTag {
             }
         });
         for (TaxonNode child : children) {
-            //if(child.isChildrenPopulated()){
+            if(child.isChildrenPopulated()){
                 displayImmediateChildren(
                         child, out, indent+1, indentSpaces + "&nbsp;&nbsp;&nbsp;", previouslySelectedTaxons);
-            //}
+            }
         }
     }
 
