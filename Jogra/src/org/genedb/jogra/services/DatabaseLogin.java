@@ -54,8 +54,8 @@ public class DatabaseLogin {
     public void validateUser() throws SQLException, AbortException {
 
         userField = new JTextField(10);
-        //String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; //Commented for now since the JAR for webstart is not signed and does not like this operation
-        //userField.setText(defaultUsername);
+        String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; //Commented for now since the JAR for webstart is not signed and does not like this operation
+        userField.setText(defaultUsername);
         passwordField = new JPasswordField(10);
         databaseNames = new JComboBox(dbnames);
         databaseNames.setSelectedIndex(0);
@@ -125,6 +125,10 @@ public class DatabaseLogin {
 
     public char[] getPassword() {
         return passwordField.getPassword();
+    }
+    
+    public String getDBUrl(){
+        return instances.get(databaseNames.getSelectedItem());
     }
 
 
