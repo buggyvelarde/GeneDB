@@ -2,6 +2,7 @@ package org.gmod.schema.feature;
 
 import org.genedb.db.dao.SequenceDao;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Organism;
 
@@ -18,6 +19,7 @@ import javax.persistence.Transient;
  *
  * @author rh11
  */
+@FeatureType(cv="sequence", accession="0000839")
 public abstract class PolypeptideRegion extends Region {
 
     PolypeptideRegion() {
