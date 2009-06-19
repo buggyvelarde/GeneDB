@@ -165,4 +165,10 @@ public class CvEditor implements JograPlugin {
 		
 	}
 
+    @Override
+    public void setJogra(Jogra jogra) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -322,6 +322,12 @@ public class GeneEditor implements JograPlugin {
             }
         }.execute();
 	}
+
+    @Override
+    public void setJogra(Jogra jogra) {
+        // TODO Auto-generated method stub
+        
+    }
 	
 }
 
