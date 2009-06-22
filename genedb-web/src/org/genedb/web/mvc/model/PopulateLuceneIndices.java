@@ -167,9 +167,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
         
         indexGenes(session);
         
-        for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
-            indexFeatures(featureClass, numBatches, session);
-        }
+        //for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
+        //    indexFeatures(featureClass, numBatches, session);
+        //}
         session.close();
         logger.trace("Leaving indexFeatures");
     }
