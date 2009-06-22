@@ -5,6 +5,7 @@ import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.QueryParam;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
@@ -24,9 +25,17 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
     protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
     protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
+    
+    protected static final TermQuery mRNAQuery = new TermQuery(new Term("type.name", "mRNA"));
+    protected static final TermQuery pseudogenicTranscriptQuery = new TermQuery(new Term("type.name","pseudogenic_transcript"));
+    protected static final BooleanQuery productiveTranscriptQuery = new BooleanQuery();
+    
     static {
         geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
         geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
+        
+        productiveTranscriptQuery.add(mRNAQuery, Occur.SHOULD);
+        productiveTranscriptQuery.add(pseudogenicTranscriptQuery, Occur.SHOULD);
     }
 
     @Autowired
@@ -95,6 +104,20 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     @Override
     protected void extraValidation(Errors errors) {
         // Deliberately empty
+    }
+    
+    /**
+     * Replace all lucene reserved characters by escaping them
+     * @param searchText
+     * @return escaped searchText
+     */
+    protected String escapseSearchText(String searchText){
+        if (!StringUtils.isEmpty(searchText)){
+            String escapeChars ="[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
+            String escaped = searchText.replaceAll(escapeChars, "\\\\$0");
+            return escaped;
+        }
+        return searchText;
     }
 
 }

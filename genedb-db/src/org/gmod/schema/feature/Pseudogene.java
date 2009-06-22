@@ -6,10 +6,7 @@ import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.utils.StrandedLocation;
 
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -49,24 +46,6 @@ public class Pseudogene extends AbstractGene {
         }
 
         return ret;
-    }
-
-    @Override
-    @Transient
-    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
-    public String getProductsAsTabSeparatedString() {
-        StringBuilder products = new StringBuilder();
-
-        boolean first = true;
-        for (PseudogenicTranscript transcript : getPseudogenicTranscripts()) {
-            if (first) {
-                first = false;
-            } else {
-                products.append('\t');
-            }
-            products.append(transcript.getProductsAsTabSeparatedString());
-        }
-        return products.toString();
     }
 
     public static Pseudogene make(Feature sourceFeature, StrandedLocation location, String uniqueName, Timestamp now) {

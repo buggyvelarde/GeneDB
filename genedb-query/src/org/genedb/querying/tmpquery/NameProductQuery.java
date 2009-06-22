@@ -52,7 +52,7 @@ public class NameProductQuery extends OrganismLuceneQuery {
         }
 
         queries.add(bq);
-        queries.add(geneOrPseudogeneQuery);
+        queries.add(productiveTranscriptQuery);
 
 
 //        BooleanQuery organismQuery = makeQueryForOrganisms(orgNames);

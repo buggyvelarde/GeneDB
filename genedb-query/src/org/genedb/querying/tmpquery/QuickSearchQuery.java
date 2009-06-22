@@ -11,7 +11,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -88,12 +87,8 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         queries.add(bq);
 
         // Add type restrictions
-        TermQuery mRNAQuery = new TermQuery(new Term("type.name","mRNA"));
         if (pseudogenes) {
-            BooleanQuery bq2= new BooleanQuery();
-            bq2.add(mRNAQuery, Occur.SHOULD);
-            bq2.add(pseudogeneQuery, Occur.SHOULD);
-            queries.add(bq2);
+            queries.add(productiveTranscriptQuery);
         } else {
             queries.add(mRNAQuery);
         }

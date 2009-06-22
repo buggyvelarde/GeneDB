@@ -4,7 +4,6 @@ import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Organism;
 
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
@@ -60,23 +59,6 @@ public class Gene extends AbstractGene {
             ret.append(transcript.getProteinUniqueName());
         }
         return ret.toString();
-    }
-
-    @Override
-    @Transient @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
-    public String getProductsAsTabSeparatedString() {
-        StringBuilder products = new StringBuilder();
-
-        boolean first = true;
-        for (ProductiveTranscript transcript : getCodingTranscripts()) {
-            if (first) {
-                first = false;
-            } else {
-                products.append('\t');
-            }
-            products.append(transcript.getProductsAsTabSeparatedString());
-        }
-        return products.toString();
     }
 
     public void addTranscript(Transcript transcript) {

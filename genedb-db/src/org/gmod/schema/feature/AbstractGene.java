@@ -63,7 +63,7 @@ public abstract class AbstractGene extends Region {
      * @return a collection of this gene's transcripts
      */
     @Transient
-    public Collection<Transcript> getTranscripts() {
+    public Collection<Transcript> getTranscripts(){
         Collection<Transcript> ret = new ArrayList<Transcript>();
 
         for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
@@ -105,10 +105,6 @@ public abstract class AbstractGene extends Region {
         }
         return firstTranscripts;
     }
-    
-
-    @Transient
-    public abstract String getProductsAsTabSeparatedString();
 
     /**
      * Is this a pseudogene?
