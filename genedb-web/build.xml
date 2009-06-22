@@ -270,7 +270,7 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
-            <arg line="-o ${organism} -i ${dir} ${dbname}"/>
+            <arg line="-o ${organism} -i ${dir} -s ${end} -e ${end} ${dbname}"/>
             <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
@@ -296,7 +296,7 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
-            <arg line="-o Pfalcipam -i /tmp ${dbname}"/>
+            <arg line="-o ${org} -i /tmp ${dbname}"/>
             <jvmarg line="-server" />
            </java>
      </target>
