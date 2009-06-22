@@ -181,7 +181,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         String hql = "select featureId from AbstractGene where obsolete=false";
         
         if (featureStart > 0) {
-            hql += " and featureId > "+featureStart;
+            hql += " and featureId >= "+featureStart;
         }
         if (featureEnd > 0) {
             hql += " and featureId < "+featureEnd;
