@@ -139,17 +139,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-//        try {
-//            System.err.println("autocommit was "+session.connection().getAutoCommit());
-//            session.connection().setAutoCommit(false);
-//            System.err.println("autocommit is "+session.connection().getAutoCommit());
-//        } catch (HibernateException e1) {
-//            e1.printStackTrace();
-//            System.exit(1);
-//        } catch (SQLException e1) {
-//            e1.printStackTrace();
-//            System.exit(1);
-//        }
         
         return session;
     }
@@ -700,42 +689,5 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public void setFeatureEnd(int featureEnd) {
         this.featureEnd = featureEnd;
     }
-
-//    public static void main(String[] args) {
-//
-//        Cli<PopulateLuceneIndicesArgs> cli = CliFactory.createCli(PopulateLuceneIndicesArgs.class);
-//        PopulateLuceneIndicesArgs iga = null;
-//        try {
-//            iga = cli.parseArguments(args);
-//        }
-//        catch(ArgumentValidationException exp) {
-//            System.err.println("Unable to run:");
-//            System.err.println(cli.getHelpMessage());
-//            exp.printStackTrace();
-//            return;
-//        }
-//            
-//        long start = new Date().getTime();
-//            
-//        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
-//                new String[] {"classpath:applicationContext.xml"});
-//        PopulateLuceneIndices indexer = ctx.getBean("populateLuceneIndices", PopulateLuceneIndices.class);
-//
-//        indexer.setOrganism("Etenella");
-//
-//        indexer.setFailFast(true);
-//
-//        indexer.setIndexBaseDirectory("/tmp");
-//        int batchsize = 20;
-//        indexer.setBatchSize(batchsize);
-//
-//        indexer.indexFeatures();
-//            
-//            //times[i] = new Date().getTime() - start;
-//        //}
-//        logger.trace("Leaving main");
-//        logger.info(String.format("Time taken '%d', (batchSize '%d')", new Date().getTime()-start, batchsize));
-//        System.exit(0);
-//    }
     
 }
