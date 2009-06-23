@@ -93,4 +93,11 @@ public class GenesByURI implements Query {
                 return GenesByURI.class.isAssignableFrom(clazz);
             }
 
+
+            @Override
+            public boolean isMaxResultsReached() {
+                // Not Implemented
+                return false;
+            }
+
 }

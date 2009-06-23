@@ -16,5 +16,7 @@ public interface Query extends Ordered, Validator, Serializable {
     String getParseableDescription();
 
     public Map<String, Object> prepareModelData();
+    
+    public boolean isMaxResultsReached();
 
 }

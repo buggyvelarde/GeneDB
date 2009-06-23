@@ -165,6 +165,10 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
             }
             Collections.sort(geneSummaries);
+            
+            if(luceneIndex.getMaxResults() == geneSummaries.size()){
+                isActualResultSizeSameAsMax = true;
+            }
 
             // If no matches are found for current taxon, display all other
             // taxons with a match

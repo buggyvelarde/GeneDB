@@ -12,6 +12,10 @@
     <div id="geneResultsPanel">
 
         <format:genePageSection  className="whiteBox">
+            <c:if test="${isMaxResultsReached}">
+                <font color="red">Please note that these search results are limited by a maximum of ${resultsSize}.</font>
+                <br/>
+            </c:if>
             <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
                    <display:column title="Systematic ids" style="width: 100px;">
                     <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum+firstResultIndex-1}&resultsLength=${fn:length(results)-1}&key=${key}">${row.displayId}</a>

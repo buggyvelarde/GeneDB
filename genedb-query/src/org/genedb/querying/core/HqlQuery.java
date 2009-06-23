@@ -41,6 +41,14 @@ public abstract class HqlQuery implements Query {
     private SessionFactory sessionFactory;
     protected String name;
     private int order;
+
+    private static final int MAX_RESULTS = 100000;
+    private int maxResults = MAX_RESULTS;
+    
+    /**
+     * Size of result retrieved
+     */
+    private boolean isActualResultSizeSameAsMax;
     
     protected static final String RESTRICT_TO_TRANSCRIPTS = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript') ";   
 
@@ -57,9 +65,24 @@ public abstract class HqlQuery implements Query {
         String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
-
+        
+        //Set max result to prevent max memory error
+        query.setMaxResults(maxResults);
+        
+        //Run query
         List ret = query.list();
+        
+        //Get the result size
+        if (ret!= null && maxResults==ret.size()){
+            isActualResultSizeSameAsMax = true;
+        }
+        
         return ret;
+    }
+
+    @Override
+    public boolean isMaxResultsReached() {
+        return isActualResultSizeSameAsMax;
     }
 
     private String restrictQueryByOrganism(String hql, String organismClause) {
@@ -130,5 +153,12 @@ public abstract class HqlQuery implements Query {
         return this.getClass().isAssignableFrom(clazz);
     }
 
+    public int getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(int maxResults) {
+        this.maxResults = maxResults;
+    }
 
 }

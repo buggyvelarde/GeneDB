@@ -132,6 +132,7 @@ public class ResultsController {
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
         model.addAttribute("firstResultIndex", start);
+        model.addAttribute("isMaxResultsReached", new Boolean(resultEntry.query.isMaxResultsReached()));
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }

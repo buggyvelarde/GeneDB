@@ -52,9 +52,14 @@ public abstract class LuceneQuery implements Query {
     @Autowired
     private transient LuceneIndexFactory luceneIndexFactory;
 
-    private transient LuceneIndex luceneIndex;
+    protected transient LuceneIndex luceneIndex;
 
     protected String name;
+    
+    /**
+     * Size of result retrieved
+     */
+    protected boolean isActualResultSizeSameAsMax;
 
 
     @PostConstruct
@@ -106,6 +111,11 @@ public abstract class LuceneQuery implements Query {
                 names.add(t);
             }
             Collections.sort(names);
+            
+            if(luceneIndex.getMaxResults() == names.size()){
+                isActualResultSizeSameAsMax = true;
+            }
+            
             return names;
         } catch (CorruptIndexException exp) {
             throw new QueryException(exp);
@@ -114,7 +124,13 @@ public abstract class LuceneQuery implements Query {
         }
     }
 
-//    protected abstract <T> T convertDocumentToReturnType(Document document, Class<T> clazz);
+    @Override
+    public boolean isMaxResultsReached() {
+        return isActualResultSizeSameAsMax;
+    }
+
+
+    //    protected abstract <T> T convertDocumentToReturnType(Document document, Class<T> clazz);
     protected abstract Object convertDocumentToReturnType(Document document);
 
     protected abstract String[] getParamNames();

@@ -74,4 +74,10 @@ public class BooleanQuery implements Query {
     public boolean supports(Class clazz) {
         return BooleanQuery.class.isAssignableFrom(clazz);
     }
+    
+    @Override
+    public boolean isMaxResultsReached() {
+        // Not Implemented
+        return false;
+    }
 }

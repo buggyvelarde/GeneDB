@@ -57,4 +57,10 @@ public class MockProteinLengthQuery implements Query {
 		return 0;
 	}
 
+    @Override
+    public boolean isMaxResultsReached() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
