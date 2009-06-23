@@ -2,6 +2,7 @@ package org.genedb.db.dao;
 
 import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.HelixTurnHelix;
 import org.gmod.schema.feature.MembraneStructure;
 import org.gmod.schema.feature.MembraneStructureComponent;
 import org.gmod.schema.feature.NonCytoplasmicRegion;
@@ -10,6 +11,7 @@ import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.feature.PolypeptideRegion;
 import org.gmod.schema.feature.SignalPeptide;
 import org.gmod.schema.feature.TransmembraneRegion;
+import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
@@ -30,9 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.gmod.schema.mapped.Analysis;
-import org.gmod.schema.mapped.AnalysisFeature;
 
 @Transactional
 public class SequenceDao extends BaseDao {
@@ -850,6 +849,37 @@ public class SequenceDao extends BaseDao {
 	}
         return signalPeptide;
     }
+    
+    //Helix-turn-helix 22.6.2009 NDS
+    
+    private CvTerm helixTurnHelixType;
+    private CvTerm scoreCvTerm;
+    
+    public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, Analysis analysis) {
+        
+        if (helixTurnHelixType == null) {
+            helixTurnHelixType = cvDao.getCvTermByDbAcc("sequence", "0001081"); //Is this right?
+        }
+        
+        String uniqueName = String.format("%s:hth%d-%d", polypeptide.getUniqueName(), start, end);
+        HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/); 
+        
+        /* Add featureloc */
+        FeatureLoc hthLoc = new FeatureLoc(polypeptide, helixTurnHelix, start, end, 0, null); //Is this right?
+        helixTurnHelix.addFeatureLoc(hthLoc);
+               
+        /* Any feature properties ? */
+
+        // Add analysisfeature
+        if (analysis != null) {
+            helixTurnHelix.createAnalysisFeature(analysis,score,null);
+        } 
+        else {
+            throw new RuntimeException("Could not create analysisfeature because analysis object is null");
+        }
+        return helixTurnHelix;
+    }
+    
 
     private CvTerm gpiAnchoredType;
     private CvTerm gpiAnchorCleavageSiteType;
