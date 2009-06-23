@@ -116,11 +116,8 @@ class HTHFile {
         Matcher matcher = SUMMARY_PATTERN.matcher(summary);
         if (matcher.matches()) {
             String name  = matcher.group(1);
-            System.out.println("Name: " + name);
             int start = Integer.parseInt(matcher.group(2));
-            System.out.println("Start: " + start);
             int end = Integer.parseInt(matcher.group(3));
-            System.out.println("End: " + end);
             int length = Integer.parseInt(matcher.group(4));
             String score = matcher.group(5);
             String strand = matcher.group(6);
