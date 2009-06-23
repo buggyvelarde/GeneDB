@@ -303,18 +303,40 @@
     <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
 
 
+    
+	
+	<!-- HELIX TURN HELIX FEATURES -->
+    <target name="load-hth" depends="access-fulljar">
+         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
+             <arg line="hthloader ${file}" />
+             <jvmarg line="-server -Xmx256m"/>
+          </java>
+    </target>
+             	
+    <target name="clear-hth" depends="access-fulljar">
+    	  <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearHTH">
+    	     <arg line="${organism}"/>
+    	     <jvmarg line="-server -Xmx256m"/>
+    	  </java>
+    </target>
+    
+   	<target name="reload-hth" depends="clear-hth,load-hth"/>
+    	     	
+    <!-- SIGNAL P FEATURES -->	    
     <target name="load-signalp" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="signalploader --signalp-version=${load.analysis.programVersion}  ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
-    </target>
+ 	</target>
+    	     	
     <target name="clear-signalp" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearSignalP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
+    	
     <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
 
 
