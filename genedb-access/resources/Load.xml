@@ -118,6 +118,9 @@
 
     <bean id="signalploader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.SignalPLoader"/>
+        
+     <bean id="hthloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.HTHLoader"/>
 
     <bean id="dgpiloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.DGPILoader"/>
