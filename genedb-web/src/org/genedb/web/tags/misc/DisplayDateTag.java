@@ -23,7 +23,7 @@ public class DisplayDateTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
 
-        if (time == 0) {
+        if (time <= 0) {
             return;
         }
 
