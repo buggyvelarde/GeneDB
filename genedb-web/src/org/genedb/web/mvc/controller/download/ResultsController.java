@@ -104,9 +104,7 @@ public class ResultsController {
 
         boolean justSome = true;
         List<GeneSummary> subset;
-        // We don't worry about the end here as the end munging above only happens when 
-        // we have more results than 1 page, this section applies if all results on one page
-        if (start == 1 && end == results.size()) {
+        if (start == 1 && end >= results.size()) {
             subset = results;
             justSome = false;
             logger.debug("The \"subset\" is all of the results!");
@@ -127,6 +125,15 @@ public class ResultsController {
                 resultEntry.results = possiblyExpanded;
                 resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
                 logger.debug("And stored the set back");
+            } else {
+                // Need to replace subList of resultEntry.results with possiblyExpanded
+                int position = start-1;
+                for (GeneSummary geneSummary : possiblyExpanded) {
+                    resultEntry.results.remove(position);
+                    resultEntry.results.add(position, geneSummary);
+                    position++;
+                }
+                
             }
         }
 
