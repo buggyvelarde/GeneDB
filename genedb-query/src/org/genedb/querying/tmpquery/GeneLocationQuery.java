@@ -38,15 +38,26 @@ public class GeneLocationQuery extends OrganismHqlQuery {
     )
     private int max;
 
+    @QueryParam(order = 4, title = "Include pseudogenes")
+    private boolean pseudogenes = true;
+
+
     @Override
     protected String getHql() {
-        return "select f.uniqueName " +
-        		"from Feature f inner join f.featureLocs fl " +
-        		"where fl.sourceFeature.uniqueName=:topLevelFeatureName " +
-        		"and fl.fmin >= :min " +
-        		"and fl.fmax <= :max @ORGANISM@ " +
-        		RESTRICT_TO_TRANSCRIPTS + //FIX_ME
-        		"order by f.organism, f.uniqueName";
+        StringBuffer sb = new StringBuffer();
+        sb.append("select f.uniqueName ");
+        sb.append("from Feature f inner join f.featureLocs fl ");
+        sb.append("where fl.sourceFeature.uniqueName=:topLevelFeatureName ");
+        sb.append("and fl.fmin >= :min ");
+        sb.append("and fl.fmax <= :max @ORGANISM@ ");
+        
+        if(pseudogenes){
+            sb.append(RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES);
+        }else{
+            sb.append(RESTRICT_TO_TRANSCRIPTS_ONLY);            
+        }
+        sb.append(" order by f.organism, f.uniqueName");
+        return sb.toString();
     }
 
 
@@ -114,6 +125,16 @@ public class GeneLocationQuery extends OrganismHqlQuery {
                 errors.reject("start.greater.than.end");
             }
         }
+    }
+
+
+    public boolean isPseudogenes() {
+        return pseudogenes;
+    }
+
+
+    public void setPseudogenes(boolean pseudogenes) {
+        this.pseudogenes = pseudogenes;
     }
 
 }

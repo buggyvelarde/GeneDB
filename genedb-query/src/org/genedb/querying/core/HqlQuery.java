@@ -50,7 +50,9 @@ public abstract class HqlQuery implements Query {
      */
     private boolean isActualResultSizeSameAsMax;
     
-    protected static final String RESTRICT_TO_TRANSCRIPTS = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript') ";   
+    protected static final String RESTRICT_TO_TRANSCRIPTS_ONLY = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript') ";   
+    
+    protected static final String RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript', 'pseudogenic_transcript')";
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();

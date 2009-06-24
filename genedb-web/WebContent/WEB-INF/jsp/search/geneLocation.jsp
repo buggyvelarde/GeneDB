@@ -30,13 +30,19 @@
                         <br><form:input id="maxLocation" path="max"/>
                         <br><font color="red"><form:errors path="max" /></font>
                     </td>
+                    
+                     <td>
+                         <b>Pseudogene:</b>
+                          <br><form:checkbox id="pseudogenes" path="pseudogenes" />
+                      </td>
+                      <td>&nbsp;&nbsp;&nbsp;</td>
                     <td>
                         <br><input type="submit" value="Submit" />
                     </td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td colspan=5><font color="red"><form:errors  /></td>
+                    <td colspan=7><font color="red"><form:errors  /></td>
                     <td></td>
                 </tr>
             </table>
