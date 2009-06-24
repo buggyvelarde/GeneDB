@@ -1,7 +1,6 @@
 package org.gmod.schema.feature;
 
 import org.genedb.db.helpers.LocationBridge;
-import org.genedb.db.helpers.MassBridge;
 
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
@@ -367,8 +366,7 @@ public class Polypeptide extends Region {
                 return "";
             }
         }
-        //System.err.println("Mass is '"+mass+"' formatted is '"+String.format("%09f", mass)+"'" );
-        return String.format("%09f", mass);
+        return String.format("%09d", (int) mass);
     }
 
     @Transient
