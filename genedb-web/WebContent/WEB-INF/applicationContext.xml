@@ -92,6 +92,7 @@
             <prop key="hibernate.hbm2dll.auto">validate</prop>
             <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
             <prop key="hibernate.bytecode.provider">javassist</prop>
+            <prop key="hibernate.jdbc.batch_size">20</prop>
             <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
             <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
         </props>
@@ -141,6 +142,7 @@
             <props>
                 <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
                 <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
+                <prop key="hibernate.jdbc.batch_size">20</prop>
             </props>
         </property>
         <!-- <property name="listeners">

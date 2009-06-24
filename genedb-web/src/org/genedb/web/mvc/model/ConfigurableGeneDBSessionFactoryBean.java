@@ -35,6 +35,7 @@ public class ConfigurableGeneDBSessionFactoryBean {
 
         Properties customised = new Properties(properties);
         customised.put("hibernate.search.worker.batch_size", Integer.toString(batchSize));
+        customised.put("hibernate.jdbc.batch_size", Integer.toString(batchSize));
         customised.put("hibernate.search.default.indexBase", indexDir);
         csfb.setProperties(customised);
 
@@ -43,13 +44,5 @@ public class ConfigurableGeneDBSessionFactoryBean {
         return (SessionFactory) csfb.getObject();
     }
 
-
-//            <property name="listeners">
-//                <map>
-//                    <entry key="post-insert" value-ref="fullTextIndexEventListener" />
-//                    <entry key="post-update" value-ref="fullTextIndexEventListener" />
-//                    <entry key="post-delete" value-ref="fullTextIndexEventListener" />
-//                </map>
-//            <property>
 }
 
