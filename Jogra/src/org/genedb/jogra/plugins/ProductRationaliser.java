@@ -148,7 +148,7 @@ public class ProductRationaliser implements JograPlugin {
         for (Product product : products) {
             
             if(isShowSysID()){ /* Get systematic IDs for this product if the relevant checkbox has been ticked */
-               idMap.put(product.getId(), (List<String>)productService.getSystematicIDs(product));
+               idMap.put(product.getId(), (List<String>)productService.getSystematicIDs(product, taxonList));
             }
             if(isShowEVC()){ /* Get evidence codes for this product if the relevant checkbox has been ticked */
                evcMap.put(product.getId(),productService.getEvidenceCodes(product));  

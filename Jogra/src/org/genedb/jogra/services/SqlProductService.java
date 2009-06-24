@@ -220,8 +220,20 @@ public class SqlProductService implements ProductService {
     }
     
     /* Method to retrieve systematic IDs for a given product  */
-    public List<String> getSystematicIDs(Product product){
-       String sql = "select feature.uniquename from feature, feature_cvterm where feature.feature_id=feature_cvterm.feature_id and feature_cvterm.cvterm_id=" + product.getId();
+    public List<String> getSystematicIDs(Product product, List<TaxonNode> taxonList){
+
+        List<String> temp = new ArrayList<String>();
+        for(TaxonNode t: taxonList){
+            temp.addAll(t.getAllChildrenNamesInSQLFormat());
+        }
+        String namesInSQLFormat = StringUtils.collectionToCommaDelimitedString(temp);
+        
+       String sql = "select feature.uniquename from feature, feature_cvterm, organism" +
+       		" where feature.feature_id=feature_cvterm.feature_id" +
+       		" and feature_cvterm.cvterm_id=" + product.getId() +
+       		" and feature.organism_id=organism.organism_id" +
+       		" and organism.common_name IN (" + namesInSQLFormat +")";
+       		
        
        RowMapper<String> mapper = new RowMapper<String>() { //Is there a better way to deal with SQL queries of this nature?
            public String mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -19,8 +19,8 @@ public interface ProductService {
     /* Modified method that also takes any corrected text provided by the user*/
     MethodResult rationaliseProduct(Product newProduct, List<Product> products, String correctedText);
     
-    /* Method to retrieve systematic IDs for a given product */
-    List<String> getSystematicIDs(Product product);
+    /* Method to retrieve systematic IDs (restricted to selected scope) for a given product */
+    List<String> getSystematicIDs(Product product, List<TaxonNode> taxonList);
     
     /* Method to retrieve evidence codes for a given product */
     List<String> getEvidenceCodes(Product product);
