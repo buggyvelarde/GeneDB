@@ -48,15 +48,11 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-<!--        <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" /> -->
-<!--        <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" /> -->
-<!--        Local copy to test. Change later [NDS] -->
-            <!-- property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" /-->
-            <property name="url" value="jdbc:postgresql://localhost:5432/nds" />
+
+            <property name="url" value="${Jogra.url}" />
             <property name="username" value="${Jogra.username}"/>
             <property name="password" value="${Jogra.password}" />
-            <!--  property name="username" value='nds'/>
-            <property name="password" value='sanger09' /-->
+         
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
@@ -84,7 +80,7 @@
   <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="sessionFactory" ref="sessionFactory" />
-        <property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property>
+        <!--  property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property -->
     </bean>
 
 
@@ -141,11 +137,11 @@
      <!-- <property name="messageService" ref="messageService"/> -->
      <property name="pluginList">
        <list>
-          <ref bean="geneEditor" />
-         <ref bean="geneList" />
-         <ref bean="cvEditor" />
+          <!-- ref bean="geneEditor" /-->
+         <!--  ref bean="geneList" /-->
+         <!-- ref bean="cvEditor" /-->
          <ref bean="organismTree" />
-         <ref bean="organismEditor" />
+         <!-- ref bean="organismEditor" /-->
          <ref bean="productRationaliser" />
 
         <!-- <ref bean="integrityChecker" /> -->
