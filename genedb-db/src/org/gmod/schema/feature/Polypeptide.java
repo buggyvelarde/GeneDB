@@ -337,9 +337,8 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
-    @FieldBridge(impl = LocationBridge.class)
-    public int getNumberTMDomains() {
-        return this.getRegions(TransmembraneRegion.class).size();
+    public String getNumberTMDomains() {
+        return String.format("%05d", this.getRegions(TransmembraneRegion.class).size());
     }
 
 
@@ -366,7 +365,9 @@ public class Polypeptide extends Region {
                 return "";
             }
         }
-        return String.format("%09d", (int) mass);
+        String formattedMass = String.format("%09d", (int) mass);
+        logger.warn("Mass is '"+formattedMass+"'");
+        return formattedMass;
     }
 
     @Transient
