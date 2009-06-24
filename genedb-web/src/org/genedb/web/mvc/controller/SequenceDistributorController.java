@@ -113,9 +113,11 @@ public class SequenceDistributorController {
             break;
         case NCBI_BLAST:
             if (nucleotide) {
-                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE=Proteins&PROGRAM=blastn&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
+                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&PAGE_TYPE=BlastSearch&" +
+                		"SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
             } else {
-                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE_TYPE=BlastSearch&PAGE=MegaBlast&PROGRAM=blastn&DATABASE=nr&BLAST_PROGRAMS=megaBlast&QUERY="+sequence;
+                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&" +
+                		"SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
             }
             break;
         }
