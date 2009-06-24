@@ -1,5 +1,8 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.helpers.LocationBridge;
+import org.genedb.db.helpers.MassBridge;
+
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
@@ -22,6 +25,7 @@ import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
@@ -49,7 +53,7 @@ public class Polypeptide extends Region {
     @Transient
     private AbstractGene gene;
 
-    @Transient private double mass = -1;
+    @Transient private double mass = -1.0;
 
     Polypeptide() {
         // empty
@@ -249,7 +253,7 @@ public class Polypeptide extends Region {
         } catch (Exception exp) {
             logger.error(String.format("Error computing protein mass in '%s' because '%s'", getUniqueName(), exp.getMessage()));
         }
-        return -1;
+        return -1.0;
     }
 
 
@@ -334,6 +338,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
+    @FieldBridge(impl = LocationBridge.class)
     public int getNumberTMDomains() {
         return this.getRegions(TransmembraneRegion.class).size();
     }
@@ -341,7 +346,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
-    public double getMass() {
+    public String getMass() {
         if (mass == -1) {
             SymbolTokenization proteinTokenization;
             try {
@@ -349,19 +354,21 @@ public class Polypeptide extends Region {
                 String residues = getResidues();
                 if (residues == null || residues.length()==0) {
                     logger.warn(String.format("Failed to calculate mass as no residues for '%s'", getUniqueName()));
-                    return -1;
+                    return "";
                 }
                 if (residues.endsWith("*")) {
                     // Trim final if present. There may still be internal stop codons
                     residues = residues.substring(0, residues.length()-1);
                 }
                 SymbolList residuesSymbolList = new SimpleSymbolList(proteinTokenization, residues);
-                calculateMass(residuesSymbolList);
+                mass = calculateMass(residuesSymbolList);
             } catch (BioException exp) {
                 logger.error("Failed to calculate mass", exp);
+                return "";
             }
         }
-        return mass;
+        //System.err.println("Mass is '"+mass+"' formatted is '"+String.format("%09f", mass)+"'" );
+        return String.format("%09f", mass);
     }
 
     @Transient
@@ -472,3 +479,4 @@ public class Polypeptide extends Region {
         return getRelatedFeatures(Polypeptide.class, "sequence", "orthologous_to");
     }
 }
+
