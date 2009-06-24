@@ -97,19 +97,21 @@ public class ResultsController {
         logger.debug("The number of results retrieved from cache is '"+results.size()+"'");
         logger.debug("The end marker, before adjustment, is '"+end+"'");
 
-        if (end > results.size()) {
-            end = results.size();
+        if (end > results.size() + 1) {
+            end = results.size() + 1;
         }
 
 
         boolean justSome = true;
         List<GeneSummary> subset;
+        // We don't worry about the end here as the end munging above only happens when 
+        // we have more results than 1 page, this section applies if all results on one page
         if (start == 1 && end == results.size()) {
             subset = results;
             justSome = false;
             logger.debug("The \"subset\" is all of the results!");
         } else {
-            subset = results.subList(start, end);
+            subset = results.subList(start - 1, end - 1);
             logger.debug(String.format("The \"subset\" is from %d to %d of %d total results!", start, end, results.size()));
         }
 
