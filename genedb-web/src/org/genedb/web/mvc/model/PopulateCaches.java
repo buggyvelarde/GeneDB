@@ -157,8 +157,9 @@ public class PopulateCaches {
         }
     }
 
+    @Transactional
     private Iterator<Feature> getTopLevelFeatures() {
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        Session session = SessionFactoryUtils.getSession(sessionFactory, true);
         Query q;
 
         if (config.isOrganisms()) {
