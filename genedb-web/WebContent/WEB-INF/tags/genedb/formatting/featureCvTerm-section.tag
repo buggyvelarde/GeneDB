@@ -24,7 +24,7 @@
                     ${evidence}
             </c:forEach>&nbsp;
             <c:forEach items="${fctDTO.pubs}" var="pub">
-                (${pub})
+                (<db:dbXRefLink dbXRef="${pub}" />)
             </c:forEach>
         </td>
         <td class="value accession">
