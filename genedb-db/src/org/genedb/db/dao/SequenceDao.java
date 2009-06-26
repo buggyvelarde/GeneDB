@@ -853,7 +853,6 @@ public class SequenceDao extends BaseDao {
     //Helix-turn-helix 22.6.2009 NDS
     
     private CvTerm helixTurnHelixType;
-    private CvTerm scoreCvTerm;
     
     public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, Analysis analysis) {
         
@@ -861,11 +860,11 @@ public class SequenceDao extends BaseDao {
             helixTurnHelixType = cvDao.getCvTermByDbAcc("sequence", "0001081"); //Is this right?
         }
         
-        String uniqueName = String.format("%s:hth%d-%d", polypeptide.getUniqueName(), start, end);
+        String uniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
         HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/); 
         
         /* Add featureloc */
-        FeatureLoc hthLoc = new FeatureLoc(polypeptide, helixTurnHelix, start, end, 0, null); //Is this right?
+        FeatureLoc hthLoc = new FeatureLoc(polypeptide, helixTurnHelix, start, end, 0, null); //null for phase - is this ok?
         helixTurnHelix.addFeatureLoc(hthLoc);
                
         /* Any feature properties ? */
