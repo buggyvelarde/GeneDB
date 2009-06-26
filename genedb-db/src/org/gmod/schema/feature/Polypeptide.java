@@ -1,6 +1,5 @@
 package org.gmod.schema.feature;
 
-import org.genedb.db.helpers.LocationBridge;
 
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
@@ -24,7 +23,6 @@ import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
@@ -340,6 +338,39 @@ public class Polypeptide extends Region {
     public String getNumberTMDomains() {
         return String.format("%05d", this.getRegions(TransmembraneRegion.class).size());
     }
+    
+
+    
+    @Transient
+    @Field(index=Index.TOKENIZED, store=Store.YES)
+    public String getSequenceLength(){
+        return String.format("%06d",  this.getSeqLen());                
+    }
+
+    /**
+     * FIX_ME - This method is duplicated (and also in the ProductiveTranscript class)
+     * @return
+     */
+    @Transient
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsTabSeparatedString() {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        List<String> products = getProducts();
+        if (products == null) {
+            return null;
+        }
+        for (String product: getProducts()) {
+            if (first) {
+                first = false;
+            } else {
+                ret.append('\t');
+            }
+            ret.append(product);
+        }
+        return ret.toString();
+    }
+
 
 
     @Transient

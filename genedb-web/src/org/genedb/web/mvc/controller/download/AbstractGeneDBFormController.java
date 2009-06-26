@@ -8,6 +8,7 @@ import javax.servlet.ServletRequest;
 
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
+import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.TaxonQuery;
@@ -60,6 +61,9 @@ public class AbstractGeneDBFormController {
         re.query = q;
         re.results = gs;
         re.queryName = queryName;
+        if (q instanceof LuceneQuery){
+            re.expanded = true;
+        }
         map.put(key, re);
         return key;
     }

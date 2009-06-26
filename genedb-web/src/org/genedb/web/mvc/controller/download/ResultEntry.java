@@ -15,5 +15,11 @@ public class ResultEntry implements Serializable {
     int numOfResults;
 
     String queryName;
+    
+    /**
+     * Indicates that the results has been expanded either through a lucene search 
+     * or passed through it at a later time in the ResultsController
+     */
+    boolean expanded;
 
 }
