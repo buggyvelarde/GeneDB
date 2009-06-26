@@ -110,8 +110,8 @@
     <bean id="iploader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.InterProLoader"/>
 
-    <bean id="pfamloader" parent="auxiliaryLoader"
-        class="org.genedb.db.loading.auxiliary.PfamLoader"/>
+    <bean id="domainloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.DomainLoader"/>
 
     <bean id="tmhmmloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.TMHMMLoader"/>
