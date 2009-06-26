@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +22,23 @@ public class TMHMMLoader extends Loader {
 
     private static Logger logger = Logger.getLogger(TMHMMLoader.class);
 
+    String analysisProgramVersion = "unknown";
+    @Override
+    protected Set<String> getOptionNames() {
+	Set<String> options = new HashSet<String>();
+	Collections.addAll(options, "tmhmm-version");
+        return options;
+    }
+    @Override
+    protected boolean processOption(String optionName, String optionValue) {
+
+    	if (optionName.equals("tmhmm-version")) {
+    		analysisProgramVersion = optionValue;
+    		return true;
+    	}
+    	return false;
+    }
+    
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         TMHMMFile file = new TMHMMFile(inputStream);
