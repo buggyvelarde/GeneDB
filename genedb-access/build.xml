@@ -111,7 +111,7 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
-            <jvmarg line="-Xmx3G"/>
+            <jvmarg line="-Xmx1G"/>
         </java>
     </target>
 
@@ -237,22 +237,53 @@
         </java>
     </target>
     <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
-
-    <target name="load-pfam" depends="check-pfam-properties, load-pfam-polypeptide-ids, load-pfam-gene-ids"/>
-
-    <target name="check-pfam-properties">
+            	
+	<target name="load-pfam" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="pfam_scan"/>
+		</antcall>	
+			
+	  	<antcall target="load-domain-polypeptide-ids">
+	    	<param name="program" value="pfam_scan"/>
+	 	</antcall>
+	</target>
+       	
+	<target name="load-prosite" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="prosite"/>
+		</antcall>	             			
+		<antcall target="load-domain-polypeptide-ids">
+			<param name="program" value="prosite"/>
+		</antcall>
+	</target>
+	
+    <target name="clear-pfam">
+		<antcall target="clear-domains">
+			<param name="program" value="pfam_scan"/>
+		</antcall>	
+    </target>
+	<target name="clear-prosite">
+		<antcall target="clear-domains">
+			<param name="program" value="prosite"/>
+		</antcall>	
+	</target>
+			
+    <target name="reload-pfam" depends="clear-pfam, load-pfam"/>
+	<target name="reload-prosite" depends="clear-prosite, load-prosite"/>
+						               	
+    <target name="check-domain-properties">
         <fail unless="load.analysis.programVersion" message="The property load.analysis.programVersion must be specified"/>
     </target>
-    <target name="load-pfam-polypeptide-ids" depends="access-fulljar" unless="load.pfam.gene-ids">
+    <target name="load-domain-polypeptide-ids" depends="access-fulljar" unless="load.domain.gene-ids">
         <condition property="notFoundNotFatal" else="false">
 	    <isset property="load.analysis.notFoundNotFatal"/>
-	</condition>
+	    </condition>
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="pfamloader --key-type=polypeptide --pfamscan-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
+            <arg line="domainloader --key-type=polypeptide --program=${program} --program-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="load-pfam-gene-ids" depends="access-fulljar" if="load.pfam.gene-ids">
+    <target name="load-domain-gene-ids" depends="access-fulljar" if="load.domain.gene-ids">
         <condition property="notFoundNotFatal" else="false">
 	    <isset property="load.analysis.notFoundNotFatal"/>
 	</condition>
@@ -260,19 +291,19 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
-            <arg line="pfamloader --key-type=gene --pfamscan-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
+            <arg line="domainloader --key-type=gene --program=${program} --program-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-pfam" depends="access-fulljar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearPfam">
-            <arg line="${organism}"/>
+              	
+    <target name="clear-domains" depends="access-fulljar">
+        <fail unless="program" message="The property --program must be specified"/>
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearDomains">
+            <arg line="${organism} ${program}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="reload-pfam" depends="clear-pfam,load-pfam"/>
-
-
+	                       	           	            	
     <target name="load-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} ${file}"/>
