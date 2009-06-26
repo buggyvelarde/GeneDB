@@ -33,7 +33,11 @@ public class InterProLoaderTest {
         loader = ctx.getBean("iploader", InterProLoader.class);
         assertTrue(loader.processOptionIfValid("key-type", "polypeptide"));
 
-        loader.clear("Pfalciparum", "interpro_scan");
+        /*TODO: When all automatically generated features have analysisfeature entries
+        *linking them to an analysis this should pass the name of the analysisProgram
+        *so that it may be used by clear to remove only features of that analysis type
+        */
+        loader.clear("Pfalciparum", null);
         new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
     }
 
