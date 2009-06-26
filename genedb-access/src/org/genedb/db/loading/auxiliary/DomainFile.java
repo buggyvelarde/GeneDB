@@ -173,7 +173,7 @@ class PrositeRow implements DomainRow {
      * @param rowFields a line of the input file
      */
     public PrositeRow(int lineNumber, String row) {
-        this(lineNumber, row.split("\\s+"));
+        this(lineNumber, row.split("\t"));
     }
 
     /**
@@ -199,7 +199,7 @@ class PrositeRow implements DomainRow {
     		this.db         = "PROSITE";
     		this.fmin       = Integer.parseInt(rowFields[COL_FMIN]) - 1; // -1 because we're converting to interbase
     		this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
-	    
+    		
     		if (rowFields.length > COL_NATIVE_DESC && !rowFields[COL_NATIVE_ACC].equals("NULL")) {
     			this.acc = new DomainAcc(rowFields[COL_NATIVE_ACC], rowFields[COL_NATIVE_DESC]);
     		}
