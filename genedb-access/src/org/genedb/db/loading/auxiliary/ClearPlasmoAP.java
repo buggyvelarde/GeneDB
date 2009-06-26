@@ -7,8 +7,8 @@ public class ClearPlasmoAP extends Clear {
         Clear.main(ClearPlasmoAP.class, args);
     }
 
-    ClearPlasmoAP(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearPlasmoAP(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
     private static final String DELETE_PLASMOAP_SCORES_SQL

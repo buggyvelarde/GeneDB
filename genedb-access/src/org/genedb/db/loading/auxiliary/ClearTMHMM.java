@@ -7,8 +7,9 @@ public class ClearTMHMM extends Clear {
         Clear.main(ClearTMHMM.class, args);
     }
 
-    ClearTMHMM(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearTMHMM(String organismCommonName, String analysisProgram)
+    		throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
     private static final String DELETE_TRANSMEMBRANE_FEATURES_SQL

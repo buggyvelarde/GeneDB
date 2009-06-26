@@ -8,12 +8,12 @@ public class ClearInterPro extends Clear {
         Clear.main(ClearInterPro.class, args);
     }
 
-    ClearInterPro(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearInterPro(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
-    ClearInterPro(Connection conn, String organismCommonName) {
-        super(conn, organismCommonName);
+    ClearInterPro(Connection conn, String organismCommonName, String analysisProgram) {
+        super(conn, organismCommonName, analysisProgram);
     }
 
     private static final String DELETE_DOMAINS_SQL

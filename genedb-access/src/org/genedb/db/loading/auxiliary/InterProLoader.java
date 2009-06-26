@@ -11,11 +11,13 @@ import org.gmod.schema.mapped.FeatureDbXRef;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -176,11 +178,13 @@ public class InterProLoader extends Loader {
     }
 
     @Transactional
-    @SuppressWarnings("deprecation") // When we're using Hibernate 3.3 or later, change
-                                     // this to use Session#doWork(Work).
-    void clear(String organismCommonName) throws HibernateException, SQLException {
+    void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-        new ClearInterPro(session.connection(), organismCommonName).clear();
+        session.doWork(new Work() {
+			public void execute(Connection connection) throws SQLException {
+				new ClearInterPro(connection, organismCommonName, analysisProgram).clear();
+			}
+        });
     }
 }
 

@@ -7,8 +7,8 @@ public class ClearSignalP extends Clear {
         Clear.main(ClearSignalP.class, args);
     }
 
-    ClearSignalP(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearSignalP(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
     private static final String DELETE_PROPS_SQL
