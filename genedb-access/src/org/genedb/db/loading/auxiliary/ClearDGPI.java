@@ -7,8 +7,8 @@ public class ClearDGPI extends Clear {
         Clear.main(ClearDGPI.class, args);
     }
 
-    ClearDGPI(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearDGPI(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
     private static final String DELETE_PROPS_SQL
