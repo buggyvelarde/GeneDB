@@ -33,7 +33,7 @@ public class InterProLoaderTest {
         loader = ctx.getBean("iploader", InterProLoader.class);
         assertTrue(loader.processOptionIfValid("key-type", "polypeptide"));
 
-        loader.clear("Pfalciparum");
+        loader.clear("Pfalciparum", "interpro_scan");
         new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
     }
 
