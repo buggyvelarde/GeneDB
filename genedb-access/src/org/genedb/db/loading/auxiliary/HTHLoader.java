@@ -22,6 +22,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class to load helix-turn-helix features. The results are expected in a certain format specified by the pattern object below.
+ * 
+ * @author nds
+ *
+ */
+
+
 public class HTHLoader extends Loader {
     private static final Logger logger = Logger.getLogger(HTHLoader.class);
 
