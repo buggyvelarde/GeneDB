@@ -9,8 +9,8 @@ public class ClearHTH extends Clear {
         Clear.main(ClearHTH.class, args);
     }
 
-    ClearHTH(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearHTH(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
   
