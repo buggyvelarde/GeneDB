@@ -1,9 +1,10 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.apache.log4j.Logger;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.web.mvc.controller.WebConstants;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,10 +13,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/ResultsNavigator")
 public class ResultsNavigatorController {
+    private static final Logger logger = Logger.getLogger(ResultsNavigatorController.class);
 
     //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
@@ -26,11 +30,17 @@ public class ResultsNavigatorController {
 
     @RequestMapping(method = RequestMethod.GET )
     public ModelAndView navigate(
+            HttpSession session,
             @RequestParam(value="index") int index,
             @RequestParam(value="key") String key//,
             //@RequestParam(value="taxonNodeName", required=false) String taxonNodeName
             ) {
 
+        if (session.isNew()){
+            logger.warn("There is no session - redirecting to force one.");
+            session.setAttribute(WebConstants.FLASH_MSG, "Your session has timed out - Please repeat your search.");
+            return new ModelAndView("redirect:/QueryList");
+        }
 
         ModelAndView ret = new ModelAndView();
 
