@@ -2,6 +2,7 @@ package org.genedb.db.loading.auxiliary;
 
 import org.gmod.schema.feature.MembraneStructure;
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.mapped.Analysis;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -23,6 +24,7 @@ public class TMHMMLoader extends Loader {
     private static Logger logger = Logger.getLogger(TMHMMLoader.class);
 
     String analysisProgramVersion = "unknown";
+
     @Override
     protected Set<String> getOptionNames() {
 	Set<String> options = new HashSet<String>();
@@ -41,13 +43,20 @@ public class TMHMMLoader extends Loader {
     
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
+    	
+    	// Add analysis 
+       	Analysis analysis = new Analysis();
+    	analysis.setProgram("tmhmm");
+    	analysis.setProgramVersion(analysisProgramVersion);
+    	sequenceDao.persist(analysis);
+    	
         TMHMMFile file = new TMHMMFile(inputStream);
         int n=1;
         for (String key: file.keys()) {
             logger.info(String.format("[%d/%d] Loading helices for key '%s'", n++, file.keys().size(), key));
             Polypeptide polypeptide = getPolypeptideByMangledName(key);
 
-            loadMembraneStructure(polypeptide, file.regionsForKey(key));
+            loadMembraneStructure(polypeptide, file.regionsForKey(key), analysis);
             /*
              * If the session isn't cleared out every so often, it
              * starts to get pretty slow after a while if we're loading
@@ -63,10 +72,15 @@ public class TMHMMLoader extends Loader {
         }
     }
 
-    private void loadMembraneStructure(Polypeptide polypeptide, Iterable<TMHMMRegion> regions) {
+    private void loadMembraneStructure(Polypeptide polypeptide, Iterable<TMHMMRegion> regions, Analysis analysis) {
         logger.debug(String.format("Creating membrane structure region for '%s'", polypeptide.getUniqueName()));
         MembraneStructure membraneStructure = sequenceDao.createMembraneStructure(polypeptide);
+    	// Add analysisfeature
+    	if (analysis != null) {
+    	    membraneStructure.createAnalysisFeature(analysis);
+    	} 
         sequenceDao.persist(membraneStructure);
+        
         for (TMHMMRegion region: regions) {
             loadRegion(membraneStructure, region);
         }
@@ -141,6 +155,7 @@ class TMHMMFile {
     private Set<String> keysWithHelices = new HashSet<String> ();
     private Map<String,Collection<TMHMMRegion>> regionsByKey = new HashMap<String,Collection<TMHMMRegion>>();
     public TMHMMFile(InputStream inputStream) throws IOException {
+    	   	
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while (null != (line = reader.readLine())) {
