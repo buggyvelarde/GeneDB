@@ -37,10 +37,11 @@ class LoadGeneDbCv {
 
     LoadGeneDbCv() {
         db = Sql.newInstance(
-            'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10120/pathdb',
-            'xxx',
-            'xxx',
+            'jdbc:postgresql://localhost:5432/pathogens',
+            'pathdb',
+            'pathdb',
             'org.postgresql.Driver')
+            
 
          cvDataSet = db.dataSet("cv")
 
@@ -52,7 +53,7 @@ class LoadGeneDbCv {
 
          relationDataSet = db.dataSet("cvterm_relationship")
 
-        List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='relationship' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
+        List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='genedb_misc' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
         REL_IS_A = relations[0]."cvterm_id";
 
     }
@@ -94,11 +95,20 @@ class LoadGeneDbCv {
 
             case 'term':
                 checkAttributeExists(node, "description")
-
+				
+				System.out.println("encountered term ->"+node.'@name');
+								
                 int newDbXRef = createDbXRef(node)
-                int newCvTerm = createCvTerm(node, newDbXRef)
-
-                if (nestedCvTerm > 0) {
+                int newCvTerm=-1;
+                if(newDbXRef!=-1){
+                
+                newCvTerm = createCvTerm(node, newDbXRef)
+                }else{
+                	System.out.println("insertion failed at dbxref for "+node.'@name');	
+                }
+                if(newDbXRef!=-1 && newCvTerm!=-1){                
+				System.out.println("Successfully inserted new cvterm ->"+node.'@name');
+				if (nestedCvTerm > 0) {
                     // Create feature relationship
                     if (writeBack) {
                         try {
@@ -113,6 +123,7 @@ class LoadGeneDbCv {
                        }
                     }
 
+                }
                 }
 
                 node.children().each(
@@ -132,7 +143,7 @@ class LoadGeneDbCv {
     int createDbXRef(def node) {
         String name = node.'@name';
         String description = node.'@description';
-
+                
         if (writeBack) {
             try {
                 dbXRefDataSet.add(
@@ -144,9 +155,12 @@ class LoadGeneDbCv {
             } catch (Exception exp) {
                 // May be a duplicate
                    System.err.println("Problem storing cvterm - duplicate?");
+                   return -1;
             }
         }
-        return getMaxIdFromPrimaryKey("dbxref")
+        int id = db.rows("SELECT dbxref_id from dbxref where description='"+description+"' and accession='"+description+"' and db_id="+currentDb)[0]["dbxref_id"];
+        return id;
+        
     }
 
 
@@ -168,9 +182,11 @@ class LoadGeneDbCv {
                 } catch (Exception exp) {
                  // May be a duplicate
                    System.err.println("Problem storing cvterm - duplicate?");
+                   return -1;
                 }
         }
-        return getMaxIdFromPrimaryKey("cvterm")
+        int id = db.rows("SELECT cvterm_id from cvterm where cv_id="+currentCv+" and dbxref_id="+dbXRef+" and name='"+name+"' and is_obsolete=0 and is_relationshiptype=0")[0]["cvterm_id"];
+        return id;
     }
 
 
@@ -243,6 +259,67 @@ class LoadGeneDbCv {
                 <term name="Glimmer" description="Glimmer gene prediction" />
                 <term name="genefinder" description="genefinder gene prediction" />
             </term>
+		<term name="SNP_analysis_application" description="Programs which identifies SNPs and indels">
+            	<term name="commandline_str" description="Full command line string used to execute the application" />
+                <term name="ssaha" description="tool for very fast matching and alignment of DNA sequences">
+                	<term name="ssaha_scalar_result" description="Output that results in a single value for the whole data set">
+                		<term name="ssaha_op_number_of_cell_lines" description="number of cell lines"/>
+                	</term>
+                 	<term name="ssaha_multivalue_result" description="Output results that has a list of values">
+                 		<term name="ssaha_snp_headers" description="Headers related to SNPs">
+	                		<term name="ssaha_op_name_of_chromosome_reference" description="name of chromosome reference"/>
+	                		<term name="ssaha_op_overall_confidence_score" description="Overall SNP confidence score: 0-99"/>
+	                		<term name="ssaha_op_offset" description="SNP offset"/>
+	                		<term name="ssaha_op_read_coverage" description="Read coverage"/>
+	                		<term name="ssaha_op_reference_base" description="Reference base"/>
+	                		<term name="ssaha_op_snp_base" description="SNP base"/>
+	                		<term name="ssaha_op_number_of_A" description="Number of A (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_op_number_of_C" description="Number of C (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_op_number_of_G" description="Number of G (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_op_number_of_T" description="Number of T (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_op_number_of_dashes" description="Number of '-'s"/>
+	                		<term name="ssaha_op_number_of_N" description="Number of Ns"/>
+	                		<term name="ssaha_op_number_of_a" description="Number of a (base quality Q&lt;25)"/>
+	                		<term name="ssaha_op_number_of_c" description="Number of c (base quality Q&lt;25)"/>
+	                		<term name="ssaha_op_number_of_g" description="Number of g (base quality Q&lt;25)"/>
+	                		<term name="ssaha_op_number_of_t" description="Number of t (base quality Q&lt;25)"/>
+                		</term>
+                		<term name="ssaha_indel_headers" description="Headers related to indels">
+                			<term name="ssaha_op_insertion_index" description="insertion index"/>
+                			<term name="ssaha_op_deletion_index" description="deletion index"/>
+                			<term name="ssaha_op_chromosome_name" description="Chromosome name"/>
+                			<term name="ssaha_op_reference_offset" description="Reference offset"/>
+                			<term name="ssaha_op_insertion_length" description="Insertion length"/>
+                			<term name="ssaha_op_deletion_length" description="Deletion length"/>
+                			<term name="ssaha_op_number_of_reads_covering_the_deletion_position" description="Number of reads covering the deletion position"/>
+                	        <term name="ssaha_op_read_mapping_score" description="insertion index"/>
+                			<term name="ssaha_op_read_name" description="deletion index"/>
+                			<term name="ssaha_op_read_offset" description="Reference offset"/>
+                			<term name="ssaha_op_alignment_direction" description="Insertion length"/>
+                			<term name="ssaha_op_read_coverage_on_the_reference_base" description="Deletion length"/>
+                			<term name="ssaha_op_number_of_dashes_from_reads_on_the_reference_base" description="Deletion length"/>
+                		</term>
+                   	</term>
+                </term>
+                <term name="maq" description="Mapping and Assembly with Quality It builds assembly by mapping short reads to reference sequences.">
+                	<term name="maq_output_headers" description="Output headers from maq program">
+                		<term name="maq_op_chromosome" description="chromosome" />
+                		<term name="maq_op_position" description="position" />
+                		<term name="maq_op_reference_base" description="reference base" />
+                		<term name="maq_op_consensus_base" description="consensus base" />
+                		<term name="maq_op_phredlike_consensus_quality" description="Phred-like consensus quality" />
+                		<term name="maq_op_read_depth" description="read depth" />
+                		<term name="maq_op_avg_no_of_hits_of_reads_covering_this_position" description="the average number of hits of reads covering this position" />
+                		<term name="maq_op_highest_mapping_quality_of_the_reads_covering_this_position" description="highest mapping quality of the reads covering this position" />
+                		<term name="maq_op_minimum_consensus_quality_in_the_3bp_flanking_regions_at_each_side_of_the_site" description="minimum consensus quality in the 3bp flanking regions at each side of the site" />
+                		<term name="maq_op_the_second_best_call" description="the second best call" />
+                		<term name="maq_op_log_likelihood_ratio_of_the_second_best_and_the_third_best_call" description="log likelihood ratio of the second best and the third best call" />                		<term name="maq_op_third_best_call" description="third best call" />
+                	</term>
+                	<term name="maq_scalar_result" description="Output results that have a single value"/>
+                </term>
+            </term>
+
+            
             <term name="misc_application" description="Applications we couldn't think of where else to put">
                 <term name="RepeatMasker" description="Mask repeats ge for blasting" />
             </term>
@@ -373,7 +450,7 @@ class LoadGeneDbCv {
         <term name="1.6.1" description="Adaptations, atypical conditions"/>
         <term name="1.6.2" description="Osmotic adaptation"/>
         <term name="1.6.3" description="Fe storage"/>
-        <term name="1.6.4  description="Nodulation related"/>
+        <term name="1.6.4"  description="Nodulation related"/>
         <term name="1.7.1" description="Cell division"/>
         <term name="1.8.1" description="Sporulation, differentiation and germination"/>
         <term name="2.0.0" description="Macromolecule metabolism"/>
@@ -489,7 +566,7 @@ class LoadGeneDbCv {
         <term name="4.1.1" description="Inner membrane"/>
         <term name="4.1.2" description="Murein sacculus, peptidoglycan"/>
         <term name="4.1.3" description="Outer membrane constituents"/>
-        <term name="4.1.4" description="Surface polysaccharides & antigens"/>
+        <term name="4.1.4" description="Surface polysaccharides and antigens"/>
         <term name="4.1.5" description="Surface structures"/>
         <term name="4.1.6" description="G+ membrane"/>
         <term name="4.1.7" description="G+ exported/lipoprotein"/>
