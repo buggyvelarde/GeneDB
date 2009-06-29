@@ -1,5 +1,7 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.gmod.schema.utils.CvTermUtils;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.connection.ConnectionProvider;
@@ -12,12 +14,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.CharBuffer;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 
@@ -67,63 +66,8 @@ public class DeleteRedundantGOTerms {
         conn.setAutoCommit(false);
     }
 
-    private void checkCvTermPath() throws SQLException {
-        PreparedStatement st = conn.prepareStatement(
-            " select cv.name, count(cvtermpath.*)"
-            +" from cv left join cvtermpath on cv.cv_id = cvtermpath.cv_id"
-            +" where cv.name in ("
-            +"       'biological_process'"
-            +"     , 'molecular_function'"
-            +"     , 'cellular_component'"
-            +" )"
-            +" group by cv.name"
-        );
-        try {
-            boolean addedToCvTermPath = false;
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                String cvName = rs.getString(1);
-                int count = rs.getInt(2);
-                logger.debug(String.format("There are %d cvtermpath entries for '%s'", count, cvName));
-
-                if (count == 0) {
-                    populateCvTermPath(conn, cvName);
-                    addedToCvTermPath = true;
-                }
-            }
-            if (addedToCvTermPath)
-                analyzeCvTermPath(conn);
-        }
-        finally {
-            try {st.close(); conn.commit();} catch (SQLException e) {logger.error(e);}
-        }
-    }
-
-    private void populateCvTermPath(Connection conn, String cvName) throws SQLException {
-        CallableStatement st = conn.prepareCall("{call fill_cvtermpath(?)}");
-        try {
-            st.setString(1, cvName);
-            logger.info(String.format("Populating cvtermpath for cv '%s'", cvName));
-            st.execute();
-        }
-        finally {
-            try {st.close();} catch (SQLException e) {logger.error(e);}
-        }
-    }
-
-    private void analyzeCvTermPath(Connection conn) throws SQLException {
-        logger.info("Analyzing cvtermpath table");
-        Statement st = conn.createStatement();
-        try {
-            st.execute("analyze cvtermpath");
-        }
-        finally {
-            try { st.close(); } catch (SQLException e) {logger.error(e);}
-        }
-    }
-
     private DeleteRedundantGOTerms deleteRedundantGOTerms() throws SQLException, IOException {
-        checkCvTermPath();
+        CvTermUtils.checkCvTermPath(conn);
 
         PreparedStatement st = conn.prepareStatement(getDeleteRedundantGOTermsSQL());
         try {
