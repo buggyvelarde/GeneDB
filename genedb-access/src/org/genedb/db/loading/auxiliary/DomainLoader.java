@@ -155,11 +155,11 @@ public class DomainLoader extends Loader {
 
     private void loadGroup(DomainFile domainFile, String gene, DomainAcc acc, Polypeptide polypeptide ) {
     	logger.debug("In loadGroup()");
-        DbXRef pfamDbxref = null;
-        if (acc != DomainAcc.NULL) {
-            logger.debug(String.format("Creating Pfam dbxref for '%s' with description '%s'",
+        DbXRef interProDbxref = null;
+        if (acc != DomainAcc.NULL && analysis.getProgram().equals("InterPro")) {
+            logger.debug(String.format("Creating InterPro dbxref for '%s' with description '%s'",
                 acc.getId(), acc.getDescription()));
-            pfamDbxref = objectManager.getDbXRef("Pfam", acc.getId(), acc.getDescription());
+            interProDbxref = objectManager.getDbXRef("InterPro", acc.getId(), acc.getDescription());
         }
 
 
@@ -192,9 +192,10 @@ public class DomainLoader extends Loader {
 										      row.score(),row.acc().getDescription(), row.fmin(), row.fmax(), 
 										      dbxref, row.evalue(), analysis);
 	    
-            // link to Pfam dbxref if applicable
-            if (pfamDbxref != null) {
-                FeatureDbXRef featureDbXRef = new FeatureDbXRef(pfamDbxref, polypeptideDomain, true);
+            // link to InterPro dbxref if applicable
+	    	// this isn't get needed, but will be once InterProLoader is integrated into DomainLoader
+            if (interProDbxref != null && analysis.getProgram().equals("InterPro")) {
+                FeatureDbXRef featureDbXRef = new FeatureDbXRef(interProDbxref, polypeptideDomain, true);
                 sequenceDao.persist(featureDbXRef);
                 polypeptideDomain.addFeatureDbXRef(featureDbXRef);
             }
