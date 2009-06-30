@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-db" default="fulljar-db" basedir=".">
+<project name="genedb-db" default="db-fulljar" basedir=".">
     <description>This project will build the GeneDB (or any generic Chado) interface</description>
 
     <!-- If this file is imported into another build.xml, resolve filenames
