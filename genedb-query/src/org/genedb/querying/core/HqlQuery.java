@@ -44,15 +44,15 @@ public abstract class HqlQuery implements Query {
 
     private static final int MAX_RESULTS = 100000;
     private int maxResults = MAX_RESULTS;
-    
+
     /**
      * Size of result retrieved
      */
     private boolean isActualResultSizeSameAsMax;
-    
-    protected static final String RESTRICT_TO_TRANSCRIPTS_ONLY = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript') ";   
-    
-    protected static final String RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES = " and f.type.name in ('miscRNA', 'snRNA', 'tRNA', 'snoRNA', 'mRNA', 'transcript', 'pseudogenic_transcript')";
+
+    protected static final String RESTRICT_TO_TRANSCRIPTS_ONLY = " and f.type.name in ('mRNA', 'rRNA', 'scRNA', 'snoRNA', 'snRNA', 'snRNA', 'transcript', 'tRNA')";
+
+    protected static final String RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES = " and f.type.name in ('mRNA', 'rRNA', 'scRNA', 'snoRNA', 'snRNA', 'snRNA', 'transcript', 'tRNA', 'pseudogenic_transcript')";
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
@@ -67,18 +67,18 @@ public abstract class HqlQuery implements Query {
         String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
-        
+
         //Set max result to prevent max memory error
         query.setMaxResults(maxResults);
-        
+
         //Run query
         List ret = query.list();
-        
+
         //Get the result size
         if (ret!= null && maxResults==ret.size()){
             isActualResultSizeSameAsMax = true;
         }
-        
+
         return ret;
     }
 
