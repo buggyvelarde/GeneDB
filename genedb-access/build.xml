@@ -230,6 +230,7 @@
         </java>
         <antcall target="delete-redundant-go"/>
     </target>
+	
     <target name="clear-interpro" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearInterPro">
             <arg line="${organism}"/>
@@ -318,7 +319,8 @@
     </target>
     <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
 
-
+	
+    <!-- DGPI -->	 
     <target name="load-dgpi" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="dgpiloader ${file}"/>
@@ -332,9 +334,24 @@
         </java>
     </target>
     <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
+            	
+	<!-- RFAM FEATURES -->
+    <target name="load-rfam" depends="access-fulljar">
+         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
+         	 <arg line="rfamloader --rfam-version=${load.analysis.programVersion} ${organism} ${file}" />
+             <jvmarg line="-server -Xmx256m"/>
+         </java>
+    </target>
+             	
+    <target name="clear-rfam" depends="access-fulljar">
+    	  <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearRfam">
+    	     <arg line="${organism}"/>
+    	     <jvmarg line="-server -Xmx256m"/>
+    	  </java>
+    </target>
+	
+    <target name="reload-rfam" depends="clear-rfam,load-rfam"/>
 
-
-    
 	
 	<!-- HELIX TURN HELIX FEATURES -->
     <target name="load-hth" depends="access-fulljar">
@@ -370,7 +387,7 @@
     	
     <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
 
-
+	<!-- PLASMOAP -->	 
     <target name="load-plasmoap" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="plasmoaploader ${file}"/>

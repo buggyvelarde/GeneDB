@@ -121,7 +121,10 @@
         
      <bean id="hthloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.HTHLoader"/>
-
+        
+     <bean id="rfamloader" parent="auxiliaryLoader" 
+        class="org.genedb.db.loading.RfamLoader" />
+      
     <bean id="dgpiloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.DGPILoader"/>
 
