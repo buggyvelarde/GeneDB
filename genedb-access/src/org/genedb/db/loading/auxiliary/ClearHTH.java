@@ -9,8 +9,8 @@ public class ClearHTH extends Clear {
         Clear.main(ClearHTH.class, args);
     }
 
-    ClearHTH(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
-        super(organismCommonName, analysisProgram);
+    ClearHTH(String organismCommonName) throws ClassNotFoundException, SQLException {
+        super(organismCommonName);
     }
 
   
@@ -29,6 +29,7 @@ public class ClearHTH extends Clear {
    
     @Override
     protected DeleteSpec[] getDeleteSpecs() {
+      
         return new DeleteSpec[] {
             new DeleteSpec("Helix turn helix features", DELETE_HTH_FEATURES_SQL),
         };
