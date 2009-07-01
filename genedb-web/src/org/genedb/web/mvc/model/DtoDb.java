@@ -5,12 +5,17 @@ import org.genedb.web.gui.ImageMapSummary;
 import org.gmod.schema.utils.PeptideProperties;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -20,29 +25,60 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class DtoDb {
+    
+    Logger logger = Logger.getLogger(DtoDb.class);
 
     SimpleJdbcTemplate template;
     
-    public void persistDTO(TranscriptDTO dto) {
+    public int persistDTO(final TranscriptDTO dto) {
+        logger.debug("persistDTO...");
         //Integer index = findDTO(dto.getFeatureId());
         Integer index = findDTO(dto.getTranscriptId());
-        if (index == null) {
-            // Create a new row
+        if (index != null) {
+            return 0;
         }
         
-        persistDTO(index, dto);
-    }
-    
-    
-    private void persistDTO(int index, TranscriptDTO dto) {
-        Map<String, Object> map = Maps.newHashMap();
         
-        template.update("insert into transcript_cache ", map);
-    }
+       
+        return template.update("insert into transcript_cache " +
+                "values(nextval('transcript_cache_seq'),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ", 
+                new PreparedStatementSetter(){
+                    public void setValues(PreparedStatement ps)throws SQLException{
+                        ps.setInt(1, dto.getTranscriptId());
+                        ps.setBoolean(2, dto.isAnAlternateTranscript());
+                        ps.setString(3, dto.getGeneName());
+                        ps.setDate(4, new Date(dto.getLastModified()));
+                        ps.setInt(5, dto.getMax());
+                        ps.setInt(6, dto.getMin());
+                        ps.setString(7, dto.getOrganismCommonName());
+                        ps.setString(8, dto.getOrganismHtmlShortName());
+                        ps.setString(9, dto.getProperName());
+                        ps.setBoolean(10, dto.isProteinCoding());
+                        ps.setBoolean(11, dto.isPseudo());
+                        ps.setShort(12, dto.getStrand());
+                        ps.setString(13, dto.getTopLevelFeatureDisplayName());
+                        ps.setInt(14, dto.getTopLevelFeatureLength());
+                        ps.setString(15, dto.getTopLevelFeatureType());
+                        ps.setString(16, dto.getTopLevelFeatureUniqueName());
+                        ps.setString(17, dto.getTypeDescription());
+                        ps.setString(18, dto.getUniqueName());
+                
 
+//                        ps.setArray(19, dto.getClusterIds().toArray());
+//                        ps.setInt(20, dto.getComments().toArray());
+//                        ps.setInt(21, dto.getNotes().toArray());
+//                        ps.setInt(22, dto.getObsoleteNames().toArray());
+//                        ps.setInt(23, dto.getOrthologueNames().toArray());
+//                        ps.setInt(24, dto.getPublications().toArray());
+//                        ps.setInt(25, dto.getSynonyms().toArray());
+                    }            
+        });        
+
+    }    
 
     public TranscriptDTO retrieveDTO(int featureId) {
         Integer index = findDTO(featureId);
+        
         if (index == null) {
             return null;
         }
@@ -59,7 +95,13 @@ public class DtoDb {
      
 
     private Integer findDTO(int featureId) {
-        return template.queryForInt("select cache_id from transcript_cache where feature_id=%1", featureId);
+        logger.debug("findDTO, featureId: " + featureId);
+        try{
+            return template.queryForInt("select transcript_cache_id from transcript_cache where transcript_id=?", featureId);
+        }catch(EmptyResultDataAccessException e){
+            logger.warn(String.format("No feature id %d found...", featureId));
+            return null;
+        }
     }
 
     
@@ -195,6 +237,15 @@ public class DtoDb {
         }
 
 
+    }
+
+    public SimpleJdbcTemplate getTemplate() {
+        return template;
+    }
+
+
+    public void setTemplate(SimpleJdbcTemplate template) {
+        this.template = template;
     }
 
 }
