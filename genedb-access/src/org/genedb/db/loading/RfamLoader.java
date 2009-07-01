@@ -17,6 +17,7 @@ import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.Organism;
@@ -200,7 +201,7 @@ public class RfamLoader extends Loader{
         Transcript transcript = gene.makeTranscript(transcriptClass, transcriptUniqueName, hit.getGeneMin(), hit.getGeneMax());
                   
         /* Score analysis feature */
-        transcript.createAnalysisFeature(analysis, hit.getScore(), null); 
+        AnalysisFeature analysisFeature = transcript.createAnalysisFeature(analysis, hit.getScore(), null); 
         
         /* Create dbxref (db name = RFAM) */
         DbXRef dbxref = objectManager.getDbXRef(DBNAME, hit.getAccession(), hit.getRnaType());
@@ -208,6 +209,8 @@ public class RfamLoader extends Loader{
         
         /* Commit everything to database */
          sequenceDao.persist(gene);
+         sequenceDao.persist(analysisFeature);
+         /* Might be nice here to have the analysisFeature attached to the transcript and hence you commit the transcript...or the gene */
      
     }
    
@@ -244,11 +247,10 @@ public class RfamLoader extends Loader{
             return hits;
         }
         
-        private final Pattern LINE_PATTERN = Pattern.compile("(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\n"); //\n at the end here does not work - investigate.
+        private final Pattern LINE_PATTERN = Pattern.compile("(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\n"); 
               
         private void parseLine(CharSequence line) {
-            
-           
+                
             Matcher matcher = LINE_PATTERN.matcher(line);
             if (matcher.matches()) {
                 String  chromosomeName = matcher.group(1);
