@@ -32,7 +32,7 @@
                 <a href="${fctdbx.urlPrefix}${fctdbx.accession}">${fctdbx.dbName}:${fctdbx.accession}</a>
             </c:forEach>
             <c:if test="${fctDTO.withFrom != 'null'}">
-                <!-- <a href="${PMID}${fctDTO.withFrom}">-->${fctDTO.withFrom}<!-- </a> -->
+                <!-- <a href="${PMID}${fctDTO.withFrom}">--><db:dbXRefLink dbXRef="${fctDTO.withFrom}" /><!-- </a> -->
             </c:if>
         </td>
         <c:if test="${! (empty cvName)}">
