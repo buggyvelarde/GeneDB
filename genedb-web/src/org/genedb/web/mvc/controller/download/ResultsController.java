@@ -12,7 +12,6 @@ import org.genedb.web.mvc.controller.WebConstants;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -20,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +38,8 @@ public class ResultsController {
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
 
     public static final int DEFAULT_LENGTH = 30;
+    
+    public static final int ID_TO_GENE_SUMMARY_EXPANSION_BATCH = 10;
 
     //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
@@ -92,7 +94,8 @@ public class ResultsController {
         }
 
         ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
-        List<GeneSummary> results = resultEntry.results;
+        List<GeneSummary> results = resultEntry.results;        
+        
 
         logger.debug("The number of results retrieved from cache is '"+results.size()+"'");
         logger.debug("The end marker, before adjustment, is '"+end+"'");
@@ -101,40 +104,21 @@ public class ResultsController {
             end = results.size() + 1;
         }
 
-
-        boolean justSome = true;
-        List<GeneSummary> subset;
-        if (start == 1 && end >= results.size()) {
-            subset = results;
-            justSome = false;
-            logger.debug("The \"subset\" is all of the results!");
-        } else {
-            subset = results.subList(start - 1, end - 1);
-            logger.debug(String.format("The \"subset\" is from %d to %d of %d total results!", start, end, results.size()));
+        List<GeneSummary> possiblyExpanded = null;
+        if (!resultEntry.expanded){
+            possiblyExpanded = possiblyExpandResults(results);
+            resultEntry.expanded = true;
         }
 
-        List<GeneSummary> possiblyExpanded = possiblyExpandResults(subset);
-
         if (possiblyExpanded == null) {
-            possiblyExpanded = subset;
+            possiblyExpanded = results;
             logger.debug("The subset is already expanded");
         } else {
             // Need to update cache
             logger.debug("We've expanded the systematic ids");
-            if (!justSome) {
-                resultEntry.results = possiblyExpanded;
-                resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
-                logger.debug("And stored the set back");
-            } else {
-                // Need to replace subList of resultEntry.results with possiblyExpanded
-                int position = start-1;
-                for (GeneSummary geneSummary : possiblyExpanded) {
-                    resultEntry.results.remove(position);
-                    resultEntry.results.add(position, geneSummary);
-                    position++;
-                }
-
-            }
+            resultEntry.results = possiblyExpanded;
+            resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
+            logger.debug("And stored the set back");
         }
 
         model.addAttribute("results", possiblyExpanded);
@@ -154,21 +138,30 @@ public class ResultsController {
         return "list/results2";
     }
 
+    /**
+     * Expand the current resultset, i.e. to initialise more fields in the list of GeneSummary instances
+     * @param results The un-expanded resultset
+     * @return expanded The expanded resultset 
+     * @throws QueryException
+     */
     private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {
-        boolean needToExpand = false;
-        List<String> ids = Lists.newArrayListWithExpectedSize(results.size());
-        for (GeneSummary geneSummary : results) {
-            if ( ! geneSummary.isConfigured()) {
-                needToExpand = true;
+        List<String> subset = new ArrayList<String>();
+        List<GeneSummary> expanded = new ArrayList<GeneSummary>();        
+        
+        for(int i=0; i<results.size(); ++i){
+
+            subset.add(results.get(i).getSystematicId());
+            if (i % ID_TO_GENE_SUMMARY_EXPANSION_BATCH == 0
+                    || i+1 == results.size()){                
+                //expand current batch
+                List<GeneSummary> converts = convertIdsToGeneSummaries(subset);
+                expanded.addAll(converts);
+                subset.clear();
             }
-            ids.add(geneSummary.getSystematicId());
         }
 
-        if (! needToExpand) {
-            return null;
-        }
-
-        List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
+        //Sort overall result
+        Collections.sort(expanded);
         return expanded;
     }
 
@@ -189,4 +182,3 @@ public class ResultsController {
     }
 
 }
-
