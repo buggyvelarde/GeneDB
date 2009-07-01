@@ -4,13 +4,15 @@ import java.sql.SQLException;
 
 /* Deletes any existing helix-turn-helix features for the chosen organism */
 
+
+
 public class ClearHTH extends Clear {
     public static void main(String[] args) throws Exception {
         Clear.main(ClearHTH.class, args);
     }
 
-    ClearHTH(String organismCommonName) throws ClassNotFoundException, SQLException {
-        super(organismCommonName);
+    ClearHTH(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
+        super(organismCommonName, analysisProgram);
     }
 
   
