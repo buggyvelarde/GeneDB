@@ -6,6 +6,7 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,15 +35,16 @@ public class GeneTypeQuery extends OrganismLuceneQuery {
                 new TermQuery(
                         new Term("type.name", type)));
     }
-    
+
     @Override
     public Map<String, Object> prepareModelData() {
-        Map<String, String> typeMap = new HashMap<String, String>();
+        Map<String, String> typeMap = new LinkedHashMap<String, String>();
         typeMap.put("mRNA", "protein-coding");
         typeMap.put("pseudogene", "pseudogene");
-        typeMap.put("tRNA", "tRNA");
+        typeMap.put("rRNA", "rRNA");
         typeMap.put("snoRNA", "snoRNA");
         typeMap.put("snRNA", "snRNA");
+        typeMap.put("tRNA", "tRNA");
         typeMap.put("transcript", "miscRNA");
 
         Map<String, Object> ret = new HashMap<String, Object>();
