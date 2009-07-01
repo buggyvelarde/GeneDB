@@ -180,11 +180,11 @@ public class DomainLoader extends Loader {
                 accessionNumber = row.nativeAcc();
             }
             if (n == 0) {
-                domainUniqueName = String.format("%s:Domain:%s",
-                    polypeptide.getUniqueName(), accessionNumber);
+                domainUniqueName = String.format("%s:%s:%s",
+                    polypeptide.getUniqueName(), row.db(), accessionNumber);
             } else {
-                domainUniqueName = String.format("%s:Domain:%s:%d",
-                    polypeptide.getUniqueName(), accessionNumber, n);
+                domainUniqueName = String.format("%s:%s:%s:%d",
+                    polypeptide.getUniqueName(), row.db(), accessionNumber, n);
             }
 
 
