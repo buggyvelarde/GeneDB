@@ -53,7 +53,7 @@ class LoadGeneDbCv {
 
          relationDataSet = db.dataSet("cvterm_relationship")
 
-        List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='genedb_misc' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
+        List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='relationship' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
         REL_IS_A = relations[0]."cvterm_id";
 
     }
