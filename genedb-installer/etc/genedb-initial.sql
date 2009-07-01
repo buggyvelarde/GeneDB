@@ -2,6 +2,8 @@
 -- --- Structural additions
 -- ----------------------
 create unique index cvterm_idx_genedb1 on cvterm (lower(name), cv_id, is_obsolete);
+create index feature_genedb_idx1 on feature (organism_id, type_id, feature_id);
+
 
 -- ----------------------
 -- --- Functions
