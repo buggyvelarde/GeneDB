@@ -7,22 +7,26 @@ import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.AfterClass;
+import org.hibernate.jdbc.Work;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.SortedSet;
 
 public class InterProLoaderTest {
+	private static final Logger logger = Logger.getLogger(InterProLoaderTest.class);
     private static InterProLoader loader;
 
     @BeforeClass
@@ -115,12 +119,17 @@ public class InterProLoaderTest {
         }
     }
 
-    @AfterClass @SuppressWarnings("deprecation")
+    @Transactional
     public static void shutdownDatabase() throws HibernateException, SQLException {
         Session session = SessionFactoryUtils.getSession(loader.getSessionFactory(), true);
-
-        // When session.connection() is deprecated, change to use doWork(Work)
-        // and remove the @SuppressWarnings("deprecation").
-        session.connection().createStatement().execute("shutdown");
+        session.doWork(new Work() {
+        		public void execute(Connection connection) {
+        			try {
+        				connection.createStatement().execute("shutdown");
+        			} catch (SQLException e) {
+        				logger.error("Failed to shutdown database", e);
+        			}
+        		}
+        });
     }
 }
