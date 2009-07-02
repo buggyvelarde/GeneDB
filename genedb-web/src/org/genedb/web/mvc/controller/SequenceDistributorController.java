@@ -95,7 +95,7 @@ public class SequenceDistributorController {
                 }
             }
         }
-        
+
         //String sequence = sequenceDao.fetchSequence(transcript, start, end, introns);
 
         sequence = splitSequenceIntoLines(sequence);
@@ -113,7 +113,7 @@ public class SequenceDistributorController {
             break;
         case NCBI_BLAST:
             if (nucleotide) {
-                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&PAGE_TYPE=BlastSearch&" +
+                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr&PAGE_TYPE=BlastSearch&" +
                 		"SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
             } else {
                 url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&" +
@@ -143,7 +143,7 @@ public class SequenceDistributorController {
     	} else {
     		logger.error("Sequences differ");
     	}
-		
+
 	}
 
 	private int LINE_LENGTH = 40;
