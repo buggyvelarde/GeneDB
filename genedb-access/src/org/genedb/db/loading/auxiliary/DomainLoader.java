@@ -8,11 +8,16 @@ import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -201,6 +206,16 @@ public class DomainLoader extends Loader {
             }
 
         }
+    }
+    
+    @Transactional
+    void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        session.doWork(new Work() {
+			public void execute(Connection connection) throws SQLException {
+				new ClearDomains(connection, organismCommonName, analysisProgram).clear();
+			}
+        });
     }
 }
 
