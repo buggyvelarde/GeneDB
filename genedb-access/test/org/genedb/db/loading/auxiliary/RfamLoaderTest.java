@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.Work;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,7 +24,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 /****************************************************************************************************************************************
@@ -31,6 +34,11 @@ import java.util.List;
  * that the tests will work against the hsql pfalciparum database. Once rfam is run against pfalciparum for real, this
  * test file should be replaced with actual results and the expected number of transcripts, type of RNA in the first row and
  * chromosome name (constants below) changed accordingly.
+ * 
+ * SAMPLE USAGE: ant rfam-test -Dconfig=bigtest5
+ * 
+ * The config argument is not really used by the test but the build.xml file complains if it is not included.
+ * 
  * TODO: Investigate the use of FeatureTester to check properties of genes and transcripts instead of writing them out here
  * 
  * @author nds
@@ -47,11 +55,12 @@ public class RfamLoaderTest {
     private Gene gene;
     private Transcript transcript;
     private static Chromosome chromosome; 
-    private Analysis analysis;
+    private static Analysis analysis;
     private static SessionFactory sessionFactory; 
     private static Session session;
     private static String analysisProgramVersion = "9.1"; //When running the rfamloader, the version will get picked up from command line. Here we insert it manually
 
+    @SuppressWarnings("unchecked")
     @BeforeClass
     public static void setup() throws IOException, HibernateException, SQLException, ClassNotFoundException {
         
@@ -69,25 +78,19 @@ public class RfamLoaderTest {
         /*Get the chromosome object */
         chromosome = (Chromosome)session.createQuery("from Feature where uniquename='" + CHROMOSOME_NAME + "'").uniqueResult();
         assertNotNull(chromosome);
-    }
-    
-    /**
-     * Tests if the rfam analysis has been added and, if so, the following properties of the analysis are checked:
-     * Program
-     * ProgramVersion 
-     * Time
-     */
-    
-    @SuppressWarnings("unchecked") //Remove after sorting out type safety issue below
-    @Test
-    public void testRfamAnalysis(){
+        
+        /*Get the analysis object */
         List<Analysis> analysisList = session.createQuery("from Analysis where program='rfam'").list();
         assertEquals(analysisList.size(),1);
         analysis = analysisList.get(0);
+        assertNotNull(analysis);
         assertEquals(analysis.getProgram(), "rfam");
         assertEquals(analysis.getProgramVersion(), analysisProgramVersion);
-        //Check time also - how?
+        //Check the time of the analysis also - how?
+        
     }
+    
+   
     
     /**
      * The loading process is expected to result in the creation of a number of genes. Here, we test the following properties of one
@@ -173,28 +176,34 @@ public class RfamLoaderTest {
         assertEquals(featureLocList.size(), 1); //There should only be one associated feature Loc
         FeatureLoc featureLoc = featureLocList.get(0);
         System.out.println("Featureloc details for feature " + featureLoc.getFeature().getFeatureId() + ":" + featureLoc.getFmin() + " - " + featureLoc.getFmax());
-        assertEquals(featureLoc.getFmin().intValue(), 2004527);
-        assertEquals(featureLoc.getFmax().intValue(), 2004566);
+        assertEquals(featureLoc.getFmin().intValue(), 1882443);
+        assertEquals(featureLoc.getFmax().intValue(), 1882574);
         assertEquals(featureLoc.getStrand().intValue(), -1);
         assertEquals(featureLoc.getRank(), 0);
         assertEquals(featureLoc.getSourceFeature().getFeatureId(), chromosome.getFeatureId());
         
         /*Tests on analysisfeature */
-        List<AnalysisFeature> analysisFeatureList = (List)transcript.getAnalysisFeatures();
-        assertEquals(analysisFeatureList.size(), EXPECTED_NUMBER_OF_GENES_AND_TRANSCRIPTS); 
-        AnalysisFeature analysisFeature = analysisFeatureList.get(0);
+        Collection<AnalysisFeature> analysisFeatureList = transcript.getAnalysisFeatures();
+        assertEquals(analysisFeatureList.size(), 1); //There should only be one associated analysisFeature
+        AnalysisFeature analysisFeature = analysisFeatureList.iterator().next();
+        if(analysis==null){
+            System.out.println("Analysis object is null");
+        }else if (analysisFeature.getAnalysis()==null){
+            System.out.println("Analysis Feature's analysis is null");
+        }
         assertEquals(analysisFeature.getAnalysis().getAnalysisId(), analysis.getAnalysisId());
         assertEquals(analysisFeature.getRawScore().toString(), new Double(77.01).toString());      
     }
     
   
     @AfterClass 
-    @SuppressWarnings("deprecation")
     public static void shutdownDatabase() throws HibernateException, SQLException {
-
-        // When session.connection() is deprecated, change to use doWork(Work)
-        // and remove the @SuppressWarnings("deprecation").
-        session.connection().createStatement().execute("shutdown");
+        /* Close database and release session */
+        session.doWork(new Work() {
+            public void execute(Connection connection) throws SQLException {
+                connection.createStatement().execute("shutdown");
+            }
+        }); 
         SessionFactoryUtils.releaseSession(session, sessionFactory);
     }
 }
