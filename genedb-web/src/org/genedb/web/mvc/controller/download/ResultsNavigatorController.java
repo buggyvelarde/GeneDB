@@ -36,8 +36,8 @@ public class ResultsNavigatorController {
             //@RequestParam(value="taxonNodeName", required=false) String taxonNodeName
             ) {
 
-        if (session.isNew()){
-            logger.warn("There is no session - redirecting to force one.");
+        if (!key.startsWith(session.getId())){
+            logger.warn("The key doesn't match the session - redirecting to error.");
             session.setAttribute(WebConstants.FLASH_MSG, "Your session has timed out - Please repeat your search.");
             return new ModelAndView("redirect:/QueryList");
         }
