@@ -1,6 +1,5 @@
 package org.genedb.db.loading.auxiliary;
 
-import org.genedb.db.loading.ParsingException;
 import org.genedb.util.TwoKeyMap;
 
 import org.apache.log4j.Logger;
@@ -9,12 +8,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 
 /**
