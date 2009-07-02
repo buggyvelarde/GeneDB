@@ -1,5 +1,6 @@
 package org.genedb.db.loading.auxiliary;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,7 +31,11 @@ public class ClearDomains extends Clear {
     ClearDomains(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
         super(organismCommonName, analysisProgram);
     }
-
+    
+    ClearDomains(Connection conn, String organismCommonName, String analysisProgram) {
+        super(conn, organismCommonName, analysisProgram);
+    }
+    
 	private static final String DELETE_DOMAINS_SQL
     = "delete from feature"
         +" where feature_id in ("
@@ -39,13 +44,14 @@ public class ClearDomains extends Clear {
         +" join organism on feature.organism_id = organism.organism_id"
         +" join cvterm feature_type on feature_type.cvterm_id = feature.type_id"
         +" join cv feature_type_cv on feature_type.cv_id = feature_type_cv.cv_id"
-	+" join analysisfeature using (feature_id)"
-	+" join analysis using (analysis_id)"
+	+" join analysisfeature on analysisfeature.feature_id = feature.feature_id"
+	+" join analysis on analysis.analysis_id = analysisfeature.analysis_id"
         +" where feature_type.name = 'polypeptide_domain'"
         +" and feature_type_cv.name = 'sequence'"
 	+" and program = ?"
         +" and organism.common_name = ?)";
-
+	
+	
     @Override
     protected DeleteSpec[] getDeleteSpecs() {
         return new DeleteSpec[] {
