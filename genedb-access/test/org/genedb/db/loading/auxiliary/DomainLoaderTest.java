@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.Work;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -29,21 +30,21 @@ import java.util.TreeSet;
 public class DomainLoaderTest {
 	private static final Logger logger = Logger.getLogger(DomainLoaderTest.class);
     private static DomainLoader loader;
-    
+
     @BeforeClass
     public static void setup() throws IOException, HibernateException, SQLException, ClassNotFoundException, Exception {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
             new String[] {"Load.xml", "AuxTest.xml"});
 
         loader = ctx.getBean("domainloader", DomainLoader.class);
+       
         assertTrue(loader.processOptionIfValid("key-type", "polypeptide")); 
         assertTrue(loader.processOptionIfValid("program", "pfam_scan"));       
         loader.analysisProgramVersion = "unknown";
         loader.notFoundNotFatal = true;
-        
-        String[] args = {"Pfalciparum", "pfam_scan"};
-        ClearDomains.main(args);
-         new Load(loader).load("test/data/Pfalciparum.pfam");
+
+        loader.clear("Pfalciparum", "pfam_scan");
+        new Load(loader).load("test/data/Pfalciparum.pfam");
 	
     }
 
@@ -92,11 +93,12 @@ public class DomainLoaderTest {
             SessionFactoryUtils.releaseSession(session, sessionFactory);
         }
     }
-
+    
+    @AfterClass
     @Transactional
     public static void shutdownDatabase() throws HibernateException, SQLException {
-        Session session = SessionFactoryUtils.getSession(loader.getSessionFactory(), true);
-        session.doWork(new Work() {
+       Session session = SessionFactoryUtils.getSession(loader.getSessionFactory(), true);
+       session.doWork(new Work() {
         		public void execute(Connection connection) {
         			try {
         				connection.createStatement().execute("shutdown");
