@@ -165,6 +165,14 @@
 
     <target name="delete-orthologues" depends="access-fulljar">
 
+        <fail message="Manual orthologue predictions can't be deleted. (Are you using reload-orthologues not load-orthologues?)">
+         <condition>
+             <and>
+                 <isset property="load.orthologues.manual"/>
+             </and>
+         </condition>
+        </fail>
+    	
        <fail message="The properties load.dataset and load.analysis.algorithm must be specified">
         <condition>
           <not>
