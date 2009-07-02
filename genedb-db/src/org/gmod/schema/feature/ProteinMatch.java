@@ -149,6 +149,16 @@ public class ProteinMatch extends Match {
         thisIsACluster();
         return this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
+    
+    /**
+     * Add a paralogue link from the specified polypeptide to this cluster.
+     * @param source the source polypeptide
+     * @return the new FeatureRelationship relating the polypeptide to this cluster
+     */
+    public FeatureRelationship addParalogue(Polypeptide source) {
+        thisIsACluster();
+        return this.addFeatureRelationship(source, "sequence", "paralogous_to");
+    }   
 
     /**
      * Get all the polypeptides that belong to this cluster.

@@ -303,6 +303,14 @@ public class Polypeptide extends Region {
         return this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
 
+    /**
+     * Add an paralogue link from the specified polypeptide to this one.
+     * @param source the source polypeptide
+     * @return the newly-created FeatureRelationship object
+     */
+    public FeatureRelationship addParalogue(Polypeptide source) {
+        return this.addFeatureRelationship(source, "sequence", "paralogous_to");
+    }
 
     @Transient
     @Field(name="signalP", index=Index.UN_TOKENIZED, store=Store.NO)
