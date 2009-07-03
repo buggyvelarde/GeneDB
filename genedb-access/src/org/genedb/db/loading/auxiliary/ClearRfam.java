@@ -40,7 +40,7 @@ public class ClearRfam extends Clear {
    
     @Override
     protected DeleteSpec[] getDeleteSpecs() {
-    
+ 
         return new DeleteSpec[] {
           new DeleteSpec("Rfam features", DELETE_RFAM_FEATURES_SQL),
         };
