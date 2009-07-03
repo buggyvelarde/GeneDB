@@ -134,6 +134,7 @@ public class RfamLoader extends Loader{
         analysis = new Analysis();
         analysis.setProgram("rfam");
         analysis.setProgramVersion(analysisProgramVersion);
+        System.out.println("version" + analysisProgramVersion);
         sequenceDao.persist(analysis);
        
         RfamFile file = new RfamFile(inputStream);
@@ -208,12 +209,13 @@ public class RfamLoader extends Loader{
         
         /* Create dbxref (db name = RFAM) */
         DbXRef dbxref = objectManager.getDbXRef(DBNAME, hit.getAccession(), hit.getRnaType());
-        transcript.addDbXRef(dbxref);
+        transcript.setDbXRef(dbxref);
         
         /* Commit everything to database */
-         sequenceDao.persist(gene);
-         sequenceDao.persist(analysisFeature);
-  
+        sequenceDao.persist(dbxref);
+        sequenceDao.persist(gene);
+        sequenceDao.persist(analysisFeature);
+         
      
     }
     
@@ -221,10 +223,9 @@ public class RfamLoader extends Loader{
     public void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         session.doWork(new Work() {
-                       public void execute(Connection connection) throws SQLException {
-                     
-                                new ClearRfam(connection, organismCommonName, analysisProgram).clear();
-                        }
+               public void execute(Connection connection) throws SQLException {
+                    new ClearRfam(connection, organismCommonName, analysisProgram).clear();
+               }
         });
     }
     
