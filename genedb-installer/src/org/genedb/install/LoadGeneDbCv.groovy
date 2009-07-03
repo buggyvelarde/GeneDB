@@ -37,9 +37,9 @@ class LoadGeneDbCv {
 
     LoadGeneDbCv() {
         db = Sql.newInstance(
-            'jdbc:postgresql://localhost:5432/pathogens',
+            'jdbc:postgresql://pathdbsrv1b:10120/bigtest5',
             'pathdb',
-            'pathdb',
+            'Pyrate_2',
             'org.postgresql.Driver')
             
 
@@ -347,6 +347,12 @@ class LoadGeneDbCv {
 
         <term name="GPI_anchor_cleavage_site_property" description="A property of a GPI_anchor_cleavage_site feature">
             <term name="GPI_cleavage_site_score" description="The score assigned to this GPI cleavage site by dgpi"/>
+        </term>
+        
+        <term name="HTH_property" description="A property of a helix-turn-helix motif">
+        	<term name="Maximum_score_at" description"Maximum score in a helix turn helix hit"/> <!-- Get proper description -->
+        	<term name="Standard_deviations" description"Standard deviations"/> <!-- Get proper description -->
+        	
         </term>
 
         <term name="feature_cvterm_props" description="Keys for storing information specifically for FeatureCvTermProps">
