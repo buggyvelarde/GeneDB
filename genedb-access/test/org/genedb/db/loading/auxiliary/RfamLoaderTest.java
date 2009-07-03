@@ -30,10 +30,10 @@ import java.util.Collection;
 import java.util.List;
 
 /****************************************************************************************************************************************
- * Tests the rfamloader class. At the moment, we have created a fictititous set of rfam results for pfalciparum so 
- * that the tests will work against the hsql pfalciparum database. Once rfam is run against pfalciparum for real, this
+ * Tests the rfamloader class. At the moment, we have created a fictititous set of rfam results for pfalciparum (based on the ones for 
+ * Bcenocepacia) so that the tests will work against the hsql pfalciparum database. Once rfam is run against pfalciparum for real, this
  * test file should be replaced with actual results and the expected number of transcripts, type of RNA in the first row and
- * chromosome name (constants below) changed accordingly.
+ * chromosome name changed accordingly.
  * 
  * SAMPLE USAGE: ant rfam-test -Dconfig=bigtest5
  * 
@@ -48,8 +48,9 @@ public class RfamLoaderTest {
     //Constants
     private static final Logger logger = Logger.getLogger(RfamLoaderTest.class);
     private static final int EXPECTED_NUMBER_OF_GENES_AND_TRANSCRIPTS = 4;
-    private static String CHROMOSOME_NAME = "Pf3D7_01";
-    private static String TYPE_OF_FIRST_TRANSCRIPT = "ncRNA";
+    private static final String CHROMOSOME_NAME = "Pf3D7_01";
+    private static final String TYPE_OF_FIRST_TRANSCRIPT = "ncRNA";
+    private static final String FILE_NAME = "Pfalciparum.rfam_scan";
     //Configurable
     private static RfamLoader loader;
     private Gene gene;
@@ -64,8 +65,9 @@ public class RfamLoaderTest {
     @BeforeClass
     public static void setup() throws IOException, HibernateException, SQLException, ClassNotFoundException {
         
-        /* Here we set the application context and extract the rfamloader bean. Then we delete any existing rfam features from the test database and
-         * load the test results.  */
+        /* Here we set the application context and extract the rfamloader bean. 
+         * Then we delete any existing rfam features from the test database and
+         * load the test results. Then we test the chromosome and analysis objects. */
         
         ApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "AuxTest.xml"});
         loader = ctx.getBean("rfamloader", RfamLoader.class);
@@ -73,21 +75,18 @@ public class RfamLoaderTest {
         sessionFactory = loader.getSessionFactory();
         session = SessionFactoryUtils.getSession(sessionFactory, true);
         loader.clear("Pfalciparum", null); 
-        new Load(loader).load("test/data/Pfalciparum-rfam.fa.o"); 
+        new Load(loader).load("test/data/" + FILE_NAME); 
 
-        /*Get the chromosome object */
         chromosome = (Chromosome)session.createQuery("from Feature where uniquename='" + CHROMOSOME_NAME + "'").uniqueResult();
         assertNotNull(chromosome);
         
-        /*Get the analysis object */
         List<Analysis> analysisList = session.createQuery("from Analysis where program='rfam'").list();
         assertEquals(analysisList.size(),1);
         analysis = analysisList.get(0);
         assertNotNull(analysis);
         assertEquals(analysis.getProgram(), "rfam");
         assertEquals(analysis.getProgramVersion(), analysisProgramVersion);
-        //Check the time of the analysis also - how?
-        
+        //TODO: Check the time of the analysis also - how?
     }
     
    
@@ -175,7 +174,6 @@ public class RfamLoaderTest {
         List<FeatureLoc> featureLocList = transcript.getFeatureLocs();
         assertEquals(featureLocList.size(), 1); //There should only be one associated feature Loc
         FeatureLoc featureLoc = featureLocList.get(0);
-        System.out.println("Featureloc details for feature " + featureLoc.getFeature().getFeatureId() + ":" + featureLoc.getFmin() + " - " + featureLoc.getFmax());
         assertEquals(featureLoc.getFmin().intValue(), 1882443);
         assertEquals(featureLoc.getFmax().intValue(), 1882574);
         assertEquals(featureLoc.getStrand().intValue(), -1);
@@ -186,11 +184,7 @@ public class RfamLoaderTest {
         Collection<AnalysisFeature> analysisFeatureList = transcript.getAnalysisFeatures();
         assertEquals(analysisFeatureList.size(), 1); //There should only be one associated analysisFeature
         AnalysisFeature analysisFeature = analysisFeatureList.iterator().next();
-        if(analysis==null){
-            System.out.println("Analysis object is null");
-        }else if (analysisFeature.getAnalysis()==null){
-            System.out.println("Analysis Feature's analysis is null");
-        }
+        
         assertEquals(analysisFeature.getAnalysis().getAnalysisId(), analysis.getAnalysisId());
         assertEquals(analysisFeature.getRawScore().toString(), new Double(77.01).toString());      
     }
