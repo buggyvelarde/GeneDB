@@ -3,27 +3,29 @@ package org.genedb.db.loading.auxiliary;
 import org.gmod.schema.feature.HelixTurnHelix;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Analysis;
-import org.gmod.schema.mapped.CvTerm;
-import org.gmod.schema.mapped.Feature;
-import org.gmod.schema.mapped.FeatureProp;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Class to load helix-turn-helix features. The results are expected in a certain format specified by the pattern object below.
+ * TODO: Add the capability to handle version number when version is known
  * 
  * @author nds
  *
@@ -32,8 +34,9 @@ import java.util.regex.Pattern;
 
 public class HTHLoader extends Loader {
     private static final Logger logger = Logger.getLogger(HTHLoader.class);
+    private int number = 0;
 
-    String analysisProgramVersion = "unknown"; //Cannot be null in database; get right version number when known
+    String analysisProgramVersion = "unknown"; //Cannot be null in database; get right version number when known; update code to handle commandline args
     private Analysis analysis;
 
     @Override
@@ -54,6 +57,7 @@ public class HTHLoader extends Loader {
                 session.clear();
             }
         }
+
     }
 
 
@@ -64,6 +68,8 @@ public class HTHLoader extends Loader {
         if (polypeptide == null) {
             logger.error(String.format("Could not find polypeptide for key '%s'", hit.getName()));
             return;
+        }else {
+            number++;
         }
        
         //All hits should be of type helix-turn-helix at this stage. 
@@ -72,6 +78,19 @@ public class HTHLoader extends Loader {
         sequenceDao.persist(helixTurnHelix);
         
     }
+    
+    @Transactional
+    public void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        session.doWork(new Work() {
+               public void execute(Connection connection) throws SQLException {
+                    new ClearHTH(connection, organismCommonName, analysisProgram).clear();
+               }
+        });
+    }
+    
+    
+    
 }
 
 /* Class corresponding to HTH file */
