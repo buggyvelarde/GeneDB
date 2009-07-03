@@ -111,6 +111,16 @@
         </junit>
     </target>
     
+	<!-- HTH Loader Test -->
+    <target name="hth-test" depends="compile-tests">
+        <antcall target="copy-pfalciparum-database"/>
+        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
+        	 <classpath refid="test-classpath"/>
+        	 <formatter type="brief" usefile="false" />
+        	 <test name="org.genedb.db.loading.auxiliary.HTHLoaderTest"/>
+        </junit>
+    </target>
+        	      	
 	
     <target name="domainloader-test" depends="compile-tests">
         <antcall target="copy-pfalciparum-database"/>
