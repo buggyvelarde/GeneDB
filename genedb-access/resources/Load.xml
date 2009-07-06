@@ -134,6 +134,8 @@
     <bean id="opi-referencesloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.OPIReferenceLoader"/>
 
+    <bean id="goaloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.GOALoader"/>
 
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
