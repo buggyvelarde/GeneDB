@@ -19,7 +19,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,10 +38,26 @@ import java.util.regex.Pattern;
 public class HTHLoader extends Loader {
     private static final Logger logger = Logger.getLogger(HTHLoader.class);
     private int number = 0;
-
-    String analysisProgramVersion = "unknown"; //Cannot be null in database; get right version number when known; update code to handle commandline args
+    private String analysisProgramVersion = "unknown"; //Cannot be null in database; get right version number when known; update code to handle commandline args
     private Analysis analysis;
+    
+    @Override
+    protected Set<String> getOptionNames() {
+        Set<String> options = new HashSet<String>();
+        Collections.addAll(options, "hth-version");
+        return options;
+    }
+    
+    @Override
+    protected boolean processOption(String optionName, String optionValue) {
+       if (optionName.equals("hth-version")) {
+            analysisProgramVersion = optionValue;
+            return true;
+        }
+        return false;
+    }
 
+  
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         // Add analysis 
@@ -74,7 +93,7 @@ public class HTHLoader extends Loader {
        
         //All hits should be of type helix-turn-helix at this stage. 
         //The createHelixTurnHelix method takes all the essential information from a hit and creates the corresponding feature & featureloc 
-        HelixTurnHelix helixTurnHelix = sequenceDao.createHelixTurnHelix(polypeptide, hit.getStart(), hit.getEnd(), hit.getScore(), analysis);
+        HelixTurnHelix helixTurnHelix = sequenceDao.createHelixTurnHelix(polypeptide, hit.getStart(), hit.getEnd(),  hit.getScore(), hit.getMaxScoreAt(), hit.getStdDeviations(), analysis);
         sequenceDao.persist(helixTurnHelix);
         
     }
@@ -149,7 +168,7 @@ class HTHFile {
             String score = matcher.group(5);
             String strand = matcher.group(6);
             int maxScoreAt = Integer.parseInt(matcher.group(7));
-            double stdDeviations = Double.parseDouble(matcher.group(8));
+            String stdDeviations = new Double(matcher.group(8)).toString();
 
             hits.add(new HTHHit(name, start, end, length, score, strand, maxScoreAt, stdDeviations));
           
@@ -164,11 +183,10 @@ class HTHFile {
 /* Each 'hit' corresponds to a paragraph beginning with the word 'Feature' in the .hth file */
 class HTHHit {
     
-    private String name, strand,score;
+    private String name, strand,score, stdDeviations;
     private int start, end, length, maxScoreAt;
-    private double stdDeviations;
   
-    public HTHHit(String name, int start, int end, int length, String score, String strand, int maxScoreAt, double stdDeviations) {
+    public HTHHit(String name, int start, int end, int length, String score, String strand, int maxScoreAt, String stdDeviations) {
         this.name = name;
         this.start = start;
         this.end = end;
@@ -203,7 +221,7 @@ class HTHHit {
         return maxScoreAt;
     }
 
-    public double getStdDeviations() {
+    public String getStdDeviations() {
         return stdDeviations;
     }
 
