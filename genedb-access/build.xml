@@ -247,6 +247,7 @@
     </target>
     <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
             	
+    <!-- DOMAINLOADER- pfam & prosite -->
 	<target name="load-pfam" depends="check-domain-properties">
 		<antcall target="load-domain-gene-ids">
 			<param name="program" value="pfam_scan"/>
@@ -312,7 +313,8 @@
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-	                       	           	            	
+	                
+	<!-- TMHMM -->
     <target name="load-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} ${file}"/>
@@ -410,7 +412,13 @@
     </target>
     <target name="reload-plasmoap" depends="clear-plasmoap,load-plasmoap"/>
 
-
+    <!-- GOALoader -->
+	<target name="goaloader" depends="access-fulljar">
+		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load"/>
+		<arg line="goaloader ${organism} ${file}"/>
+		<jvmarg line="-server -Xmx256m"/>
+	</target>
+            	
     <target name="delete-redundant-go" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
     </target>
