@@ -263,57 +263,57 @@ class LoadGeneDbCv {
             	<term name="commandline_str" description="Full command line string used to execute the application" />
                 <term name="ssaha" description="tool for very fast matching and alignment of DNA sequences">
                 	<term name="ssaha_scalar_result" description="Output that results in a single value for the whole data set">
-                		<term name="ssaha_op_number_of_cell_lines" description="number of cell lines"/>
+                		<term name="ssaha_number_of_cell_lines" description="number of cell lines"/>
                 	</term>
                  	<term name="ssaha_multivalue_result" description="Output results that has a list of values">
                  		<term name="ssaha_snp_headers" description="Headers related to SNPs">
-	                		<term name="ssaha_op_name_of_chromosome_reference" description="name of chromosome reference"/>
-	                		<term name="ssaha_op_overall_confidence_score" description="Overall SNP confidence score: 0-99"/>
-	                		<term name="ssaha_op_offset" description="SNP offset"/>
-	                		<term name="ssaha_op_read_coverage" description="Read coverage"/>
-	                		<term name="ssaha_op_reference_base" description="Reference base"/>
-	                		<term name="ssaha_op_snp_base" description="SNP base"/>
-	                		<term name="ssaha_op_number_of_A" description="Number of A (base quality Q&gt;=0)"/>
-	                		<term name="ssaha_op_number_of_C" description="Number of C (base quality Q&gt;=0)"/>
-	                		<term name="ssaha_op_number_of_G" description="Number of G (base quality Q&gt;=0)"/>
-	                		<term name="ssaha_op_number_of_T" description="Number of T (base quality Q&gt;=0)"/>
-	                		<term name="ssaha_op_number_of_dashes" description="Number of '-'s"/>
-	                		<term name="ssaha_op_number_of_N" description="Number of Ns"/>
-	                		<term name="ssaha_op_number_of_a" description="Number of a (base quality Q&lt;25)"/>
-	                		<term name="ssaha_op_number_of_c" description="Number of c (base quality Q&lt;25)"/>
-	                		<term name="ssaha_op_number_of_g" description="Number of g (base quality Q&lt;25)"/>
-	                		<term name="ssaha_op_number_of_t" description="Number of t (base quality Q&lt;25)"/>
+	                		<term name="ssaha_name_of_chromosome_reference" description="name of chromosome reference"/>
+	                		<term name="ssaha_overall_confidence_score" description="Overall SNP confidence score: 0-99"/>
+	                		<term name="ssaha_offset" description="SNP offset"/>
+	                		<term name="ssaha_read_coverage" description="Read coverage"/>
+	                		<term name="ssaha_reference_base" description="Reference base"/>
+	                		<term name="ssaha_snp_base" description="SNP base"/>
+	                		<term name="ssaha_number_of_A" description="Number of A (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_number_of_C" description="Number of C (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_number_of_G" description="Number of G (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_number_of_T" description="Number of T (base quality Q&gt;=0)"/>
+	                		<term name="ssaha_number_of_dashes" description="Number of - s"/>
+	                		<term name="ssaha_number_of_N" description="Number of Ns"/>
+	                		<term name="ssaha_number_of_a_bq_lt_25" description="Number of a (base quality Q&lt;25)"/>
+	                		<term name="ssaha_number_of_c_bq_lt_25" description="Number of c (base quality Q&lt;25)"/>
+	                		<term name="ssaha_number_of_g_bq_lt_25" description="Number of g (base quality Q&lt;25)"/>
+	                		<term name="ssaha_number_of_t_bq_lt_25" description="Number of t (base quality Q&lt;25)"/>
                 		</term>
                 		<term name="ssaha_indel_headers" description="Headers related to indels">
-                			<term name="ssaha_op_insertion_index" description="insertion index"/>
-                			<term name="ssaha_op_deletion_index" description="deletion index"/>
-                			<term name="ssaha_op_chromosome_name" description="Chromosome name"/>
-                			<term name="ssaha_op_reference_offset" description="Reference offset"/>
-                			<term name="ssaha_op_insertion_length" description="Insertion length"/>
-                			<term name="ssaha_op_deletion_length" description="Deletion length"/>
-                			<term name="ssaha_op_number_of_reads_covering_the_deletion_position" description="Number of reads covering the deletion position"/>
-                	        <term name="ssaha_op_read_mapping_score" description="insertion index"/>
-                			<term name="ssaha_op_read_name" description="deletion index"/>
-                			<term name="ssaha_op_read_offset" description="Reference offset"/>
-                			<term name="ssaha_op_alignment_direction" description="Insertion length"/>
-                			<term name="ssaha_op_read_coverage_on_the_reference_base" description="Deletion length"/>
-                			<term name="ssaha_op_number_of_dashes_from_reads_on_the_reference_base" description="Deletion length"/>
+                			<term name="ssaha_insertion_index" description="insertion index"/>
+                			<term name="ssaha_deletion_index" description="deletion index"/>
+                			<term name="ssaha_chromosome_name" description="Chromosome name"/>
+                			<term name="ssaha_reference_offset" description="Reference offset"/>
+                			<term name="ssaha_insertion_length" description="Insertion length"/>
+                			<term name="ssaha_deletion_length" description="Deletion length"/>
+                			<term name="ssaha_number_of_reads_covering_the_deletion_position" description="Number of reads covering the deletion position"/>
+                	        <term name="ssaha_read_mapping_score" description="read mapping score"/>
+                			<term name="ssaha_read_name" description="read name"/>
+                			<term name="ssaha_read_offset" description="read offset"/>
+                			<term name="ssaha_alignment_direction" description="Alignment direction"/>
+                			<term name="ssaha_read_coverage_on_the_reference_base" description="Read coverage on the reference base"/>
+                			<term name="ssaha_number_of_dashes_from_reads_on_the_reference_base" description="number of dashes from reads on the reference base"/>
                 		</term>
                    	</term>
                 </term>
                 <term name="maq" description="Mapping and Assembly with Quality It builds assembly by mapping short reads to reference sequences.">
                 	<term name="maq_output_headers" description="Output headers from maq program">
-                		<term name="maq_op_chromosome" description="chromosome" />
-                		<term name="maq_op_position" description="position" />
-                		<term name="maq_op_reference_base" description="reference base" />
-                		<term name="maq_op_consensus_base" description="consensus base" />
-                		<term name="maq_op_phredlike_consensus_quality" description="Phred-like consensus quality" />
-                		<term name="maq_op_read_depth" description="read depth" />
-                		<term name="maq_op_avg_no_of_hits_of_reads_covering_this_position" description="the average number of hits of reads covering this position" />
-                		<term name="maq_op_highest_mapping_quality_of_the_reads_covering_this_position" description="highest mapping quality of the reads covering this position" />
-                		<term name="maq_op_minimum_consensus_quality_in_the_3bp_flanking_regions_at_each_side_of_the_site" description="minimum consensus quality in the 3bp flanking regions at each side of the site" />
-                		<term name="maq_op_the_second_best_call" description="the second best call" />
-                		<term name="maq_op_log_likelihood_ratio_of_the_second_best_and_the_third_best_call" description="log likelihood ratio of the second best and the third best call" />                		<term name="maq_op_third_best_call" description="third best call" />
+                		<term name="maq_chromosome" description="chromosome" />
+                		<term name="maq_position" description="position" />
+                		<term name="maq_reference_base" description="reference base" />
+                		<term name="maq_consensus_base" description="consensus base" />
+                		<term name="maq_phredlike_consensus_quality" description="Phred-like consensus quality" />
+                		<term name="maq_read_depth" description="read depth" />
+                		<term name="maq_avg_no_of_hits_of_reads_covering_this_position" description="the average number of hits of reads covering this position" />
+                		<term name="maq_highest_mapping_quality_of_the_reads_covering_this_position" description="highest mapping quality of the reads covering this position" />
+                		<term name="maq_minimum_consensus_quality_in_the_3bp_flanking_regions_at_each_side_of_the_site" description="minimum consensus quality in the 3bp flanking regions at each side of the site" />
+                		<term name="maq_the_second_best_call" description="the second best call" />
+                		<term name="maq_log_likelihood_ratio_of_the_second_best_and_the_third_best_call" description="log likelihood ratio of the second best and the third best call" />                		<term name="maq_third_best_call" description="third best call" />
                 	</term>
                 	<term name="maq_scalar_result" description="Output results that have a single value"/>
                 </term>
@@ -350,8 +350,8 @@ class LoadGeneDbCv {
         </term>
         
         <term name="HTH_property" description="A property of a helix-turn-helix motif">
-        	<term name="Maximum_score_at" description"Maximum score in a helix turn helix hit"/> <!-- Get proper description -->
-        	<term name="Standard_deviations" description"Standard deviations"/> <!-- Get proper description -->
+        	<term name="Maximum_score_at" description="Maximum score in a helix turn helix hit"/> <!-- Get proper description -->
+        	<term name="Standard_deviations" description="Standard deviations"/> <!-- Get proper description -->
         	
         </term>
 
