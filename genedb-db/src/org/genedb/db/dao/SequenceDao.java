@@ -853,27 +853,35 @@ public class SequenceDao extends BaseDao {
     //Helix-turn-helix 22.6.2009 NDS
     
     private CvTerm helixTurnHelixType;
+    private CvTerm maxScoreAtCvTerm;
+    private CvTerm stdDeviationsCvTerm;
     
-    public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, Analysis analysis) {
+    public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, int maxScoreAt, String stdDeviations, Analysis analysis) {
         
         if (helixTurnHelixType == null) {
-            helixTurnHelixType = cvDao.getCvTermByDbAcc("sequence", "0001081"); //Is this right?
+            /* Looks for the cvterm where the dxref_id corresponds to a dbxref record 
+             * whose accession is 0001081 and the database is 'SO' */
+            helixTurnHelixType = cvDao.getCvTermByDbAcc("SO", "0001081");
+            helixTurnHelixType.getCvTermId();
         }
         
         String uniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
         HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/); 
         
         /* Add featureloc */
-        FeatureLoc hthLoc = new FeatureLoc(polypeptide, helixTurnHelix, start, end, 0, null); //null for phase - is this ok?
+        FeatureLoc hthLoc = new FeatureLoc(polypeptide /*sourcefeature*/, helixTurnHelix, start /*fmin*/, end /*fmax*/, 0 /*strand*/, null /*phase*/, 0 /*rank*/); 
         helixTurnHelix.addFeatureLoc(hthLoc);
                
-        /* Any feature properties ? */
+        /* Add feature properties */
+        FeatureProp featureProp1 = helixTurnHelix.addFeatureProp(new Integer(maxScoreAt).toString(), "genedb-misc", "Maximum_score_at", 0 /*rank*/);
+        FeatureProp featureProp2 = helixTurnHelix.addFeatureProp(stdDeviations, "genedb-misc", "Standard_deviations", 0 /*rank*/);
+        persist(featureProp1);
+        persist(featureProp2);
 
-        // Add analysisfeature
+        /* Add analysisfeature */
         if (analysis != null) {
             helixTurnHelix.createAnalysisFeature(analysis,score,null);
-        } 
-        else {
+        } else {
             throw new RuntimeException("Could not create analysisfeature because analysis object is null");
         }
         return helixTurnHelix;
