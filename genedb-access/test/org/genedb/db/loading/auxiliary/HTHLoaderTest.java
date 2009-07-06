@@ -7,6 +7,7 @@ import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 /****************************************************************************************************************************************
- * Tests the hthloader class. First hit in the file is expected to be the following. If this changes, change the constants below.
+ * Tests the hthloader class. First hit in the file is expected to be the following. 
    
     Feature: 1
     Name: PFA0610c..pep
@@ -39,10 +40,13 @@ import java.util.List;
     Strand: +
     Maximum_score_at: 151
     Standard_deviations: 2.55
+    
+ * If this changes, change the constants below.
   
  * SAMPLE USAGE: ant hth-test -Dconfig=bigtest5
  * 
  * The config argument is not really used by the test but the build.xml file complains if it is not included.
+ * TODO: Re-implement this class using FeatureTester
  *  
  * @author nds
  ****************************************************************************************************************************************/
@@ -61,8 +65,8 @@ public class HTHLoaderTest {
     private final int START = 151;
     private final int END = 172;
     private final String SCORE = "988.000";
-    private final int MAX_SCORE_AT = 151;
-    private final double STD_DEVIATIONS = 2.55;
+    private final String MAX_SCORE_AT = "151";
+    private final String STD_DEVIATIONS = "2.55";
     
     //Configured during test
     private static int organism_id;
@@ -81,7 +85,7 @@ public class HTHLoaderTest {
         
         ApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "AuxTest.xml"});
         loader = ctx.getBean("hthloader", HTHLoader.class);
-        //assertTrue(loader.processOptionIfValid("hth-version", analysisProgramVersion)); 
+        assertTrue(loader.processOptionIfValid("hth-version", VERSION)); 
         sessionFactory = loader.getSessionFactory();
         session = SessionFactoryUtils.getSession(sessionFactory, true);
         loader.clear("Pfalciparum", null); 
@@ -157,8 +161,17 @@ public class HTHLoaderTest {
         assertEquals(analysisFeature.getRawScore().toString(), new Double(SCORE).toString());   
         
         /* Tests on featureprops */
-        /* Complete when the two new cvterms have been added to database */
-       
+        Collection<FeatureProp> featurePropList = helixTurnHelix.getFeatureProps();
+        assertEquals(featurePropList.size(), 2); //Each hth has two feature props
+        for (FeatureProp fp: featurePropList){
+            if(fp.getType().getName().equals("Maximum_score_at")){
+                assertEquals(fp.getValue(), MAX_SCORE_AT);
+            }else if(fp.getType().getName().equals("Standard_deviations")){
+                assertEquals(fp.getValue(), STD_DEVIATIONS);
+            }
+        }
+        
+             
     }
     
     
