@@ -44,7 +44,7 @@ public class FeatureUtils implements InitializingBean {
     private static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GO_KEY_ATTRIBUTION,
-                   GO_KEY_RESIDUE, GENEDB_AUTOCOMMENT;
+                   GO_KEY_RESIDUE, GO_KEY_DATE, GENEDB_AUTOCOMMENT;
     private CvTerm PUB_TYPE_UNFETCHED;
     private Db PUBMED_DB;
     private int NULL_PUB_ID;
@@ -57,9 +57,10 @@ public class FeatureUtils implements InitializingBean {
         GO_KEY_EVIDENCE = cvDao.getExistingCvTermByNameAndCvName("evidence", "genedb_misc");
         GO_KEY_ATTRIBUTION = cvDao.getExistingCvTermByNameAndCvName("attribution", "genedb_misc");
         GO_KEY_RESIDUE = cvDao.getExistingCvTermByNameAndCvName("residue", "genedb_misc");
+        GO_KEY_DATE = cvDao.getExistingCvTermByNameAndCvName("date", "feature_property");       
         GO_KEY_QUALIFIER = cvDao.getExistingCvTermByNameAndCvName("qualifier", "genedb_misc");
         GENEDB_AUTOCOMMENT = cvDao.getExistingCvTermByNameAndCvName("autocomment", "genedb_misc");
-        PUB_TYPE_UNFETCHED = cvDao.getExistingCvTermByNameAndCvName("unfetched", "genedb_literature");
+        PUB_TYPE_UNFETCHED = cvDao.getExistingCvTermByNameAndCvName("unfetched", "genedb_literature");       
 
         Pub NULL_PUB = pubDao.getPubByUniqueName("null");
         if (NULL_PUB == null) {
@@ -181,6 +182,11 @@ public class FeatureUtils implements InitializingBean {
                 go.getEvidence().getDescription(), 0);
         sequenceDao.persist(evidenceProp);
 
+        // Date
+        FeatureCvTermProp dateProp = new FeatureCvTermProp(GO_KEY_DATE, fct,
+                go.getDate(), 0);
+        sequenceDao.persist(dateProp);
+        
         // Attribution
         String attribution = go.getAttribution();
         if (attribution != null) {
