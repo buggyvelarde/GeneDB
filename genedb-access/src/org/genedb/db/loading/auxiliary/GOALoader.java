@@ -4,6 +4,7 @@ import org.genedb.db.loading.GoEvidenceCode;
 import org.genedb.db.loading.GoInstance;
 
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 
 import org.apache.log4j.Logger;
@@ -17,18 +18,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GOALoader extends Loader {
     private static final Logger logger = Logger.getLogger(GOALoader.class);
     
 	Boolean goTermErrorsAreNotFatal = true;
-	
-	
 
     public void doLoad(InputStream inputStream, Session session) throws IOException {
- 
+    	
 	GOAssociationFile file = new GOAssociationFile(inputStream);
 
         int n=1;
@@ -60,10 +57,7 @@ public class GOALoader extends Loader {
     		return;
     	}
         
-    	//get existing GO annotations on this polypeptide
-    	//String existingGO = polypeptide.getGo();
-    	
-    	//The processGO method takes all the essential information from a hit and creates the corresponding database entries
+     	//The processGO method takes all the essential information from a hit and creates the corresponding database entries
     	processGO(polypeptide, hit);
     }
     
@@ -74,8 +68,12 @@ public class GOALoader extends Loader {
 			goInstance.setId(hit.getGoId());
 			goInstance.setDate(hit.getDate());
 			goInstance.setAttribution(hit.getCurator());
-			goInstance.setWithFrom(hit.getWithFrom());
-
+			
+			if (hit.getWithFrom() != null)
+				goInstance.setWithFrom(hit.getWithFrom());
+			if (hit.getQualifier() != null)
+				goInstance.addQualifier(hit.getQualifier());
+			
 			try {
 				goInstance.setEvidence(GoEvidenceCode.valueOf(hit.getEvCode()));
 			} catch (IllegalArgumentException e) {
@@ -86,18 +84,17 @@ public class GOALoader extends Loader {
 
 			String comment = "From GO association file";
 			
-			//if (hit.getWithFrom() == null)
-			featureUtils.createGoEntries(polypeptide, goInstance, comment,
-				Collections.<DbXRef> emptyList());
-			/*
-			 * } else {  
-			 *  Db db = Db("GO");
-			 *  DbXRef withFromDbxref = new DbXRef(db, withFrom);
-			 * 	createGoEntries(polypeptide,
-			 * 	goInstance, comment, Collections.<DbXRef>emptyList()); else
-			 * 	createGoEntries(polypeptide, goInstance, comment,
-			 * 	Collections.singletonList(withFromDbxref)); }
-			 */			
+			DbXRef withFromDbxref = null;
+			if (hit.getWithFrom() != null) {
+				logger.debug(String.format("Adding withFrom '%s'", hit.getWithFrom()));
+				//withFrom is in the format DB:accession
+				withFromDbxref = objectManager.getDbXRef(hit.getWithFrom());
+				if (withFromDbxref == null) {
+					throw new RuntimeException(String.format("Error loading GO term: Db is not found for withFrom DbXRef '%s'", hit.getWithFrom()));
+				}
+			}
+
+			featureUtils.createGoEntries(polypeptide, goInstance, comment, withFromDbxref);	
 
 		} catch (Exception e) {
 			if (goTermErrorsAreNotFatal) {
@@ -118,114 +115,97 @@ class GOAssociationFile {
     private List<GOHit> hits = new ArrayList<GOHit>();
 
     public GOAssociationFile(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String previousLine = null, line;
-        while (null != (line = reader.readLine())) { //While not end of file
-            if (line.startsWith("Feature: ")) {
-                if (previousLine == null) {
-                    throw new IllegalStateException();
-                }
-                StringBuilder sb = new StringBuilder(previousLine);
-                while (0 < (line = reader.readLine()).length()) {
-                    sb.append(line);
-                    sb.append('\n');
-                }
-                logger.trace(sb);
-                parseSummary(sb);
-            }
 
-            previousLine = line;
-        }       
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        
+        int lineNumber = 0;
+        while (null != (line = reader.readLine())) { //While not end of file
+            if(0 < line.length()){
+                lineNumber++;
+                StringBuilder sb = new StringBuilder(line);
+                sb.append('\n');
+                logger.trace(sb);
+                GOHit hit = new GOHit(lineNumber, line);
+                hits.add(hit);
+            }
+        }          
     }
 
     public Collection<GOHit> hits() {
         return hits;
-    }
-
-    private static final Pattern SUMMARY_PATTERN = Pattern.compile(
-    		
-    	//File format for GO association file
-    	//	1	DB	 required	 1	 SGD
-    	//	2	DB_Object_ID	 required	 1	 S000000296
-    	//	3	 DB_Object_Symbol	 required	 1	 PHO3
-    	//	4	 Qualifier	 optional	 0 or greater	 NOT
-    	//	5	 GO ID	 required	 1	 GO:0003993
-    	//	6	 DB:Reference (|DB:Reference)	 required	 1 or greater	 SGD_REF:S000047763|PMID:2676709
-    	//	7	 Evidence code	 required	 1	IMP
-    	//	8	 With (or) From	 optional	 0 or greater	 GO:0000346
-    	//	9	 Aspect	 required	 1	 F
-    	//	10	 DB_Object_Name	 optional	 0 or 1	 acid phosphatase
-    	//	11	 DB_Object_Synonym (|Synonym)	 optional	 0 or greater	 YBR092C
-    	//	12	 DB_Object_Type	 required	 1	 gene
-    	//	13	 taxon(|taxon)	 required	 1 or 2	 taxon:4932
-    	//	14	 Date	 required	 1	 20010118
-    	//	15	 Assigned_by
-    	
-    	"(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\n"		
-      
-    );
-    
-    
-    private void parseSummary(CharSequence summary) {
-       
-        Matcher matcher = SUMMARY_PATTERN.matcher(summary);
-        if (matcher.matches()) {
-            String featureDb  = matcher.group(1);
-            String featureUniquename = matcher.group(2);
-            String featureSymbol = matcher.group(3);
-            String qualifier = matcher.group(4);
-            String goId = matcher.group(5);
-            String dbxref = matcher.group(6);
-            String evCode  = matcher.group(7);
-            String withFrom = matcher.group(8);
-            String aspect = matcher.group(9);         
-            String featureProduct = matcher.group(10);
-            String featureSynonym = matcher.group(11);
-            String featureType = matcher.group(12);
-            String taxon = matcher.group(13);
-            String date = matcher.group(14);
-            String curator = matcher.group(15);          
-            
-            hits.add(new GOHit(featureDb, featureUniquename, featureSymbol, qualifier, goId, 
-            			dbxref, evCode, withFrom, aspect, featureProduct, featureSynonym, 
-            			featureType, taxon, date, curator));
-          
-        }
-        else {
-            logger.error("Failed to parse summary:\n" + summary);
-        }
-        
     }
 }
 
 /* Each 'hit' corresponds to a line in the .GO file */
 class GOHit {
     
-	//private static final Logger logger = Logger.getLogger(GOHit.class);
+	//File format for GO association file
+	//	1	DB	 required	 1	 SGD
+	//	2	DB_Object_ID	 required	 1	 S000000296
+	//	3	 DB_Object_Symbol	 required	 1	 PHO3
+	//	4	 Qualifier	 optional	 0 or greater	 NOT
+	//	5	 GO ID	 required	 1	 GO:0003993
+	//	6	 DB:Reference (|DB:Reference)	 required	 1 or greater	 SGD_REF:S000047763|PMID:2676709
+	//	7	 Evidence code	 required	 1	IMP
+	//	8	 With (or) From	 optional	 0 or greater	 GO:0000346
+	//	9	 Aspect	 required	 1	 F
+	//	10	 DB_Object_Name	 optional	 0 or 1	 acid phosphatase
+	//	11	 DB_Object_Synonym (|Synonym)	 optional	 0 or greater	 YBR092C
+	//	12	 DB_Object_Type	 required	 1	 gene
+	//	13	 taxon(|taxon)	 required	 1 or 2	 taxon:4932
+	//	14	 Date	 required	 1	 20010118
+	//	15	 Assigned_by	 required	 1	 SGD
+	
+    // The columns we're interested in:
+    private static final int DB         		= 0;
+    private static final int DB_OBJECT_ID   	= 1;
+    private static final int DB_OBJECT_SYMBOL   = 2;
+    private static final int QUALIFIER         	= 3;
+    private static final int GO_ID         		= 4;
+    private static final int DBXREF         	= 5;
+    private static final int EVIDENCE_CODE      = 6;
+    private static final int WITH_FROM         	= 7;
+    private static final int ASPECT         	= 8;
+    private static final int DB_OBJECT_NAME     = 9;
+    private static final int DB_OBJECT_SYNONYM	= 10;
+    private static final int DB_OBJECT_TYPE    	= 11;
+    private static final int TAXON         		= 12;
+    private static final int DATE         		= 13;
+    private static final int ASSIGNED_BY        = 14;   
+    
     private String featureDb, featureUniquename, featureSymbol, qualifier, goId, 
 	dbxref, evCode, withFrom, aspect, featureProduct, featureSynonym, 
 	featureType, taxon, date, curator;
-  
-    public GOHit(String featureDb, String featureUniquename, String featureSymbol, String qualifier, 
-    		String goId, String dbxref, String evCode, String withFrom, String aspect, 
-    		String featureProduct, String featureSynonym, String featureType, String taxon, 
-    		String date, String curator) {
+    private int lineNumber;
+    
+    public GOHit(int lineNumber, String row) {
+        this(lineNumber, row.split("\t"));
+    }
+    
+    public GOHit(int lineNumber, String[] rowFields) {
     	
-    	this.featureDb = featureDb;
-    	this.featureUniquename = featureUniquename;
-    	this.featureSymbol = featureSymbol;
-    	this.qualifier = qualifier;
-    	this.goId = goId; 
-    	this.dbxref = dbxref;
-    	this.evCode = evCode; 
-    	this.withFrom = withFrom;
-    	this.aspect = aspect;
-    	this.featureProduct = featureProduct;
-    	this.featureSynonym = featureSynonym; 
-    	this.featureType = featureType;
-    	this.taxon = taxon;
-    	this.date = date; 
-    	this.curator = curator;
+    	this.lineNumber = lineNumber;
+    	this.featureDb = rowFields[DB];
+    	this.featureUniquename = rowFields[DB_OBJECT_ID];
+    	this.featureSymbol = rowFields[DB_OBJECT_SYMBOL];
+    	this.qualifier = rowFields[QUALIFIER];
+    	this.goId = rowFields[GO_ID]; 
+    	this.dbxref = rowFields[DBXREF];
+    	this.evCode = rowFields[EVIDENCE_CODE]; 
+    	this.withFrom = rowFields[WITH_FROM];
+    	this.aspect = rowFields[ASPECT];
+    	this.featureProduct = rowFields[DB_OBJECT_NAME];
+    	this.featureSynonym = rowFields[DB_OBJECT_SYNONYM]; 
+    	this.featureType = rowFields[DB_OBJECT_TYPE];
+    	this.taxon = rowFields[TAXON];
+    	this.date = rowFields[DATE]; 
+    	this.curator = rowFields[ASSIGNED_BY]; 	
+    
+    }
+    
+    public int getLineNumber() {
+        return lineNumber;
     }
     
     public String getFeatureDb() {
@@ -241,10 +221,16 @@ class GOHit {
     }
     
     public String getFeatureProduct() {
+    	if (featureProduct.equals("")) {
+    		return null;
+    	}
         return featureProduct;
     }
   
     public String getFeatureSynonym() {
+    	if (featureSynonym.equals("")) {
+    		return null;
+    	}
         return featureSynonym;
     }
     
@@ -253,6 +239,9 @@ class GOHit {
     }
     
     public String getQualifier() {
+    	if (qualifier.equals("")) {
+    		return null;
+    	}
         return qualifier;
     }
 
@@ -269,6 +258,9 @@ class GOHit {
     }
 
     public String getWithFrom() {
+    	if (withFrom.equals("")) {
+    		return null;
+    	}
         return withFrom;
     }
     
