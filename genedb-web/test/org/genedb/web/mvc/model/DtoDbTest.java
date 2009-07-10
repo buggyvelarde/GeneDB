@@ -34,7 +34,7 @@ public class DtoDbTest {
     }
     
     @Test 
-    public void testInserts(){
+    public void testInserts()throws Exception{
         logger.debug("Started...");
         StoredMap<Integer, TranscriptDTO> dtoMap = bmf.getDtoMap();
         
@@ -42,14 +42,30 @@ public class DtoDbTest {
         int updates = 0;
         try{
             for (StoredMap.Entry<Integer, TranscriptDTO> entry : dtoMap.entrySet()) {
+                ++index;                
                 TranscriptDTO dto = entry.getValue();
-                dto.setTranscriptId(++index);
-                logger.debug("GeneName: "  + dto.getUniqueName());
-                updates = updates + dtoDb.persistDTO(dto);
+                try{
+                    dto.setTranscriptId(entry.getKey());
+                    logger.debug("GeneName: "  + dto.getUniqueName());
+                    updates = updates + dtoDb.persistDTO(dto);
+                }catch(Exception e){
+                    logger.error("Failed:\n " + dto.toString() +"\n", e);
+                    throw e;
+                }
+                
             }
         }finally{
-            logger.debug(String.format("\n%d successful updates out of %d insert attempts", updates, index));
+            logger.debug(String.format("\n%d successful updates out of %d insert attempts", updates, dtoMap.entrySet().size()));
         }
+    }
+
+    
+    //@Test 
+    public void findCacheSize(){
+        logger.debug("Started...");
+        StoredMap<Integer, TranscriptDTO> dtoMap = bmf.getDtoMap();
+        
+        logger.debug("Pfalciparum Size: " + dtoMap.size());
     }
 
 }

@@ -23,7 +23,7 @@
     </bean>
 
     <bean name="bmf" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
-        <property name="rootDirectory" value="/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/cache"/>
+        <property name="rootDirectory" value="/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/Pfalciparum"/>
     </bean>
     
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">

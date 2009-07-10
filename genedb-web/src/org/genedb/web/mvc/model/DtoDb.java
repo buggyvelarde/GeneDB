@@ -7,18 +7,16 @@ import org.gmod.schema.utils.PeptideProperties;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,52 +28,79 @@ public class DtoDb {
 
     SimpleJdbcTemplate template;
     
-    public int persistDTO(final TranscriptDTO dto) {
+    public int persistDTO(TranscriptDTO dto) {
         logger.debug("persistDTO...");
         //Integer index = findDTO(dto.getFeatureId());
         Integer index = findDTO(dto.getTranscriptId());
         if (index != null) {
             return 0;
         }
+
+        Map<String, Object> args = Maps.newHashMap();
+        args.put("transcript_id", dto.getTranscriptId());
+        args.put("alternative_transcript", dto.isAnAlternateTranscript());
+        args.put("gene_name", dto.getGeneName());
+        if (dto.getLastModified()>0){
+            args.put("last_modified_date", new Date(dto.getLastModified()));
+        }else{
+            args.put("last_modified_date", null);
+        }
+        args.put("max", dto.getMax());
+        args.put("min", dto.getMin());
+        args.put("organism_common_name", dto.getOrganismCommonName());
+        args.put("organism_html_short_name", dto.getOrganismHtmlShortName());
+        args.put("proper_name", dto.getProperName());
+        args.put("protein_coding", dto.isProteinCoding());
+        args.put("pseudo", dto.isPseudo());
+        args.put("strand", dto.getStrand());
+        args.put("top_level_feature_displayname", dto.getTopLevelFeatureDisplayName());
+        args.put("top_level_feature_length", dto.getTopLevelFeatureLength());
+        args.put("top_level_feature_type", dto.getTopLevelFeatureType());
+        args.put("top_level_feature_uniquename", dto.getTopLevelFeatureUniqueName());
+        args.put("type_description", dto.getTypeDescription());
+        args.put("uniquename", dto.getUniqueName());
         
-        
-       
+        args.put("cluster_ids", new DtoArrayField(dto.getClusterIds()));
+        args.put("comments", new DtoArrayField(dto.getComments()));
+        args.put("notes", new DtoArrayField(dto.getNotes()));
+        args.put("obsolete_names", new DtoArrayField(dto.getObsoleteNames()));
+        args.put("orthologue_names", new DtoArrayField(dto.getOrthologueNames()));
+        args.put("publications", new DtoArrayField(dto.getPublications()));
+        args.put("synonyms", new DtoArrayField(dto.getSynonyms()));
+
         return template.update("insert into transcript_cache " +
-                "values(nextval('transcript_cache_seq'),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ", 
-                new PreparedStatementSetter(){
-                    public void setValues(PreparedStatement ps)throws SQLException{
-                        ps.setInt(1, dto.getTranscriptId());
-                        ps.setBoolean(2, dto.isAnAlternateTranscript());
-                        ps.setString(3, dto.getGeneName());
-                        ps.setDate(4, new Date(dto.getLastModified()));
-                        ps.setInt(5, dto.getMax());
-                        ps.setInt(6, dto.getMin());
-                        ps.setString(7, dto.getOrganismCommonName());
-                        ps.setString(8, dto.getOrganismHtmlShortName());
-                        ps.setString(9, dto.getProperName());
-                        ps.setBoolean(10, dto.isProteinCoding());
-                        ps.setBoolean(11, dto.isPseudo());
-                        ps.setShort(12, dto.getStrand());
-                        ps.setString(13, dto.getTopLevelFeatureDisplayName());
-                        ps.setInt(14, dto.getTopLevelFeatureLength());
-                        ps.setString(15, dto.getTopLevelFeatureType());
-                        ps.setString(16, dto.getTopLevelFeatureUniqueName());
-                        ps.setString(17, dto.getTypeDescription());
-                        ps.setString(18, dto.getUniqueName());
-                
-
-//                        ps.setArray(19, dto.getClusterIds().toArray());
-//                        ps.setInt(20, dto.getComments().toArray());
-//                        ps.setInt(21, dto.getNotes().toArray());
-//                        ps.setInt(22, dto.getObsoleteNames().toArray());
-//                        ps.setInt(23, dto.getOrthologueNames().toArray());
-//                        ps.setInt(24, dto.getPublications().toArray());
-//                        ps.setInt(25, dto.getSynonyms().toArray());
-                    }            
-        });        
-
-    }    
-
+        		
+                " values(nextval('transcript_cache_seq')," +
+                ":transcript_id," +
+                ":alternative_transcript," +
+                ":gene_name," +
+                ":last_modified_date," +
+                ":max," +
+                ":min," +
+                ":organism_common_name," +
+                ":organism_html_short_name," +
+                ":proper_name," +
+                ":protein_coding," +
+                ":pseudo," +
+                ":strand," +
+                ":top_level_feature_displayname," +
+                ":top_level_feature_length," +
+                ":top_level_feature_type," +
+                ":top_level_feature_uniquename," +
+                ":type_description," +
+                ":uniquename," +
+                ":cluster_ids," +
+                ":comments," +
+                ":notes," +
+                ":obsolete_names," +
+                ":orthologue_names," +
+                ":publications," +
+                ":synonyms" +
+                ") ", 
+                args);
+       
+    }   
+    
     public TranscriptDTO retrieveDTO(int featureId) {
         Integer index = findDTO(featureId);
         
