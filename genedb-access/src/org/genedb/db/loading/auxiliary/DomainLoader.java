@@ -1,6 +1,9 @@
 
 package org.genedb.db.loading.auxiliary;
 
+import org.genedb.db.loading.GoInstance;
+import org.genedb.db.loading.ParsingException;
+
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.mapped.Analysis;
@@ -14,14 +17,24 @@ import org.hibernate.jdbc.Work;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A generic loader for polypeptide domain results. 
@@ -46,10 +59,17 @@ import java.util.Set;
 public class DomainLoader extends Loader {
     private static final Logger logger = Logger.getLogger(DomainLoader.class);
 
+    //Constants
     String analysisProgramVersion;
     String analysisProgram;
     boolean notFoundNotFatal = false;
-
+    Pfam2GoFile pfam2GoFile;
+    private static String today;
+    static {
+    	DateFormat dFormat = new SimpleDateFormat("yyyyMMdd");
+    	today = dFormat.format(new Date());
+	  }
+	    
     @Override
     protected Set<String> getOptionNames() {
 	Set<String> options = new HashSet<String>();
@@ -101,7 +121,7 @@ public class DomainLoader extends Loader {
     
     private Analysis analysis;
     @Transactional
-    protected void loadDomainFile(DomainFile domainFile, Session session) {
+    protected void loadDomainFile(DomainFile domainFile, Session session) throws IOException {
 
 	// Add analysis 
 	analysis = new Analysis();
@@ -128,7 +148,7 @@ public class DomainLoader extends Loader {
         }
     }
 
-    private void loadKey(DomainFile domainFile, String key) {
+    private void loadKey(DomainFile domainFile, String key) throws IOException {
 
         Polypeptide polypeptide = getPolypeptideForKey(key);
         if (polypeptide == null) {
@@ -158,7 +178,7 @@ public class DomainLoader extends Loader {
         }
     }
 
-    private void loadGroup(DomainFile domainFile, String gene, DomainAcc acc, Polypeptide polypeptide ) {
+    private void loadGroup(DomainFile domainFile, String gene, DomainAcc acc, Polypeptide polypeptide ) throws IOException {
     	logger.debug("In loadGroup()");
         DbXRef interProDbxref = null;
         if (acc != DomainAcc.NULL && analysis.getProgram().equals("InterPro")) {
@@ -193,10 +213,20 @@ public class DomainLoader extends Loader {
             }
 
 
-	    PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(domainUniqueName, polypeptide, 
+            PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(domainUniqueName, polypeptide, 
 										      row.score(),row.acc().getDescription(), row.fmin(), row.fmax(), 
 										      dbxref, row.evalue(), analysis);
-	    
+            
+            if (analysisProgram.equals("pfam_scan")) {
+            	//parse the pfam2go file if not already done
+            	if (pfam2GoFile == null) {
+            		logger.info(String.format("Creating pfam2go mapping")); 
+            		pfam2GoFile = new Pfam2GoFile();
+            	}
+
+            	addPfam2GoMapping(polypeptide, polypeptideDomain, accessionNumber);
+            }
+            
             // link to InterPro dbxref if applicable
 	    	// this isn't get needed, but will be once InterProLoader is integrated into DomainLoader
             if (interProDbxref != null && analysis.getProgram().equals("InterPro")) {
@@ -208,7 +238,42 @@ public class DomainLoader extends Loader {
         }
     }
     
-    @Transactional
+    
+    private void addPfam2GoMapping(Polypeptide polypeptide, PolypeptideDomain polypeptideDomain, 
+    		String pfamAccession) {
+
+		if (pfam2GoFile.getGoByPfam(pfamAccession) == null) {
+			logger.debug(String.format("The domain '%s' has no mapped GO terms", pfamAccession));			
+			return;
+		}
+		
+    	for (String goAccession: pfam2GoFile.getGoByPfam(pfamAccession)) {
+    		
+    		try {
+    			GoInstance goInstance = new GoInstance();
+    			goInstance.setId(goAccession);
+    			goInstance.setDate(today);
+		
+    			if (polypeptide.getGo().contains(goInstance.getId())) {
+    				logger.info(String.format("The GO term '%s' has already been added to polypeptide '%s'",
+    						goInstance.getId(), polypeptide));
+    				continue;
+    			}
+ 
+    			logger.info(String.format("Creating pfam2go GO term '%s' for domain '%s'",
+    					goInstance.getId(), polypeptideDomain.getUniqueName()));
+
+        		featureUtils.createGoEntries(polypeptide, goInstance,
+        				"From Pfam2GO mapping", (DbXRef) null);
+        		
+        		
+        	} catch (ParsingException e) {
+        		logger.error(e);
+        	}
+        }
+	}
+
+	@Transactional
     void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         session.doWork(new Work() {
@@ -216,6 +281,65 @@ public class DomainLoader extends Loader {
 				new ClearDomains(connection, organismCommonName, analysisProgram).clear();
 			}
         });
+    }
+
+
+	
+	
+}
+
+/* 
+ * Stores the pfam2go mappings in a Map<String, Set<String>>
+ */
+class Pfam2GoFile {
+	
+	Map<String, Set<String>> pfam2go;
+    private static final Logger logger = Logger.getLogger(Pfam2GoFile.class);
+    
+	public Pfam2GoFile() throws IOException {
+		
+		InputStream inputStream = new FileInputStream("resources/pfam2go");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+		pfam2go = new HashMap<String, Set<String>>();
+		while (null != (line = reader.readLine())) { //While not end of file
+			if(0 < line.length()){
+				StringBuilder sb = new StringBuilder(line);
+				sb.append('\n');
+				//logger.info(sb);
+				
+				Pfam2GoLine pfam2GoLine = new Pfam2GoLine(line);
+				if (!pfam2go.containsKey(pfam2GoLine.pfamAccession)) {
+					pfam2go.put(pfam2GoLine.pfamAccession, new HashSet<String>());
+				}
+				pfam2go.get(pfam2GoLine.pfamAccession).add(pfam2GoLine.goAccession);
+				logger.debug(String.format("adding pfam %s for go %s", pfam2GoLine.pfamAccession, pfam2GoLine.goAccession));
+			}
+		}		
+	}
+	
+	public Set<String> getGoByPfam(String pfamAccession) {
+		return(pfam2go.get(pfamAccession));
+	}
+
+}
+/* 
+ * Parses a single line of the pfam2go mapping file
+ */
+class Pfam2GoLine {
+	
+	String pfamAccession, goAccession;
+	
+    public Pfam2GoLine(String line) {
+         //Sample line
+        //Pfam:PF00001 7tm_1 > GO:G-protein coupled receptor protein signaling pathway ; GO:0007186
+    	final Pattern LINE_PATTERN = Pattern.compile("Pfam:(\\S+)\\s+(.+>.+)\\s+;\\s+GO:(\\d+)"); 
+        Matcher matcher = LINE_PATTERN.matcher(line);
+        
+        if (matcher.matches()) {
+            this.pfamAccession = matcher.group(1);
+            this.goAccession = matcher.group(3);
+        }
     }
 }
 
