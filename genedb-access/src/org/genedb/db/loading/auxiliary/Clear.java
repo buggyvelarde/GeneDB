@@ -116,28 +116,40 @@ public abstract class Clear {
 
     protected class DeleteSpec {
         private String description, sql;
-
+        private int numberBindParams;
+        
         public DeleteSpec(String description, String sql) {
             this.description = description;
             this.sql = sql;
-        }
+            this.numberBindParams = 1;
+         }
+        
+        public DeleteSpec(String description, String sql, int numberBindParams) {
+            this.description = description;
+            this.sql = sql;
+            this.numberBindParams = numberBindParams;
+         }
 
-        private void execute() throws SQLException {      	
-            PreparedStatement st = conn.prepareStatement(sql);
+        private void execute() throws SQLException {  
+             PreparedStatement st = conn.prepareStatement(sql);
             try {         	
-            	if (analysisProgram == null) {
+            	if (numberBindParams == 1) {
             		st.setString(1, organismCommonName);
             	}
-            	else {
+            	else if (numberBindParams == 2) {
             		st.setString(1, analysisProgram); 
             		st.setString(2, organismCommonName);
             	}
+            	else {
+            		logger.error(String.format("Incorrect number of bind parameters: %d", numberBindParams));
+            	}
                 int numberDeleted = st.executeUpdate();
-                logger.info(String.format("Deleted %d %s", numberDeleted, description));
+                logger.info(String.format("Deleted %d %s for %s %s using %s", numberDeleted, description, analysisProgram, organismCommonName, sql));
             }
             finally {
                 try { st.close(); } catch (SQLException e) { logger.error(e); }
             }
+            
         }
     }
 }
