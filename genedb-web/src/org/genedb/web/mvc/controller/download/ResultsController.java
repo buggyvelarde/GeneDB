@@ -38,7 +38,7 @@ public class ResultsController {
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
 
     public static final int DEFAULT_LENGTH = 30;
-    
+
     public static final int ID_TO_GENE_SUMMARY_EXPANSION_BATCH = 10;
 
     //@Autowired
@@ -94,8 +94,8 @@ public class ResultsController {
         }
 
         ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
-        List<GeneSummary> results = resultEntry.results;        
-        
+        List<GeneSummary> results = resultEntry.results;
+
 
         logger.debug("The number of results retrieved from cache is '"+results.size()+"'");
         logger.debug("The end marker, before adjustment, is '"+end+"'");
@@ -125,7 +125,9 @@ public class ResultsController {
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
         model.addAttribute("firstResultIndex", start);
-        model.addAttribute("isMaxResultsReached", new Boolean(resultEntry.query.isMaxResultsReached()));
+        if (resultEntry.query != null) {
+            model.addAttribute("isMaxResultsReached", Boolean.valueOf(resultEntry.query.isMaxResultsReached()));
+        }
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }
@@ -141,18 +143,18 @@ public class ResultsController {
     /**
      * Expand the current resultset, i.e. to initialise more fields in the list of GeneSummary instances
      * @param results The un-expanded resultset
-     * @return expanded The expanded resultset 
+     * @return expanded The expanded resultset
      * @throws QueryException
      */
     private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {
         List<String> subset = new ArrayList<String>();
-        List<GeneSummary> expanded = new ArrayList<GeneSummary>();        
-        
+        List<GeneSummary> expanded = new ArrayList<GeneSummary>();
+
         for(int i=0; i<results.size(); ++i){
 
             subset.add(results.get(i).getSystematicId());
             if (i % ID_TO_GENE_SUMMARY_EXPANSION_BATCH == 0
-                    || i+1 == results.size()){                
+                    || i+1 == results.size()){
                 //expand current batch
                 List<GeneSummary> converts = convertIdsToGeneSummaries(subset);
                 expanded.addAll(converts);
