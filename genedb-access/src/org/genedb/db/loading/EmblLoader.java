@@ -160,6 +160,10 @@ class EmblLoader {
         this.overwriteExisting = overwriteExisting;
     }
 
+    public OverwriteExisting getOverwriteExisting() {
+        return this.overwriteExisting;
+    }
+    
     /**
      * Whether to deal with controlled_curation qualifiers that don't have the expected
      * format. The default, if this method is not called, is <code>false</code>.
