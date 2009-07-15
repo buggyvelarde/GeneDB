@@ -1,5 +1,7 @@
 package org.genedb.db.loading;
 
+import org.genedb.db.loading.EmblLoader.OverwriteExisting;
+
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -28,7 +30,7 @@ public class EmblFile {
 
     private boolean continueOnError = false;
     private String filePath;
-
+    
     private void dataError(DataError dataError) throws DataError {
         if (continueOnError) {
             logger.error("DataError", dataError);
@@ -58,14 +60,17 @@ public class EmblFile {
         this(inputFile, reader, false);
     }
 
-    public EmblFile(File inputFile, Reader reader, boolean continueOnError) throws IOException, ParsingException {
-        this (inputFile.toString(), new BufferedReader(reader), continueOnError);
+    public EmblFile(File inputFile, Reader reader, boolean continueOnError, OverwriteExisting overwriteExisting) throws IOException, ParsingException {
+        this (inputFile.toString(), new BufferedReader(reader), continueOnError, overwriteExisting);
     }
-
-    public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError) throws IOException, ParsingException {
+    public EmblFile(File inputFile, Reader reader, boolean continueOnError) throws IOException, ParsingException { 
+    	this (inputFile.toString(), new BufferedReader(reader), continueOnError, OverwriteExisting.NO);
+    }
+    
+    public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError, OverwriteExisting overwriteExisting) throws IOException, ParsingException {
         this.filePath = inputFile;
         this.continueOnError = continueOnError;
-
+        
         String line;
         while (null != (line = reader.readLine())) {
             processLine(inputFile, line);
@@ -78,9 +83,12 @@ public class EmblFile {
             idSection = new IDSection();
             idSection.accession = inputFile;
         }
-        if (sequenceSection == null) {
+        if (sequenceSection == null && !overwriteExisting.toString().equals("MERGE")) {
             dataError(new DataError(inputFile, "Found no sequence data"));
         }
+        if (sequenceSection != null && overwriteExisting.toString().equals("MERGE")) {
+            dataError(new DataError(inputFile, "Found sequence data but running with overwriteExisting=MERGE"));
+        }       
 
         logger.info(String.format("Loaded '%s' from '%s'", getAccession(), inputFile));
     }
