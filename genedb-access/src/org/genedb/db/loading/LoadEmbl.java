@@ -1,6 +1,8 @@
 package org.genedb.db.loading;
 
 
+import org.genedb.db.loading.EmblLoader.OverwriteExisting;
+
 import org.gmod.schema.feature.BACEnd;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
@@ -138,7 +140,7 @@ public class LoadEmbl extends FileProcessor {
         loader.setOverwriteExisting(overwriteExisting);
         loader.setSloppyControlledCuration(sloppyControlledCuration);
         loader.setGoTermErrorsAreNotFatal(goTermErrorsAreNotFatal);
-
+        
         if (topLevelFeatureType.equals("chromosome")) {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
@@ -188,7 +190,7 @@ public class LoadEmbl extends FileProcessor {
 
     @Override
     protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
-        EmblFile emblFile = new EmblFile(inputFile, reader, continueOnError);
+        EmblFile emblFile = new EmblFile(inputFile, reader, continueOnError, loader.getOverwriteExisting());
         loader.load(emblFile);
     }
 
