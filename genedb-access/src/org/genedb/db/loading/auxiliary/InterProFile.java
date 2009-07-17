@@ -167,10 +167,12 @@ class InterProRow {
             parseGoString(lineNumber, rowFields[COL_GO]);
     }
     private static final Pattern goTermPattern
-        = Pattern.compile("\\G(Cellular Component|Biological Process|Molecular Function): (.*?) \\(GO:(\\d{7})\\)(?:, |\\z)");
+        = Pattern.compile("\\G(Cellular Component|Biological Process|Molecular Function):\\s*(.*?) \\(GO:(\\d{7})\\)(?:, |\\z)");
+    int endOfLastMatch = 0;
     private void parseGoString(int lineNumber, String goString) {
         Matcher matcher = goTermPattern.matcher(goString);
         while (matcher.find()) {
+            endOfLastMatch = matcher.end();
             String type = matcher.group(1);
             String description = matcher.group(2);
             String goId = matcher.group(3);
@@ -198,8 +200,9 @@ class InterProRow {
 
             this.goTerms.add(goTerm);
         }
-        if (!matcher.hitEnd())
+        if (endOfLastMatch != goString.length()) {
             logger.error(String.format("Failed to completely parse GO terms '%s' on line %d", goString, lineNumber));
+        }
     }
 
     public String getDate() {
@@ -221,7 +224,7 @@ class InterProRow {
 /**
  * Represents an InterPro accession identifier with description,
  * as found in the last two columns of an InterProScan raw output file.
- * 
+ *
  * @author rh11
  */
 class InterProAcc {
