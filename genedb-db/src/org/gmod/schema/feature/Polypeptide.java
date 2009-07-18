@@ -50,8 +50,6 @@ public class Polypeptide extends Region {
     @Transient
     private AbstractGene gene;
 
-    @Transient private double mass = -1.0;
-
     Polypeptide() {
         // empty
     }
@@ -346,13 +344,13 @@ public class Polypeptide extends Region {
     public String getNumberTMDomains() {
         return String.format("%05d", this.getRegions(TransmembraneRegion.class).size());
     }
-    
 
-    
+
+
     @Transient
     @Field(index=Index.TOKENIZED, store=Store.YES)
     public String getSequenceLength(){
-        return String.format("%06d",  this.getSeqLen());                
+        return String.format("%06d",  this.getSeqLen());
     }
 
     /**
@@ -384,29 +382,17 @@ public class Polypeptide extends Region {
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
     public String getMass() {
-        if (mass == -1) {
-            SymbolTokenization proteinTokenization;
-            try {
-                proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
-                String residues = getResidues();
-                if (residues == null || residues.length()==0) {
-                    logger.warn(String.format("Failed to calculate mass as no residues for '%s'", getUniqueName()));
-                    return "";
-                }
-                if (residues.endsWith("*")) {
-                    // Trim final if present. There may still be internal stop codons
-                    residues = residues.substring(0, residues.length()-1);
-                }
-                SymbolList residuesSymbolList = new SimpleSymbolList(proteinTokenization, residues);
-                mass = calculateMass(residuesSymbolList);
-            } catch (BioException exp) {
-                logger.error("Failed to calculate mass", exp);
-                return "";
+        try {
+            PeptideProperties pp = calculateStats();
+            if (pp.isHasMass()) {
+                long mass = Math.round(pp.getMassInDaltons());
+                return String.format("%09d", mass);
             }
+            return "";
         }
-        String formattedMass = String.format("%09d", (int) mass);
-        logger.warn("Mass is '"+formattedMass+"'");
-        return formattedMass;
+        catch (RuntimeException exp) {
+            return "";
+        }
     }
 
     @Transient
@@ -458,7 +444,7 @@ public class Polypeptide extends Region {
         }
         return ret;
     }
-    
+
     @Transient
     @Field(index=Index.TOKENIZED, store=Store.NO)
     public String getPfam(){

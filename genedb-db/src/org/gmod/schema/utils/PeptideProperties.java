@@ -61,6 +61,10 @@ public class PeptideProperties implements Serializable {
         return massInDaltons != 0;
     }
 
+    public double getMassInDaltons() {
+        return massInDaltons;
+    }
+
     /**
      * Get the mass.
      * @return the mass in kiloDaltons, formatted as a string like "1.23kDa"
