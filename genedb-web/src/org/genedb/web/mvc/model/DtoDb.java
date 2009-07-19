@@ -1,6 +1,11 @@
 package org.genedb.web.mvc.model;
 
 import org.genedb.web.gui.ImageMapSummary;
+import org.genedb.web.mvc.model.types.DBXRefType;
+import org.genedb.web.mvc.model.types.DtoObjectArrayField;
+import org.genedb.web.mvc.model.types.DtoStringArrayField;
+import org.genedb.web.mvc.model.types.FeatureCVTPropType;
+import org.genedb.web.mvc.model.types.PeptidePropertiesType;
 
 import org.gmod.schema.utils.PeptideProperties;
 
@@ -16,10 +21,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +42,8 @@ public class DtoDb {
     Logger logger = Logger.getLogger(DtoDb.class);
 
     private SimpleJdbcTemplate template;
+    
+    
     
     public int persistDTO(TranscriptDTO dto) throws Exception{
         logger.debug("persistDTO...");
@@ -66,27 +77,26 @@ public class DtoDb {
         args.put("type_description", dto.getTypeDescription());
         args.put("uniquename", dto.getUniqueName());
         
-        args.put("cluster_ids", new DtoArrayField(dto.getClusterIds()));
-        args.put("comments", new DtoArrayField(dto.getComments()));
-        args.put("notes", new DtoArrayField(dto.getNotes()));
-        args.put("obsolete_names", new DtoArrayField(dto.getObsoleteNames()));
-        args.put("orthologue_names", new DtoArrayField(dto.getOrthologueNames()));
-        args.put("publications", new DtoArrayField(dto.getPublications()));
-        args.put("synonyms", new DtoArrayField(dto.getSynonyms()));
+        args.put("cluster_ids", new DtoStringArrayField(dto.getClusterIds()));
+        args.put("comments", new DtoStringArrayField(dto.getComments()));
+        args.put("notes", new DtoStringArrayField(dto.getNotes()));
+        args.put("obsolete_names", new DtoStringArrayField(dto.getObsoleteNames()));
+        args.put("orthologue_names", new DtoStringArrayField(dto.getOrthologueNames()));
+        args.put("publications", new DtoStringArrayField(dto.getPublications()));
+        args.put("synonyms", new DtoStringArrayField(dto.getSynonyms()));
         
-        args.put("algorithm_data", getBytes(getBytes(dto.getAlgorithmData())));
-        args.put("controlled_curation", getBytes(dto.getControlledCurations()));
-        args.put("dbx_ref_dtos", getBytes(dto.getDbXRefDTOs()));
-        args.put("domain_information", getBytes(dto.getDomainInformation()));
-        args.put("go_biological_processes", getBytes(dto.getGoBiologicalProcesses()));
-        args.put("go_cellular_components", getBytes(dto.getGoCellularComponents()));
-        args.put("go_molecular_functions", getBytes(dto.getGoMolecularFunctions()));
-        args.put("image_map_summary", getBytes(dto.getIms()));
-        args.put("polypeptide_properties", getBytes(dto.getPolypeptideProperties()));
-        args.put("products", getBytes(dto.getProducts()));        
-        args.put("synonyms_by_types", getBytes(dto.getSynonymsByTypes()));
+        args.put("dbx_ref_dtos", createArrayField(dto.getDbXRefDTOs(), DBXRefType.class, "dbxreftype")); 
+        args.put("algorithm_data", getBytes(dto.getAlgorithmData()));     
+        
+        if (dto.getPolypeptideProperties()!= null){
+            args.put("polypeptide_properties", new PeptidePropertiesType(dto.getPolypeptideProperties()));
+        }else{
+            args.put("polypeptide_properties", null);
+        }
+//        args.put("domain_information", createArrayField(dto.getDomainInformation(), PepRegionGroupType.class));      
+//        args.put("synonyms_by_types", getBytes(dto.getSynonymsByTypes()));
 
-        return template.update("insert into transcript_cache " +
+        template.update("insert into transcript_cache " +
         		
                 " values(nextval('transcript_cache_seq')," +
                 ":transcript_id," +
@@ -116,23 +126,76 @@ public class DtoDb {
                 ":publications," +
                 ":synonyms," +
                 
-                ":algorithm_data," +
-                ":controlled_curation," +
-                ":dbx_ref_dtos," +
-                ":domain_information," +
-                ":go_biological_processes," +
-                ":go_cellular_components," +
-                ":go_molecular_functions," +
-                ":image_map_summary," +
                 ":polypeptide_properties," +
-                ":products," +
-                ":synonyms_by_types" +
+                ":dbx_ref_dtos," +
+                ":algorithm_data" +
+//                ":domain_information," +
+//                ":synonyms_by_types" +
                 ") ", 
                 args);
+            
+            int transcriptId = dto.getTranscriptId();
+            updateFeatureCvtermDTO(transcriptId, dto.getControlledCurations());
+            updateFeatureCvtermDTO(transcriptId, dto.getGoBiologicalProcesses());
+            updateFeatureCvtermDTO(transcriptId, dto.getGoCellularComponents());
+            updateFeatureCvtermDTO(transcriptId, dto.getGoMolecularFunctions());
+            updateFeatureCvtermDTO(transcriptId, dto.getProducts());
+        
        
+        return 1;
     }  
     
-    private byte[] getBytes(Object value)throws Exception{
+    private void updateFeatureCvtermDTO(int transcriptId, List<FeatureCvTermDTO> fdtos)throws Exception{ 
+        Map<String, Object> args = Maps.newHashMap();
+        for(FeatureCvTermDTO fdto : fdtos){
+            args.put("temp_type_name", fdto.getTypeName());
+            args.put("type_name", fdto.getTypeName());
+            args.put("type_accession", fdto.getTypeAccession());
+            args.put("with_from", fdto.getWithFrom());
+            args.put("count", fdto.getCount());
+            args.put("pubs", new DtoStringArrayField(fdto.getPubs()));
+            args.put("dbxref", createArrayField(fdto.getDbXRefDtoList(), DBXRefType.class, "dbxreftype")); 
+            args.put("props", createPropsArrayField(fdto.getProps(), "featurecvtproptype")); 
+            args.put("transcript_id", transcriptId);   
+        
+            template.update("insert into transcript_featurecvterm " +
+                    " values(nextval('transcript_featurecvterm_seq')," +
+                    ":temp_type_name," +
+                    ":type_name," +
+                    ":type_accession," +
+                    ":with_from," +
+                    ":count," +
+                    ":pubs,"  +
+                    ":dbxref," +  
+                    ":props," +  
+                    ":transcript_id" +  
+                    ") ", 
+                    args);
+        }
+    }
+    
+    private DtoObjectArrayField createPropsArrayField(Map<String, Collection<String>> props, String typeName){
+        List<FeatureCVTPropType> featureCVTPropTypes = new ArrayList<FeatureCVTPropType>();
+        for(String key: props.keySet()){
+            Collection<String> values = props.get(key);
+            int size = values.size();
+            featureCVTPropTypes.add(new FeatureCVTPropType(key, values.toArray(new String[size])));            
+        }
+        return new DtoObjectArrayField(typeName, featureCVTPropTypes);
+    }
+    
+    private <T, K> DtoObjectArrayField createArrayField(List<T> dtos, Class<K> clazz, String typeName)throws Exception{
+        int i=0;
+        List<K> types = new ArrayList<K>();
+        for(T ele: dtos){
+            Constructor<K> constructor  = clazz.getConstructor(ele.getClass());
+            K retObj = constructor.newInstance(dtos.get(i++));
+            types.add(retObj);
+        }
+        return new DtoObjectArrayField(typeName, types);
+    }
+    
+    private <T> byte[] getBytes(T value)throws Exception{
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(value);
@@ -178,63 +241,64 @@ public class DtoDb {
         @Override
         public TranscriptDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
             TranscriptDTO ret = new TranscriptDTO();
-        
-        // Simple types
-        ret.setAnAlternateTranscript(rs.getBoolean("alternative_transcript"));
-        ret.setGeneName(rs.getString("gene_name"));
-        
-        Date lastModifiedDate = rs.getDate("last_modified_date"); 
-        if(lastModifiedDate!=null){
-            ret.setLastModified(lastModifiedDate.getTime());
-        }
-        
-        ret.setMax(rs.getInt("max"));
-        ret.setMin(rs.getInt("min"));
-        ret.setOrganismCommonName(rs.getString("organism_common_name"));
-        ret.setOrganismHtmlShortName(rs.getString("organism_html_short_name"));
-        ret.setProperName(rs.getString("proper_name"));
-        ret.setProteinCoding(rs.getBoolean("protein_coding"));
-        ret.setPseudo(rs.getBoolean("pseudo"));
-        ret.setStrand(rs.getShort("strand"));
-        ret.setTopLevelFeatureDisplayName(rs.getString("top_level_feature_displayname"));
-        ret.setTopLevelFeatureLength(rs.getInt("top_level_feature_length"));
-        ret.setTopLevelFeatureType(rs.getString("top_level_feature_type"));
-        ret.setTopLevelFeatureUniqueName(rs.getString("top_level_feature_uniquename"));
-        ret.setTypeDescription(rs.getString("type_description"));
-        ret.setUniqueName(rs.getString("uniquename"));
-        
-        // Array types
-        ret.setClusterIds(sqlArrayAsListString(rs, "cluster_ids"));
-        ret.setComments(sqlArrayAsListString(rs, "comments"));
-        ret.setNotes(sqlArrayAsListString(rs, "notes"));
-        ret.setObsoleteNames(sqlArrayAsListString(rs, "obsolete_names"));
-        ret.setOrthologueNames(sqlArrayAsListString(rs, "orthologue_names"));
-        ret.setPublications(sqlArrayAsListString(rs, "publications"));
-        ret.setSynonyms(sqlArrayAsListString(rs, "synonyms"));
-        
-        // Special types
-        ret.setAlgorithmData(objectFromSerializedStream(rs, "algorithm_data", Map.class));
-        ret.setControlledCurations(objectFromSerializedStream(rs, "controlled_curation", List.class));
-        ret.setDbXRefDTOs(objectFromSerializedStream(rs, "dbX_ref_dtos", List.class));
-        ret.setDomainInformation(objectFromSerializedStream(rs, "domain_information", List.class));
-        ret.setGoBiologicalProcesses(objectFromSerializedStream(rs, "go_biological_processes", List.class));
-        ret.setGoCellularComponents(objectFromSerializedStream(rs, "go_cellular_components", List.class));
-        ret.setGoMolecularFunctions(objectFromSerializedStream(rs, "go_molecular_functions", List.class));
-        ret.setIms(objectFromSerializedStream(rs, "image_map_summary", ImageMapSummary.class));
-        ret.setPolypeptideProperties(objectFromSerializedStream(rs, "polypeptide_properties", PeptideProperties.class));
-        ret.setProducts(objectFromSerializedStream(rs, "products", List.class));
-        ret.setSynonymsByTypes(objectFromSerializedStream(rs, "synonyms_by_types", Map.class));
 
-        return ret;
-    }
-        
+            // Simple types
+            ret.setAnAlternateTranscript(rs.getBoolean("alternative_transcript"));
+            ret.setGeneName(rs.getString("gene_name"));
+
+            Date lastModifiedDate = rs.getDate("last_modified_date"); 
+            if(lastModifiedDate!=null){
+                ret.setLastModified(lastModifiedDate.getTime());
+            }
+
+            ret.setMax(rs.getInt("max"));
+            ret.setMin(rs.getInt("min"));
+            ret.setOrganismCommonName(rs.getString("organism_common_name"));
+            ret.setOrganismHtmlShortName(rs.getString("organism_html_short_name"));
+            ret.setProperName(rs.getString("proper_name"));
+            ret.setProteinCoding(rs.getBoolean("protein_coding"));
+            ret.setPseudo(rs.getBoolean("pseudo"));
+            ret.setStrand(rs.getShort("strand"));
+            ret.setTopLevelFeatureDisplayName(rs.getString("top_level_feature_displayname"));
+            ret.setTopLevelFeatureLength(rs.getInt("top_level_feature_length"));
+            ret.setTopLevelFeatureType(rs.getString("top_level_feature_type"));
+            ret.setTopLevelFeatureUniqueName(rs.getString("top_level_feature_uniquename"));
+            ret.setTypeDescription(rs.getString("type_description"));
+            ret.setUniqueName(rs.getString("uniquename"));
+
+            // Array types
+            ret.setClusterIds(sqlArrayAsListString(rs, "cluster_ids"));
+            ret.setComments(sqlArrayAsListString(rs, "comments"));
+            ret.setNotes(sqlArrayAsListString(rs, "notes"));
+            ret.setObsoleteNames(sqlArrayAsListString(rs, "obsolete_names"));
+            ret.setOrthologueNames(sqlArrayAsListString(rs, "orthologue_names"));
+            ret.setPublications(sqlArrayAsListString(rs, "publications"));
+            ret.setSynonyms(sqlArrayAsListString(rs, "synonyms"));
+
+           
+
+            ret.setAlgorithmData(objectFromSerializedStream(rs, "algorithm_data", Map.class));            
+            ret.setControlledCurations(objectFromSerializedStream(rs, "controlled_curation", List.class));
+            ret.setDbXRefDTOs(objectFromSerializedStream(rs, "dbX_ref_dtos", List.class));
+            ret.setDomainInformation(objectFromSerializedStream(rs, "domain_information", List.class));
+            ret.setGoBiologicalProcesses(objectFromSerializedStream(rs, "go_biological_processes", List.class));
+            ret.setGoCellularComponents(objectFromSerializedStream(rs, "go_cellular_components", List.class));
+            ret.setGoMolecularFunctions(objectFromSerializedStream(rs, "go_molecular_functions", List.class));
+            ret.setIms(objectFromSerializedStream(rs, "image_map_summary", ImageMapSummary.class));
+            ret.setPolypeptideProperties(objectFromSerializedStream(rs, "polypeptide_properties", PeptideProperties.class));
+            ret.setProducts(objectFromSerializedStream(rs, "products", List.class));
+            ret.setSynonymsByTypes(objectFromSerializedStream(rs, "synonyms_by_types", Map.class));
+
+            return ret;
+        }
+
         private <T> T objectFromSerializedStream(ResultSet rs, String columnName, Class<T> expectedType) {
 
             ObjectInputStream ois = null;
             try {
                 byte[] colValue = rs.getBytes(columnName);
                 ois = new ObjectInputStream(new ByteArrayInputStream(colValue));
-                @SuppressWarnings("unchecked") T ret = (T) ois.readObject();
+                @SuppressWarnings("unchecked") T ret =  (T)ois.readObject();
                 ois.close();
                 ois = null;
                 return ret;
@@ -253,7 +317,7 @@ public class DtoDb {
             throw new RuntimeException(
                     String.format("Unable to deserialize '%s' as '%s' from dto cache", columnName, expectedType.getCanonicalName()));
         }
-        
+
         private List<String> sqlArrayAsListString(ResultSet rs, String columnName) throws SQLException {
             return Arrays.asList((String[])rs.getArray(columnName).getArray());
         }

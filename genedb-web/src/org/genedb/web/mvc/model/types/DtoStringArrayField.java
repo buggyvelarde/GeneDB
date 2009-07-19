@@ -1,4 +1,4 @@
-package org.genedb.web.mvc.model;
+package org.genedb.web.mvc.model.types;
 
 import java.sql.Array;
 import java.sql.ResultSet;
@@ -7,11 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DtoArrayField implements Array {
+public class DtoStringArrayField implements Array {
     
     private List<String> field;
 
-    public <T> DtoArrayField(List<String> arr){
+    public <T> DtoStringArrayField(List<String> arr){
         field = arr;
     }
     
