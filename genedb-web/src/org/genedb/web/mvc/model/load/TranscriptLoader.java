@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 /**
@@ -20,7 +22,9 @@ public class TranscriptLoader {
     private SimpleJdbcTemplate template;
     
     public static void main(String args[]){
-        TranscriptLoader transcriptLoader = new TranscriptLoader();
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"TranscriptLoaderTest-context.xml.xml"});
+        TranscriptLoader transcriptLoader = ctx.getBean("transcriptLoader", TranscriptLoader.class);
         transcriptLoader.load("Tbruceibrucei427");
     }
     
