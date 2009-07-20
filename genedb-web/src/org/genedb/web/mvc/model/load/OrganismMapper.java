@@ -18,11 +18,13 @@ public class OrganismMapper  implements ParameterizedRowMapper<OrganismMapper>{
 
     @Override
     public OrganismMapper mapRow(ResultSet rs, int rowCount) throws SQLException {
+        logger.debug("Enter mapRow");
         OrganismMapper organism = new OrganismMapper();
         organism.setOrganismId(rs.getInt("organism_id"));
         organism.setGenus(rs.getString("genus"));
         organism.setSpecies(rs.getString("species"));
         organism.setCommonName(rs.getString("common_name"));
+        logger.debug("Exit mapRow");
         return organism;
     }
     

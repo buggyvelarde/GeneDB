@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.genedb.web.mvc.model.types.DtoStringArrayField;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import common.Logger;
@@ -33,6 +34,8 @@ public class TranscriptMapper extends FeatureMapper {
     
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
+        logger.debug("Enter mapRow");
+        
         HashMap<String, Object> args = new HashMap<String, Object>();
         
         //Get transcript details 
@@ -81,45 +84,58 @@ public class TranscriptMapper extends FeatureMapper {
 //        }else{
 //            args.put("polypeptide_properties", null);
 //        }
-        
+
+        logger.debug("Exit mapRow");
         return transcriptMapper;
     }
     
     private void initOrganismArguments(HashMap<String, Object> args){ 
+        logger.debug("Enter initOrganismArguments");
         args.put("organism_common_name", organismMapper.getCommonName());
-        args.put("organism_id", organismMapper.getOrganismId());        
+        args.put("organism_id", organismMapper.getOrganismId());    
+        logger.debug("Exit initOrganismArguments");    
     }
     
     private void initGeneArguments(HashMap<String, Object> args){
+        logger.debug("Enter initGeneArguments");
         args.put("gene_name", geneMapper.getName());          
         args.put("gene_id", geneMapper.getFeatureId());    
         args.put("gene_time_last_modified", geneMapper.getTimeLastModified());
         args.put("fmax", geneMapper.getFmax());
         args.put("fmin", geneMapper.getFmin());
         args.put("strand", geneMapper.getStrand());
+        logger.debug("Exit initGeneArguments");
     }
     
-    private void initTopLevelArguments(HashMap<String, Object> args, FeatureMapper topLevelFeature){        
+    private void initTopLevelArguments(HashMap<String, Object> args, FeatureMapper topLevelFeature){ 
+        logger.debug("Enter initTopLevelArguments");       
         args.put("top_level_feature_displayname", topLevelFeature.getDisplayName());
         args.put("top_level_feature_length", topLevelFeature.getSeqLen());
         //args.put("top_level_feature_type", dto.getTopLevelFeatureType());
         //args.put("type_description", dto.getTypeDescription());
-        args.put("top_level_feature_uniquename", topLevelFeature.getUniqueName());        
+        args.put("top_level_feature_uniquename", topLevelFeature.getUniqueName());     
+        logger.debug("Exit initTopLevelArguments");          
     }
 
     private void initTranscriptArguments(HashMap<String, Object> args, FeatureMapper transcriptMapper){
+        logger.debug("Enter initTranscriptArguments");
         args.put("transcript_id", transcriptMapper.getFeatureId());
         args.put("organism_id", transcriptMapper.getOrganismId());        
         args.put("time_last_modified", transcriptMapper.getTimeLastModified());
         args.put("uniquename", transcriptMapper.getUniqueName());      
         args.put("proper_name", transcriptMapper.getName());  
+        args.put("type_description", transcriptMapper.getCvtName());
         
         if (isProductiveTranscript(transcriptMapper)){
             args.put("pseudo", "pseudogenic_transcript".equals(transcriptMapper.getCvtName()));
+        }else{
+            args.put("pseudo", false);
         }
+        logger.debug("Exit initTranscriptArguments");
     }
     
     private void initPolypeptideArguments(HashMap<String, Object> args, FeatureMapper polypeptideMapper){
+        logger.debug("Enter initPolypeptideArguments");
 
         if(polypeptideMapper!= null){
             args.put("protein_coding", true);
@@ -132,7 +148,7 @@ public class TranscriptMapper extends FeatureMapper {
             for(FeaturePropMapper prop : props){
                 comments.add(prop.getValue());
             }
-            args.put("pep_comments", comments);
+            args.put("pep_comments", new DtoStringArrayField(comments));
             
             //Get the curation for polypeptide
             List<String> curation = new ArrayList<String>();
@@ -141,11 +157,13 @@ public class TranscriptMapper extends FeatureMapper {
             for(FeaturePropMapper prop : props){
                 curation.add(prop.getValue());
             }
-            args.put("pep_curation", curation);
+            args.put("pep_curation", new DtoStringArrayField(curation));
         }
+        logger.debug("Exit initPolypeptideArguments");
     }
     
     private boolean isProductiveTranscript(FeatureMapper transcriptMapper){
+        logger.debug("Enter isProductiveTranscript");
         if("sequence".equals(transcriptMapper.getCvName())){
             if ("mRNA".equals(transcriptMapper.getCvtName())
                     || "pseudogenic_transcript".equals(transcriptMapper.getCvtName())){
@@ -156,9 +174,13 @@ public class TranscriptMapper extends FeatureMapper {
     }
     
     
-    private int insertDenormalisedTranscript(HashMap<String, Object> args){        
-        return template.update("insert into transcript_cache " +                
-                " values(nextval('transcript_cache_seq')," +
+    private int insertDenormalisedTranscript(HashMap<String, Object> args){   
+        logger.debug("Enter insertDenormalisedTranscript");
+        for(String key : args.keySet()){
+            logger.debug(String.format("%s: %s", key, args.get(key)));
+        }
+        logger.debug(String.format("Field args size: %s", args.size()));
+        return template.update("insert into transcript_cache values(" +
                 ":transcript_id," +
                 ":gene_id," +
                 ":gene_name," +
@@ -168,7 +190,7 @@ public class TranscriptMapper extends FeatureMapper {
                 ":strand," +
                 ":organism_id," +
                 ":organism_common_name," +
-                ":organism_html_short_name," +
+//                ":organism_html_short_name," +
                 ":proper_name," +
                 ":protein_coding," +
                 ":pseudo," +
@@ -189,11 +211,10 @@ public class TranscriptMapper extends FeatureMapper {
                 
 //                ":polypeptide_properties," +
 //                ":dbx_ref_dtos," +
-//                ":algorithm_data" +
+//                ":algorithm_data," +
 //                ":domain_information," +
 //                ":synonyms_by_types" +
-                ") ", 
-                args);
+                ") ",  args);
             
 //            int transcriptId = dto.getTranscriptId();
 //            updateFeatureCvtermDTO(transcriptId, dto.getControlledCurations());

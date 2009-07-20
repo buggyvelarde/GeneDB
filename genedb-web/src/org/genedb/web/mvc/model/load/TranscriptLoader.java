@@ -44,7 +44,7 @@ public class TranscriptLoader {
      * @param organimsName
      */
     public void load(String organimsName){
-        
+        logger.debug(String.format("Enter load(%s)", organimsName));
 
         OrganismMapper organism = template.queryForObject(
                 "select * from organism where common_name = ?", new OrganismMapper(), organimsName);
@@ -55,6 +55,7 @@ public class TranscriptLoader {
                 " and f.organism_id = ? " +
                 " and f.type_id in (select cvterm_id from cvterm where name in ('gene', 'pseudogene'))";        
         template.query(sql, new GeneMapper(organism, template), organism.getOrganismId());
+        logger.debug(String.format("Exit load(%s)", organimsName));
     
     }
     

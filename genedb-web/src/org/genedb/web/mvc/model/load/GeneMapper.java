@@ -34,6 +34,7 @@ public class GeneMapper extends FeatureMapper {
     
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
+        logger.debug("Enter mapRow");        
         FeatureMapper gene = super.mapRow(rs, rowNum);
         gene.setFmax(rs.getInt("fmax"));
         gene.setFmin(rs.getInt("fmin"));
@@ -44,7 +45,8 @@ public class GeneMapper extends FeatureMapper {
         
         
         template.query(TranscriptMapper.SQL, new TranscriptMapper(organism, gene, template), gene.getFeatureId());
-        
+
+        logger.debug("Exit mapRow");
         return gene;
     }
 
