@@ -94,7 +94,11 @@
               <td class="value">
                   <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
                     <c:if test="${!empty dbxref.urlPrefix}">
-                      <span><a href="${dbxref.urlPrefix}${dbxref.accession}">${dbxref.dbName}:${dbxref.accession}</a><%--
+                      <c:set var="urlPrefix" value="${dbxref.urlPrefix}"/>
+                      <c:if test="${dbxref.urlPrefix=='/DbLinkRedirector?db=EC&acc='}">
+                        <c:set var="urlPrefix" value="/DbLinkRedirect?db=EC&acc="/>
+                      </c:if>
+                      <span><a href="${urlPrefix}${dbxref.accession}">${dbxref.dbName}:${dbxref.accession}</a><%--
                              --%><c:if test="${!status.last}">, </c:if></span>
                     </c:if>
                   </c:forEach>
