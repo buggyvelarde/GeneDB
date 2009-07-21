@@ -12,6 +12,9 @@
 <head>
     <title>${title} - GeneDB</title>
 
+    <script type="text/javascript" src="http://js.sanger.ac.uk/urchin.js"></script>
+
+
     <link rel="stylesheet" href="<c:url value="/includes/style/alternative.css"/>" type="text/css" />
     <link rel="stylesheet" href="<c:url value="/includes/yui/build/reset-fonts/reset-fonts.css"/>" type="text/css" />
     <link rel="stylesheet" href="<c:url value="/includes/yui/build/assets/skins/sam/menu.css"/>" type="text/css" />
