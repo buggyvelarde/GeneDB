@@ -23,7 +23,7 @@ public class DbLinkRedirectController {
         return "redirect:/Homepage";
     }
 
-    @RequestMapping(method = RequestMethod.GET , params= {"db, acc"})
+    @RequestMapping(method = RequestMethod.GET , params= {"db", "acc"})
     public String processForm(
             @RequestParam(value="db") String dbName,
             @RequestParam(value="acc") String acc) {
