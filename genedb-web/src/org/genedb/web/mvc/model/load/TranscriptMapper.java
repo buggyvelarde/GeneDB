@@ -32,26 +32,6 @@ public class TranscriptMapper extends FeatureMapper {
         FeatureMapper transcriptMapper = super.mapRow(rs, rowNum);          
         transcriptMapper.setCvtName(rs.getString("cvtname"));
         transcriptMapper.setCvName(rs.getString("cvname"));
-        
-        logger.debug("Transcript Name: " + rs.getString("name"));
-        
-        //args.put("organism_html_short_name", rs.getInt("")dto.getOrganismHtmlShortName());
-//        args.put("cluster_ids", new DtoStringArrayField(dto.getClusterIds()));
-
-
-//        args.put("obsolete_names", new DtoStringArrayField(dto.getObsoleteNames()));
-//        args.put("orthologue_names", new DtoStringArrayField(dto.getOrthologueNames()));
-//        args.put("publications", new DtoStringArrayField(dto.getPublications()));
-//        args.put("synonyms", new DtoStringArrayField(dto.getSynonyms()));
-//        
-//        args.put("dbx_ref_dtos", createArrayField(dto.getDbXRefDTOs(), DBXRefType.class, "dbxreftype")); 
-//        args.put("algorithm_data", getBytes(dto.getAlgorithmData()));     
-//        
-//        if (dto.getPolypeptideProperties()!= null){
-//            args.put("polypeptide_properties", new PeptidePropertiesType(dto.getPolypeptideProperties()));
-//        }else{
-//            args.put("polypeptide_properties", null);
-//        }
 
         logger.debug("Exit mapRow");
         return transcriptMapper;

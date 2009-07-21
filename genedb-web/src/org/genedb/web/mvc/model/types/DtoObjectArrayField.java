@@ -9,12 +9,12 @@ import java.util.Map;
 
 public class DtoObjectArrayField implements Array {
 
-    private Iterator<?> iter = null;
+    private List<?> arrayField = null;
     private String baseTypeName = null;
     
     public <T> DtoObjectArrayField(String objectType, List<T> arr){
         baseTypeName = objectType;
-        iter = arr.iterator();
+        arrayField = arr;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class DtoObjectArrayField implements Array {
     public String toString(){
         StringBuffer sb = new StringBuffer();
         sb.append("{");
-        while(iter.hasNext()){  
+        for(Iterator<?> iter = arrayField.iterator(); iter.hasNext();){  
             sb.append("\"");
             sb.append(iter.next());  
             sb.append("\"");                

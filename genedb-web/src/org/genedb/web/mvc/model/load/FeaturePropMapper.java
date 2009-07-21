@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class FeaturePropMapper implements
-        ParameterizedRowMapper<FeaturePropMapper> {
+        ParameterizedRowMapper<String> {
     
     public static final String SQL = "select value " +
     		" from featureProp fp, cvterm cvt, cv" +
@@ -19,11 +19,9 @@ public class FeaturePropMapper implements
     private String value;
     
     @Override
-    public FeaturePropMapper mapRow(ResultSet rs, int rowCount)
+    public String mapRow(ResultSet rs, int rowCount)
             throws SQLException {
-        FeaturePropMapper featurePropMapper = new FeaturePropMapper();
-        featurePropMapper.setValue(rs.getString("value"));
-        return featurePropMapper;
+        return rs.getString("value");
     }
 
     public String getValue() {

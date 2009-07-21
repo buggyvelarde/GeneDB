@@ -8,12 +8,21 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
 
+    public String getResidues() {
+        return residues;
+    }
+
+    public void setResidues(String residues) {
+        this.residues = residues;
+    }
+
     private int featureId;
     private int typeId;
     private int organismId;
     private String uniqueName;
     private String name;
     private int seqLen;
+    private String residues;
     private Date timeLastModified;
     
     private int fmax;
@@ -33,6 +42,7 @@ public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
         mapper.setUniqueName(rs.getString("uniquename"));
         mapper.setName(rs.getString("name"));
         mapper.setSeqLen(rs.getInt("seqlen"));
+        mapper.setResidues(rs.getString("residues"));
         mapper.setTimeLastModified(rs.getDate("timelastmodified"));
         return mapper;
     }

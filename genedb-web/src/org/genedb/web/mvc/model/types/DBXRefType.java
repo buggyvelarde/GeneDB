@@ -7,6 +7,12 @@ public class DBXRefType {
     private String dbName;
     private String urlPrefix;
     
+    public DBXRefType(String accession, String dbName, String urlPrefix){
+        this.accession = accession;
+        this.dbName = dbName;
+        this.urlPrefix = urlPrefix;
+    }
+    
     public DBXRefType(DbXRefDTO dto) {
         accession = dto.getAccession();
         dbName = dto.getDbName();
