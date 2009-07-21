@@ -11,6 +11,8 @@ public class OrganismMapper  implements ParameterizedRowMapper<OrganismMapper>{
     
     public static final String SQL =  "select * from organism";
     
+    public static final String SQL_WITH_PARAMS =   "select * from organism where common_name = ?";
+    
     private int organismId;
     private String genus;
     private String species;
