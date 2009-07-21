@@ -95,10 +95,14 @@
                   <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
                     <c:if test="${!empty dbxref.urlPrefix}">
                       <c:set var="urlPrefix" value="${dbxref.urlPrefix}"/>
+                      <c:set var="urlSuffix" value=""/>
                       <c:if test="${dbxref.urlPrefix=='/DbLinkRedirector?db=EC&acc='}">
                         <c:set var="urlPrefix" value="/DbLinkRedirect?db=EC&acc="/>
                       </c:if>
-                      <span><a href="${urlPrefix}${dbxref.accession}">${dbxref.dbName}:${dbxref.accession}</a><%--
+                      <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
+                        <c:set var="urlSuffix" value=".html"/>
+                      </c:if>
+                      <span><a href="${urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.dbName}:${dbxref.accession}</a><%--
                              --%><c:if test="${!status.last}">, </c:if></span>
                     </c:if>
                   </c:forEach>
