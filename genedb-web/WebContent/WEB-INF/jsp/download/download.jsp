@@ -3,18 +3,18 @@
 <c:url value="/" var="base"/>
 <format:headerRound title="Download List" onLoad="initDownload('${base}','${history}')">
 	<st:init />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/fonts/fonts-min.css"/>" />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/datatable/assets/skins/sam/datatable.css"/>" />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/button/assets/skins/sam/button.css"/>" />
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/connection/connection-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/dragdrop/dragdrop-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/json/json-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/element/element-beta-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/button/button-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datasource/datasource-beta-min.js"/>"></script>
-	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datatable/datatable-beta-min.js"/>"></script>
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/yui/build/fonts/fonts-min.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/yui/build/datatable/assets/skins/sam/datatable.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/yui/build/button/assets/skins/sam/button.css"/>" />
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/dragdrop/dragdrop-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/json/json-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/element/element-beta-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/button/button-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datasource/datasource-beta-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datatable/datatable-beta-min.js"/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/download.js"/>"></script>
 </format:headerRound>
@@ -51,11 +51,11 @@
 				<select id="sequenceselect" name="sequenceselect" multiple>
 				    <option value="DNA (Unspliced sequence of CDS) or sequenced EST">UNSPLICED_DNA</option>
 				    <option value="DNA (Spliced sequence)">SPLICED_DNA</option>
-				    <option value="Intron sequence">INTRON</option>  
-					<option value="Protein sequence">PROTEIN</option>     
+				    <option value="Intron sequence">INTRON</option>
+					<option value="Protein sequence">PROTEIN</option>
 					<option value="Intergenic Sequence (5' )">INTERGENIC_5</option>
-					<option value="Intergenic Sequence (3' )">INTERGENIC_3</option>     
-					<option value="CDS/RNA with 5'/3' flanking sequence">CDS_RNA</option>    
+					<option value="Intergenic Sequence (3' )">INTERGENIC_3</option>
+					<option value="CDS/RNA with 5'/3' flanking sequence">CDS_RNA</option>
 				</select>
 			</li>
 		  </ul>

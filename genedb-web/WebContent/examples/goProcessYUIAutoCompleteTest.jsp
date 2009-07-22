@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo/yahoo-min.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/dom/dom-min.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/event/event-min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo/yahoo-min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/includes/yui/build/dom/dom-min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/includes/yui/build/event/event-min.js"/>"></script>
 
 <!-- OPTIONAL: Animation (required only if enabling animation) -->
-<script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
 
 <script src="<c:url value="/includes/scripts/spring-util.js"/>" type="text/javascript"></script>
 <script src='<c:url value="/dwr/interface/goProcessBrowse.js"/>' type="text/javascript"></script>

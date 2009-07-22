@@ -119,7 +119,7 @@ function onSaveClicked(e) {
 	}
 
 	var div = document.getElementById('img');
-	div.innerHTML = "<img src=\"" + base  + "includes/yui/assets/skins/sam/treeview-loading.gif\"></img>";
+	div.innerHTML = "<img src=\"" + base  + "includes/yui/build/assets/skins/sam/treeview-loading.gif\"></img>";
 
 	var request = YAHOO.util.Connect.asyncRequest('GET', url,callback);
 

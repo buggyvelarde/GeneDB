@@ -303,7 +303,7 @@ function initDownload(base,history) {
 			}
 
 			var url = base + "DownloadFeatures" + initialRequest;
-			div.innerHTML = "<img src=\"" + base  + "includes/yui/assets/skins/sam/treeview-loading.gif\"></img>";
+			div.innerHTML = "<img src=\"" + base  + "includes/yui/build/assets/skins/sam/treeview-loading.gif\"></img>";
 
 			if(history<=0) {
 				div.innerHTML = "History number cannot be less than or equal to zero.";
