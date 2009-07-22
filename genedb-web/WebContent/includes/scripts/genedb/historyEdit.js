@@ -12,36 +12,36 @@ function initHistoryEdit(b,h) {
 	hist = h;
 	var params = "?columns=organism.commonName,uniqueName,product&outputFormat=HTML&json=true&historyItem=" + hist;
 	var url = base + "DownloadFeatures";
-	
+
 	makeDataTable(url,params);
-	
+
 	makeButtons();
 }
 
 
 function makeButtons() {
-	var selectAll = new YAHOO.widget.Button({type: "push",label:"Select All",value:"selectAll", 
+	var selectAll = new YAHOO.widget.Button({type: "push",label:"Select All",value:"selectAll",
 							id:"selectAll",container: "historyEditActionButtons"});
-	
+
 	selectAll.addListener("click", onSelectAllClicked);
-	
-	var unselectAll = new YAHOO.widget.Button({type: "push",label:"Deselect All",value:"unselectAll", 
+
+	var unselectAll = new YAHOO.widget.Button({type: "push",label:"Deselect All",value:"unselectAll",
 							id:"unselectAll",container: "historyEditActionButtons"});
 
 	unselectAll.addListener("click", onSelectAllClicked);
-	
-	var deleteSelected = new YAHOO.widget.Button({type: "push",label:"Delete items",value:"delete", 
+
+	var deleteSelected = new YAHOO.widget.Button({type: "push",label:"Delete items",value:"delete",
 								id:"delete",container: "historyEditManipulateButtons"});
 
 	deleteSelected.addListener("click", onDeleteClicked);
 
-	
-	var save = new YAHOO.widget.Button({type: "push",label:"Replace original query",value:"save", 
+
+	var save = new YAHOO.widget.Button({type: "push",label:"Replace original query",value:"save",
 					id:"save",container: "historyEditSaveButtons"});
 
 	save.addListener("click", onSaveClicked);
-	
-	var newList = new YAHOO.widget.Button({type: "push",label:"Create new list",value:"newlist", 
+
+	var newList = new YAHOO.widget.Button({type: "push",label:"Create new list",value:"newlist",
 					id:"newlist",container: "historyEditSaveButtons"});
 
 	newList.addListener("click", onSaveClicked);
@@ -66,7 +66,7 @@ function onSelectAllClicked(e) {
 		var div = document.getElementById("selection");
 		div.innerHTML = ids.toStringWithSpace();
 		myDT.refreshView();
-} 
+}
 
 function onDeleteClicked(e) {
     	var rows = myDT.getSelectedRows();
@@ -113,16 +113,16 @@ function onSaveClicked(e) {
 	var url = base + "History/AddItem?history=" + hist + "&ids=" + ids.toString();
 	if(type == 'save') {
 		url += "&type=MODIFY";
-		
+
 	} else {
 		url += "&type=NEW";
 	}
-	
+
 	var div = document.getElementById('img');
-	div.innerHTML = "<img src=\"" + base  + "includes/YUI-2.5.2/assets/skins/sam/treeview-loading.gif\"></img>";
-	
+	div.innerHTML = "<img src=\"" + base  + "includes/yui/assets/skins/sam/treeview-loading.gif\"></img>";
+
 	var request = YAHOO.util.Connect.asyncRequest('GET', url,callback);
-	
+
 	window.location = base + "History/View";
 }
 
@@ -135,7 +135,7 @@ function checkElements(element) {
 		element.checked = true;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -153,8 +153,8 @@ function makeDataTable(url, params) {
 	                    resultsList: "hits",
 	                    fields: ["checkbox","organism","name","product"]
 	                };
-	                
-	                paginator = new YAHOO.widget.Paginator({ 
+
+	                paginator = new YAHOO.widget.Paginator({
                 					alwaysVisible: false,
                 					rowsPerPage: 25,
         				            template : "{PreviousPageLink} <span>{CurrentPageReport}</span> {PageLinks} {NextPageLink}",
@@ -162,17 +162,17 @@ function makeDataTable(url, params) {
         				            nextPageLinkLabel : '&gt;',
         				            pageReportTemplate : 'Showing records <strong>{startRecord} - {endRecord}</strong> of {totalRecords}'
 	        				    });
-	                
-	                var oConfigs = { 
+
+	                var oConfigs = {
 	        	                paginator: paginator,
 	        	                initialRequest: params,
 	        	                width: 600
-	        	        }; 	 
-	                		
+	        	        };
+
 	                myDT = this.myDataTable = new YAHOO.widget.DataTable("historyEdit", myColumnDefs,
 	                        this.myDataSource,oConfigs );
-	                
-	                this.myDataTable.subscribe("checkboxClickEvent", checkboxClicked);      
+
+	                this.myDataTable.subscribe("checkboxClickEvent", checkboxClicked);
 }
 
 
