@@ -30,8 +30,13 @@ public class TranscriptLoaderTest {
         PropertyConfigurator.configure(url);                
     }
     
+    //@Test
+    public void loadTbruceibrucei427()throws Exception{
+        transcriptLoader.load("Tbruceibrucei427", 10);
+    }
+    
     @Test
-    public void loadTbruceibrucei427(){
-        transcriptLoader.load("Tbruceibrucei427");
+    public void loadPFalciparum()throws Exception{
+        transcriptLoader.load("Pfalciparum", 1000);
     }
 }

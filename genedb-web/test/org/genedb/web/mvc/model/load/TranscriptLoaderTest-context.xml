@@ -34,9 +34,15 @@
     
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5433/pathogens"/>
+        <!--property name="url" value="jdbc:postgresql://localhost/tcdb"/>
+        <property name="username" value="tcuser"/>
+        <property name="password" value="tcuser"/-->
+        <!--property name="url" value="jdbc:postgresql://localhost:5433/pathogens"/>
         <property name="username" value="lo2@sanger.ac.uk"/>
-        <property name="password" value="lo2"/>
+        <property name="password" value="lo2"/-->
+        <property name="url" value="jdbc:postgresql://localhost:5477/pathdev"/>
+        <property name="username" value="pathdb"/>
+        <property name="password" value="LongJ!@n"/>
     </bean>
     
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

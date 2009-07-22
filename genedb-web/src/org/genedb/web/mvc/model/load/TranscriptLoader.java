@@ -1,15 +1,18 @@
 package org.genedb.web.mvc.model.load;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.genedb.web.mvc.model.types.DBXRefType;
 import org.genedb.web.mvc.model.types.DtoObjectArrayField;
 import org.genedb.web.mvc.model.types.DtoStringArrayField;
 import org.genedb.web.mvc.model.types.PeptidePropertiesType;
+import org.genedb.web.mvc.model.types.SynonymType;
 import org.gmod.schema.utils.PeptideProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,8 +38,7 @@ public class TranscriptLoader {
     }
     
     public void loadAll(){           
-        template.query(GeneMapper.SQL, new GeneMapper(template));
-    
+        template.query(GeneMapper.SQL, new GeneMapper(template));    
     }
     
     /**
@@ -48,6 +50,7 @@ public class TranscriptLoader {
      */
     public int load(String organismName, int limit)throws Exception{
         logger.debug(String.format("Enter load(%s)", organismName));
+        Date startTime = new Date();
         
         
         //Get the organism
@@ -58,59 +61,100 @@ public class TranscriptLoader {
         int offset = 1;
               
         List<FeatureMapper> genes = null;
-        do{
-            logger.info(String.format("Offset is %s and Limit is %s", offset, limit));
-            
-            //Create the mapper and get the genes
-            genes = template.query(
-                    GeneMapper.SQL_WITH_LIMIT_AND_OFFSET_PARAMS, 
-                    new GeneMapper(template), organismMapper.getOrganismId(), limit, offset);
-            logger.debug("Genes size: " + genes.size());            
-            for(FeatureMapper geneMapper: genes){          
-                
-                //Init the toplevelfeature arguments of this transcript
-                FeatureMapper topLevelFeatureMapper = template.queryForObject(
-                        "select * from feature f where feature_id = ?", new FeatureMapper(), geneMapper.getSourceFeatureId());                          
-                
-                //get the transcripts
-                List<FeatureMapper>transcriptMappers = template.query(
-                        TranscriptMapper.SQL, new TranscriptMapper(template), geneMapper.getFeatureId());
-                logger.info("Transcripts size: " + transcriptMappers.size());
-                for( FeatureMapper transcriptMapper: transcriptMappers){                    
-                   
-                    logger.info("Adding..." + transcriptMapper.getFeatureId());
-                    
-                    HashMap<String, Object> args = new HashMap<String, Object>();
-                    
-                    //Init the Organism arguments of this transcript
-                    initOrganismArguments(args, organismMapper);
-                    
-                    //Init the gene arguments of this transcript
-                    initGeneArguments(args, geneMapper);
-                          
-                    //Init the transcript arguments
-                    initTranscriptArguments(args, transcriptMapper);
-                    
-                    if (isProductiveTranscript(transcriptMapper)){
-                        FeatureMapper polypeptideMapper = template.queryForObject(
-                                PolypeptideMapper.SQL, new PolypeptideMapper(), transcriptMapper.getFeatureId());
+        try{
+            do{
+                logger.info(String.format("Offset is %s and Limit is %s", offset, limit));
+
+                //Create the mapper and get the genes
+                genes = template.query(
+                        GeneMapper.SQL_WITH_LIMIT_AND_OFFSET_PARAMS, 
+                        new GeneMapper(template), organismMapper.getOrganismId(), limit, offset);
+                logger.info("Genes size: " + genes.size());            
+                for(FeatureMapper geneMapper: genes){         
+                    Date geneProcessingStartTime = new Date();    
+
+                    //Init the toplevelfeature arguments of this transcript
+                    Date topLevelFeatureGetStartTime = new Date();
+                    FeatureMapper topLevelFeatureMapper = template.queryForObject(
+                            TopLevelFeatureMapper.SQL, 
+                            new TopLevelFeatureMapper(), geneMapper.getSourceFeatureId());
+                    printTimeLapse(topLevelFeatureGetStartTime, "topLevelFeatureGetStartTime");
+
+                    //get the transcripts      
+                    Date transcriptGetStartTime = new Date();
+                    List<FeatureMapper>transcriptMappers = template.query(
+                            TranscriptMapper.SQL, new TranscriptMapper(template), geneMapper.getFeatureId());
+                    printTimeLapse(transcriptGetStartTime, "transcriptGetStartTime");
+
+                    logger.info("Transcripts size: " + transcriptMappers.size());                
+                    for( FeatureMapper transcriptMapper: transcriptMappers){       
+                        Date transcriptProcessingStartTime = new Date();
+
+                        logger.info("Adding..." + transcriptMapper.getFeatureId());
+
+                        HashMap<String, Object> args = new HashMap<String, Object>();
+
+                        //Init the Organism arguments of this transcript
+                        initOrganismArguments(args, organismMapper);
+
+                        //Init the gene arguments of this transcript
+                        initGeneArguments(args, geneMapper);
+
+                        //Init the transcript arguments
+                        initTranscriptArguments(args, transcriptMapper);
                         
-                        initPolypeptideArguments(args, polypeptideMapper);            
-                    } 
-                    initTopLevelArguments(args, topLevelFeatureMapper);        
-                    
-                    loadCount = loadCount + insertDenormalisedTranscript(args);
-                    logger.info("Added..." + transcriptMapper.getFeatureId());
+                        //Init the synonyms
+                        List<SynonymType> synonyms = template.query(
+                                SynonymTypeMapper.SQL, new SynonymTypeMapper(), transcriptMapper.getFeatureId());
+                        initSynonymTypeArguments(args, synonyms);
+
+                        if (isProductiveTranscript(transcriptMapper)){
+                            FeatureMapper polypeptideMapper = template.queryForObject(
+                                    PolypeptideMapper.SQL, new PolypeptideMapper(), transcriptMapper.getFeatureId());                                                
+                            initPolypeptideArguments(args, polypeptideMapper);
+                        }else{
+                            args.put("protein_coding", false);
+                            args.put("polypeptide_time_last_modified",null);
+                            args.put("pep_comments", null);
+                            args.put("pep_curation", null);
+                            args.put("dbx_refs", null);
+                            args.put("publications", null);
+                            args.put("polypeptide_properties",null);
+                            args.put("cluster_ids", null);
+                            args.put("orthologue_names", null);  
+                        }
+
+                        initTopLevelArguments(args, topLevelFeatureMapper);        
+
+                        loadCount = loadCount + insertDenormalisedTranscript(args);
+
+                        logger.info("Added..." + transcriptMapper.getFeatureId());
+                        printTimeLapse(transcriptProcessingStartTime, "transcriptProcessingTime");
+                    }
+                    printTimeLapse(geneProcessingStartTime, "geneProcessingStartTime");
                 }
-            }
-            
-            //increase the offset
-            offset = offset + limit;
-            
-        }while(genes!= null && limit <= genes.size());
-            
-        logger.debug(String.format("Exit load(%s)", organismName));
+
+                //increase the offset
+                offset = offset + limit;
+
+            }while(genes!= null && limit <= genes.size());
+        }catch(Exception e){
+            logger.info("Error: ", e);
+            throw e;
+        }finally{
+            logger.info("Load Count: " + loadCount);
+        }
+        
+        printTimeLapse(startTime, String.format("Exit load(%s)", organismName));
         return loadCount;
+    }
+    
+    private void initSynonymTypeArguments(HashMap<String, Object> args, List<SynonymType> synonyms ){
+        logger.debug("Enter initSynonymTypeArguments");
+        DtoObjectArrayField objectField = new DtoObjectArrayField("synonymtype", synonyms);
+        args.put("synonyms", objectField);
+        logger.debug("Exit initSynonymTypeArguments");
+        
     }
     
     private void initOrganismArguments(HashMap<String, Object> args, OrganismMapper organismMapper){ 
@@ -135,8 +179,7 @@ public class TranscriptLoader {
         logger.debug("Enter initTopLevelArguments");       
         args.put("top_level_feature_displayname", topLevelFeature.getDisplayName());
         args.put("top_level_feature_length", topLevelFeature.getSeqLen());
-        //args.put("top_level_feature_type", dto.getTopLevelFeatureType());
-        //args.put("type_description", dto.getTypeDescription());
+        args.put("top_level_feature_type", topLevelFeature.getCvtName());
         args.put("top_level_feature_uniquename", topLevelFeature.getUniqueName());     
         logger.debug("Exit initTopLevelArguments");          
     }
@@ -158,8 +201,15 @@ public class TranscriptLoader {
         logger.debug("Exit initTranscriptArguments");
     }
     
+    /**
+     * 
+     * @param args
+     * @param polypeptideMapper
+     * @throws Exception
+     */
     private void initPolypeptideArguments(HashMap<String, Object> args, FeatureMapper polypeptideMapper)
     throws Exception{
+        Date startTime = new Date();
         logger.debug("Enter initPolypeptideArguments");
 
         if(polypeptideMapper!= null){
@@ -192,78 +242,54 @@ public class TranscriptLoader {
             
             //Get polypeptide properties
             PeptideProperties properties = PolypeptidePropertiesHelper.calculateStats(polypeptideMapper);
-            args.put("polypeptide_properties", new PeptidePropertiesType(properties));
+            if (properties!= null){
+                logger.info("Polypep properties: Amino "
+                        + properties.getAminoAcids() +", " 
+                        + properties.getCharge() + ", Charge"
+                        + properties.getIsoelectricPoint()+ ", IsoElec"
+                        + properties.getMass() + ", Mass In Daltons "
+                        + properties.getMassInDaltons() );
+                args.put("polypeptide_properties", new PeptidePropertiesType(properties));
+            }else{
+                args.put("polypeptide_properties", null);
+                logger.error("Peptide Properties for (featureid: "+polypeptideMapper.getFeatureId() +")is null");
+            }
         
             //Get the clusertIds and orthologueNames
-            initPepClusterIdsAndOrthologueNames(args, polypeptideMapper);
-        }else{
-            args.put("protein_coding", false);
-            args.put("polypeptide_time_last_modified",null);
-            args.put("pep_comments", null);
-            args.put("pep_curation", null);
-            args.put("dbx_refs", null);
-            args.put("publications", null);
-            args.put("polypeptide_properties",null);
-            args.put("cluster_ids", null);
-            args.put("orthologue_names", null);  
+            initPepClusterIdsAndOrthologueNames(args, polypeptideMapper);            
         }
         logger.debug("Exit initPolypeptideArguments");
+        printTimeLapse(startTime, "initPolypeptideArguments");
     }
     
+    /**
+     * 
+     * @param args
+     * @param polypeptideMapper
+     */
     private void initPepClusterIdsAndOrthologueNames(HashMap<String, Object> args, FeatureMapper polypeptideMapper){
+        Date startTime = new Date();
+        
         List<String> cluserIds = new ArrayList<String>();
         List<String> orthorloguesNames = new ArrayList<String>();
         
+        List<ClusterIdAndOrthologueNamesMapper> clusterIdAndOrthologueNamesMappers = template.query(
+                ClusterIdAndOrthologueNamesMapper.SQL, 
+                new ClusterIdAndOrthologueNamesMapper(), polypeptideMapper.getFeatureId());
         
-        String termName = "orthologous_to";
-        String cvName = "sequence";
-        //filter the feature relation for cvname="sequence", cvterm="orthologous_to"
-        List<FeatureRelationshipMapper> featRelates = template.query(
-                FeatureRelationshipMapper.TYPE_RESTRICTED_SQL, 
-                new FeatureRelationshipMapper(), 
-                polypeptideMapper.getFeatureId(),
-                cvName, termName);
-        
-        if (featRelates.size()==0){
-            logger.error(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
-            args.put("cluster_ids", new DtoStringArrayField(cluserIds));
-            args.put("orthologue_names", new DtoStringArrayField(orthorloguesNames));  
-            return;
-        }
-        
-        String sql = "select f.uniquename, cvt.name " +
-        		" from feature f, cvterm cvt " +
-        		" where f.type_id = cvt.cvterm_id" +
-        		" and f.feature_id in (placeHolders)";
-        
-        //Get the list of object_id to be used as placeholders
-        String placeholders = "";
-        List<Integer> objectIds = new ArrayList<Integer>(); 
-        for(Iterator<FeatureRelationshipMapper> iter = featRelates.iterator(); iter.hasNext();){
-            FeatureRelationshipMapper featRelate = iter.next();
-            objectIds.add(featRelate.getObjectId());
-            placeholders = placeholders + "?";
-            if(iter.hasNext()){
-                placeholders = placeholders + ",";
-            }
-        }
-        
-        //put the placeholsers
-        sql = sql.replace("placeholders", placeholders);
-        
-        List<FeatureMapper> featureTypeMappers = template.query(sql, new FeatureTypeMapper(), objectIds);
-        for(FeatureMapper featureTypeMapper: featureTypeMappers){
-            if (featureTypeMapper.getCvtName().equals("protein_match")){
-                cluserIds.add(featureTypeMapper.getUniqueName());
+        for(ClusterIdAndOrthologueNamesMapper mapper: clusterIdAndOrthologueNamesMappers){
+            if (mapper.getCvtName().equals("protein_match")){
+                cluserIds.add(mapper.getUniqueName());
                 
-            }else if(featureTypeMapper.getCvtName().equals("polypeptide")){
-                orthorloguesNames.add(featureTypeMapper.getUniqueName());
+            }else if(mapper.getCvtName().equals("polypeptide")){
+                orthorloguesNames.add(mapper.getUniqueName());
             }
         }
 
         //initialise the fields
         args.put("cluster_ids", new DtoStringArrayField(cluserIds));
-        args.put("orthologue_names", new DtoStringArrayField(orthorloguesNames));        
+        args.put("orthologue_names", new DtoStringArrayField(orthorloguesNames));    
+        printTimeLapse(startTime, "initPepClusterIdsAndOrthologueNames");
     }
     
     private boolean isProductiveTranscript(FeatureMapper transcriptMapper){
@@ -280,12 +306,14 @@ public class TranscriptLoader {
     
     private int insertDenormalisedTranscript(HashMap<String, Object> args){   
         logger.debug("Enter insertDenormalisedTranscript");
+        Date startTime = new Date();
+        
         for(String key : args.keySet()){
-            logger.debug(String.format("%s: %s", key, args.get(key)));
+            logger.info(String.format("%s: %s", key, args.get(key)));
         }
         logger.debug("\n");
         logger.debug(String.format("Field args size: %s", args.size()));
-        return template.update("insert into transcript_cache values(" +
+        int update = template.update("insert into transcript_cache values(" +
                 ":transcript_id," +
                 ":gene_id," +
                 ":gene_name," +
@@ -301,7 +329,7 @@ public class TranscriptLoader {
                 ":pseudo," +
                 ":top_level_feature_displayname," +
                 ":top_level_feature_length," +
- //               ":top_level_feature_type," +
+                ":top_level_feature_type," +
                 ":top_level_feature_uniquename," +
                 ":type_description," +
                 ":uniquename," +
@@ -312,9 +340,9 @@ public class TranscriptLoader {
 //                ":obsolete_names," +
                 ":orthologue_names," +
                 ":publications," +
-//                ":synonyms," +
                 
                 ":polypeptide_properties," +
+                ":synonyms," +
                 ":dbx_refs" +
 //                ":algorithm_data," +
 //                ":domain_information," +
@@ -327,6 +355,8 @@ public class TranscriptLoader {
 //            updateFeatureCvtermDTO(transcriptId, dto.getGoCellularComponents());
 //            updateFeatureCvtermDTO(transcriptId, dto.getGoMolecularFunctions());
 //            updateFeatureCvtermDTO(transcriptId, dto.getProducts());
+        printTimeLapse(startTime, "insertDenormalisedTranscript");
+        return update;
     }
 
     public SimpleJdbcTemplate getTemplate() {
@@ -335,5 +365,19 @@ public class TranscriptLoader {
 
     public void setTemplate(SimpleJdbcTemplate template) {
         this.template = template;
+    }
+    
+    private void printTimeLapse(Date startTime, String queryName){
+        Date timeAfter = new Date();
+        long timeTaken =  timeAfter.getTime() - startTime.getTime();
+        if(timeTaken < 1000){
+            logger.info(queryName + " execution time = "+ timeTaken + " millisecs");
+            
+        }else if(timeTaken > 60000){
+            logger.info(queryName + " execution time = "+ timeTaken/60 + "." + (timeTaken%60)/1000 +" mins");
+            
+        }else{
+            logger.info(queryName + " execution time = "+ timeTaken/1000 + "." + timeTaken%1000 +" secs");
+        }
     }
 }
