@@ -15,6 +15,12 @@ public class DbxRefMapper implements ParameterizedRowMapper<DBXRefType> {
     		" and fdbx.dbxref_id = dbxref.dbxref_id" +
     		" and dbxref.db_id = db.db_id";
     
+    public static final String FEATURE_CVTERM_SQL = "select accession, db.name, db.urlprefix " +
+    		" from feature_cvterm_dbxref fcvtdb, dbxref, db" +
+    		" where fcvtdb.feature_cvterm_id = ?" +
+    		" fcvtdb.dbxref_id = dbxref.dbxref_id" +
+    		" and dbxref.db_id = db.db_id";
+    
     @Override
     public DBXRefType mapRow(ResultSet rs, int rowCount) throws SQLException {
         return new DBXRefType(

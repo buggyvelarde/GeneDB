@@ -2,12 +2,12 @@ package org.genedb.web.mvc.model.types;
 
 public class FeatureCVTPropType {
     private String fctTypeName;
-    private String[] fctValues;
+    private String fctValue;
     
-    public FeatureCVTPropType(String fctTypeName, String[] fctValues) {
+    public FeatureCVTPropType(String fctTypeName, String fctValue) {
         super();
         this.fctTypeName = fctTypeName;
-        this.fctValues = fctValues;
+        this.fctValue = fctValue;
     }
     
     @Override
@@ -18,17 +18,10 @@ public class FeatureCVTPropType {
         sb.append("'");
         sb.append(fctTypeName);
         sb.append("',");
-        
-        sb.append("{");
-        for(int i=0; i<fctValues.length; ++i){   
-            sb.append("\"");
-            sb.append(fctValues[i]);            
-            sb.append("\"");                        
-            if (i+1<fctValues.length){
-                sb.append(",");
-            }
-        }
-        sb.append("}");
+
+        sb.append("'");
+        sb.append(fctValue);
+        sb.append("',");
         
         sb.append(")");
         return sb.toString();
