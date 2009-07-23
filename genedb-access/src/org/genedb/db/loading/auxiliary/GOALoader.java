@@ -45,8 +45,11 @@ public class GOALoader extends Loader {
     	if (hit.getFeatureType().equals("gene")) {
     		polypeptide = getPolypeptideForGene(hit.getFeatureUniquename());
     	}
+    	else if (hit.getFeatureType().equals("protein")) {
+    		polypeptide = getPolypeptideByMangledName(hit.getFeatureUniquename());
+    	}    	
     	else {
-    		logger.error(String.format("Feature '%s' is of type %s not type gene", hit.getFeatureUniquename(), hit.getFeatureType()));
+    		logger.error(String.format("Feature '%s' is of type %s not type gene or protein", hit.getFeatureUniquename(), hit.getFeatureType()));
     		return;
     	}
     	
