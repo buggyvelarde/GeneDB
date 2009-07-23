@@ -36,15 +36,15 @@
 
   <!-- General targets -->
 
-  <target name="lib-populate-lib-dir" depends="check.lib-lib-uptodate" unless="lib.lib-uptodate">
+  <target name="lib-populate-lib-dir" depends="check.lib-lib-uptodate" unless="libs.lib-uptodate">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <populate directory="genedb-libs"/>
     <!-- <ivy:retrieve conf="default"/> -->
   </target>
 
-    <target name="check.lib-lib-uptodate" depends="libs-init" if="lib.ivy-timestamp-exists">
-        <uptodate property="lib.lib-uptodate" srcfile="${imported.basedir.lib}/ivy.xml" targetfile="${imported.basedir.lib}/lib/ivy.timestamp.txt" />
+    <target name="check.lib-lib-uptodate" depends="libs-init" if="libs.ivy-timestamp-exists">
+        <uptodate property="libs.lib-uptodate" srcfile="${imported.basedir.libs}/ivy.xml" targetfile="${imported.basedir.libs}/lib/ivy.timestamp.txt" />
     </target>
 
 
@@ -122,7 +122,7 @@
       <mkdir dir="@{topdir}/${classes.dir}" />
       <mkdir dir="@{topdir}/${test-classes.dir}" />
       <mkdir dir="@{topdir}/${lib.dir}" />
-      <available property="@{project}.ivy-timestamp-exists" file="${lib.dir}/ivy.timestamp.txt" />
+      <available property="@{project}.ivy-timestamp-exists" file="@{topdir}/${lib.dir}/ivy.timestamp.txt" />
     </sequential>
   </macrodef>
 
