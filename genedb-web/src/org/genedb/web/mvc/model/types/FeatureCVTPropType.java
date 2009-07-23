@@ -21,7 +21,7 @@ public class FeatureCVTPropType {
 
         sb.append("'");
         sb.append(fctValue);
-        sb.append("',");
+        sb.append("'");
         
         sb.append(")");
         return sb.toString();

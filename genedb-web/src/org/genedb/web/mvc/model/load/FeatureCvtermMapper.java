@@ -10,7 +10,6 @@ public class FeatureCvtermMapper implements ParameterizedRowMapper<FeatureCvterm
     private int featureCvtId;
     private int featureId;
     private int typeId;
-    private String value;   
     private int pubId;
 
 
@@ -18,7 +17,7 @@ public class FeatureCvtermMapper implements ParameterizedRowMapper<FeatureCvterm
             " from feature_cvterm fcvt, cvterm cvt, cv" +
             " where fcvt.cvterm_id = cvt.cvterm_id" +
             " and cvt.cv_id = cv.cv_id" +
-            " and cv.name like '?%'" +
+            " and cv.name like ?" +
             " and fcvt.feature_id = ?";
 
 
@@ -46,14 +45,6 @@ public class FeatureCvtermMapper implements ParameterizedRowMapper<FeatureCvterm
         this.typeId = typeId;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     public static String getSQL() {
         return SQL;
     }
@@ -73,7 +64,6 @@ public class FeatureCvtermMapper implements ParameterizedRowMapper<FeatureCvterm
         featureCvtermMapper.setFeatureCvtId(rs.getInt("feature_cvterm_id"));
         featureCvtermMapper.setFeatureId(rs.getInt("feature_id"));
         featureCvtermMapper.setTypeId(rs.getInt("cvterm_id"));
-        featureCvtermMapper.setValue(rs.getString("value"));
         featureCvtermMapper.setPubId(rs.getInt("pub_id"));
         return featureCvtermMapper;
     }

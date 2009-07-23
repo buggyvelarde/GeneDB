@@ -17,7 +17,7 @@ ParameterizedRowMapper<String> {
     public static final String FEATURE_CVTERM_SQL = "select uniquename " +
     	" from feature_cvterm fcvt, feature_cvterm_pub fcvtpub, pub" +
     	" where fcvt.feature_cvterm_id = ?" +
-    	" fcvt.feature_cvterm_id = fcvtpub.feature_cvterm_id" +
+    	" and fcvt.feature_cvterm_id = fcvtpub.feature_cvterm_id" +
     	" and fcvtpub.pub_id = pub.pub_id";
 
     @Override
