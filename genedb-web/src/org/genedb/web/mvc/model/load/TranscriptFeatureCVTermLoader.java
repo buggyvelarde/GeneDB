@@ -49,7 +49,7 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the Name
                 logger.debug("Getting ...cvTermName");
-                String cvTermName = (String)template.queryForObject(
+                String cvTermName = template.queryForObject(
                         "select name from cvterm where cvterm_id = ?",
                         String.class,
                         new Object[]{new Integer(mapper.getTypeId())} );
@@ -58,7 +58,7 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the Accession
                 logger.debug("Getting ...typeAccession");
-                String typeAccession = (String)template.queryForObject(
+                String typeAccession = template.queryForObject(
                         " select accession " +
                         " from cvterm cvt, dbxref dbx " +
                         " where cvt.dbxref_id = dbx.dbxref_id " +
@@ -70,7 +70,7 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the withFrom
                 logger.debug("Getting ...withFromPb");
-                String withFromPub = (String)template.queryForObject(
+                String withFromPub = template.queryForObject(
                         "select uniquename from pub where pub_id = ?",
                         String.class,
                         new Object[]{new Integer(mapper.getPubId())});
