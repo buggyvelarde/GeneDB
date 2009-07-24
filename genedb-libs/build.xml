@@ -22,11 +22,6 @@
     <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.3.RELEASE.jar"/>
   </path>
 
-  <!-- Extra task definitions -->
-  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-    <classpath refid="aspectj-tools-classpath"/>
-  </taskdef>
-
 
   <!-- Classpaths -->
   <path id="aspect.path">
@@ -199,6 +194,9 @@
       <attribute name="classpathref" default="@{project}-classpath"/>
     <sequential>
       <antcall target="lib-populate-lib-dir" />
+	  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+	    <classpath refid="aspectj-tools-classpath"/>
+	  </taskdef>
       <iajc
         verbose="false" nowarn="true"
         inpath="@{from-directory}"
