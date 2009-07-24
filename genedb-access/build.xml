@@ -94,6 +94,10 @@
           </condition>
       </fail>
 
+  	  <!-- Copy property-file.${config} to resources/project.properties, if and only if they're different.
+  	       The reason we don't want to copy the file needlessly is that it would force a recompile,
+  	       because the copy would be newer than the timestamp.
+  	    -->
       <copy overwrite="true" todir="${imported.basedir.access}/resources">
       	<fileset dir="${imported.basedir.access}">
       		<different targetdir="${imported.basedir.access}/resources" ignoreFileTimes="true">
