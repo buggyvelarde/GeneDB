@@ -84,7 +84,9 @@
     </bean>
 
     <bean id="fastaLoader" class="org.genedb.db.loading.FastaLoader"/>
-
+    
+    <bean id="agpLoader" class="org.genedb.db.loading.AGPLoader"/>
+    
     <bean id="vulgarLoader" class="org.genedb.db.loading.VulgarLoader">
         <property name="transactionManager" ref="jdbcTransactionManager"/>
     </bean>
