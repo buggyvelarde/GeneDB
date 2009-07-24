@@ -40,14 +40,28 @@
   <target name="access-init">
     <init-target project="access"/>
   </target>
+	
+  <target name="access-check-timestamp-exists">
+  	<available property="access.timestamp-exists" file="${imported.basedir.access}/${build.dir}/timestamp.txt" />
+  </target>
 
-  <target name="access-compile" depends="access-init, access-populate-lib, access-populate-util, access-populate-db">
+  <target name="access-check-uptodate" depends="access-check-timestamp-exists" if="access.timestamp-exists">
+    <uptodate property="access.uptodate" targetfile="${imported.basedir.access}/${build.dir}/timestamp.txt">
+        <srcfiles dir="${imported.basedir.access}/src" />
+        <srcfiles dir="${imported.basedir.access}/resources" />
+        <srcfiles dir="${imported.basedir.access}/conf" />
+    </uptodate>
+  </target>
+  
+  <target name="access-compile" depends="access-init, access-populate-lib, access-populate-util, access-populate-db, access-check-uptodate"
+  		unless="access.uptodate">
       <compile-target project="access" />
       <iajc-target project="access" />
-      <copy todir="${imported.basedir.access}/ant-build/classes" overwrite="true">
+      <copy todir="${imported.basedir.access}/${classes.dir}" overwrite="true">
         <fileset dir="${imported.basedir.access}/resources" />
         <fileset dir="${imported.basedir.access}/conf" />
       </copy>
+  	  <touch file="${imported.basedir.access}/${build.dir}/timestamp.txt"/>
   </target>
 
 
@@ -80,11 +94,17 @@
           </condition>
       </fail>
 
-      <copy file="${imported.basedir.access}/property-file.${config}" tofile="${imported.basedir.access}/resources/project.properties"
-          overwrite="true" />
+      <copy overwrite="true" todir="${imported.basedir.access}/resources">
+      	<fileset dir="${imported.basedir.access}">
+      		<different targetdir="${imported.basedir.access}/resources" ignoreFileTimes="true">
+          		<mapper type="glob" from="property-file.${config}" to="project.properties"/>
+      		</different>
+      	</fileset>
+  		<mapper type="glob" from="property-file.${config}" to="project.properties"/>
+      </copy>
   </target>
 
-  <target name="access-fulljar" depends="replace,access-compile" description="Create JAR file">
+  <target name="access-fulljar" depends="replace,access-compile" description="Create JAR file" unless="access.jar-uptodate">
     <jar-target project="access"/>
   </target>
 
@@ -469,10 +489,17 @@
         <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath"/>
     </target>
     
-    <target name="install" depends="access-fulljar" if="installDir">
-        <copy flatten="true" todir="${installDir}" verbose="true">
+    <target name="install" depends="access-fulljar">
+        <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
+        <copy flatten="true" todir="${installDir}/lib" verbose="true">
             <path refid="exec-classpath"/>
         </copy>
+        <copy todir="${installDir}/bin">
+            <fileset dir="${imported.basedir.access}/scripts" />
+        </copy>
+    	<chmod perm="ugo+rx">
+    		<fileset dir="${installDir}/bin"/>
+    	</chmod>
     </target>
 
 </project>
