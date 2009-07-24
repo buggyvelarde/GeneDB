@@ -122,9 +122,9 @@
 
     <format:genePageSection id="analysisTools" className="whiteBox">
         <div class="heading">Tools</div>
-        <!-- <div style="clear: both; margin-top: 1ex;">
+        <div style="clear: both; margin-top: 1ex;">
             <format:addToBasket uniqueName="${dto.uniqueName}" />
-         </div> -->
+         </div>
         <div style="clear: both; margin-top: 3ex; margin-left: 1ex;">
              <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true"><img src="<c:url value="/" />includes/images/viewSequenceButton.gif"></a>
          </div>

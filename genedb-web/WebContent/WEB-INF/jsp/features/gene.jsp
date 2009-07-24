@@ -47,15 +47,15 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 <script language="javascript">
 //<![CDATA[
 function addToBasket(geneid){
-    var url = "/ci-web/Basket";
+    var url = "/Basket";
     var postData = "name="+geneid;
     var callback = {
         success: function(o) {
-            document.getElementById('basketbutton').src = "/ci-web/includes/images/alreadyInBasket.gif";
+            document.getElementById('basketbutton').src = "/includes/images/alreadyInBasket.gif";
             document.getElementById('basketbutton').onclick = null;
         },
         failure: function(o) {
-            write("AJAX request for add button failed");
+            alert("AJAX request for add button failed");
         }
     }
 
