@@ -106,10 +106,13 @@ doLoad() {
     organism=''
     topLevel=''
     properties=''
+    debug=false
 
     OPTIND=0
-    while getopts "o:t:x:" option; do
+    while getopts "do:t:x:" option; do
         case "$option" in
+        d)  debug=true
+            ;;
         o)  organism="$OPTARG"
             ;;
         t)  topLevel="$OPTARG"
@@ -158,7 +161,25 @@ doLoad() {
         echo >&2 "`basename $0`: no such file or directory '$file'"
         exit 1
     fi
+    
+    user="$LOGNAME@sanger.ac.uk"
+    echo -n "Password for $user: "
+    trap 'stty echo' EXIT ;# In case the user presses ^C, for example
+    stty -echo
+    read password
+    stty echo
+    trap - EXIT
+    echo
 
-    echo Doing it
-    java -Dload.organismCommonName="$organism" -Dload.topLevel="$topLevel" -Dload.inputDirectory="$file" org.genedb.db.loading.LoadEmbl
+    if $debug; then
+        echo "Classpath:"
+        echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
+        set -x
+    fi
+    java -Xmx1G \
+        -Dload.organismCommonName="$organism" -Dload.topLevel="$topLevel" \
+         -Dload.inputDirectory="$file" \
+         $properties \
+         -Ddbuser="$user" -Ddbpassword="$password" \
+         org.genedb.db.loading.LoadEmbl
 }
