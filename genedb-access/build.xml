@@ -149,7 +149,18 @@
             <jvmarg line="-Xmx350M"/>
         </java>
     </target>
-
+        	
+	<target name="load-agp" depends="access-fulljar">
+         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadAGP">
+         	<sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.AGPFile" value="${file}"/>
+            <syspropertyset>
+            	<propertyref builtin="commandline"/>
+             </syspropertyset>
+             <jvmarg line="-Xmx1G"/>
+         </java>
+    </target>
+	
     <target name="delete-organism" depends="access-fulljar">
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
@@ -438,16 +449,20 @@
 
     <!-- GOALoader -->
 	<target name="goaloader" depends="access-fulljar">
-		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load"/>
-		<arg line="goaloader ${organism} ${file}"/>
-		<jvmarg line="-server -Xmx256m"/>
+		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
+			<arg line="goaloader ${file}"/>
+			<jvmarg line="-server -Xmx256m"/>
+		</java>
 	</target>
             	
     <target name="delete-redundant-go" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
     </target>
 
-
+    <target name="delete-duplicate-go" depends="access-fulljar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteDuplicateGOTerms"/>
+    </target>
+    	
     <target name="fix-residues-verbose" depends="access-fulljar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
