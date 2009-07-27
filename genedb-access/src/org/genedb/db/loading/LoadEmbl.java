@@ -65,9 +65,6 @@ public class LoadEmbl extends FileProcessor {
      *                  affect the parsing of /GO qualifiers: parsing errors will still be fatal, as
      *                  usual. It affects situations where there is no GO term with the specified
      *                  accession number in the database, for example.
-     *    <li> if <code>load.reportUnusedQualifiers</code> is set to <code>true</code> (or
-     *                  any value other than <code>false</code>) then a list of unused qualifiers,
-     *                  grouped by feature type, is printed after each file has been loaded.
      *    <li> <code>load.ignoreQualifiers</code> may be set to a comma-separated list of qualifiers
      *                  to ignore. The qualifier name may be prefixed with a feature type, for example
      *                  <code>-Dload.ignoreQualifiers=CDS:similarity</code> would cause all /similarity
