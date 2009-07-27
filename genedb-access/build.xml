@@ -516,7 +516,7 @@
         <copy todir="${installDir}/bin">
             <fileset dir="${imported.basedir.access}/scripts" />
         </copy>
-    	<chmod perm="ugo+rx">
+    	<chmod perm="ugo+rx" maxparallel="100">
     		<fileset dir="${installDir}/bin"/>
     	</chmod>
     </target>
