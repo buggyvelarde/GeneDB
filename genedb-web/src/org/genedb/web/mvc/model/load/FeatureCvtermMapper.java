@@ -14,10 +14,8 @@ public class FeatureCvtermMapper implements ParameterizedRowMapper<FeatureCvterm
 
 
     public static final String SQL = "select fcvt.*" +
-            " from feature_cvterm fcvt, cvterm cvt, cv" +
+            " from feature_cvterm fcvt, cvterm cvt" +
             " where fcvt.cvterm_id = cvt.cvterm_id" +
-            " and cvt.cv_id = cv.cv_id" +
-            " and cv.name like ?" +
             " and fcvt.feature_id = ?";
 
 

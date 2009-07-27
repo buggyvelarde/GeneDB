@@ -14,7 +14,7 @@ public class TimerHelper {
             logger.info(queryName + " execution time = "+ timeTaken + " millisecs");
             
         }else if(timeTaken > 60000){
-            logger.info(queryName + " execution time = "+ timeTaken/60 + "." + (timeTaken%60)/1000 +" mins");
+            logger.info(queryName + " execution time = "+ timeTaken/60000 + "." + (timeTaken%60000)/1000 +" mins");
             
         }else{
             logger.info(queryName + " execution time = "+ timeTaken/1000 + "." + timeTaken%1000 +" secs");

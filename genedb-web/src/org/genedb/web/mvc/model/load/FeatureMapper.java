@@ -47,10 +47,6 @@ public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
         return mapper;
     }
     
-    public String getDisplayName() {
-        return (getName() != null) ? getName() : getUniqueName();
-    }
-
     public int getFeatureId() {
         return featureId;
     }

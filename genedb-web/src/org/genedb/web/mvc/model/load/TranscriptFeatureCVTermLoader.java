@@ -28,14 +28,13 @@ public class TranscriptFeatureCVTermLoader {
      * @param template
      * @throws Exception 
      */
-    public static void load(int transcriptId, FeatureMapper pep, String cvNamePrefix, SimpleJdbcTemplate template) 
+    public static void load(int transcriptId, FeatureMapper pep, SimpleJdbcTemplate template) 
     throws Exception{
         
         //append
         Date fcvtGetTime = new Date();
-        String _cvNamePrefix = cvNamePrefix + "%";
         List<FeatureCvtermMapper> featureCvtermMappers= 
-            template.query(FeatureCvtermMapper.SQL, new FeatureCvtermMapper(), _cvNamePrefix, pep.getFeatureId());
+            template.query(FeatureCvtermMapper.SQL, new FeatureCvtermMapper(), pep.getFeatureId());
         TimerHelper.printTimeLapse(logger, fcvtGetTime, "fcvtGetTime");
         
         //Get the Feature CVTerm Properties
@@ -45,11 +44,22 @@ public class TranscriptFeatureCVTermLoader {
                 Date processFcvtTime = new Date();            
 
                 args.put("transcript_id", transcriptId);
-                args.put("cv_name_prefix", cvNamePrefix);
+                args.put("feature_cvterm_id", mapper.getFeatureCvtId());
+                
+                //Get the CV Name
+                logger.debug("Getting ...cvName");
+                String cvName = (String)template.queryForObject(
+                        "select cv.name " +
+                        " from cvterm cvt, cv " +
+                        " where cvt.cv_id = cv.cv_id" +
+                        " and cvt.cvterm_id = ?",
+                        String.class,
+                        new Object[]{new Integer(mapper.getTypeId())} );
+                args.put("cv_name", cvName);
 
-                //Get the Name
+                //Get the Type Name
                 logger.debug("Getting ...cvTermName");
-                String cvTermName = template.queryForObject(
+                String cvTermName = (String)template.queryForObject(
                         "select name from cvterm where cvterm_id = ?",
                         String.class,
                         new Object[]{new Integer(mapper.getTypeId())} );
@@ -58,7 +68,7 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the Accession
                 logger.debug("Getting ...typeAccession");
-                String typeAccession = template.queryForObject(
+                String typeAccession = (String)template.queryForObject(
                         " select accession " +
                         " from cvterm cvt, dbxref dbx " +
                         " where cvt.dbxref_id = dbx.dbxref_id " +
@@ -70,7 +80,7 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the withFrom
                 logger.debug("Getting ...withFromPb");
-                String withFromPub = template.queryForObject(
+                String withFromPub = (String)template.queryForObject(
                         "select uniquename from pub where pub_id = ?",
                         String.class,
                         new Object[]{new Integer(mapper.getPubId())});
@@ -135,8 +145,9 @@ public class TranscriptFeatureCVTermLoader {
             }
         }
         int update = template.update("insert into transcript_featurecvterm " +
-        		"values(nextval('transcript_featurecvterm_seq')," +
-                ":cv_name_prefix," +
+        		"values(" +
+        		":feature_cvterm_id," +
+                ":cv_name," +
                 ":cvterm_name," +
                 ":type_accession," +
                 ":with_from_pub," +
