@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -19,6 +20,14 @@ public abstract class Clear {
     //Fixed
     private static final Logger logger = Logger.getLogger(Clear.class);
     private static final ResourceBundle config = ResourceBundle.getBundle("project");
+    
+    private static String getConfigParam(String key) {
+    	try {
+    		return config.getString(key);
+    	} catch (MissingResourceException e) {
+    		return System.getProperty(key);
+    	}
+    }
     
     //Configurable variables
     private Connection conn;
@@ -59,11 +68,11 @@ public abstract class Clear {
         if (organismCommonName.length() == 0)
             throw new IllegalArgumentException("Empty organism name");
         String url = String.format("jdbc:postgresql://%s:%s/%s",
-            config.getString("dbhost"),
-            config.getString("dbport"),
-            config.getString("dbname"));
-        String username = config.getString("dbuser");
-        String password = config.getString("dbpassword");
+            getConfigParam("dbhost"),
+            getConfigParam("dbport"),
+            getConfigParam("dbname"));
+        String username = getConfigParam("dbuser");
+        String password = getConfigParam("dbpassword");
 
         Class.forName("org.postgresql.Driver");
         logger.debug(String.format("Connecting to database '%s' as user '%s'", url, username));
