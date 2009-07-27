@@ -68,12 +68,19 @@ if [ $# -lt 1 ]; then
 fi
 
 case "$1" in
-    h)  echo "Help for the $loader loader"
-        loaderHelp
-        loaderUsage
+    -h)  echo "Help for the $loader loader"
+        if [ -t 1 ]; then
+            {
+                loaderHelp
+                loaderUsage
+            } | ${PAGER:-less}
+        else
+            loaderHelp
+            loaderUsage
+        fi
         exit 0
         ;;
-    u)  loaderUsage
+    -u)  loaderUsage
         exit 0
         ;;
 esac
