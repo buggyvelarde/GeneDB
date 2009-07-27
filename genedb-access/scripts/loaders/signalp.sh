@@ -78,5 +78,5 @@ doLoad() {
 
     java -Ddbuser="$user" -Ddbpassword="$password" \
         org.genedb.db.loading.auxiliary.Load signalploader \
-        --signalp-version="signalpVersion" "$file"
+        --signalp-version="signalpVersion" "$@"
 }
