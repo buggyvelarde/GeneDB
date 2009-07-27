@@ -10,6 +10,7 @@ import org.genedb.web.mvc.model.types.DBXRefType;
 import org.genedb.web.mvc.model.types.DtoObjectArrayField;
 import org.genedb.web.mvc.model.types.DtoStringArrayField;
 import org.genedb.web.mvc.model.types.FeatureCVTPropType;
+import org.genedb.web.mvc.model.types.FeatureCvtermType;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 
@@ -22,9 +23,8 @@ public class TranscriptFeatureCVTermLoader {
     static Logger logger = Logger.getLogger(TranscriptFeatureCVTermLoader.class);
     
     /**
-     * Load transcript_featurecvterm record
+     * Load transcript_featurecvterm records
      * @param pep
-     * @param cvNamePrefix
      * @param template
      * @throws Exception 
      */
@@ -33,37 +33,38 @@ public class TranscriptFeatureCVTermLoader {
         
         //append
         Date fcvtGetTime = new Date();
-        List<FeatureCvtermMapper> featureCvtermMappers= 
+        List<FeatureCvtermType> featureCvtermTypes= 
             template.query(FeatureCvtermMapper.SQL, new FeatureCvtermMapper(), pep.getFeatureId());
         TimerHelper.printTimeLapse(logger, fcvtGetTime, "fcvtGetTime");
         
         //Get the Feature CVTerm Properties
-        for(FeatureCvtermMapper mapper : featureCvtermMappers){    
+        for(FeatureCvtermType featureCvtermType : featureCvtermTypes){    
             Map<String, Object> args = new HashMap<String, Object>();
             try{
                 Date processFcvtTime = new Date();            
 
                 args.put("transcript_id", transcriptId);
-                args.put("feature_cvterm_id", mapper.getFeatureCvtId());
+                args.put("feature_cvterm_id", featureCvtermType.getFeatureCvtId());
+                args.put("polypeptide_id", pep.getFeatureId());
                 
                 //Get the CV Name
                 logger.debug("Getting ...cvName");
-                String cvName = (String)template.queryForObject(
-                        "select cv.name " +
-                        " from cvterm cvt, cv " +
-                        " where cvt.cv_id = cv.cv_id" +
-                        " and cvt.cvterm_id = ?",
-                        String.class,
-                        new Object[]{new Integer(mapper.getTypeId())} );
-                args.put("cv_name", cvName);
+//                String cvName = (String)template.queryForObject(
+//                        "select cv.name " +
+//                        " from cvterm cvt, cv " +
+//                        " where cvt.cv_id = cv.cv_id" +
+//                        " and cvt.cvterm_id = ?",
+//                        String.class,
+//                        new Object[]{new Integer(featureCvtermType.getTypeId())} );
+                args.put("cv_name", featureCvtermType.getCvname());
 
                 //Get the Type Name
                 logger.debug("Getting ...cvTermName");
-                String cvTermName = (String)template.queryForObject(
-                        "select name from cvterm where cvterm_id = ?",
-                        String.class,
-                        new Object[]{new Integer(mapper.getTypeId())} );
-                args.put("cvterm_name", cvTermName);
+//                String cvTermName = (String)template.queryForObject(
+//                        "select name from cvterm where cvterm_id = ?",
+//                        String.class,
+//                        new Object[]{new Integer(featureCvtermType.getTypeId())} );
+                args.put("cvterm_name", featureCvtermType.getCvtname());
 
 
                 //Get the Accession
@@ -74,17 +75,17 @@ public class TranscriptFeatureCVTermLoader {
                         " where cvt.dbxref_id = dbx.dbxref_id " +
                         " and cvt.cvterm_id = ?",
                         String.class,
-                        new Object[]{new Integer(mapper.getTypeId())});
+                        new Object[]{new Integer(featureCvtermType.getTypeId())});
                 args.put("type_accession", typeAccession);
 
 
                 //Get the withFrom
                 logger.debug("Getting ...withFromPb");
-                String withFromPub = (String)template.queryForObject(
-                        "select uniquename from pub where pub_id = ?",
-                        String.class,
-                        new Object[]{new Integer(mapper.getPubId())});
-                args.put("with_from_pub", withFromPub);
+//                String withFromPub = (String)template.queryForObject(
+//                        "select uniquename from pub where pub_id = ?",
+//                        String.class,
+//                        new Object[]{new Integer(featureCvtermType.getPubId())});
+                args.put("with_from_pub", featureCvtermType.getPubUniqueName());
 
 
                 //Get the feature cvterm count
@@ -95,21 +96,21 @@ public class TranscriptFeatureCVTermLoader {
                         " where fcvt.cvterm_id = ?" +
                         " and f.organism_id = ?" +
                         " and f.feature_id = fcvt.feature_id",
-                        mapper.getTypeId(), pep.getOrganismId());
+                        featureCvtermType.getTypeId(), pep.getOrganismId());
                 args.put("feature_cvterm_count", featureCvtermCount);
 
 
                 //Get publications
                 logger.debug("Getting ...pubNames");
                 List<String> pubNames = template.query(
-                        PubNameMapper.FEATURE_CVTERM_SQL, new PubNameMapper(), mapper.getFeatureCvtId());
+                        PubNameMapper.FEATURE_CVTERM_SQL, new PubNameMapper(), featureCvtermType.getFeatureCvtId());
                 args.put("pubs", new DtoStringArrayField(pubNames));
 
 
                 //Get the dbxref
                 logger.debug("Getting ...dbxRefs");
                 List<DBXRefType> dbxRefs = template.query(
-                        DbxRefMapper.FEATURE_CVTERM_SQL, new DbxRefMapper(), mapper.getFeatureCvtId());                        
+                        DbxRefMapper.FEATURE_CVTERM_SQL, new DbxRefMapper(), featureCvtermType.getFeatureCvtId());                        
                 DtoObjectArrayField objectField = new DtoObjectArrayField("dbxreftype", dbxRefs);
                 args.put("dbxrefs", objectField);            
 
@@ -117,7 +118,7 @@ public class TranscriptFeatureCVTermLoader {
                 //Get the pros
                 logger.debug("Getting ...properties");
                 List<FeatureCVTPropType> props = template.query(
-                        FeatureCVTermPropMapper.SQL, new FeatureCVTermPropMapper(), mapper.getFeatureCvtId());                        
+                        FeatureCVTermPropMapper.SQL, new FeatureCVTermPropMapper(), featureCvtermType.getFeatureCvtId());                        
                 objectField = new DtoObjectArrayField("featurecvtproptype", props);
                 args.put("properties", objectField);            
 
@@ -147,6 +148,7 @@ public class TranscriptFeatureCVTermLoader {
         int update = template.update("insert into transcript_featurecvterm " +
         		"values(" +
         		":feature_cvterm_id," +
+        		":polypeptide_id," +
                 ":cv_name," +
                 ":cvterm_name," +
                 ":type_accession," +

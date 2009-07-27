@@ -197,12 +197,17 @@ public class TranscriptLoader {
 
             //Insert into the transcript_cache table
             loadCount = loadCount + insertDenormalisedTranscript(args);
-            
-            //Insert into the transcript_featurecvterm table
+                        
             if(polypeptideMapper!= null){
+              //Insert into the transcript_featurecvterm table
                 TranscriptFeatureCVTermLoader.load(
                         transcriptMapper.getFeatureId(), polypeptideMapper, template);
+                
+              //Insert into the transcript_featureprop table
+                TranscriptFeaturePropLoader.load(
+                        transcriptMapper.getFeatureId(), polypeptideMapper, template);
             }
+                        
 
             logger.info("Added..." + transcriptMapper.getFeatureId());
             TimerHelper.printTimeLapse(logger, transcriptProcessingStartTime, "transcriptProcessingTime");
@@ -304,16 +309,6 @@ public class TranscriptLoader {
 
         if(polypeptideMapper!= null){
             args.put("polypeptide_time_last_modified", polypeptideMapper.getTimeLastModified());
-
-            //Get the comments for polypeptide
-            List<String> props = template.query(
-                    FeaturePropMapper.SQL, new FeaturePropMapper(), polypeptideMapper.getFeatureId(), "comment", "feature_property");            
-            args.put("pep_comments", new DtoStringArrayField(props));
-            
-            //Get the curation for polypeptide
-            props = template.query(
-                    FeaturePropMapper.SQL, new FeaturePropMapper(), polypeptideMapper.getFeatureId(), "curation", "genedb_misc");            
-            args.put("pep_curation", new DtoStringArrayField(props));
             
             //Get the dbxref details
             List<DBXRefType> dbxrefs = template.query(
@@ -431,8 +426,6 @@ public class TranscriptLoader {
                     ":top_level_feature_type," +
 
                     ":cluster_ids," +
-                    ":pep_comments," +
-                    ":pep_curation," +
                     ":orthologue_names," +
                     ":publications," +
                     ":synonyms," +

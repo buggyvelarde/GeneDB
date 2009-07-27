@@ -19,6 +19,13 @@ ParameterizedRowMapper<String> {
     	" where fcvt.feature_cvterm_id = ?" +
     	" and fcvt.feature_cvterm_id = fcvtpub.feature_cvterm_id" +
     	" and fcvtpub.pub_id = pub.pub_id";
+    
+    public static final String FEATURE_PROP_SQL = "select uniquename " +
+        " from featureprop fp, featureprop_pub fpp, pub" +
+        " where fp.featureprop_id = ?" +
+        " and fp.featureprop_id = fpp.featureprop_id" +
+        " and fpp.pub_id = pub.pub_id";
+
 
     @Override
     public String mapRow(ResultSet rs, int rowCount)
