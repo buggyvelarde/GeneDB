@@ -76,7 +76,7 @@ doLoad() {
             org.genedb.db.loading.auxiliary.ClearSignalP "$organism"
     fi
 
-    java org.genedb.db.loading.auxiliary.Load signalploader \
-        -Ddbuser="$user" -Ddbpassword="$password" \
+    java -Ddbuser="$user" -Ddbpassword="$password" \
+        org.genedb.db.loading.auxiliary.Load signalploader \
         --signalp-version="signalpVersion" "$file"
 }
