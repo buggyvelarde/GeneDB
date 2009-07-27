@@ -63,7 +63,7 @@ fi
 source "$GENEDB_HOME/bin/loaders/$loader.sh"
 
 if [ $# -lt 1 ]; then
-    print_help
+    loaderUsage
     exit 1
 fi
 

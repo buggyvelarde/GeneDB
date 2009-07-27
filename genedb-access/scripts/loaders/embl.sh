@@ -136,8 +136,7 @@ doLoad() {
 
             properties="$properties -Dload.$OPTARG"
             ;;
-        *)  echo "option: $option"
-            loaderUsage >&2
+        *)  loaderUsage >&2
             exit 1
             ;;
         esac
