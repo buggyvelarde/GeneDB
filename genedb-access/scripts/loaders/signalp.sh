@@ -56,6 +56,15 @@ doLoad() {
         exit 1
     fi
 
+    user="$LOGNAME@sanger.ac.uk"
+    echo -n "Password for $user: "
+    trap 'stty echo' EXIT ;# In case the user presses ^C, for example
+    stty -echo
+    read password
+    stty echo
+    trap - EXIT
+    echo
+
     if $debug; then
         echo "Classpath:"
         echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
@@ -63,9 +72,11 @@ doLoad() {
     fi
     
     if $reload; then
-        java -Xmx256m org.genedb.db.loading.auxiliary.ClearSignalP "$organism"
+        java -Xmx256m -Ddbuser="$user" -Ddbpassword="$password" \
+            org.genedb.db.loading.auxiliary.ClearSignalP"$organism"
     fi
 
     java org.genedb.db.loading.auxiliary.Load signalploader \
-      --signalp-version="signalpVersion" "$file"
+        -Ddbuser="$user" -Ddbpassword="$password" \
+        --signalp-version="signalpVersion" "$file"
 }
