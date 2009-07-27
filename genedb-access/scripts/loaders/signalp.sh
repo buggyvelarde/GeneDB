@@ -73,7 +73,7 @@ doLoad() {
     
     if $reload; then
         java -Xmx256m -Ddbuser="$user" -Ddbpassword="$password" \
-            org.genedb.db.loading.auxiliary.ClearSignalP"$organism"
+            org.genedb.db.loading.auxiliary.ClearSignalP "$organism"
     fi
 
     java org.genedb.db.loading.auxiliary.Load signalploader \
