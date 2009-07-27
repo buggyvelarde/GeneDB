@@ -284,14 +284,11 @@ public class TranscriptLoader {
                     PolypeptideMapper.SQL, new PolypeptideMapper(), transcriptMapper.getFeatureId());                                                
             initPolypeptideArguments(args, polypeptideMapper);
         }else{
-            args.put("polypeptide_time_last_modified",null);
-            args.put("pep_comments", null);
-            args.put("pep_curation", null);
-            args.put("dbx_refs", null);
-            args.put("publications", null);
-            args.put("polypeptide_properties",null);
-            args.put("cluster_ids", null);
-            args.put("orthologue_names", null);  
+            args.put("dbx_refs", new DtoObjectArrayField("dbxreftype", new ArrayList<DBXRefType>()));
+            DtoStringArrayField emptyArr = new DtoStringArrayField(null);
+            args.put("publications", emptyArr);
+            args.put("cluster_ids", emptyArr);
+            args.put("orthologue_names", emptyArr);  
         }
         return polypeptideMapper;
     }
