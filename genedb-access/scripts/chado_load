@@ -62,29 +62,6 @@ if [ ! -e "$GENEDB_HOME/bin/loaders/$loader.sh" ]; then
 fi
 source "$GENEDB_HOME/bin/loaders/$loader.sh"
 
-if [ $# -lt 1 ]; then
-    loaderUsage
-    exit 1
-fi
-
-case "$1" in
-    -h)  echo "Help for the $loader loader"
-        if [ -t 1 ]; then
-            {
-                loaderHelp
-                loaderUsage
-            } | ${PAGER:-less}
-        else
-            loaderHelp
-            loaderUsage
-        fi
-        exit 0
-        ;;
-    -u)  loaderUsage
-        exit 0
-        ;;
-esac
-
 dbhost=pgsrv1.internal.sanger.ac.uk
 dbport=5432
 dbname=pathogens
@@ -121,6 +98,7 @@ process_standard_options() {
 }
 
 stdopts="D:U:"
+
 standard_options() {
 cat <<OPTIONS
   -D database_connection_details
@@ -145,5 +123,28 @@ read_password() {
     database_properties="-Ddbhost=$dbhost -Ddbport=$dbport -Ddbname=$dbname \
     -Ddbuser=$dbuser -Ddbpassword=$password"
 }
+
+if [ $# -lt 1 ]; then
+    loaderUsage
+    exit 1
+fi
+
+case "$1" in
+    -h)  echo "Help for the $loader loader"
+        if [ -t 1 ]; then
+            {
+                loaderHelp
+                loaderUsage
+            } | ${PAGER:-less}
+        else
+            loaderHelp
+            loaderUsage
+        fi
+        exit 0
+        ;;
+    -u)  loaderUsage
+        exit 0
+        ;;
+esac
 
 doLoad "$@"
