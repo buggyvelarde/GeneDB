@@ -156,43 +156,43 @@ public class EmblFile {
         Class<? extends Section> sectionType = sectionTypeByIdentifier.get(identifier);
         if (sectionType == null) {
             return new UnknownSection(identifier);
-        } else {
-            Section section = null;
-            try {
-                section = sectionType.getDeclaredConstructor(EmblFile.class).newInstance(this);
+        }
+        
+        Section section = null;
+        try {
+        	section = sectionType.getDeclaredConstructor(EmblFile.class).newInstance(this);
 
-                /*
-                 * For other section types, the section constructor leaves a reference to the
-                 * section in an instance variable - see IDSection, for example. Unlike the
-                 * others, FeatureTable is not an inner class: because it's complicated and
-                 * important enough to deserve its own file, and Java doesn't let you define
-                 * an inner class in a separate file. Since this is the only such case, it's
-                 * no great hardship to deal with it specially here.
-                 */
-                if (section instanceof FeatureTable) {
-                    if (featureTable != null) {
-                        dataError(new DataError("More than one feature table found"));
-                    }
-                    featureTable = (FeatureTable) section;
-                }
+        	/*
+        	 * For other section types, the section constructor leaves a reference to the
+        	 * section in an instance variable - see IDSection, for example. Unlike the
+        	 * others, FeatureTable is not an inner class: because it's complicated and
+        	 * important enough to deserve its own file, and Java doesn't let you define
+        	 * an inner class in a separate file. Since this is the only such case, it's
+        	 * no great hardship to deal with it specially here.
+        	 */
+        	if (section instanceof FeatureTable) {
+        		if (featureTable != null) {
+        			dataError(new DataError("More than one feature table found"));
+        		}
+        		featureTable = (FeatureTable) section;
+        	}
 
-                return section;
-            } catch (InvocationTargetException e) {
-                // The invoked constructor threw an exception
-                Throwable targetException = e.getCause();
-                if (targetException instanceof DataError) {
-                    dataError((DataError) targetException);
-                    return section;
-                } else {
-                    throw new RuntimeException(e);
-                }
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+        	return section;
+        } catch (InvocationTargetException e) {
+        	// The invoked constructor threw an exception
+        	Throwable targetException = e.getCause();
+        	if (targetException instanceof DataError) {
+        		dataError((DataError) targetException);
+        		return section;
+        	} else {
+        		throw new RuntimeException(e);
+        	}
+        } catch (NoSuchMethodException e) {
+        	throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+        	throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+        	throw new RuntimeException(e);
         }
     }
     private FeatureTable featureTable = null;
@@ -258,6 +258,7 @@ public class EmblFile {
 
     private boolean seenSequenceHeader = false;;
     private class SequenceHeaderSection extends Section {
+    	@SuppressWarnings("unused") // used by reflection
         SequenceHeaderSection() {
             // empty
         }
@@ -276,6 +277,7 @@ public class EmblFile {
 
     private ContigSection contigSection = null;
     private class ContigSection extends Section {
+    	@SuppressWarnings("unused") // used by reflection
         ContigSection() throws DataError {
             if (contigSection != null) {
                 dataError(new DataError("More than one CO section found"));
@@ -307,6 +309,7 @@ public class EmblFile {
     private static final Pattern sequencePattern = Pattern.compile("((?:\\w{10} ){0,5}\\w{1,10})\\s+(\\d+)");
     private SequenceSection sequenceSection = null;
     private class SequenceSection extends Section {
+    	@SuppressWarnings("unused") // used by reflection
         SequenceSection() throws DataError {
             if (sequenceSection != null) {
                 dataError(new DataError("Found more than one sequence data section"));
@@ -343,6 +346,7 @@ public class EmblFile {
     }
 
     private class SilentlyIgnoredSection extends Section {
+    	@SuppressWarnings("unused") // used by reflection
         SilentlyIgnoredSection() {}
         @Override
         public void addData(int lineNumber, String data) {}
