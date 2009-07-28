@@ -85,4 +85,65 @@ case "$1" in
         ;;
 esac
 
+dbhost=pgsrv1.internal.sanger.ac.uk
+dbport=5432
+dbname=pathogens
+dbuser="$LOGNAME@sanger.ac.uk"
+
+# These functions may be used by the loaders
+process_standard_options() {
+  case "$1" in
+    D)  case "$OPTARG" in
+        *:*/*)
+            host_and_port="${OPTARG%/*}"
+            dbname="${OPTARG#*/}"
+            dbhost="${host_and_port%:*}"
+            dbport="${host_and_port#*:}"
+            ;;
+        */*)
+            dbhost="${OPTARG%/*}"
+            dbname="${OPTARG#*/}"
+            ;;
+        *) loaderUsage >&2
+           exit 1
+           ;;
+        esac
+        echo "Database host: $dbhost"
+        echo "Database port: $dbport"
+        echo "Database name: $dbname"
+        ;;
+    U)  dbuser="$OPTARG"
+        ;;
+    *)  loaderUsage >&2
+        exit 1
+        ;;
+  esac
+}
+
+stdopts="D:U:"
+standard_options() {
+cat <<OPTIONS
+  -D database_connection_details
+    In the format host:port/database, for example:
+     -D pathdbsrv1b.internal.sanger.ac.uk:10120/bigtest
+     -D pgsrv2.internal.sanger.ac.uk:5432/pathdev
+    The default, if this option is not given, is to use the main pathogens db.
+  -U database_username
+    The default is your Sanger email address.
+OPTIONS
+}
+
+read_password() {
+    echo -n "Password for $dbuser: "
+    trap 'stty echo' EXIT ;# In case the user presses ^C, for example
+    stty -echo
+    read password
+    stty echo
+    trap - EXIT
+    echo
+
+    database_properties="-Ddbhost=$dbhost -Ddbport=$dbport -Ddbname=$dbname \
+    -Ddbuser=$dbuser -Ddbpassword=$password"
+}
+
 doLoad "$@"

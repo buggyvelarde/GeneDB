@@ -23,8 +23,9 @@ Options:
   -r
     Reload. If this option is present, existing SignalP predictions for
     the specified organism will be deleted before the new ones are loaded.
-
 USAGE
+    standard_options
+    echo
 }
 
 doLoad() {
@@ -34,7 +35,7 @@ doLoad() {
     debug=false
 
     OPTIND=0
-    while getopts "do:v:r" option; do
+    while getopts "do:v:r$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -44,8 +45,7 @@ doLoad() {
             ;;
         r)  reload=true
             ;;
-        *)  loaderUsage >&2
-            exit 1
+        *)  process_standard_options "$option"
             ;;
         esac
     done
@@ -56,14 +56,7 @@ doLoad() {
         exit 1
     fi
 
-    user="$LOGNAME@sanger.ac.uk"
-    echo -n "Password for $user: "
-    trap 'stty echo' EXIT ;# In case the user presses ^C, for example
-    stty -echo
-    read password
-    stty echo
-    trap - EXIT
-    echo
+    read_password
 
     if $debug; then
         echo "Classpath:"
@@ -72,11 +65,11 @@ doLoad() {
     fi
     
     if $reload; then
-        java -Xmx256m -Ddbuser="$user" -Ddbpassword="$password" \
+        java -Xmx256m $database_properties \
             org.genedb.db.loading.auxiliary.ClearSignalP "$organism"
     fi
 
-    java -Ddbuser="$user" -Ddbpassword="$password" \
+    java $database_properties \
         org.genedb.db.loading.auxiliary.Load signalploader \
         --signalp-version="signalpVersion" "$@"
 }

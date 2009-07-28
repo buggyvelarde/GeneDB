@@ -31,8 +31,9 @@ Options:
     These can be restricted by feature type as well: for example
     you can specify -x ignoreQualifiers=CDS:similarity to archive
     all /similarity qualifiers on CDS features.
-
 USAGE
+    standard_options
+    echo
 }
 
 loaderHelp() {
@@ -109,7 +110,7 @@ doLoad() {
     debug=false
 
     OPTIND=0
-    while getopts "do:t:x:" option; do
+    while getopts "do:t:x:$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -136,8 +137,7 @@ doLoad() {
 
             properties="$properties -Dload.$OPTARG"
             ;;
-        *)  loaderUsage >&2
-            exit 1
+        *)  process_standard_options "$option"
             ;;
         esac
     done
@@ -161,14 +161,7 @@ doLoad() {
         exit 1
     fi
     
-    user="$LOGNAME@sanger.ac.uk"
-    echo -n "Password for $user: "
-    trap 'stty echo' EXIT ;# In case the user presses ^C, for example
-    stty -echo
-    read password
-    stty echo
-    trap - EXIT
-    echo
+    read_password
 
     if $debug; then
         echo "Classpath:"
@@ -178,7 +171,6 @@ doLoad() {
     java -Xmx1G \
         -Dload.organismCommonName="$organism" -Dload.topLevel="$topLevel" \
          -Dload.inputDirectory="$file" \
-         $properties \
-         -Ddbuser="$user" -Ddbpassword="$password" \
+         $properties $database_properties \
          org.genedb.db.loading.LoadEmbl
 }
