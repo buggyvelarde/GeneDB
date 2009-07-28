@@ -1078,11 +1078,11 @@ class EmblLoader {
                     } else if (key.equals("date")) {
                         goInstance.setDate(value);
                     } else if (key.equals("evidence")) {
-                        try {
-                            goInstance.setEvidence(GoEvidenceCode.valueOf(value));
-                        } catch (IllegalArgumentException e) {
+                        GoEvidenceCode evidenceCode = GoEvidenceCode.parse(value);
+                        if (evidenceCode == null) {
                             throw new DataError(String.format("Failed to parse GO evidence code '%s'", value));
                         }
+                        goInstance.setEvidence(evidenceCode);
                     } else if (key.equals("qualifier")) {
                         goInstance.addQualifier(value);
                     } else if (key.equals("with") || key.equals("from")) {

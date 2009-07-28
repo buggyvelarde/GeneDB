@@ -19,7 +19,8 @@
 
 package org.genedb.db.loading;
 
-
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * This class represents a GO evidence code:
@@ -43,7 +44,7 @@ public enum GoEvidenceCode {
     ISA ("Inferred from Sequence Alignment"),
     ISM ("Inferred from Sequence Model"),
     IGC ("Inferred from Genomic Context"),
-    RCA ("inferred from Reviewed Computational Analysis"),
+    RCA ("Inferred from Reviewed Computational Analysis"),
 
     // Author statement evidence codes
     TAS ("Traceable Author Statement"),
@@ -60,11 +61,25 @@ public enum GoEvidenceCode {
     NR  ("Not Recorded");
 
     private String description;
+    private static Map<String,GoEvidenceCode> byName;
+    private static void addToMap(GoEvidenceCode gec) {
+        if (byName == null) {
+            byName = new HashMap<String,GoEvidenceCode>();
+        }
+        byName.put(gec.toString(), gec);
+        byName.put(gec.description, gec);
+        byName.put(gec.description.toLowerCase(), gec);
+    }
     private GoEvidenceCode(String description) {
         this.description = description;
+        addToMap(this);
     }
 
     public String getDescription() {
         return description;
+    }
+    
+    public static GoEvidenceCode parse(String ev) {
+        return byName.get(ev);
     }
 }
