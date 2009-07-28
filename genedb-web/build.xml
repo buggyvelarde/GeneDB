@@ -525,21 +525,20 @@
             <arg value="/Users/sangerinstitute/Downloads/lucene"/>
         </java>
     </target>
+	
 
-    <target name="usage">
-        <echo message=""/>
-        <echo message="-----------------------------------"/>
-        <echo message=""/>
-        <echo message="Available targets are:"/>
-        <echo message=""/>
-        <echo message=" genedb-web-tests                        --> Run test-cases found in the genedb-web project"/>
-        <echo message=" -Ddeploy=${deploy} synchronise-caches   --> Update the Berkeley cache using a Change Set"/>
-        <echo message=" -Ddeploy=${deploy} populate-caches      --> Populate the entire Berkeley cache"/>
-        <echo message=" -Ddeploy=${deploy} LuceneIndex          --> Create entire Lucene Index"/>
-        <echo message=" -Ddeploy=${deploy} PeriodicUpdater      --> Update the Lucene Index and the Berkeley cache using a Change Set"/>
-        <echo message="-----------------------------------"/>
-        <echo message=" where ${deploy} is a property-file located in genedb-web directory"/>
-        <echo message=""/>
+
+
+    <target name="load-transcript-cache" >
+        <compile-target project="web"/>
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.load.TranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
     </target>
 
 </project>

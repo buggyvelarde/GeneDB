@@ -1,18 +1,18 @@
 package org.genedb.web.mvc.model.load;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.genedb.web.mvc.model.types.DBXRefType;
 import org.genedb.web.mvc.model.types.DtoObjectArrayField;
 import org.genedb.web.mvc.model.types.DtoStringArrayField;
-import org.genedb.web.mvc.model.types.PeptidePropertiesType;
 import org.genedb.web.mvc.model.types.SynonymType;
 import org.genedb.web.mvc.model.types.TranscriptRegionType;
-import org.gmod.schema.utils.PeptideProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -30,10 +30,13 @@ public class TranscriptLoader {
     private SimpleJdbcTemplate template;
     
     public static void main(String args[])throws Exception{
+        
+        setUpLogging();
+        
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"TranscriptLoaderTest-context.xml"});
+                new String[] {"classpath:TranscriptLoader-context.xml"});
         TranscriptLoader transcriptLoader = ctx.getBean("transcriptLoader", TranscriptLoader.class);
-        transcriptLoader.loadAll(1000);
+        transcriptLoader.load("Tbruceibrucei427", 100);
     }
     
     /**
@@ -322,19 +325,19 @@ public class TranscriptLoader {
             args.put("publications", new DtoStringArrayField(pubNames));
             
             //Get polypeptide properties
-            PeptideProperties properties = PolypeptidePropertiesHelper.calculateStats(polypeptideMapper);
-            if (properties!= null){
-                logger.info("Polypep properties: Amino "
-                        + properties.getAminoAcids() +", " 
-                        + properties.getCharge() + ", Charge"
-                        + properties.getIsoelectricPoint()+ ", IsoElec"
-                        + properties.getMass() + ", Mass In Daltons "
-                        + properties.getMassInDaltons() );
-                args.put("polypeptide_properties", new PeptidePropertiesType(properties));
-            }else{
-                args.put("polypeptide_properties", null);
-                logger.error("Peptide Properties for (featureid: "+polypeptideMapper.getFeatureId() +")is null");
-            }
+//            PeptideProperties properties = PolypeptidePropertiesHelper.calculateStats(polypeptideMapper);
+//            if (properties!= null){
+//                logger.info("Polypep properties: Amino "
+//                        + properties.getAminoAcids() +", " 
+//                        + properties.getCharge() + ", Charge"
+//                        + properties.getIsoelectricPoint()+ ", IsoElec"
+//                        + properties.getMass() + ", Mass In Daltons "
+//                        + properties.getMassInDaltons() );
+//                args.put("polypeptide_properties", new PeptidePropertiesType(properties));
+//            }else{
+//                args.put("polypeptide_properties", null);
+//                logger.error("Peptide Properties for (featureid: "+polypeptideMapper.getFeatureId() +")is null");
+//            }
         
             //Get the clusertIds and orthologueNames
             initPepClusterIdsAndOrthologueNames(args, polypeptideMapper);            
@@ -449,5 +452,15 @@ public class TranscriptLoader {
 
     public void setTemplate(SimpleJdbcTemplate template) {
         this.template = template;
+    }
+    
+    /**
+     * Set up logging
+     */
+    private static void setUpLogging() {
+        String log4jprops = "/log4j.TranscriptLoader.properties";
+        URL url = TranscriptLoader.class.getResource(log4jprops);
+        System.out.printf("Configuring Log4J from '%s'\n", url);
+        PropertyConfigurator.configure(url);                
     }
 }
