@@ -33,7 +33,7 @@ public class LoadFasta extends FileProcessor {
      * in the file is loaded as a contig.
      * <p>
      * Takes no command-line arguments, but expects to find the system properties
-     * <code>load.organismCommonName</code> and <code>load.startingDirectory</code>.
+     * <code>load.organismCommonName</code> and <code>load.inputDirectory</code>.
      * Optionally, the property <code>load.fileNamePattern</code> may contain a regular
      * expression aganst which file names are matched. If this property is not specified,
      * we default to <code>.*\.fasta</code>, which matches any file name with the extension
