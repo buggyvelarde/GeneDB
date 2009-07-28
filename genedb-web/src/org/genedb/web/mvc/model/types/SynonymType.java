@@ -6,6 +6,7 @@ public class SynonymType {
 
     private String synonymName;
     private String cvtName;
+    private boolean isCurrent;
     
     public String getSynonymName() {
         return synonymName;
@@ -21,6 +22,14 @@ public class SynonymType {
 
     public void setCvtName(String cvtName) {
         this.cvtName = cvtName;
+    }
+
+    public boolean isCurrent() {
+        return isCurrent;
+    }
+
+    public void setCurrent(boolean isCurrent) {
+        this.isCurrent = isCurrent;
     }
 
     /**
@@ -49,6 +58,8 @@ public class SynonymType {
         return String.valueOf(formattedName).trim();
     }
     
+    
+    
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -60,7 +71,9 @@ public class SynonymType {
         
         sb.append("'");
         sb.append(formatStr(synonymName));
-        sb.append("'");
+        sb.append("',");
+        
+        sb.append(isCurrent);
         
         sb.append(")");
         return sb.toString();

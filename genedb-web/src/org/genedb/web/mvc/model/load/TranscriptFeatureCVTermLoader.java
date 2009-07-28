@@ -49,21 +49,10 @@ public class TranscriptFeatureCVTermLoader {
                 
                 //Get the CV Name
                 logger.debug("Getting ...cvName");
-//                String cvName = (String)template.queryForObject(
-//                        "select cv.name " +
-//                        " from cvterm cvt, cv " +
-//                        " where cvt.cv_id = cv.cv_id" +
-//                        " and cvt.cvterm_id = ?",
-//                        String.class,
-//                        new Object[]{new Integer(featureCvtermType.getTypeId())} );
                 args.put("cv_name", featureCvtermType.getCvname());
 
                 //Get the Type Name
                 logger.debug("Getting ...cvTermName");
-//                String cvTermName = (String)template.queryForObject(
-//                        "select name from cvterm where cvterm_id = ?",
-//                        String.class,
-//                        new Object[]{new Integer(featureCvtermType.getTypeId())} );
                 args.put("cvterm_name", featureCvtermType.getCvtname());
 
 
@@ -81,10 +70,6 @@ public class TranscriptFeatureCVTermLoader {
 
                 //Get the withFrom
                 logger.debug("Getting ...withFromPb");
-//                String withFromPub = (String)template.queryForObject(
-//                        "select uniquename from pub where pub_id = ?",
-//                        String.class,
-//                        new Object[]{new Integer(featureCvtermType.getPubId())});
                 args.put("with_from_pub", featureCvtermType.getPubUniqueName());
 
 
