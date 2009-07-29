@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class GeneMapper extends FeatureMapper {
     
@@ -36,7 +35,7 @@ public class GeneMapper extends FeatureMapper {
     
 
     
-    public static final String SQL_WITH_LIMIT_AND_OFFSET_PARAMS = 
+    public static final String GET_GENES_SQL_WITH_LIMIT_AND_OFFSET_PARAMS = 
             " select fl.*, f.*, cvt.name as cvtname, cv.name as cvname " +
             " from feature f, featureloc fl, cvterm cvt, cv " +
             " where f.feature_id = fl.feature_id" +
@@ -47,12 +46,25 @@ public class GeneMapper extends FeatureMapper {
             " limit ?" +
             " offset ?";
     
-    private SimpleJdbcTemplate template;
+    public static final String SQL_WITH_GENE_ID_PARAMS = 
+        " select fl.*, f.*, cvt.name as cvtname, cv.name as cvname " +
+        " from feature f, featureloc fl, cvterm cvt, cv " +
+        " where f.feature_id = fl.feature_id" +
+        " and f.type_id = cvt.cvterm_id " +
+        " and cvt.cv_id = cv.cv_id " +
+        " and feature_id in (:placeholders)";
     
+    public static final String SQL_WITH_TRANSCRIPT_ID_PARAM = 
+        " select fl.*, f.*, cvt.name as cvtname, cv.name as cvname " +
+        " from feature f, featureloc fl, cvterm cvt, cv " +
+        " where f.feature_id = fl.feature_id" +
+        " and f.type_id = cvt.cvterm_id " +
+        " and cvt.cv_id = cv.cv_id " +
+        " and feature_id in (" +
+        " select object_id" +
+        " from feature_relationship fr" +
+        " where fr.subject_id = ?)";
     
-    public GeneMapper(SimpleJdbcTemplate template){
-        this.template = template;
-    }
     
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {

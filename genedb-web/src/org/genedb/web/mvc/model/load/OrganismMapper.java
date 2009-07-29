@@ -9,9 +9,14 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class OrganismMapper  implements ParameterizedRowMapper<OrganismMapper>{    
     Logger logger = Logger.getLogger(OrganismMapper.class);
     
-    public static final String SQL =  "select * from organism";
+    public static final String GET_ALL_ORGANISMS_SQL =  "select * from organism";
     
-    public static final String SQL_WITH_PARAMS =   "select * from organism where common_name = ?";
+    public static final String GET_ALL_ORGANISMS_SQL_WITH_COMMON_NAME_PARAM =   "select * from organism where common_name = ?";
+    
+    public static final String SQL_WITH_GENE_ID_PARAM = " select o.* " +
+        " from feature f, organism o " +
+        " where f.organism_id = o.organism_id" +
+        " and f.feature_id = ?";
     
     private int organismId;
     private String genus;
