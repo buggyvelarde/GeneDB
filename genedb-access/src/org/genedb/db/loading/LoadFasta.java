@@ -67,7 +67,7 @@ public class LoadFasta extends FileProcessor {
         }
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
-        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.fasta");
+        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.fasta(?:\\.gz)?");
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "supercontig");
         String entryType = getPropertyWithDefault("load.entryType", "contig");
