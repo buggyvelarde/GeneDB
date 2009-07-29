@@ -18,6 +18,9 @@ Options:
     -t contig
     -t EST
     -t BAC_end
+  -r
+    Reload. If this option is specified, all genomic data for the specified
+    organism are deleted before the load begins. Use with caution!
   -x overwriteExisting=yes
     Overwrite the existing feature with the same identifier, if there is one
   -x overwriteExisting=merge
@@ -108,9 +111,10 @@ doLoad() {
     topLevel=''
     properties=''
     debug=false
+    reload=false
 
     OPTIND=0
-    while getopts "do:t:x:$stdopts" option; do
+    while getopts "do:t:x:r$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -137,6 +141,8 @@ doLoad() {
 
             properties="$properties -Dload.$OPTARG"
             ;;
+        r)  reload=true
+            ;;
         *)  process_standard_options "$option"
             ;;
         esac
@@ -161,6 +167,24 @@ doLoad() {
         exit 1
     fi
     
+    if $reload; then
+        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
+        psql <<SQL
+        delete from feature where organism_id in (
+            select organism_id from organism where common_name = '${organism}'
+        );
+
+        delete from synonym where synonym_id in (
+          select synonym_id from synonym
+          except (
+              select synonym_id from feature_synonym
+              union
+              select synonym_id from library_synonym
+          )
+        );
+SQL
+    fi
+
     read_password
 
     if $debug; then
@@ -168,6 +192,7 @@ doLoad() {
         echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
         set -x
     fi
+    
     java -Xmx1G \
         -Dload.organismCommonName="$organism" -Dload.topLevel="$topLevel" \
          -Dload.inputDirectory="$file" \
