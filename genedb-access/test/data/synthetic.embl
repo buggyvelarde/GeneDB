@@ -106,6 +106,7 @@ FT   tRNA            join(370..380,390..400)
 FT                   /label="tRNA label"
 FT                   /colour="12"
 FT                   /invented_qualifier="value"
+FT                   /db_xref="Rfam:RF00230"
 FT   CDS             500..600
 ##
 ##                   Make sure that duplicated /literature qualifiers don't cause a constraint violation

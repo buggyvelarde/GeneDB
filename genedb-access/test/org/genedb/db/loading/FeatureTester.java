@@ -283,6 +283,18 @@ public class FeatureTester {
             }
             return pubUniqueNames;
         }
+        public T dbXRefs(String... dbXRefStrings) {
+            Set<String> actualDbXRefStrings = new HashSet<String>();
+            for (FeatureDbXRef featureDbXRef: feature.getFeatureDbXRefs()) {
+                actualDbXRefStrings.add(featureDbXRef.getDbXRef().toString());
+            }
+
+            Set<String> expectedDbXRefStrings = new HashSet<String>();
+            Collections.addAll(expectedDbXRefStrings, dbXRefStrings);
+            assertEquals(expectedDbXRefStrings, actualDbXRefStrings);
+
+            return ourClass.cast(this);
+        }
         public T assertObsolete() {
             assertTrue(String.format("Expected feature '%s' to be obsolete", feature.getUniqueName()), feature.isObsolete());
             return ourClass.cast(this);

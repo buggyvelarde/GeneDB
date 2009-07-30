@@ -1786,6 +1786,10 @@ class EmblLoader {
                 addTranscriptSynonymsFromQualifier("gene",    "synonym", true);
                 addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             }
+            
+            for (String dbxrefs: feature.getQualifierValues("db_xref")) {
+                addDbXRefs(dbxrefs);
+            }
 
             processCuration();
         }
