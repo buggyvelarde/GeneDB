@@ -1045,7 +1045,7 @@ class LoadGeneDbPhylogeny {
                     <property name="htmlFullName" value="Staphylococcus aureus MRSA252"/>
                     <property name="htmlShortName" value="S. aureus MRSA252"/>
                     <property name="shortName" value="S. aureus" />
-                    <property name="curatorName" value="" />
+                    <property name="curatorName" value="Matt Holden" />
                 </organism>
                 <organism name="Saureus_MSSA476">
                     <property name="taxonId" value="282459" />
@@ -1076,6 +1076,16 @@ class LoadGeneDbPhylogeny {
                     <property name="htmlFullName" value="<i>Staphylococcus aureus</i> TW20"/>
                     <property name="htmlShortName" value="<i>S. aureus</i> TW20"/>
                     <property name="shortName" value="S. aureus TW20" />
+                    <property name="curatorName" value="Matt Holden" />
+                </organism>
+                <organism name="Saureus_LGA251">
+                    <property name="fullName" value="Staphylococcus aureus (LGA251)" />
+                    <property name="nickname" value="Saureus_LGA251" />
+                    <property name="translationTable" value="11"/>
+                    <property name="curatorEmail" value="mh3@sanger.ac.uk"/>
+                    <property name="htmlFullName" value="<i>Staphylococcus aureus</i> LGA251"/>
+                    <property name="htmlShortName" value="<i>S. aureus</i> LGA251"/>
+                    <property name="shortName" value="S. aureus LGA251" />
                     <property name="curatorName" value="Matt Holden" />
                 </organism>
             </node>
