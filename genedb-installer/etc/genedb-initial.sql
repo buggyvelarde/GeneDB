@@ -189,6 +189,9 @@ update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
 update db set urlprefix='http://pfam.sanger.ac.uk/family?type=Family&entry='
     where name='Pfam';
 
+update db set name='Rfam', urlprefix='http://rfam.sanger.ac.uk/family/'
+    where name='RFAM';
+
 update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
     where name='Prosite';
 
