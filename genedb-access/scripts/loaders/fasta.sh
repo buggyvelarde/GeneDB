@@ -33,6 +33,9 @@ entry represents a contig, but this is configurable.
 
 If a directory rather than a file is specified, the directory is scanned for
 files with the extension .fasta or .fasta.gz, and all these files are loaded.
+
+The name of the supercontig (or whatever the FASTA file represents) is taken
+from the filename, by removing the file extension.
 HELP
 }
 
