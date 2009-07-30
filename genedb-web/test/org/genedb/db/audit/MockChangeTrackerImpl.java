@@ -3,7 +3,7 @@ package org.genedb.db.audit;
 import java.sql.SQLException;
 /**
  *
- * @author LO
+ * @author lo2@sangerinstitute.ac.uk
  *
  */
 public class MockChangeTrackerImpl implements ChangeTracker {

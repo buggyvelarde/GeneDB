@@ -141,7 +141,7 @@ public abstract class AbstractTranscriptLoader {
                     " synonyms = :synonyms," +
                     " transcript_regions = :transcript_regions," +
                     " dbx_refs = :dbx_refs" +
-                    " where transcript_id = :transcript_id) ",  args);
+                    " where transcript_id = :transcript_id ",  args);
         }catch(Exception e){
             String message = null;
             for(String key : args.keySet()){

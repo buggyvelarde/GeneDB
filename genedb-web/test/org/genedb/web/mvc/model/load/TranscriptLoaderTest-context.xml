@@ -24,6 +24,11 @@
 	</tx:advice>
     
     
+    <bean id="indexUpdater" class="org.genedb.web.mvc.model.load.TranscriptUpdater">
+        <property name="template" ref="jdbcTemplate"/>
+    </bean>
+    
+    
     <bean id="transcriptLoader" class="org.genedb.web.mvc.model.load.TranscriptLoader">
         <property name="template" ref="jdbcTemplate"/>
     </bean>
@@ -50,9 +55,8 @@
     </bean>
     
     <aop:config>
-        <aop:pointcut id="transcriptLoaderServiceOperation" expression="execution(* org.genedb.web.mvc.model.load.TranscriptLoader.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="transcriptLoaderServiceOperation"/>
-    </aop:config>  
-    
+        <aop:pointcut id="transcriptUpdaterServiceOperation" expression="execution(* org.genedb.web.mvc.model.load.TranscriptUpdater.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="transcriptUpdaterServiceOperation"/>
+    </aop:config>
 
 </beans>

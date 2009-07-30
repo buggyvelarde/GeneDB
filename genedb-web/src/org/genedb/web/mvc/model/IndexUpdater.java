@@ -15,5 +15,12 @@ public interface IndexUpdater {
      * @return true if the update was successful
      */
     boolean updateAllCaches(ChangeSet changeSet);
+    
+    /**
+     * Convinience method for testing the transcript loader/updater
+     * @param changeSet
+     * @return
+     */
+    int updateTranscriptCache(ChangeSet changeSet)throws Exception;
 
 }

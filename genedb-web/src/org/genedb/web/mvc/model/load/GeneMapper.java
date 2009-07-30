@@ -52,7 +52,7 @@ public class GeneMapper extends FeatureMapper {
         " where f.feature_id = fl.feature_id" +
         " and f.type_id = cvt.cvterm_id " +
         " and cvt.cv_id = cv.cv_id " +
-        " and feature_id in (:placeholders)";
+        " and f.feature_id in (:placeholders)";
     
     public static final String SQL_WITH_TRANSCRIPT_ID_PARAM = 
         " select fl.*, f.*, cvt.name as cvtname, cv.name as cvname " +
@@ -60,7 +60,7 @@ public class GeneMapper extends FeatureMapper {
         " where f.feature_id = fl.feature_id" +
         " and f.type_id = cvt.cvterm_id " +
         " and cvt.cv_id = cv.cv_id " +
-        " and feature_id in (" +
+        " and f.feature_id in (" +
         " select object_id" +
         " from feature_relationship fr" +
         " where fr.subject_id = ?)";

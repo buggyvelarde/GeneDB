@@ -18,12 +18,17 @@ import org.gmod.schema.feature.Transcript;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-
+import org.springframework.transaction.annotation.Transactional;
+/**
+ * 
+ * @author lo2@sangerinstitute
+ *
+ */
+@Transactional
 public class TranscriptUpdater extends AbstractTranscriptLoader implements IndexUpdater{
     
     Logger logger = Logger.getLogger(TranscriptUpdater.class);
 
-    private SimpleJdbcTemplate template;    
     private ChangeTracker changeTracker;    
 
     
@@ -43,54 +48,64 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
         updateAllCaches(changeSet);
     }
     
+    
+    
+    @Override
+    public int updateTranscriptCache(ChangeSet changeSet) throws Exception{    
+        int updateCount = 0;
+        //Processed transcript Ids filter to avoid multiple insert or update of same transcript
+        Set<Integer> processedTranscriptsIds = new HashSet<Integer>();
+
+        //Process new genes
+        Collection<Integer> featureIds = changeSet.newFeatureIds(AbstractGene.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new GeneChangesProcessor(false, processedTranscriptsIds));
+
+        //Process changed genes
+        featureIds = changeSet.changedFeatureIds(AbstractGene.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new GeneChangesProcessor(true, processedTranscriptsIds));
+
+        //Process deleted genes
+        featureIds = changeSet.deletedFeatureIds(AbstractGene.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new GenesRemover());
+
+
+
+
+        //Process new Transcript
+        featureIds = changeSet.newFeatureIds(Transcript.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new TranscriptChangesProcessor(false, processedTranscriptsIds));
+
+        //Process changed Transcript
+        featureIds = changeSet.changedFeatureIds(Transcript.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new TranscriptChangesProcessor(true, processedTranscriptsIds));
+
+        //Process deleted Transcript
+        featureIds = changeSet.deletedFeatureIds(Transcript.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new TranscriptsRemover());
+
+
+
+
+        //Process new Polypeptide
+        featureIds = changeSet.newFeatureIds(Polypeptide.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new PolypeptideChangesProcessor(false, processedTranscriptsIds));
+
+        //Process changed Polypeptide
+        featureIds = changeSet.changedFeatureIds(Polypeptide.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new PolypeptideChangesProcessor(true, processedTranscriptsIds));
+
+        //Process deleted Polypeptide
+        featureIds = changeSet.deletedFeatureIds(Polypeptide.class);
+        updateCount = updateCount + batchRequest(featureIds, 50, new PolypeptidesRemover());
+        
+        return updateCount;
+    }
+
     @Override
     public boolean updateAllCaches(ChangeSet changeSet){
         
-        try{        
-            //Processed transcript Ids filter to avoid multiple insert or update of same transcript
-            Set<Integer> processedTranscriptsIds = new HashSet<Integer>();
-
-            //Process new genes
-            Collection<Integer> featureIds = changeSet.newFeatureIds(AbstractGene.class);
-            batchRequest(featureIds, 50, new GeneChangesProcessor(false, processedTranscriptsIds));
-
-            //Process changed genes
-            featureIds = changeSet.changedFeatureIds(AbstractGene.class);
-            batchRequest(featureIds, 50, new GeneChangesProcessor(true, processedTranscriptsIds));
-
-            //Process deleted genes
-            featureIds = changeSet.deletedFeatureIds(AbstractGene.class);
-            batchRequest(featureIds, 50, new GenesRemover());
-
-
-
-
-            //Process new Transcript
-            featureIds = changeSet.newFeatureIds(Transcript.class);
-            batchRequest(featureIds, 50, new TranscriptChangesProcessor(false, processedTranscriptsIds));
-
-            //Process changed Transcript
-            featureIds = changeSet.changedFeatureIds(Transcript.class);
-            batchRequest(featureIds, 50, new TranscriptChangesProcessor(true, processedTranscriptsIds));
-
-            //Process deleted Transcript
-            featureIds = changeSet.deletedFeatureIds(Transcript.class);
-            batchRequest(featureIds, 50, new TranscriptsRemover());
-
-
-
-
-            //Process new Polypeptide
-            featureIds = changeSet.newFeatureIds(Polypeptide.class);
-            batchRequest(featureIds, 50, new PolypeptideChangesProcessor(false, processedTranscriptsIds));
-
-            //Process changed Polypeptide
-            featureIds = changeSet.changedFeatureIds(Polypeptide.class);
-            batchRequest(featureIds, 50, new PolypeptideChangesProcessor(true, processedTranscriptsIds));
-
-            //Process deleted Polypeptide
-            featureIds = changeSet.deletedFeatureIds(Polypeptide.class);
-            batchRequest(featureIds, 50, new PolypeptidesRemover());
+        try{    
+            updateTranscriptCache(changeSet);
         }catch(Exception e){
             throw new RuntimeException(e);
         }
@@ -104,7 +119,8 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
      * @param request
      * @throws Exception
      */
-    private void batchRequest(Collection<Integer> featureIds, int batchSize, RequestProcessor request)throws Exception{
+    private int batchRequest(Collection<Integer> featureIds, int batchSize, RequestProcessor request)throws Exception{
+        int updateCount = 0;
         int currentBatchIndex = 0;
         List<Integer> subset = new ArrayList<Integer>(); 
         List<Integer> ids = new ArrayList<Integer>(featureIds);
@@ -116,10 +132,11 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
                     continue;
                 }
             }                    
-            request.execute(subset);
+            updateCount = updateCount + request.execute(subset);
             subset.clear();
             currentBatchIndex = 0;                
-        }        
+        }
+        return updateCount;
     }
     
     /**
@@ -269,8 +286,8 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
             
             Date geneProcessingStartTime = new Date();      
             
-            GeneMapper geneMapper = template.queryForObject(
-                    GeneMapper.SQL_WITH_TRANSCRIPT_ID_PARAM, GeneMapper.class, transcriptMapper.getFeatureId());
+            FeatureMapper geneMapper = template.queryForObject(
+                    GeneMapper.SQL_WITH_TRANSCRIPT_ID_PARAM, new GeneMapper(), transcriptMapper.getFeatureId());
 
             //Get the organism
             OrganismMapper organismMapper = template.queryForObject(
@@ -301,9 +318,9 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
      */
     private class GenesRemover implements RequestProcessor{
         public int execute(Collection<Integer> featureIds)throws Exception{
-            String sql = "delete transcript where gene_id in (placeholders)";
+            String sql = "delete from transcript where gene_id in (placeholders)";
             sql = sql.replace("placeholders", formatPlaceholders(featureIds.size()));
-            return template.update(sql, featureIds);
+            return template.update(sql, featureIds.toArray((Object[])new Integer[0]));
         }
     }
     
@@ -314,9 +331,9 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
      */
     private class TranscriptsRemover implements RequestProcessor{
         public int execute(Collection<Integer> featureIds)throws Exception{
-            String sql = "delete transcript where transcript_id in (:placeholders)";
+            String sql = "delete from transcript where transcript_id in (:placeholders)";
             sql = sql.replace(":placeholders", formatPlaceholders(featureIds.size()));
-            return template.update(sql, featureIds);
+            return template.update(sql, featureIds.toArray((Object[])new Integer[0]));
         }
     }
     
@@ -348,7 +365,7 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
         sql =  sql.replace(":placeholders", formatPlaceholders(featureIds.size()));
         //Create the mapper and get the genes
         List<FeatureMapper> genes = template.query(
-                sql, new GeneMapper(), featureIds);
+                sql, new GeneMapper(), featureIds.toArray((Object[])new Integer[0]));
         logger.info("Genes size: " + genes.size());        
         return genes;
     }
@@ -359,7 +376,7 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
         sql =  sql.replace(":placeholders", formatPlaceholders(featureIds.size()));
         //Create the mapper and get the genes
         List<FeatureMapper> transcripts = template.query(
-                sql, new TranscriptMapper(), featureIds);
+                sql, new TranscriptMapper(), featureIds.toArray((Object[])new Integer[featureIds.size()]));
         logger.info("Transcript size: " + transcripts.size());        
         return transcripts;
     }
@@ -370,7 +387,7 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
         sql =  sql.replace(":placeholders", formatPlaceholders(featureIds.size()));
         //Create the mapper and get the genes
         List<FeatureMapper> transcripts = template.query(
-                sql, new TranscriptMapper(), featureIds);
+                sql, new TranscriptMapper(), featureIds.toArray((Object[])new Integer[0]));
         logger.info("Transcript size: " + transcripts.size());        
         return transcripts;
     }
@@ -412,6 +429,22 @@ public class TranscriptUpdater extends AbstractTranscriptLoader implements Index
         for(ListIterator<FeatureMapper> iter = transcriptMappers.listIterator(); iter.hasNext(); ){
            processedIds.add(iter.next().getFeatureId());
         }
+    }
+
+    public SimpleJdbcTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(SimpleJdbcTemplate template) {
+        this.template = template;
+    }
+
+    public ChangeTracker getChangeTracker() {
+        return changeTracker;
+    }
+
+    public void setChangeTracker(ChangeTracker changeTracker) {
+        this.changeTracker = changeTracker;
     }
     
 }
