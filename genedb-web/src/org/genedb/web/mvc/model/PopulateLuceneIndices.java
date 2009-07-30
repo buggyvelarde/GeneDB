@@ -68,6 +68,12 @@ import com.google.common.collect.Sets;
  * @author rh11
  */
 public class PopulateLuceneIndices implements IndexUpdater {
+    @Override
+    public int updateTranscriptCache(ChangeSet changeSet) throws Exception {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
     private static Logger logger = Logger.getLogger(PopulateLuceneIndices.class);
 
     /**

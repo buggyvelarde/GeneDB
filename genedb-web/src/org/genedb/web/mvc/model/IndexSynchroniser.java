@@ -46,6 +46,12 @@ import com.google.common.collect.Sets;
 @Repository
 @Transactional
 public class IndexSynchroniser implements IndexUpdater{
+    @Override
+    public int updateTranscriptCache(ChangeSet changeSet) throws Exception {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
     private static final Logger logger = Logger.getLogger(IndexSynchroniser.class);
 
     private static final int BATCH_SIZE = 10;//must match BATCH_SIZE in config

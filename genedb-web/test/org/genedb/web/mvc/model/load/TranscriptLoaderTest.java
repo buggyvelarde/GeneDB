@@ -117,7 +117,7 @@ public class TranscriptLoaderTest {
     @Test
     public void testDeletedGenesFromChangeSet()throws Exception{
         //Size of records to use for testing
-        int limit = 4, offset=limit;
+        int limit = 2, offset=limit;
         
         //Get some gene ids to use for test
         List<Integer> geneIds = findRandomGeneIds(offset, limit);
@@ -130,11 +130,20 @@ public class TranscriptLoaderTest {
         Map<Class<? extends Feature>, List<Integer>> map = changeSet.getDeletedMap();
         map.put(AbstractGene.class, geneIds);
         
-        //Proper test begins i.e. update the cache with transcripts
+        //Proper test begins i.e. delete the transcripts in the cache
         int deleted = indexUpdater.updateTranscriptCache(changeSet);
         
-        //Assert that those changed records are updated by the transcriptUpdater
+        //Assert that those records are deleted by the transcriptUpdater
         Assert.isTrue(deleted == geneIds.size());
+        
+        //Restore deleted
+        map.clear();
+        map = changeSet.getNewMap();
+        map.put(AbstractGene.class, geneIds);
+        int restored = indexUpdater.updateTranscriptCache(changeSet);
+        
+        //Assert that deleted is restored
+        Assert.isTrue(deleted == restored);
     }
     
     @Test
@@ -164,6 +173,64 @@ public class TranscriptLoaderTest {
         
         //Assert that those new records are inserted by the transcriptUpdater
         Assert.isTrue(inserted == findTranscriptIds(transcriptIds).size());
+    }
+
+    
+    @Test
+    public void testChangedTranscriptsFromChangeSet()throws Exception{
+        //Size of records to use for testing
+        int limit = 4, offset=limit;
+        
+        //Get some transcript ids to use for test
+        List<Integer> transcriptIds = findRandomTranscriptIds(offset, limit);
+        
+        //Assert size of transcripts is the limit asked for
+        Assert.isTrue(transcriptIds.size()==limit);
+        
+        //Set up the changeset
+        MockChangeSetImpl changeSet = new MockChangeSetImpl();
+        Map<Class<? extends Feature>, List<Integer>> map = changeSet.getChangedMap();
+        map.put(Transcript.class, transcriptIds);
+        
+        //Proper test begins i.e. update the cache with transcripts
+        int changed = indexUpdater.updateTranscriptCache(changeSet);
+        
+        //Assert that those changed records are updated by the transcriptUpdater
+        Assert.isTrue(changed == transcriptIds.size());
+    }
+    
+
+    
+    @Test
+    public void testDeletedTranscriptsFromChangeSet()throws Exception{
+        //Size of records to use for testing
+        int limit = 2, offset=limit;
+        
+        //Get some transcript ids to use for test
+        List<Integer> transcriptIds = findRandomTranscriptIds(offset, limit);
+        
+        //Assert size of transcript is the limit asked for
+        Assert.isTrue(transcriptIds.size()==limit);
+        
+        //Set up the changeset
+        MockChangeSetImpl changeSet = new MockChangeSetImpl();
+        Map<Class<? extends Feature>, List<Integer>> map = changeSet.getDeletedMap();
+        map.put(Transcript.class, transcriptIds);
+        
+        //Proper test begins i.e. delete the transcripts in the cache
+        int deleted = indexUpdater.updateTranscriptCache(changeSet);
+        
+        //Assert that those records are deleted by the transcriptUpdater
+        Assert.isTrue(deleted == transcriptIds.size());
+        
+        //Restore deleted
+        map.clear();
+        map = changeSet.getNewMap();
+        map.put(Transcript.class, transcriptIds);
+        int restored = indexUpdater.updateTranscriptCache(changeSet);
+        
+        //Assert that deleted is restored
+        Assert.isTrue(deleted == restored);
     }
     
     

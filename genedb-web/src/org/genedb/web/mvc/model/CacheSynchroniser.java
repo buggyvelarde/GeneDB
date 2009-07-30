@@ -43,7 +43,13 @@ import com.sleepycat.collections.StoredMap;
 @Repository
 @Transactional
 public class CacheSynchroniser implements IndexUpdater{
-	private static final Logger logger = Logger.getLogger(CacheSynchroniser.class);
+	@Override
+    public int updateTranscriptCache(ChangeSet changeSet) throws Exception {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    private static final Logger logger = Logger.getLogger(CacheSynchroniser.class);
     
     
     private RenderedDiagramFactory renderedDiagramFactory;
