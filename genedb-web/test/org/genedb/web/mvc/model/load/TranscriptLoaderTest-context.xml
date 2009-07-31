@@ -55,7 +55,7 @@
     </bean>
     
     <aop:config>
-        <aop:pointcut id="transcriptUpdaterServiceOperation" expression="execution(* org.genedb.web.mvc.model.load.TranscriptUpdater.*(..))"/>
+        <aop:pointcut id="transcriptUpdaterServiceOperation" expression="execution(* org.genedb.web.mvc.model.load.Transcript*.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="transcriptUpdaterServiceOperation"/>
     </aop:config>
 
