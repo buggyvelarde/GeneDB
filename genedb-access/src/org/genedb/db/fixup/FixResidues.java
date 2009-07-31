@@ -184,13 +184,13 @@ public class FixResidues {
         return this;
     }
 
-    private void fixAll() throws SQLException, TranslationException {
+    private void fixAll() throws SQLException {
         for (Organism organism: getOrganisms(conn)) {
             fixOrganism(organism);
         }
     }
 
-    private void fixOrganismByName(String organismName) throws SQLException, TranslationException {
+    private void fixOrganismByName(String organismName) throws SQLException {
         System.out.printf("Attempting to fix '%s'%n", organismName);
         for (Organism organism: getOrganisms(conn)) {
             if (!organism.commonName.equals(organismName))
@@ -262,7 +262,7 @@ public class FixResidues {
         }
     }
 
-    private void fixOrganism(Organism organism) throws SQLException, TranslationException {
+    private void fixOrganism(Organism organism) throws SQLException {
         info("Processing organism: %s", organism.commonName);
         info("\t(translation table = %d, mitochondrial = %d)", organism.translationTable, organism.mitochondrialTranslationTable);
 
@@ -319,7 +319,7 @@ public class FixResidues {
         }
     }
 
-    private void fixTopLevelFeature(int translationTableId, int topLevelFeatureId) throws SQLException, TranslationException {
+    private void fixTopLevelFeature(int translationTableId, int topLevelFeatureId) throws SQLException {
         String topLevelSequence = loadResidues(topLevelFeatureId);
         PreparedStatement st = conn.prepareStatement(
             "select gene.feature_id"
@@ -375,7 +375,7 @@ public class FixResidues {
         }
     }
 
-    private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException, TranslationException {
+    private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException {
         debug("Processing gene '%s' (ID=%d) on strand %d", geneUniqueName, geneFeatureId, strand);
 
         PreparedStatement st = conn.prepareStatement(
