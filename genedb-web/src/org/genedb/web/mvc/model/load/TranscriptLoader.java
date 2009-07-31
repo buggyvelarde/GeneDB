@@ -31,16 +31,16 @@ public class TranscriptLoader extends AbstractTranscriptLoader{
      * Load transcripts of all organisms
      * @param limit
      */
-    public int loadAll(int limit)throws Exception{
-        int loadCount = 0;
-        List<OrganismMapper> organisms = template.query(
-                OrganismMapper.GET_ALL_ORGANISMS_SQL, new OrganismMapper());
-        for(OrganismMapper organismMapper: organisms){
-            logger.info("Loading Organism: " + organismMapper.getCommonName());
-            loadCount = loadCount + load(organismMapper.getCommonName(), limit);
-        }  
-        return loadCount;
-    }
+//    public int loadAll(int limit)throws Exception{
+//        int loadCount = 0;
+//        List<OrganismMapper> organisms = template.query(
+//                OrganismMapper.GET_ALL_ORGANISMS_SQL, new OrganismMapper());
+//        for(OrganismMapper organismMapper: organisms){
+//            logger.info("Loading Organism: " + organismMapper.getCommonName());
+//            loadCount = loadCount + load(organismMapper.getCommonName(), limit);
+//        }  
+//        return loadCount;
+//    }
     
     /**
      * Choose organism to load

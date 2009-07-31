@@ -38,14 +38,10 @@ public class TranscriptMapper extends FeatureMapper {
     
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
-        logger.debug("Enter mapRow");
-        
         //Get transcript details 
         FeatureMapper transcriptMapper = super.mapRow(rs, rowNum);          
         transcriptMapper.setCvtName(rs.getString("cvtname"));
         transcriptMapper.setCvName(rs.getString("cvname"));
-
-        logger.debug("Exit mapRow");
         return transcriptMapper;
     }
 }
