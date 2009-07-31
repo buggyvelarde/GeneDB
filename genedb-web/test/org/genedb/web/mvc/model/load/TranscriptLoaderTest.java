@@ -48,7 +48,7 @@ public class TranscriptLoaderTest {
         PropertyConfigurator.configure(url);                
     }
     
-    //@Test
+    @Test
     public void loadTbruceibrucei427()throws Exception{
         //empty the table
         jdbcTemplate.update("delete from transcript ");
