@@ -1457,7 +1457,7 @@ class EmblLoader {
                 addPub(target, accession, dbXRef);
             }
             else {
-                target.addDbXRef(dbXRef);
+                session.persist(target.addDbXRef(dbXRef));
             }
         }
 
@@ -1466,7 +1466,7 @@ class EmblLoader {
                 accession, target.toString()));
             Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
             session.persist(pub.addDbXRef(dbXRef, true));
-            target.addPub(pub);
+            session.persist(target.addPub(pub));
         }
 
         private Set<String> seenPubAccessions = new HashSet<String>();

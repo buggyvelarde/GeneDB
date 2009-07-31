@@ -248,6 +248,13 @@ public class EmblLoaderSyntheticTest {
         Collection<CvTerm> function = s4.getTerms("molecular_function", "GO");
         Collection<CvTerm> component = s4.getTerms("molecular_function", "GO");
     }
+    
+    @Test
+    public void s5_dbxrefs() {
+        PolypeptideTester s5 = tester.geneTester("s5").transcript("s5:mRNA").polypeptide("s5:pep");
+
+        s5.dbXRefs("UniProt:Q95Z09");
+    }
 
     @Test
     public void Smp_124050_similarities() {
@@ -325,7 +332,8 @@ public class EmblLoaderSyntheticTest {
         tRNA1.transcript("super1_tRNA1:tRNA")
             .properties("feature_property", "comment", "/label=tRNA label")
             .properties("genedb_misc", "colour", "12")
-            .property("genedb_misc", "EMBL_qualifier", "/invented_qualifier=\"value\"");
+            .property("genedb_misc", "EMBL_qualifier", "/invented_qualifier=\"value\"")
+            .dbXRefs("Rfam:RF00230");
     }
 
     @Test
