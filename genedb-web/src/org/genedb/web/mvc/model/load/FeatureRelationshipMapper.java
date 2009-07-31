@@ -56,9 +56,7 @@ public class FeatureRelationshipMapper implements ParameterizedRowMapper<Feature
     private String cvName;
     
     @Override
-    public FeatureRelationshipMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
-        logger.debug("Enter mapRow");
-        
+    public FeatureRelationshipMapper mapRow(ResultSet rs, int rowNum) throws SQLException {        
         //Get frMapper details 
         FeatureRelationshipMapper frMapper = new FeatureRelationshipMapper();
         frMapper.setSubjectId(rs.getInt("subject_id"));

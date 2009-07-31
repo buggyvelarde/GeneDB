@@ -52,6 +52,7 @@ public abstract class AbstractTranscriptLoader {
         logger.debug(String.format("Field args size: %s", args.size()));
         int update = 0;
         try{
+            logger.info("Loading Trnacript: " + args.get("transcript_id"));
             update = template.update("insert into transcript values(" +
                     ":transcript_id," +
                     ":transcript_name," +

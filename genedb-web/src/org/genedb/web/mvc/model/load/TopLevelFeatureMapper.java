@@ -16,15 +16,12 @@ public class TopLevelFeatureMapper extends FeatureMapper {
     
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
-        logger.debug("Enter mapRow");
-        
         //Get transcript details 
         FeatureMapper mapper = new FeatureMapper(); 
         mapper.setUniqueName(rs.getString("uniquename"));
         mapper.setName(rs.getString("fname"));
         mapper.setSeqLen(rs.getInt("seqlen"));        
         mapper.setCvtName(rs.getString("cvtname"));
-        logger.debug("Exit mapRow");
         return mapper;
     }
 }

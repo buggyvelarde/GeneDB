@@ -36,6 +36,7 @@ public class TranscriptLoader extends AbstractTranscriptLoader{
         List<OrganismMapper> organisms = template.query(
                 OrganismMapper.GET_ALL_ORGANISMS_SQL, new OrganismMapper());
         for(OrganismMapper organismMapper: organisms){
+            logger.info("Loading Organism: " + organismMapper.getCommonName());
             loadCount = loadCount + load(organismMapper.getCommonName(), limit);
         }  
         return loadCount;
