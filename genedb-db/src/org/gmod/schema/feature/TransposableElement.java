@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", term="transposable_element")
-public abstract class TransposableElement extends MobileGeneticElement {
+@FeatureType(cv="sequence", accession="0000101")
+public class TransposableElement extends IntegratedMobileGeneticElement {
     TransposableElement() {
         // empty
     }

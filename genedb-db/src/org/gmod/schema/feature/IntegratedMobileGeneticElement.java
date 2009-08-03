@@ -8,14 +8,14 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", accession="0000772")
-public class GenomicIsland extends IntegratedMobileGeneticElement {
+@FeatureType(cv="sequence", accession="0001039")
+public class IntegratedMobileGeneticElement extends MobileGeneticElement {
 
-    public GenomicIsland() {
+    public IntegratedMobileGeneticElement() {
         // empty
     }
 
-    public GenomicIsland(Organism organism, String uniqueName, boolean analysis,
+    public IntegratedMobileGeneticElement(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }

@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", term="integrated_plasmid")
-public class IntegratedPlasmid extends MobileGeneticElement {
+@FeatureType(cv="sequence", accession="0001040")
+public class IntegratedPlasmid extends IntegratedMobileGeneticElement {
 
     public IntegratedPlasmid() {
         // empty
