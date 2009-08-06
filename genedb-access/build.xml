@@ -450,7 +450,7 @@
     <!-- GOALoader -->
 	<target name="goaloader" depends="access-fulljar">
 		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-			<arg line="goaloader ${file}"/>
+			<arg line="goaloader --goTermErrorsAreNotFatal=${load.goTermErrorsAreNotFatal} ${file}"/>
 			<jvmarg line="-server -Xmx256m"/>
 		</java>
 	</target>
@@ -463,6 +463,18 @@
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteDuplicateGOTerms"/>
     </target>
     	
+	
+	<target name="add-featprops" depends="access-fulljar">
+        <fail unless="load.propType" message="The property load.propType must be specified. Eg private, curation"/>			
+        <fail unless="load.propValue" message="The property load.propValue must be specified, enlcosed in quotes"/>
+		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
+			 <arg line="featproploader --featureType=${load.featureType} --propType=${load.propType} --errorsAreNotFatal=${load.errorsAreNotFatal}"/>
+			 <arg value="--propValue=${load.propValue}"/>
+			 <arg value="${file}"/>
+			<jvmarg line="-server -Xmx256m"/>
+	   </java>
+	</target>
+				
     <target name="fix-residues-verbose" depends="access-fulljar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
