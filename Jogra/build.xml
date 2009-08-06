@@ -4,6 +4,7 @@
 
     <import file="../genedb-libs/build.xml" />
     <import file="../genedb-db/build.xml" />
+    <import file="../genedb-util/build.xml" />
 
     <property name="Jogra.jar"
         value="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar" />
@@ -16,6 +17,12 @@
         <pathelement location="${genedb-db.jar}" />
         <pathelement location="${java.home}/lib/javaws.jar" />
     </path>
+	
+	<!-- Need to make the util jar file known as cvDao is being used -->
+
+    <target name="Jogra-populate-util" depends="util-fulljar">
+      <copy file="${genedb-util.jar}" todir="${imported.basedir.Jogra}/lib" />
+    </target>
 
     <target name="Jogra-init">
         <init-target project="Jogra" />
@@ -25,11 +32,12 @@
         <clean-target project="Jogra" />
     </target>
 
-    <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate">
+    <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate" >
         <populate directory="Jogra" />
+    	<echo message="${imported.basedir.libs}" />
         <copy todir="lib">
             <fileset dir="${imported.basedir.libs}/lib/biojava">
-                <include name="biojava-1.6.jar"/>
+            	<include name="biojava-1.6.jar"/>
                 <include name="bytecode-0.91.jar"/>
             </fileset>
             <fileset dir="${imported.basedir.libs}/lib/gui">
@@ -43,7 +51,7 @@
         <uptodate property="Jogra.lib-uptodate" srcfile="${imported.basedir.Jogra}/ivy.xml" targetfile="${imported.basedir.Jogra}/lib/ivy.timestamp.txt" />
     </target>
 
-    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.db-fulljar">
+    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.db-fulljar, Jogra-populate-util">
         <compile-target project="Jogra" />
         <copy todir="${imported.basedir.Jogra}/${classes.dir}">
             <fileset dir="${imported.basedir.Jogra}/conf" />
