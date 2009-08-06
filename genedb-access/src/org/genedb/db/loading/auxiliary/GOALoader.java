@@ -4,7 +4,6 @@ import org.genedb.db.loading.GoEvidenceCode;
 import org.genedb.db.loading.GoInstance;
 
 import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 
 import org.apache.log4j.Logger;
@@ -17,13 +16,31 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GOALoader extends Loader {
     private static final Logger logger = Logger.getLogger(GOALoader.class);
     
 	Boolean goTermErrorsAreNotFatal = true;
+	
+	@Override
+	protected Set<String> getOptionNames() {
+		Set<String> options = new HashSet<String>();
+		Collections.addAll(options, "goTermErrorsAreNotFatal");
+		return options;
+	}
+	@Override
+	protected boolean processOption(String optionName, String optionValue) {
 
+		if (optionName.equals("goTermErrorsAreNotFatal")) {
+			goTermErrorsAreNotFatal = Boolean.valueOf(optionValue);
+			return true;
+		}    	
+		return false;
+	}
+	    
     public void doLoad(InputStream inputStream, Session session) throws IOException {
     	
 	GOAssociationFile file = new GOAssociationFile(inputStream);
@@ -53,8 +70,6 @@ public class GOALoader extends Loader {
     		return;
     	}
     	
-    	logger.debug(String.format("Processing feature of name '%s'", hit.getFeatureUniquename()));
-    	
     	if (polypeptide == null) {
     		logger.error(String.format("Could not find polypeptide for key '%s'", hit.getFeatureUniquename()));
     		return;
@@ -62,9 +77,10 @@ public class GOALoader extends Loader {
         
      	//The processGO method takes all the essential information from a hit and creates the corresponding database entries
     	processGO(polypeptide, hit);
+    	
     }
-    
-    protected void processGO(Polypeptide polypeptide, GOHit hit)
+
+	protected void processGO(Polypeptide polypeptide, GOHit hit)
 			throws RuntimeException {
 		try {
 			GoInstance goInstance = new GoInstance();
