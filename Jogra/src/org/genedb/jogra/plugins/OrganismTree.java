@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -79,8 +80,11 @@ public class OrganismTree implements JograPlugin {
              }
         };
         button.addActionListener(actionListener);
-        panel.add(label);
-        panel.add(button);
+        Box horizontalBox = Box.createHorizontalBox();
+        horizontalBox.add(label);
+        horizontalBox.add(button);
+        horizontalBox.add(Box.createHorizontalGlue());
+        panel.add(horizontalBox);
         return panel;
     }
 
