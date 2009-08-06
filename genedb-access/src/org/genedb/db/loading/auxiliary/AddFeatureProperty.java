@@ -19,16 +19,21 @@ import java.util.Set;
 /**
  * Adds feature properties to the polypeptide feature associated with a list of gene or protein systematic ids
  * The systematic ids should be listed, one per line in a file supplied on the command line
- * The type of the features listed can be specified using -Dload.featureType, but the default is 'polypeptide'
+ * The type of the features listed (eg gene, polypeptide) can be specified using -Dload.featureType, 
+ * but the default is 'polypeptide' (optional)
  * 
- * The type of the feature_property is specified using -Dload.propType
+ * The type of the feature_property is specified using -Dload.propType (required)
  * The value of the feature_property is specified using -Dload.propValue and must be enclosed 
- * in quotes if it contains spaces
+ * in quotes if it contains spaces (required)
  * 
- * -Dload.errorsAreNotFatal may be used if the file contains deprecated systematic ids
+ * -Dload.errorsAreNotFatal may be used if the file contains deprecated systematic ids (optional)
  * 
  * Even if the file contains multiple copies of the same systematic id the feature_property will only be 
  * added once per feature per load session
+ * 
+ * Example of use:
+ * ant add-featprops -Dconfig=bigtest2 -Dorganism=Pfalciparum -Dload.featureType=gene -Dload.propType=private 
+ * -Dload.propValue="Tinas private value" -Dload.errorsAreNotFatal=true -Dfile=featureprop.test
  * 
  * @author te3
  *
