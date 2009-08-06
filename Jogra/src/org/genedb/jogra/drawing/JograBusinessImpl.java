@@ -1,5 +1,7 @@
 package org.genedb.jogra.drawing;
 
+import java.io.File;
+
 
 public class JograBusinessImpl implements JograBusiness {
 
