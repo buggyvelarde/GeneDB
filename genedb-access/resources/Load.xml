@@ -115,6 +115,9 @@
     <bean id="domainloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.DomainLoader"/>
 
+    <bean id="featproploader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.AddFeatureProperty"/>
+        
     <bean id="tmhmmloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.TMHMMLoader"/>
 
