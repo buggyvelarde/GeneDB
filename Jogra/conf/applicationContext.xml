@@ -12,9 +12,6 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-init-method="postConstruction">
 
-<!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
-        <property name="name" value="jogra.jpg" />
-    </bean> -->
         <context:annotation-config/>
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
     <tx:annotation-driven mode="aspectj"/>
@@ -36,38 +33,29 @@
     <!-- <property name="lockAndNotificationService" ref="lockAndNotificationService" /> -->
   </bean>
 
-  <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
-    <property name="productService" ref="productService" />
+
+  <!-- Generic Term Rationaliser   -->
+  <bean name="termRationaliser" class="org.genedb.jogra.plugins.TermRationaliser">
+     <property name="termService" ref="termService" />
      <property name="taxonNodeManager" ref="taxonNodeManager" />
      <property name="jogra" ref="application" /> <!--  remove after fixing event bus publish method 26.5.09 NDS -->
   </bean>
 
-  <bean name="productService" class="org.genedb.jogra.services.SqlProductService">
+  <bean name="termService" class="org.genedb.jogra.services.SqlTermService"> <!--init-method="afterPropertiesSet"--> 
      <property name="dataSource" ref="dataSource" />
+     <property name="taxonNodeManager" ref="taxonNodeManager" />
   </bean>
-
+  
+  
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-
-            <property name="url" value="${Jogra.url}" />
-            <property name="username" value="${Jogra.username}"/>
-            <property name="password" value="${Jogra.password}" />
+        <property name="url" value="${Jogra.url}" />
+	    <property name="username" value="${Jogra.username}"/>
+        <property name="password" value="${Jogra.password}" />
          
     </bean>
 
-  <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
-
-
-
-  <bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
-
-<!--
-  <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
-  <property name="organismManager" ref="organismManager" />
-  </bean>
--->
-
-  <bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
+  
 
   <!-- Plugin to view the organism tree structure  -->
 
@@ -80,11 +68,21 @@
   <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="sessionFactory" ref="sessionFactory" />
-        <!--  property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property -->
+   
     </bean>
 
 
      <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">   
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="generalDao" ref="generalDao" />
+    </bean>
+
+    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao">
+        <property name="cvDao" ref="cvDao"/>
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
@@ -92,7 +90,11 @@
          <property name="sessionFactory" ref="sessionFactory" />
      </bean>
 
-    <bean id="sessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+
+    
+    <!-- Hibernate SessionFactory -->
+    <bean id="sessionFactory"
+        class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
         <property name="annotatedPackages">
@@ -101,10 +103,11 @@
                 <value>org.gmod.schema.feature</value>
             </list>
         </property>
-<!--         <property name="defaultFilters">
-            <list><value>excludeObsoleteFeatures</value></list>
-        </property> -->
     </bean>
+    
+    
+    
+
 
 
 
@@ -116,19 +119,14 @@
             <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
             <prop key="hibernate.bytecode.provider">javassist</prop>
             <prop key="current_session_context_class">thread</prop>
+            <prop key="hibernate.search.default.indexBase">${java.io.tmpdir}</prop>
+            <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
         </props>
      </property>
-    </bean>
+    </bean >
+    
 
 
-
-
-
-
-
-<!--
-  <bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
--->
 
 <!-- List of plugins for Jogra -->
 
@@ -136,15 +134,9 @@
      <property name="jograBusiness" ref="jograBusiness" />
      <!-- <property name="messageService" ref="messageService"/> -->
      <property name="pluginList">
-       <list>
-          <!-- ref bean="geneEditor" /-->
-         <!--  ref bean="geneList" /-->
-         <!-- ref bean="cvEditor" /-->
-         <ref bean="organismTree" />
-         <!-- ref bean="organismEditor" /-->
-         <ref bean="productRationaliser" />
-
-        <!-- <ref bean="integrityChecker" /> -->
+       <list>      
+          <ref bean="organismTree" />
+          <ref bean="termRationaliser" />         
        </list>
      </property>
    </bean>
@@ -153,12 +145,6 @@
    <!-- <property name="testService" ref="testService" /> -->
    </bean>
 
-   <!-- <bean id="testService" class="org.genedb.jogra.drawing.TestServiceImpl">
-    <property name="sessionFactory" ref="sessionFactory" />
-   </bean> -->
-
-  <!--  <bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
-
-  <bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/> -->
+   
 
 </beans>
