@@ -54,7 +54,7 @@ public class DatabaseLogin {
     public void validateUser() throws SQLException, AbortException {
 
         userField = new JTextField(10);
-        String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; //Commented for now since the JAR for webstart is not signed and does not like this operation
+        String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; 
         userField.setText(defaultUsername);
         passwordField = new JPasswordField(10);
         databaseNames = new JComboBox(dbnames);

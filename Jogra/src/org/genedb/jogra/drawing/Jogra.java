@@ -7,8 +7,7 @@
 
 package org.genedb.jogra.drawing;
 
-
-
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.jogra.domain.GeneDBMessage;
 import org.genedb.jogra.services.DatabaseLogin;
 import org.genedb.jogra.services.MessageService;
@@ -28,6 +27,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -64,7 +64,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private JograBusiness jograBusiness;
     private Timer timer = new Timer();
     private MessageService messageService;
-    private List<String> chosenOrganism; /* Used by other plugins as a way of storing the user's organism selection. Will be changed to Eventbus.publish etc. */
+    private List<String> selectedOrganismNames; /* Used by other plugins as a way of storing the user's organism selection. Will be changed to Eventbus.publish etc. */
+    private List<TaxonNode> selectedTaxons;
     private static String username;
     private static String password;
 
@@ -107,7 +108,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             public void onEvent(String topic, List<String> selection) {
               System.out.println("Selection is " + selection.toString() );
 //                System.out.println("Topic is " + topic );
-                setChosenOrganism(selection);
+                setSelectedOrganismNames(selection);
                 System.out.println("JOGRA: Picked up " + selection.toString());
             }
 
@@ -121,17 +122,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public void init() throws Exception {
-
-      /*  LoginService ls = new JograLoginService();
-        JXLoginPane loginPane = new JXLoginPane(ls);
-       loginPane.setBannerText("Jogra Login");
-       final BufferedImage bi = ImageUtils.makeBackgroundFromClasspath("jogra.jpg");
-       loginPane.setBanner(bi);
-       Status status = JXLoginPane.showLoginDialog(null, loginPane);
-       if (status != Status.SUCCEEDED) {
-       	finalShutdown();
-        }
-        */
 
         try {
             sis = (SingleInstanceService) ServiceManager.lookup("javax.jnlp.SingleInstanceService");
@@ -180,7 +170,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         final Container pane = mainFrame.getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-        // pane.setOpaque(true);
 
         final Border border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2),
                 BorderFactory.createEtchedBorder());
@@ -195,10 +184,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
 
     }
-
-
-
-
 
     public void onEvent(final GeneDBMessage event) {
         if (event.getClass().isAssignableFrom(OpenWindowEvent.class)) {
@@ -303,12 +288,17 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         properties.setProperty("Jogra.password", new String(password));
         properties.setProperty("Jogra.url", url);
         configurer.setProperties(properties);
+        
+        /** Check if the org....* files exist in the root directory and if they do, delete them **/
+        // Store lucene indices somewhere harmless as not needed, but created automatically
+        //System.setProperty("hibernate.search.default.indexBase", System.getProperty("java.io.tmpdir"));
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
         context.addBeanFactoryPostProcessor(configurer);
 
         context.setConfigLocation("classpath:/applicationContext.xml" );
         context.refresh();
+
         final Jogra application = (Jogra)context.getBean("application", Jogra.class);
         context.registerShutdownHook();
         return application;
@@ -349,14 +339,16 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
         jp.process(newArgs);
     }
-
-    public List<String> getChosenOrganism() {
-        return chosenOrganism;
+  
+    public List<String> getSelectedOrganismNames() {
+        return selectedOrganismNames;
     }
 
-    public void setChosenOrganism(List<String> user_selection) {
-        this.chosenOrganism = user_selection;
+    public void setSelectedOrganismNames(List<String> user_selection) {
+        this.selectedOrganismNames = user_selection;
     }
+    
+    
 
     @Override
     public void propertyChange(PropertyChangeEvent arg0) {
@@ -390,6 +382,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
         dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
         dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
+        //dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds"); 
         
         try {
             dblogin.validateUser();
@@ -399,7 +392,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         } catch (AbortException exp) {
             System.exit(65);
         }
-
 
         Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword(), dblogin.getDBUrl());
         application.testTransactions();
