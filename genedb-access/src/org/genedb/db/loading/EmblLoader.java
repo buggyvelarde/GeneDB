@@ -436,6 +436,8 @@ class EmblLoader {
         this.archivedFeatureIndexes.clear();
 
         this.motifIndex = 1;
+
+        this.objectManager.flush();
     }
 
     private void loadContigsAndGaps(EmblLocation.Join locations) throws DataError {
