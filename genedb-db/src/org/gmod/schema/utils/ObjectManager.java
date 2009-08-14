@@ -59,6 +59,13 @@ public class ObjectManager extends EmptyInterceptor {
     }
 
     /**
+     * Flush the cache.
+     */
+    public void flush() {
+        postFlush(null);
+    }
+
+    /**
      * Get or create a DbXRef. Works even if the DbXRef has been
      * created but not yet flushed, as long as it was created using
      * this object.
