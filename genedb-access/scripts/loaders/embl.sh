@@ -169,7 +169,7 @@ doLoad() {
     
     if $reload; then
         export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
-        psql <<SQL
+        psql --no-psqlrc <<SQL
         delete from feature where organism_id in (
             select organism_id from organism where common_name = '${organism}'
         );
