@@ -87,6 +87,11 @@ insert into db (name, description) values (
         'Local values for where we need a dbxref eg for new cvterms');
 
 insert into db (name, description, urlprefix) values (
+        'GeneDB',
+        'The GeneDB database',
+        'http://beta.genedb.org/NamedFeature/');
+
+insert into db (name, description, urlprefix) values (
         'SMART',
         'The SMART database',
         'http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN=');
