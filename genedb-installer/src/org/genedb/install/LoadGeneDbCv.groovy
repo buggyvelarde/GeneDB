@@ -37,9 +37,9 @@ class LoadGeneDbCv {
 
     LoadGeneDbCv() {
         db = Sql.newInstance(
-            'jdbc:postgresql://pathdbsrv1b:10120/bigtest5',
-            'pathdb',
-            'Pyrate_2',
+            'jdbc:postgresql://pgsrv2:5432/pathdev',
+            'rn2@sanger.ac.uk',
+            'xxxxxxx',
             'org.postgresql.Driver')
             
 
@@ -261,7 +261,10 @@ class LoadGeneDbCv {
             </term>
 		<term name="SNP_analysis_application" description="Programs which identifies SNPs and indels">
             	<term name="commandline_str" description="Full command line string used to execute the application" />
+            	<term name="strain_id" description="unique name of the strain" />
+            	<term name="strain_sample_id" description="unique name of the sample for a particular strain" />
                 <term name="ssaha" description="tool for very fast matching and alignment of DNA sequences">
+                	<term name="ssaha_call" description="call at a particular genome location"/>
                 	<term name="ssaha_scalar_result" description="Output that results in a single value for the whole data set">
                 		<term name="ssaha_number_of_cell_lines" description="number of cell lines"/>
                 	</term>
@@ -272,6 +275,7 @@ class LoadGeneDbCv {
 	                		<term name="ssaha_offset" description="SNP offset"/>
 	                		<term name="ssaha_read_coverage" description="Read coverage"/>
 	                		<term name="ssaha_reference_base" description="Reference base"/>
+	                		<term name="ssaha_consensus_base" description="Consensus base"/>
 	                		<term name="ssaha_snp_base" description="SNP base"/>
 	                		<term name="ssaha_number_of_A" description="Number of A (base quality Q&gt;=0)"/>
 	                		<term name="ssaha_number_of_C" description="Number of C (base quality Q&gt;=0)"/>
