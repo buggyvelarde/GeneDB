@@ -49,14 +49,6 @@
 
   <target name="populate-lib-dirs">
       <antcall target="lib-populate-lib-dir"/>
-      <populate directory="genedb-access"/>
-      <populate directory="genedb-db"/>
-      <populate directory="genedb-domain"/>
-      <populate directory="genedb-query"/>
-      <populate directory="genedb-util" />
-      <populate directory="genedb-web"/>
-      <populate directory="Jogra"/>
-      <populate directory="Medusa"/>
   </target>
 
   <target name="clean-all">
