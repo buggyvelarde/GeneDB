@@ -66,11 +66,38 @@ public class ClearDomains extends Clear {
         +" and feature_cvtermprop.value = 'From Pfam2GO mapping'"
         +" and organism.common_name = ?)";
 	
+    private static final String DELETE_INTERPRO_GO_TERMS_SQL
+    = "delete from feature_cvterm"
+        +" where feature_cvterm_id in ("
+        +" select feature_cvterm.feature_cvterm_id"
+        +" from feature_cvterm"
+        +" join feature_cvtermprop on feature_cvterm.feature_cvterm_id = feature_cvtermprop.feature_cvterm_id"
+        +" join cvterm prop_type on feature_cvtermprop.type_id = prop_type.cvterm_id"
+        +" join feature on feature_cvterm.feature_id = feature.feature_id"
+        +" join organism on feature.organism_id = organism.organism_id"
+        +" where prop_type.name = 'autocomment'"
+        +" and feature_cvtermprop.value = 'From Interpro file'"
+        +" and organism.common_name = ?)";
+    
     @Override
     protected DeleteSpec[] getDeleteSpecs() {
-        return new DeleteSpec[] {
-            new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
-            new DeleteSpec("Pfam GO terms",   DELETE_PFAM_GO_TERMS_SQL, 1),
-        };
+    	
+    	if (analysisProgram.equals("pfam_scan")) {
+    		return new DeleteSpec[] {
+    				new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
+    				new DeleteSpec("Pfam GO terms",   DELETE_PFAM_GO_TERMS_SQL, 1),
+    		};
+    	}
+    	else if (analysisProgram.equals("interpro")) {
+    		return new DeleteSpec[] {
+    				new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
+    				new DeleteSpec("Pfam GO terms",   DELETE_INTERPRO_GO_TERMS_SQL, 1),
+    		};	
+    	}
+
+    	return new DeleteSpec[] {
+    		new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
+    	};    		
+    	
     }
 }
