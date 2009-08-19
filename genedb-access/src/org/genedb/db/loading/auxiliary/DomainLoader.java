@@ -228,7 +228,6 @@ public class DomainLoader extends Loader {
             }
             
             // link to InterPro dbxref if applicable
-	    	// this isn't get needed, but will be once InterProLoader is integrated into DomainLoader
             if (interProDbxref != null && analysis.getProgram().equals("InterPro")) {
                 FeatureDbXRef featureDbXRef = new FeatureDbXRef(interProDbxref, polypeptideDomain, true);
                 sequenceDao.persist(featureDbXRef);
