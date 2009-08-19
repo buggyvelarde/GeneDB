@@ -109,9 +109,6 @@
         <property name="objectManager" ref="objectManager" />
     </bean>
 
-    <bean id="iploader" parent="auxiliaryLoader"
-        class="org.genedb.db.loading.auxiliary.InterProLoader"/>
-
     <bean id="domainloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.DomainLoader"/>
 
