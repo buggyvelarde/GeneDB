@@ -4,7 +4,7 @@ summary() {
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` $1 [options] <file>
+Usage: `basename $0` goa [options] <file>
 Options:
   -x goTermErrorsAreNotFatal
     If this property is set, it is not a fatal error if a GO term mentioned in the
