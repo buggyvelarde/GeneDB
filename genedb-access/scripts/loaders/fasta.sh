@@ -90,7 +90,7 @@ doLoad() {
         echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
         set -x
     fi
-    java -Xmx1G \
+    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
         -Dload.organismCommonName="$organism" \
         -Dload.inputDirectory="$file" \
         -Dload.topLevel="$topLevel" -Dload.entryType="$entryType" \

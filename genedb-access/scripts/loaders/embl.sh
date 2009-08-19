@@ -193,7 +193,7 @@ SQL
         set -x
     fi
     
-    java -Xmx1G \
+    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
         -Dload.organismCommonName="$organism" -Dload.topLevel="$topLevel" \
          -Dload.inputDirectory="$file" \
          $properties $database_properties \
