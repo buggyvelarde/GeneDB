@@ -28,7 +28,7 @@
     </target>
 
     <target name="all-tests" depends="access-fulljar,compile-tests,
-        file-test,location-test,embl-test,ortho-test,interpro-test"/>
+        file-test,location-test,embl-test,ortho-test,domainloader-test"/>
     <target name="file-test" depends="compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
             <classpath refid="test-classpath"/>
@@ -91,16 +91,7 @@
             <test name="org.genedb.db.loading.OrthologueLoader${subtest}Test"/>
         </junit>
     </target>
-    <target name="interpro-test" depends="compile-tests">
-        <antcall target="copy-pfalciparum-database"/>
-        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
-            <classpath refid="test-classpath"/>
-            <formatter type="brief" usefile="false" />
-            <test name="org.genedb.db.loading.auxiliary.InterProLoaderTest"/>
-        </junit>
-    </target>
 
-    
     <!-- Rfam loader test -->
     <target name="rfam-test" depends="compile-tests">
         <antcall target="copy-pfalciparum-database"/>
@@ -111,6 +102,7 @@
         </junit>
     </target>
     
+
 	<!-- HTH Loader Test -->
     <target name="hth-test" depends="compile-tests">
         <antcall target="copy-pfalciparum-database"/>
@@ -121,7 +113,7 @@
         </junit>
     </target>
         	      	
-	
+	<!-- Domain Loader Test (interpro/pfam/prosite) -->	
     <target name="domainloader-test" depends="compile-tests">
         <antcall target="copy-pfalciparum-database"/>
         <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
