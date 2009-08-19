@@ -35,19 +35,19 @@ rows.each({
     if (!(nextRow['value']).startsWith(';query')) {
         throw new RuntimeException("Problem with finding second row for ${fid} ${nextRow}")
     }
-    def fpid2 = nextRow[0]['featureprop_id']
+    def fpid2 = nextRow['featureprop_id']
 
     nextRow = db.firstRow("select featureprop_id, value from featureprop where feature_id='"+fid+"' and type_id=1672 and rank="+(rank+2))
-    if (!(nextRow[0]['value']).matches('[0-9]\\.[0-9]*')) {
+    if (!(nextRow['value']).matches('[0-9]\\.[0-9]*')) {
         throw new RuntimeException("Problem with finding third row for ${fid} ${nextRow}")
     }
-    def fpid3 = nextRow[0]['featureprop_id']
+    def fpid3 = nextRow['featureprop_id']
 
     nextRow = db.firstRow("select featureprop_id, value from featureprop where feature_id='"+fid+"' and type_id=1672 and rank="+(rank+3))
-    if (!(nextRow[0]['value']).matches('[0-9]\\.[0-9]*')) {
+    if (!(nextRow['value']).matches('[0-9]\\.[0-9]*')) {
         throw new RuntimeException("Problem with finding fourth row for ${fid} ${nextRow}")
     }
-    def fpid4 = nextRow[0]['featureprop_id']
+    def fpid4 = nextRow['featureprop_id']
 
     String cmd = "delete from featureprop where featureprop_id in ("+fpid+', '+fpid2+', '+fpid3+', '+fpid4+")"
     db.execute(cmd)
@@ -67,19 +67,18 @@ rows.each({
     def fid = it['feature_id']
 
     def nextRow = db.firstRow("select featureprop_id, value from featureprop where feature_id='"+fid+"' and type_id=1672 and rank="+(rank+1))
-    if (!(nextRow[0]['value']).matches('[0-9]\\.[0-9]*')) {
+    if (!(nextRow['value']).matches('[0-9]\\.[0-9]*')) {
         throw new RuntimeException("Problem with finding third row for ${fid} ${nextRow}")
     }
-    def fpid3 = nextRow[0]['featureprop_id']
+    def fpid3 = nextRow['featureprop_id']
 
     nextRow = db.firstRow("select featureprop_id, value from featureprop where feature_id='"+fid+"' and type_id=1672 and rank="+(rank+2))
-    if (!(nextRow[0]['value']).matches('[0-9]\\.[0-9]*')) {
+    if (!(nextRow['value']).matches('[0-9]\\.[0-9]*')) {
         throw new RuntimeException("Problem with finding fourth row for ${fid} ${nextRow}")
     }
-    def fpid4 = nextRow[0]['featureprop_id']
+    def fpid4 = nextRow['featureprop_id']
 
     String cmd = "delete from featureprop where featureprop_id in ("+fpid+', '+fpid3+', '+fpid4+")"
-    println cmd
     db.execute(cmd)
 })
 
@@ -119,6 +118,8 @@ for (def row in rows) {
     def products = db.firstRow("select cvterm_id from cvterm where name='"+term+"'")
     int num = products['cvterm_id']
     def cmd = "insert into feature_cvtermprop (feature_cvterm_id, type_id, value) values("+fcid+", 26761,'"+evidence+"')"
+    db.executeUpdate(cmd)
+    cmd = "update feature_cvterm set cvterm_id="+num+" where feature_cvterm_id="+cvtid
     db.executeUpdate(cmd)
     cmd = "update feature_cvterm set pub_id="+pubId+" where feature_cvterm_id="+cvtid
     db.executeUpdate(cmd)
