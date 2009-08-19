@@ -275,7 +275,6 @@ public class TranscriptDTOFactory {
 
     }
 
-    // TODO Can the login be made prettier ie more obvious
     private void populateLastModified(TranscriptDTO transcriptDTO, Transcript transcript, Polypeptide polypeptide) {
             Timestamp date = transcript.getTimeLastModified();
 
