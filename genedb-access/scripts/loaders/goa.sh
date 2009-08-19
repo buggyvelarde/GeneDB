@@ -44,11 +44,6 @@ orthoparaLoad() {
     done
     shift $[ $OPTIND - 1 ]
     
-    if [ -z "$organism" ]; then
-        loaderUsage >&2
-        exit 1
-    fi
-    
     if [ $# -ne 1 ]; then
         loaderUsage >&2
         exit 1
@@ -71,7 +66,7 @@ orthoparaLoad() {
     fi
     java -Xmx1G \
         $database_properties \
-        org.genedb.db.loading.auxiliary.Load goaloader $options "$@"
+        org.genedb.db.loading.auxiliary.Load goaloader $options "$file"
     
     echo "Deleting redundant GO terms"
     java $database_properties org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms
