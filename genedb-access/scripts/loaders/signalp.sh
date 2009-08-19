@@ -65,11 +65,11 @@ doLoad() {
     fi
     
     if $reload; then
-        java -Xmx256m $database_properties \
+        java -Xmx256m $database_properties -Dlog4j.configuration=log4j.loader.properties \
             org.genedb.db.loading.auxiliary.ClearSignalP "$organism"
     fi
 
-    java $database_properties \
+    java $database_properties -Dlog4j.configuration=log4j.loader.properties \
         org.genedb.db.loading.auxiliary.Load signalploader \
         --signalp-version="signalpVersion" "$@"
 }
