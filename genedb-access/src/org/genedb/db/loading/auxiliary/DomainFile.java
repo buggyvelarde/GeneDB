@@ -1,5 +1,8 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.genedb.db.loading.GoEvidenceCode;
+import org.genedb.db.loading.GoInstance;
+import org.genedb.db.loading.ParsingException;
 import org.genedb.util.TwoKeyMap;
 
 import org.apache.log4j.Logger;
@@ -8,8 +11,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
@@ -37,6 +44,180 @@ interface DomainRow {
 	public int fmax();
 	public String score();
 	public String evalue();
+}
+
+
+/**
+ * Represents a single row of an Interpro output file.
+ *
+ * @author art
+ * @author rh11
+ */
+
+class InterProRow implements DomainRow {
+    private static final Logger logger = Logger.getLogger(InterProRow.class);
+
+    int lineNumber;
+    String key, nativeProg, db, nativeAcc, nativeDesc, score;
+    DomainAcc acc = DomainAcc.NULL;
+    int fmin, fmax;
+    private ISOFormatDate date;
+    Set<GoInstance> goTerms = new HashSet<GoInstance>();
+
+    // The columns we're interested in:
+    private static final int COL_KEY         = 0;
+    private static final int COL_NATIVE_PROG = 3;
+    private static final int COL_NATIVE_ACC  = 4;
+    private static final int COL_NATIVE_DESC = 5;
+    private static final int COL_FMIN        = 6;
+    private static final int COL_FMAX        = 7;
+    private static final int COL_SCORE       = 8;
+    private static final int COL_DATE        = 10;
+    private static final int COL_ACC         = 11;
+    private static final int COL_DESC        = 12;
+    private static final int COL_GO          = 13;
+
+    private static final HashMap<String, String> dbByProg = new HashMap<String, String>() {{
+        put("HMMPfam", "Pfam");
+        put("FPrintScan", "PRINTS");
+        put("ProfileScan", "Prosite");
+        put("ScanRegExp", "Prosite");
+        put("HMMSmart", "SMART");
+        put("BlastProDom", "ProDom");
+        put("HMMTigr", "TIGR_TIGRFAMS");
+        put("HMMPIR", "PIRSF");
+        put("HMMPanther", "PANTHER");
+
+        // These three have not been seen in the P. falciparum output, at least.
+        // Are they still possible?
+        put("Superfamily", "Superfamily");
+        put("superfamily", "Superfamily");
+        put("ScanProsite", "Prosite");
+    }};
+
+    /**
+     * Convert a row of an Interpro output file to an InterproRow object.
+     *
+     * @param lineNumber the line number of this line in the input file.
+     *          Used to produce more helpful diagnostics if there's a
+     *          problem decoding the line.
+     * @param rowFields a line of the input file
+     */
+    InterProRow(int lineNumber, String row) {
+        this(lineNumber, row.split("\t"));
+    }
+
+    /**
+     * Convert a row of an Interpro output file to an InterproRow object.
+     *
+     * @param lineNumber the line number of this line in the input file.
+     *          Used to produce more helpful diagnostics if there's a
+     *          problem decoding the line.
+     * @param rowFields an array containing the fields in the file.
+     *  In the actual file, fields are separated by tab characters.
+     */
+    InterProRow(int lineNumber, String[] rowFields) {
+        this.lineNumber = lineNumber;
+        this.key        = rowFields[COL_KEY];
+        this.nativeProg = rowFields[COL_NATIVE_PROG];
+        this.db         = dbByProg.get(nativeProg);
+        this.nativeAcc  = rowFields[COL_NATIVE_ACC];
+        this.nativeDesc = rowFields[COL_NATIVE_DESC];
+        this.fmin       = Integer.parseInt(rowFields[COL_FMIN]) - 1; // -1 because we're converting to interbase
+        this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
+        this.score      = rowFields[COL_SCORE];
+        this.date       = new ISOFormatDate(rowFields[COL_DATE]);
+
+        if (rowFields.length > COL_ACC && !rowFields[COL_ACC].equals("NULL")) {
+            this.acc = new DomainAcc(rowFields[COL_ACC], rowFields[COL_DESC]);
+        }
+        if (rowFields.length > COL_GO)
+            parseGoString(lineNumber, rowFields[COL_GO]);
+    }
+    private static final Pattern goTermPattern
+        = Pattern.compile("\\G(Cellular Component|Biological Process|Molecular Function): (.*?) \\(GO:(\\d{7})\\)(?:, |\\z)");
+    private void parseGoString(int lineNumber, String goString) {
+        Matcher matcher = goTermPattern.matcher(goString);
+        while (matcher.find()) {
+            String type = matcher.group(1);
+            String description = matcher.group(2);
+            String goId = matcher.group(3);
+
+            logger.debug(String.format("Parsed GO term: %s/%s/%s", type, description, goId));
+
+            GoInstance goTerm = new GoInstance();
+            try {
+                goTerm.setId(goId);
+                goTerm.setEvidence(GoEvidenceCode.IEA);
+                goTerm.setWithFrom("InterPro:" + this.acc.getId());
+                goTerm.setRef("GOC:interpro2go");
+                goTerm.setDate(this.date.withoutDashes());
+                goTerm.setSubtype(type);
+            } catch (ParsingException e) {
+                throw new RuntimeException(e);
+            }
+
+            /*
+             * We do not set the <code>geneName</code> field of the GoInstance,
+             * because a) the key is not necessarily a gene name, and b) the
+             * method FeatureUtils#createGoEntries does not use the geneName
+             * field.
+             */
+
+            this.goTerms.add(goTerm);
+        }
+        if (!matcher.hitEnd())
+            logger.error(String.format("Failed to completely parse GO terms '%s' on line %d", goString, lineNumber));
+    }
+
+    public String db() {
+        return db;
+    }
+	public DomainAcc acc() {
+		return acc;
+	}
+	public String key() {
+		return key;
+	}	
+	public String nativeAcc() {
+		return nativeAcc;
+	}
+	public String nativeDesc() {
+		return nativeDesc;
+	}	
+	public String nativeProg() {
+		return nativeProg;
+	}
+	public int lineNumber() {
+		return lineNumber;
+	}
+	public int fmin() {
+		return fmin;
+	}
+	public int fmax() {
+		return fmax;
+	}
+	public String score() {
+		return score;
+	}	
+	public String evalue() {
+		return null;
+	}
+	    
+    public String getDate() {
+        return date.withDashes();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%s/%s: %s (%s), location %d-%d",
+            key, acc.getId(), nativeDesc, nativeProg, fmin, fmax));
+        for (GoInstance goTerm: goTerms) {
+            sb.append(String.format("\n\t%s (GO:%s)", goTerm.getSubtype(), goTerm.getId()));
+        }
+        return sb.toString();
+    }
 }
 
 
@@ -336,6 +517,9 @@ class DomainFile {
             else if (analysisProgram.equals("prosite")) {
             	row = new PrositeRow(lineNumber, line);
             }
+            else if (analysisProgram.equals("interpro") || analysisProgram.equals("interpro_scan") ) {
+            	row = new InterProRow(lineNumber, line);
+            }
             else {
                 throw new IllegalArgumentException(String.format("Loader for program '%s' has not been implemented", analysisProgram));
             }
@@ -371,3 +555,66 @@ class DomainFile {
         return rowsByKeyAndAcc.get(key, acc);
     }
 }
+
+/**
+* Convert dates from the format "24-Sep-1976" into ISO format
+* (1976-09-24 or 19760924). For example:
+* <pre>
+*     new ISOFormatDate("24-Sep-1976").withDashes(); // Returns "1976-09-24"
+* </pre>
+* @author rh11
+*/
+class ISOFormatDate {
+   private static final Map<String, String> months = new HashMap<String, String>(12) {{
+       put("Jan", "01"); put("May", "05"); put("Sep", "09");
+       put("Feb", "02"); put("Jun", "06"); put("Oct", "10");
+       put("Mar", "03"); put("Jul", "07"); put("Nov", "11");
+       put("Apr", "04"); put("Aug", "08"); put("Dec", "12");
+   }};
+
+   private static final Pattern datePattern = Pattern.compile("(\\d\\d)-([A-Z][a-z][a-z])-(\\d{4})");
+
+   private String year, month, day;
+   /**
+    * Create a converter for the specified date.
+    *
+    * @param date The date in format dd-Mon-yyyy, e.g. 24-Sep-1976
+    * @throws IllegalArgumentException if the date cannot be parsed
+    */
+   public ISOFormatDate(String date) {
+       Matcher matcher = datePattern.matcher(date);
+       if (!matcher.matches())
+           throw new IllegalArgumentException(String.format(
+               "Failed to parse date '%s'", date));
+       String day   = matcher.group(1);
+       String month = matcher.group(2);
+       String year  = matcher.group(3);
+
+       if (!months.containsKey(month))
+           throw new IllegalArgumentException(String.format(
+               "Unknown month '%s' while parsing date '%s'", month, date));
+
+       this.year = year;
+       this.month = months.get(month);
+       this.day = day;
+   }
+
+   /**
+    * Get the date in the format <code>yyyy-mm-dd</code>.
+    *
+    * @return the date in format <code>yyyy-mm-dd</code>
+    */
+   public String withDashes() {
+       return String.format("%s-%s-%s", year, month, day);
+   }
+   /**
+    * Get the date in the format <code>yyyymmdd</code>.
+    *
+    * @return the date in format <code>yyyymmdd</code>
+    */
+   public String withoutDashes() {
+       return String.format("%s%s%s", year, month, day);
+   }
+}
+
+
