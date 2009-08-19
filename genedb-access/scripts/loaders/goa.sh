@@ -20,7 +20,7 @@ Load GO annotations from a gene association file.
 HELP
 }
 
-orthoparaLoad() {
+doLoad() {
     options=''
     debug=false
 
