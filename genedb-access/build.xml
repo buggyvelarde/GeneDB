@@ -258,63 +258,57 @@
         </java>
     </target>
 
-    <target name="load-interpro" depends="load-interpro-polypeptide-ids, load-interpro-gene-ids"/>
-    <target name="load-interpro-polypeptide-ids" depends="access-fulljar" unless="load.interpro.gene-ids">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="iploader --key-type=polypeptide ${file}"/>
-           <jvmarg line="-server -Xmx256m"/>
-        </java>
-        <antcall target="delete-redundant-go"/>
-    </target>
-    <target name="load-interpro-gene-ids" depends="access-fulljar" if="load.interpro.gene-ids">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="iploader --key-type=gene ${file}"/>
-           <jvmarg line="-server -Xmx256m"/>
-        </java>
-        <antcall target="delete-redundant-go"/>
-    </target>
-
-    <target name="clear-interpro" depends="access-fulljar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearInterPro">
-            <arg line="${organism}"/>
-            <jvmarg line="-server -Xmx256m"/>
-        </java>
-    </target>
-    <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
-
     <!-- DOMAINLOADER- pfam & prosite -->
-    <target name="load-pfam" depends="check-domain-properties">
-        <antcall target="load-domain-gene-ids">
-            <param name="program" value="pfam_scan"/>
-        </antcall>    
 
-          <antcall target="load-domain-polypeptide-ids">
-            <param name="program" value="pfam_scan"/>
-         </antcall>
-    </target>
+	<target name="load-pfam" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="pfam_scan"/>
+		</antcall>	
+			
+	  	<antcall target="load-domain-polypeptide-ids">
+	    	<param name="program" value="pfam_scan"/>
+	 	</antcall>
+	</target>
+       	
+	<target name="load-prosite" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="prosite"/>
+		</antcall>	             			
+		<antcall target="load-domain-polypeptide-ids">
+			<param name="program" value="prosite"/>
+		</antcall>
+	</target>
 
-    <target name="load-prosite" depends="check-domain-properties">
-        <antcall target="load-domain-gene-ids">
-            <param name="program" value="prosite"/>
-        </antcall>                             
-        <antcall target="load-domain-polypeptide-ids">
-            <param name="program" value="prosite"/>
-        </antcall>
-    </target>
-
+	<target name="load-interpro" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="interpro"/>
+		</antcall>	             			
+		<antcall target="load-domain-polypeptide-ids">
+			<param name="program" value="interpro"/>
+		</antcall>
+	</target>
+			
     <target name="clear-pfam">
-        <antcall target="clear-domains">
-            <param name="program" value="pfam_scan"/>
-        </antcall>    
+		<antcall target="clear-domains">
+			<param name="program" value="pfam_scan"/>
+		</antcall>	
     </target>
-    <target name="clear-prosite">
-        <antcall target="clear-domains">
-            <param name="program" value="prosite"/>
-        </antcall>    
-    </target>
+	<target name="clear-prosite">
+		<antcall target="clear-domains">
+			<param name="program" value="prosite"/>
+		</antcall>	
+	</target>
 
+    <target name="clear-interpro">
+    	<antcall target="clear-domains">
+    		<param name="program" value="interpro"/>
+    	</antcall>	
+    </target>
+       	
     <target name="reload-pfam" depends="clear-pfam, load-pfam"/>
-    <target name="reload-prosite" depends="clear-prosite, load-prosite"/>
+	<target name="reload-prosite" depends="clear-prosite, load-prosite"/>
+    <target name="reload-interpro" depends="clear-interpro, load-interpro"/>
+            	
 
     <target name="check-domain-properties">
         <fail unless="load.analysis.programVersion" message="The property load.analysis.programVersion must be specified"/>
@@ -330,8 +324,9 @@
     </target>
     <target name="load-domain-gene-ids" depends="access-fulljar" if="load.domain.gene-ids">
         <condition property="notFoundNotFatal" else="false">
-        <isset property="load.analysis.notFoundNotFatal"/>
-    </condition>
+       		<isset property="load.analysis.notFoundNotFatal"/>
+    	</condition>
+
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <syspropertyset>
                 <propertyref builtin="commandline"/>
