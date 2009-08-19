@@ -37,6 +37,7 @@ orthoparaLoad() {
                 exit 1
                 ;;
             esac
+            ;;
         *)  process_standard_options "$option"
             ;;
         esac
