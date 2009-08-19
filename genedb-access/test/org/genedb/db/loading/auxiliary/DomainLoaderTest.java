@@ -39,12 +39,15 @@ public class DomainLoaderTest {
         loader = ctx.getBean("domainloader", DomainLoader.class);
        
         assertTrue(loader.processOptionIfValid("key-type", "polypeptide")); 
-        assertTrue(loader.processOptionIfValid("program", "pfam_scan"));       
+     
         loader.analysisProgramVersion = "unknown";
         loader.notFoundNotFatal = true;
 
         loader.clear("Pfalciparum", "pfam_scan");
         new Load(loader).load("test/data/Pfalciparum.pfam");
+        
+        loader.clear("Pfalciparum", null);
+        new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
 	
     }
 
@@ -93,7 +96,49 @@ public class DomainLoaderTest {
             SessionFactoryUtils.releaseSession(session, sessionFactory);
         }
     }
-    
+  
+    @Test
+    public void testInterProDomains() {
+        	
+        SessionFactory sessionFactory = loader.getSessionFactory();
+        Session session = SessionFactoryUtils.getSession(sessionFactory, true);
+            
+        try {
+            Polypeptide polypeptide = (Polypeptide) session.createQuery(
+                "from Polypeptide where uniquename = 'PFC0495w:pep'"
+            ).uniqueResult();
+
+            assertNotNull(polypeptide);
+            assertEquals("PFC0495w:pep", polypeptide.getUniqueName());
+
+            SortedSet<PolypeptideDomain> domains = polypeptide.getDomains();
+            assertNotNull(domains);
+            assertEquals(1, domains.size());
+
+            PolypeptideDomain domain = domains.first();
+            assertNotNull(domain);
+            assertEquals("PFC0495w:pep:InterPro:IPR001461", domain.getUniqueName());
+
+            DbXRef dbxref = domain.getDbXRef();
+            assertNotNull(dbxref);
+            assertEquals("PRINTS", dbxref.getDb().getName());
+            assertEquals("PR00792", dbxref.getAccession());
+
+            Collection<FeatureDbXRef> featureDbXRefs = domain.getFeatureDbXRefs();
+            assertNotNull(featureDbXRefs);
+            assertEquals(1, featureDbXRefs.size());
+            FeatureDbXRef featureDbXRef = featureDbXRefs.iterator().next();
+            DbXRef interproDbXRef = featureDbXRef.getDbXRef();
+            assertNotNull(interproDbXRef);
+            assertEquals("InterPro", interproDbXRef.getDb().getName());
+            assertEquals("IPR001461", interproDbXRef.getAccession());
+            
+        } finally {
+            SessionFactoryUtils.releaseSession(session, sessionFactory);
+        }
+    }
+      
+        
     @AfterClass
     @Transactional
     public static void shutdownDatabase() throws HibernateException, SQLException {
