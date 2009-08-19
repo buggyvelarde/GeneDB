@@ -112,13 +112,13 @@ OPTIONS
 }
 
 read_password() {
-    echo -n "Password for $dbuser: "
+    echo -n "Password for $dbuser: " > /dev/tty
     trap 'stty echo' EXIT ;# In case the user presses ^C, for example
     stty -echo
-    read password
+    read password < /dev/tty
     stty echo
     trap - EXIT
-    echo
+    echo > /dev/tty
 
     database_properties="-Ddbhost=$dbhost -Ddbport=$dbport -Ddbname=$dbname \
     -Ddbuser=$dbuser -Ddbpassword=$password"
