@@ -46,7 +46,7 @@ public class DomainLoaderTest {
         loader.clear("Pfalciparum", "pfam_scan");
         new Load(loader).load("test/data/Pfalciparum.pfam");
         
-        loader.clear("Pfalciparum", null);
+        loader.clear("Pfalciparum", "interpro");
         new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
 	
     }
