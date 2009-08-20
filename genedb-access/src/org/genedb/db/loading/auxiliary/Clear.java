@@ -32,7 +32,7 @@ public abstract class Clear {
     //Configurable variables
     private Connection conn;
     private String organismCommonName;
-    private String analysisProgram;
+    protected String analysisProgram;
     
     /**
      * Main method that deals with arguments sent to clear objects
