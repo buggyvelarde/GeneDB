@@ -37,23 +37,22 @@ public class DomainLoaderTest {
             new String[] {"Load.xml", "AuxTest.xml"});
 
         loader = ctx.getBean("domainloader", DomainLoader.class);
-       
-        assertTrue(loader.processOptionIfValid("key-type", "polypeptide")); 
-     
+
+        assertTrue(loader.processOptionIfValid("key-type", "polypeptide"));
+
         loader.analysisProgramVersion = "unknown";
         loader.notFoundNotFatal = true;
 
-        loader.clear("Pfalciparum", "pfam_scan");
-        new Load(loader).load("test/data/Pfalciparum.pfam");
-        
-        loader.clear("Pfalciparum", "interpro");
-        new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
-	
     }
 
     @Test
-    public void testPfamDomains() {
-    	
+    public void testPfamDomains() throws HibernateException, SQLException, IOException {
+
+    	loader.analysisProgram = "pfam_scan";
+
+        loader.clear("Pfalciparum", "pfam_scan");
+        new Load(loader).load("test/data/Pfalciparum.pfam");
+
         SessionFactory sessionFactory = loader.getSessionFactory();
         Session session = SessionFactoryUtils.getSession(sessionFactory, true);
         try {
@@ -67,18 +66,18 @@ public class DomainLoaderTest {
             SortedSet<PolypeptideDomain> allDomains = polypeptide.getDomains();
             assertNotNull(allDomains);
             SortedSet<PolypeptideDomain> pfamDomains =  new TreeSet<PolypeptideDomain>();
-            
+
             for(PolypeptideDomain domain : allDomains) {
             	assertNotNull(domain);
             	if (domain.getAnalysisFeature() != null && domain.getAnalysisFeature().getAnalysis().getProgram().equals("pfam_scan")) {
             		pfamDomains.add(domain);
             	}
             }
-            
+
             assertEquals(2, pfamDomains.size());
             PolypeptideDomain domain = pfamDomains.first();
             assertNotNull(domain);
-            
+
             assertEquals("MAL13P1.114:pep:Pfam:PF00308", domain.getUniqueName());
 
             DbXRef dbxref = domain.getDbXRef();
@@ -86,23 +85,28 @@ public class DomainLoaderTest {
             assertEquals("Pfam", dbxref.getDb().getName());
             assertEquals("PF00308", dbxref.getAccession());
             assertEquals("Bac_DnaA", dbxref.getDescription());
-            
+
             // No InterPro dbxrefs
             Collection<FeatureDbXRef> featureDbXRefs = domain.getFeatureDbXRefs();
             assertNotNull(featureDbXRefs);
             assertEquals(0, featureDbXRefs.size());
-            
+
         } finally {
             SessionFactoryUtils.releaseSession(session, sessionFactory);
         }
     }
-  
+
     @Test
-    public void testInterProDomains() {
-        	
+    public void testInterProDomains() throws HibernateException, SQLException, IOException {
+
+        loader.analysisProgram = "interpro";
+
+        loader.clear("Pfalciparum", "interpro");
+        new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
+
         SessionFactory sessionFactory = loader.getSessionFactory();
         Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-            
+
         try {
             Polypeptide polypeptide = (Polypeptide) session.createQuery(
                 "from Polypeptide where uniquename = 'PFC0495w:pep'"
@@ -132,25 +136,25 @@ public class DomainLoaderTest {
             assertNotNull(interproDbXRef);
             assertEquals("InterPro", interproDbXRef.getDb().getName());
             assertEquals("IPR001461", interproDbXRef.getAccession());
-            
+
         } finally {
             SessionFactoryUtils.releaseSession(session, sessionFactory);
         }
     }
-      
-        
+
+
     @AfterClass
     @Transactional
     public static void shutdownDatabase() throws HibernateException, SQLException {
-       Session session = SessionFactoryUtils.getSession(loader.getSessionFactory(), true);
-       session.doWork(new Work() {
-        		public void execute(Connection connection) {
-        			try {
-        				connection.createStatement().execute("shutdown");
-        			} catch (SQLException e) {
-        				logger.error("Failed to shutdown database", e);
-        			}
-        		}
+        Session session = SessionFactoryUtils.getSession(loader.getSessionFactory(), true);
+        session.doWork(new Work() {
+            public void execute(Connection connection) {
+                try {
+                    connection.createStatement().execute("shutdown");
+                } catch (SQLException e) {
+                    logger.error("Failed to shutdown database", e);
+                }
+            }
         });
     }
 }
