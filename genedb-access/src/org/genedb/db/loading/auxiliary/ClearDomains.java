@@ -1,7 +1,5 @@
 package org.genedb.db.loading.auxiliary;
 
-import org.genedb.db.loading.auxiliary.Clear.DeleteSpec;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -9,14 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ClearDomains extends Clear {
-	
-	String analysisProgram;
+
     protected Set<String> getOptionNames() {
 	Set<String> options = new HashSet<String>();
 	Collections.addAll(options, "program");
         return options;
     }
-    
+
     protected boolean processOption(String optionName, String optionValue) {
 
     	if (optionName.equals("program")) {
@@ -25,7 +22,7 @@ public class ClearDomains extends Clear {
     	}
     	return false;
     }
-    
+
     public static void main(String[] args) throws Exception {
         Clear.main(ClearDomains.class, args);
     }
@@ -33,11 +30,11 @@ public class ClearDomains extends Clear {
     ClearDomains(String organismCommonName, String analysisProgram) throws ClassNotFoundException, SQLException {
         super(organismCommonName, analysisProgram);
     }
-    
+
     ClearDomains(Connection conn, String organismCommonName, String analysisProgram) {
         super(conn, organismCommonName, analysisProgram);
     }
-    
+
 	private static final String DELETE_DOMAINS_SQL
     = "delete from feature"
         +" where feature_id in ("
@@ -52,7 +49,7 @@ public class ClearDomains extends Clear {
         +" and feature_type_cv.name = 'sequence'"
 	+" and program = ?"
         +" and organism.common_name = ?)";
-	
+
     private static final String DELETE_PFAM_GO_TERMS_SQL
     = "delete from feature_cvterm"
         +" where feature_cvterm_id in ("
@@ -65,7 +62,7 @@ public class ClearDomains extends Clear {
         +" where prop_type.name = 'autocomment'"
         +" and feature_cvtermprop.value = 'From Pfam2GO mapping'"
         +" and organism.common_name = ?)";
-	
+
     private static final String DELETE_INTERPRO_GO_TERMS_SQL
     = "delete from feature_cvterm"
         +" where feature_cvterm_id in ("
@@ -78,10 +75,10 @@ public class ClearDomains extends Clear {
         +" where prop_type.name = 'autocomment'"
         +" and feature_cvtermprop.value = 'From Interpro file'"
         +" and organism.common_name = ?)";
-    
+
     @Override
     protected DeleteSpec[] getDeleteSpecs() {
-    	
+
     	if (analysisProgram.equals("pfam_scan")) {
     		return new DeleteSpec[] {
     				new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
@@ -91,13 +88,13 @@ public class ClearDomains extends Clear {
     	else if (analysisProgram.equals("interpro")) {
     		return new DeleteSpec[] {
     				new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
-    				new DeleteSpec("Pfam GO terms",   DELETE_INTERPRO_GO_TERMS_SQL, 1),
-    		};	
+    				new DeleteSpec("InterPro GO terms",   DELETE_INTERPRO_GO_TERMS_SQL, 1),
+    		};
     	}
 
     	return new DeleteSpec[] {
     		new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
-    	};    		
-    	
+    	};
+
     }
 }
