@@ -24,11 +24,12 @@ public class TMHMMLoader extends Loader {
     private static Logger logger = Logger.getLogger(TMHMMLoader.class);
 
     String analysisProgramVersion = "unknown";
+    Boolean notFoundNotFatal = false;
 
     @Override
     protected Set<String> getOptionNames() {
-	Set<String> options = new HashSet<String>();
-	Collections.addAll(options, "tmhmm-version");
+        Set<String> options = new HashSet<String>();
+        Collections.addAll(options, "tmhmm-version", "not-found-not-fatal");
         return options;
     }
     @Override
@@ -38,23 +39,44 @@ public class TMHMMLoader extends Loader {
     		analysisProgramVersion = optionValue;
     		return true;
     	}
+        else if (optionName.equals("not-found-not-fatal")) {
+            if (!optionValue.equals("true") && !optionValue.equals("false")) {
+                return false;
+            }
+            notFoundNotFatal = Boolean.valueOf(optionValue);
+            return true;
+        }
     	return false;
     }
-    
+
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
-    	
-    	// Add analysis 
+
+    	// Add analysis
        	Analysis analysis = new Analysis();
     	analysis.setProgram("tmhmm");
     	analysis.setProgramVersion(analysisProgramVersion);
     	sequenceDao.persist(analysis);
-    	
+
         TMHMMFile file = new TMHMMFile(inputStream);
         int n=1;
         for (String key: file.keys()) {
+
             logger.info(String.format("[%d/%d] Loading helices for key '%s'", n++, file.keys().size(), key));
+
             Polypeptide polypeptide = getPolypeptideByMangledName(key);
+            if (polypeptide == null) {
+
+                if (notFoundNotFatal) {
+                    String errorMessage = String.format("Failed to find polypeptide '%s'", key);
+                    logger.error(errorMessage);
+                }
+                else {
+                    throw new RuntimeException(String.format("Failed to find polypeptide '%s'", key));
+                }
+                continue;
+            }
+
 
             loadMembraneStructure(polypeptide, file.regionsForKey(key), analysis);
             /*
@@ -78,9 +100,9 @@ public class TMHMMLoader extends Loader {
     	// Add analysisfeature
     	if (analysis != null) {
     	    membraneStructure.createAnalysisFeature(analysis);
-    	} 
+    	}
         sequenceDao.persist(membraneStructure);
-        
+
         for (TMHMMRegion region: regions) {
             loadRegion(membraneStructure, region);
         }
@@ -155,7 +177,7 @@ class TMHMMFile {
     private Set<String> keysWithHelices = new HashSet<String> ();
     private Map<String,Collection<TMHMMRegion>> regionsByKey = new HashMap<String,Collection<TMHMMRegion>>();
     public TMHMMFile(InputStream inputStream) throws IOException {
-    	   	
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while (null != (line = reader.readLine())) {
