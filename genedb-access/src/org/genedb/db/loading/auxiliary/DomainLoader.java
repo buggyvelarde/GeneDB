@@ -19,7 +19,6 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -300,8 +299,8 @@ class Pfam2GoFile {
 
 	public Pfam2GoFile() throws IOException {
 
-		InputStream inputStream = new FileInputStream("resources/pfam2go");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+	    InputStream inputStream = getClass().getResourceAsStream("/pfam2go");
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line;
 		pfam2go = new HashMap<String, Set<String>>();
 		while (null != (line = reader.readLine())) { //While not end of file
