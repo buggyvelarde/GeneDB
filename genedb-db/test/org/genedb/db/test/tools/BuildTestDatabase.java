@@ -46,7 +46,7 @@ public class BuildTestDatabase {
         }
 
         boolean onlySchema = args[0].equals("--only-schema");
-        int argBase = onlySchema ? 1 : 0;        
+        int argBase = onlySchema ? 1 : 0;
 
         String sourceUrl = args[argBase + 0];
         String sourceUsername = args[argBase + 1];
@@ -73,11 +73,11 @@ public class BuildTestDatabase {
 
         BuildTestDatabase buildTestDatabase = new BuildTestDatabase(source, target, organismId);
         buildTestDatabase.copySchema(true); //!onlySchema);
-        
+
         //Build the Audit schema
         buildTestDatabase.createSchema("audit");
         buildTestDatabase.copySchema("audit", true);
-        
+
         if (!onlySchema) {
             buildTestDatabase.copyPublicSchemaData();
         }
@@ -162,6 +162,21 @@ public class BuildTestDatabase {
             +" join feature_pub using (feature_id)"
             +" where feature.organism_id = " + organismIdString
             +")");
+
+        copyTableData("analysis", "analysis_id in ("
+            +" select analysis.analysis_id "
+            +" from analysis"
+            +" join analysisfeature on analysis.analysis_id = analysisfeature.analysis_id"
+            +" join feature on feature.feature_id = analysisfeature.feature_id"
+            +" where organism_id = " + organismIdString
+            +")");
+
+        copyTableData("analysisfeature", "feature_id in ("
+            +" select feature_id "
+            +" from feature"
+            +" where organism_id = " + organismIdString
+            +")");
+
     }
 
     private void copyTableData(String tableName, String condition) throws SQLException {
@@ -279,8 +294,8 @@ public class BuildTestDatabase {
         }
         return columnNames;
     }
-    
-    
+
+
     private void createSchema(String schema)throws SQLException{
         Statement st = target.createStatement();
         String createStatement = String.format("create schema %s authorization dba", schema);
@@ -481,10 +496,10 @@ public class BuildTestDatabase {
         while (rs.next()) {
             String constraintName = rs.getString("constraint_name");
             String condition = rs.getString("condition");
-            
+
             //re-format the condition
             condition = condition.replace("::text", "");
-            
+
             addConstraint(schema, tableName,
                 String.format("constraint \"%s\" check (%s)", constraintName, condition));
         }
