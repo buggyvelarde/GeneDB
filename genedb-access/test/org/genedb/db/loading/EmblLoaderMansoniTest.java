@@ -61,12 +61,12 @@ public class EmblLoaderMansoniTest {
         tester.geneTester("Smp_097240")
         .loc(-1, 18494, 22354)
         .source("Smp_scaff000604")
-        .transcripts("Smp_097240.1:mRNA", "Smp_097240.2:mRNA", "Smp_097240.4:mRNA");
+        .transcripts("Smp_097240.1", "Smp_097240.2", "Smp_097240.4");
     }
 
     @Test
     public void test_Smp097240_1() {
-        tester.geneTester("Smp_097240").transcript("Smp_097240.1:mRNA")
+        tester.geneTester("Smp_097240").transcript("Smp_097240.1")
             .components("Smp_097240.1:exon:1", "Smp_097240.1:exon:2", "Smp_097240.1:exon:3", "Smp_097240.1:exon:4",
                         "Smp_097240.1:exon:5", "Smp_097240.1:exon:6", "Smp_097240.1:exon:7", "Smp_097240.1:exon:8",
                         "Smp_097240.1:3utr",   "Smp_097240.1:5utr:1", "Smp_097240.1:5utr:2")
