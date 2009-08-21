@@ -347,7 +347,7 @@
     <!-- TMHMM -->
     <target name="load-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
-            <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} ${file}"/>
+            <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
