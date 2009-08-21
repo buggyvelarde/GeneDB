@@ -181,7 +181,7 @@ public class DomainLoader extends Loader {
     private void loadGroup(DomainFile domainFile, String gene, DomainAcc acc, Polypeptide polypeptide ) throws IOException {
     	logger.debug("In loadGroup()");
         DbXRef interProDbxref = null;
-        if (acc != DomainAcc.NULL && analysis.getProgram().equals("InterPro")) {
+        if (acc != DomainAcc.NULL && analysis.getProgram().equals("iprscan")) {
             logger.debug(String.format("Creating InterPro dbxref for '%s' with description '%s'",
                 acc.getId(), acc.getDescription()));
             interProDbxref = objectManager.getDbXRef("InterPro", acc.getId(), acc.getDescription());
@@ -228,7 +228,7 @@ public class DomainLoader extends Loader {
             }
 
             // link to InterPro dbxref if applicable
-            if (interProDbxref != null && analysis.getProgram().equals("InterPro")) {
+            if (interProDbxref != null && analysis.getProgram().equals("iprscan")) {
                 FeatureDbXRef featureDbXRef = new FeatureDbXRef(interProDbxref, polypeptideDomain, true);
                 sequenceDao.persist(featureDbXRef);
                 polypeptideDomain.addFeatureDbXRef(featureDbXRef);

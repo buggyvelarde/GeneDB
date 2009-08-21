@@ -85,7 +85,7 @@ public class ClearDomains extends Clear {
     				new DeleteSpec("Pfam GO terms",   DELETE_PFAM_GO_TERMS_SQL, 1),
     		};
     	}
-    	else if (analysisProgram.equals("interpro")) {
+    	else if (analysisProgram.equals("iprscan")) {
     		return new DeleteSpec[] {
     				new DeleteSpec("polypeptide domains", DELETE_DOMAINS_SQL, 2),
     				new DeleteSpec("InterPro GO terms",   DELETE_INTERPRO_GO_TERMS_SQL, 1),
