@@ -315,7 +315,7 @@
     </target>
     <target name="load-domain-polypeptide-ids" depends="access-fulljar" unless="load.domain.gene-ids">
         <condition property="notFoundNotFatal" else="false">
-        <isset property="load.analysis.notFoundNotFatal"/>
+        <isset property="notFoundNotFatal"/>
         </condition>
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="domainloader --key-type=polypeptide --program=${program} --program-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
@@ -324,7 +324,7 @@
     </target>
     <target name="load-domain-gene-ids" depends="access-fulljar" if="load.domain.gene-ids">
         <condition property="notFoundNotFatal" else="false">
-       		<isset property="load.analysis.notFoundNotFatal"/>
+       		<isset property="notFoundNotFatal"/>
     	</condition>
 
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
@@ -346,6 +346,9 @@
 
     <!-- TMHMM -->
     <target name="load-tmhmm" depends="access-fulljar">
+        <condition property="notFoundNotFatal" else="false">
+            <isset property="notFoundNotFatal"/>
+        </condition>
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
