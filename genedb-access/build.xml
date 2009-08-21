@@ -281,10 +281,10 @@
 
 	<target name="load-interpro" depends="check-domain-properties">
 		<antcall target="load-domain-gene-ids">
-			<param name="program" value="interpro"/>
+			<param name="program" value="iprscan"/>
 		</antcall>	             			
 		<antcall target="load-domain-polypeptide-ids">
-			<param name="program" value="interpro"/>
+			<param name="program" value="iprscan"/>
 		</antcall>
 	</target>
 			
@@ -301,7 +301,7 @@
 
     <target name="clear-interpro">
     	<antcall target="clear-domains">
-    		<param name="program" value="interpro"/>
+    		<param name="program" value="iprscan"/>
     	</antcall>	
     </target>
        	
