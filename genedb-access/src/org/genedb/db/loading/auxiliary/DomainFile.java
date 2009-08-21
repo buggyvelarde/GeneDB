@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 /**
  * The DomainFile class represents a an output file from a polypeptide domain prediction algorithm, such as pfam_scan or Prosite,
  * as a collection of @{link DomainRow}s.
- * The DomainRow class is an interface implemented by specific classes such as PfamRow and PrositeRow which each represent a row of 
+ * The DomainRow class is an interface implemented by specific classes such as PfamRow and PrositeRow which each represent a row of
  * the input file.
- * 
+ *
  * @author art
  * @author rh11
  * @author te3
@@ -35,10 +35,10 @@ interface DomainRow {
 
 	public String db();
 	public DomainAcc acc();
-	public String key();	
-	public String nativeAcc();	
-	public String nativeDesc();	
-	public String nativeProg();		
+	public String key();
+	public String nativeAcc();
+	public String nativeDesc();
+	public String nativeProg();
 	public int lineNumber();
 	public int fmin();
 	public int fmax();
@@ -178,13 +178,13 @@ class InterProRow implements DomainRow {
 	}
 	public String key() {
 		return key;
-	}	
+	}
 	public String nativeAcc() {
 		return nativeAcc;
 	}
 	public String nativeDesc() {
 		return nativeDesc;
-	}	
+	}
 	public String nativeProg() {
 		return nativeProg;
 	}
@@ -199,11 +199,11 @@ class InterProRow implements DomainRow {
 	}
 	public String score() {
 		return score;
-	}	
+	}
 	public String evalue() {
 		return null;
 	}
-	    
+
     public String getDate() {
         return date.withDashes();
     }
@@ -227,7 +227,7 @@ class PfamRow implements DomainRow {
     String key, nativeProg, db, nativeAcc, nativeDesc, score, evalue, version;
     DomainAcc acc = DomainAcc.NULL;
     int fmin, fmax;
-    
+
     // The columns we're interested in:
     private static final int COL_KEY         = 0;
     private static final int COL_NATIVE_ACC  = 5;
@@ -261,11 +261,11 @@ class PfamRow implements DomainRow {
      */
     public PfamRow(int lineNumber, String[] rowFields) {
 
-    	if (rowFields.length == 15 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PF") && rowFields[COL_SIG].equals("1")) { 
+    	if (rowFields.length == 15 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PF") && rowFields[COL_SIG].equals("1")) {
 
     		this.lineNumber = lineNumber;
     		this.key        = rowFields[COL_KEY];
-    		
+
     		this.nativeAcc  = rowFields[COL_NATIVE_ACC];
 
     		this.nativeDesc = rowFields[COL_NATIVE_DESC];
@@ -275,13 +275,13 @@ class PfamRow implements DomainRow {
     		this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
     		this.score      = rowFields[COL_SCORE];
     		this.evalue     = rowFields[COL_EVALUE];
-	    
+
     		if (rowFields.length > COL_NATIVE_DESC && !rowFields[COL_NATIVE_ACC].equals("NULL")) {
     			this.acc = new DomainAcc(rowFields[COL_NATIVE_ACC], rowFields[COL_NATIVE_DESC]);
     		}
     	}
     }
-    
+
     public String db() {
         return db;
     }
@@ -290,13 +290,13 @@ class PfamRow implements DomainRow {
 	}
 	public String key() {
 		return key;
-	}	
+	}
 	public String nativeAcc() {
 		return nativeAcc;
 	}
 	public String nativeDesc() {
 		return nativeDesc;
-	}	
+	}
 	public String nativeProg() {
 		return nativeProg;
 	}
@@ -311,11 +311,11 @@ class PfamRow implements DomainRow {
 	}
 	public String score() {
 		return score;
-	}	
+	}
 	public String evalue() {
 		return evalue;
 	}
-	
+
 
     @Override
     public String toString() {
@@ -332,11 +332,11 @@ class PrositeRow implements DomainRow {
     String key, nativeProg, db, nativeAcc, nativeDesc, nativeName, version;
     DomainAcc acc = DomainAcc.NULL;
     int fmin, fmax;
-    
+
     // The columns we're interested in:
     private static final int COL_KEY         = 0;
     private static final int COL_NATIVE_ACC  = 1;
-    private static final int COL_NATIVE_NAME = 5;   
+    private static final int COL_NATIVE_NAME = 5;
     private static final int COL_NATIVE_DESC = 6;
     private static final int COL_FMIN        = 2;
     private static final int COL_FMAX        = 3;
@@ -364,11 +364,11 @@ class PrositeRow implements DomainRow {
      */
     public PrositeRow(int lineNumber, String[] rowFields) {
 
-    	if (rowFields.length == 7 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PS")) { 
+    	if (rowFields.length == 7 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PS")) {
 
     		this.lineNumber = lineNumber;
     		this.key        = rowFields[COL_KEY];
-    		
+
     		this.nativeAcc  = rowFields[COL_NATIVE_ACC];
     		this.nativeName = rowFields[COL_NATIVE_NAME];
     		this.nativeDesc = rowFields[COL_NATIVE_DESC];
@@ -376,13 +376,13 @@ class PrositeRow implements DomainRow {
     		this.db         = "PROSITE";
     		this.fmin       = Integer.parseInt(rowFields[COL_FMIN]) - 1; // -1 because we're converting to interbase
     		this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
-    		
+
     		if (rowFields.length > COL_NATIVE_DESC && !rowFields[COL_NATIVE_ACC].equals("NULL")) {
     			this.acc = new DomainAcc(rowFields[COL_NATIVE_ACC], rowFields[COL_NATIVE_DESC]);
     		}
     	}
     }
-    
+
     public String db() {
         return db;
     }
@@ -391,16 +391,16 @@ class PrositeRow implements DomainRow {
 	}
 	public String key() {
 		return key;
-	}	
+	}
 	public String nativeAcc() {
 		return nativeAcc;
 	}
 	public String nativeDesc() {
 		return nativeDesc;
-	}	
+	}
 	public String nativeProg() {
 		return nativeProg;
-	}	
+	}
 	public int lineNumber() {
 		return lineNumber;
 	}
@@ -412,14 +412,14 @@ class PrositeRow implements DomainRow {
 	}
 	public String name() {
 		return nativeName;
-	}		
+	}
 	public String score() {
 		return null;
-	}	
+	}
 	public String evalue() {
 		return null;
 	}
-	
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -432,7 +432,7 @@ class PrositeRow implements DomainRow {
 /**
  * Represents an InterPro/Pfam/Prosite accession identifier with description,
  * as found in the last two columns of an PfamScan raw output file.
- * 
+ *
  * @author rh11
  */
 class DomainAcc {
@@ -509,7 +509,7 @@ class DomainFile {
         Set<String> unrecognisedProgs = new HashSet<String>();
         while (null != (line = br.readLine())) {
             lineNumber++;
-            
+
             DomainRow row;
             if (analysisProgram.equals("pfam_scan")) {
             	row = new PfamRow(lineNumber, line);
@@ -517,13 +517,13 @@ class DomainFile {
             else if (analysisProgram.equals("prosite")) {
             	row = new PrositeRow(lineNumber, line);
             }
-            else if (analysisProgram.equals("interpro") || analysisProgram.equals("interpro_scan") ) {
+            else if (analysisProgram.equals("iprscan")) {
             	row = new InterProRow(lineNumber, line);
             }
             else {
                 throw new IllegalArgumentException(String.format("Loader for program '%s' has not been implemented", analysisProgram));
             }
-            
+
             if (row.db() == null) {
                 if (!unrecognisedProgs.contains(row.nativeProg())) {
                     logger.warn(String.format("Unrecognised program '%s', first encountered on line %d", row.nativeProg(), lineNumber));
@@ -531,14 +531,14 @@ class DomainFile {
                 }
                 continue;
             }
-        
+
             if (!rowsByKeyAndAcc.containsKey(row.key(), row.acc())) {
             	rowsByKeyAndAcc.put(row.key(), row.acc(), new HashSet<DomainRow>());
-	    		rowsByKeyAndAcc.get(row.key(), row.acc()).add(row);	    
+	    		rowsByKeyAndAcc.get(row.key(), row.acc()).add(row);
         	}
     	}
     }
-    
+
     public Set<String> keys() {
         return rowsByKeyAndAcc.firstKeySet();
     }

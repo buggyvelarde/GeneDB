@@ -99,9 +99,9 @@ public class DomainLoaderTest {
     @Test
     public void testInterProDomains() throws HibernateException, SQLException, IOException {
 
-        loader.analysisProgram = "interpro";
+        loader.analysisProgram = "iprscan";
 
-        loader.clear("Pfalciparum", "interpro");
+        loader.clear("Pfalciparum", "iprscan");
         new Load(loader).load("test/data/Pfalciparum-20090107-subset.interpro");
 
         SessionFactory sessionFactory = loader.getSessionFactory();
