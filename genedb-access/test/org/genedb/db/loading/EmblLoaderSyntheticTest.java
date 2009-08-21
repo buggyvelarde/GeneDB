@@ -131,7 +131,7 @@ public class EmblLoaderSyntheticTest {
     public void s2Colours() {
         // Also check that the repetition of the qualifier /colour="9" does not cause
         // two properties to be added.
-        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA");
+        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2");
         s2_2.polypeptide("s2_2:pep").property("genedb_misc", "colour", "9");
         s2_2.exon("s2_2:exon:1").property("genedb_misc", "colour", "9");
         s2_2.exon("s2_2:exon:2").property("genedb_misc", "colour", "9");
@@ -155,8 +155,8 @@ public class EmblLoaderSyntheticTest {
      */
     @Test
     public void s2genelocs() {
-        TranscriptTester s2_1 = tester.geneTester("s2").transcript("s2_1:mRNA");
-        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA");
+        TranscriptTester s2_1 = tester.geneTester("s2").transcript("s2_1");
+        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2");
 
         s2_1.loc("super1", 0, 0, +1, 89, 100)
             .loc("con1a", 1, 1, +1, 89, 100)
@@ -181,7 +181,7 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void s2products() {
-        PolypeptideTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA").polypeptide("s2_2:pep");
+        PolypeptideTester s2_2 = tester.geneTester("s2").transcript("s2_2").polypeptide("s2_2:pep");
 
         s2_2.cvtermsCheckingDb("genedb_products", "PRODUCT", "product 1", "product 2", "product 3");
     }
@@ -259,7 +259,7 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void Smp_124050_similarities() {
         PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
-            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+            .transcript("Smp_124050.4").polypeptide("Smp_124050.4:pep");
 
         Smp_124050_4.dbXRefs("EMBL:AY953433")
             .similarity("UniProt", "A6WB28.1")
@@ -270,7 +270,7 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void Smp_124050_controlled_curation() {
         PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
-        .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+        .transcript("Smp_124050.4").polypeptide("Smp_124050.4:pep");
 
         Smp_124050_4.cvterms("CC_genedb_controlledcuration",
             "expression in 7 week adult");
@@ -279,7 +279,7 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void Smp_124050_literature() {
         PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
-            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+            .transcript("Smp_124050.4").polypeptide("Smp_124050.4:pep");
 
         Smp_124050_4.pubs("PMID:23456", "PMID:34567");
     }
@@ -287,7 +287,7 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void Smp_124050_private() {
         PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
-            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+            .transcript("Smp_124050.4").polypeptide("Smp_124050.4:pep");
 
         Smp_124050_4.property("genedb_misc", "private", "a private note");
     }

@@ -88,8 +88,14 @@ class EmblLoader {
      * Moreover, this can't be changed without causing serious potential problems
      * elsewhere, because the GFF3 feature format requires feature names to be
      * globally unique, and we want to be able to export our data in GFF3 format.
+     *
+     * For alternatively-spliced genes, on the other hand, there is no need to
+     * append the transcript type, because the transcript will have an assigned
+     * uniquename (the /systematic_id of the CDS) that is different from the
+     * uniquename of the gene (the /shared_id of the CDS).
      */
-    private static final boolean APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME = true;
+    private enum AppendType { ALWAYS, NEVER, SINGLY_SPLICED_ONLY };
+    private static final AppendType APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME = AppendType.SINGLY_SPLICED_ONLY;
 
     // Injected beans
     private CvDao cvDao;
@@ -893,12 +899,25 @@ class EmblLoader {
 
         private void loadTranscript(AbstractGene gene) throws DataError {
             logger.debug(String.format("Creating transcript '%s' for gene '%s'", transcriptUniqueName, gene.getUniqueName()));
-            if (APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME) {
-                this.transcript = gene.makeTranscript(getTranscriptClass(),
-                    String.format("%s:%s", transcriptUniqueName, getTranscriptType()), location.getFmin(), location.getFmax());
-            } else {
-                this.transcript = gene.makeTranscript(getTranscriptClass(), transcriptUniqueName, location.getFmin(), location.getFmax());
+            String actualTranscriptUniqueName;
+            switch (APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME) {
+                case ALWAYS:
+                    actualTranscriptUniqueName = String.format("%s:%s", transcriptUniqueName, getTranscriptType());
+                    break;
+                case NEVER:
+                    actualTranscriptUniqueName = transcriptUniqueName;
+                    break;
+                case SINGLY_SPLICED_ONLY:
+                    if (transcriptUniqueName.equals(gene.getUniqueName())) {
+                        actualTranscriptUniqueName = String.format("%s:%s", transcriptUniqueName, getTranscriptType());
+                    } else {
+                        actualTranscriptUniqueName = transcriptUniqueName;
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("The java compiler is not bright enough to realise that this is impossible");
             }
+            this.transcript = gene.makeTranscript(getTranscriptClass(), actualTranscriptUniqueName, location.getFmin(), location.getFmax());
             session.persist(transcript);
 
             focalFeature = transcript;
