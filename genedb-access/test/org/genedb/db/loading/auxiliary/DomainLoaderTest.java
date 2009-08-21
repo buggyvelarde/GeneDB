@@ -114,6 +114,7 @@ public class DomainLoaderTest {
 
             assertNotNull(polypeptide);
             assertEquals("PFC0495w:pep", polypeptide.getUniqueName());
+            logger.info(String.format("InterProTest: Getting domains for polypeptide %s", polypeptide.getUniqueName()));
 
             SortedSet<PolypeptideDomain> domains = polypeptide.getDomains();
             assertNotNull(domains);
@@ -121,12 +122,14 @@ public class DomainLoaderTest {
 
             PolypeptideDomain domain = domains.first();
             assertNotNull(domain);
-            assertEquals("PFC0495w:pep:InterPro:IPR001461", domain.getUniqueName());
+            assertEquals("PFC0495w:pep:PRINTS:IPR001461", domain.getUniqueName());
 
             DbXRef dbxref = domain.getDbXRef();
             assertNotNull(dbxref);
             assertEquals("PRINTS", dbxref.getDb().getName());
             assertEquals("PR00792", dbxref.getAccession());
+
+            logger.info(String.format("InterProTest: Getting featureDbXrefs for domain %s", domain.getUniqueName()));
 
             Collection<FeatureDbXRef> featureDbXRefs = domain.getFeatureDbXRefs();
             assertNotNull(featureDbXRefs);
