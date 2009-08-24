@@ -56,7 +56,7 @@ rows.each({
 
 
 
- * Find multi note signal anchor
+// Find multi note signal anchor
 
 rows = db.rows(
 "select fp.featureprop_id, fp.rank, f.feature_id from feature f, featureprop fp where f.organism_id=19 and f.type_id=191 and fp.feature_id=f.feature_id and fp.type_id=1672 and fp.value = 'Signal anchor' order by f.uniquename, fp.rank")
@@ -88,7 +88,7 @@ db.execute("delete from featureprop where featureprop_id in (select fp.featurepr
 //Stuff in EMBL_qualifier - not for now
 
 
- *  product with evidence code
+//  product with evidence code
 
 rows = db.rows(
         "select f.uniquename, c.cvterm_id, c.name, fc.feature_cvterm_id from feature f, feature_cvterm fc, cvterm c where f.organism_id=19 and f.type_id=191 and fc.feature_id=f.feature_id and fc.cvterm_id=c.cvterm_id and c.cv_id=25 and c.name like 'term=%' order by c.cvterm_id")
