@@ -388,7 +388,7 @@ public class FixResidues {
             +"    , exonloc.fmin"
             +"    , exonloc.fmax"
             +"    , exists ("
-            +"         select 8"
+            +"         select *"
             +"         from featureprop"
             +"         where feature_id = transcript.feature_id"
             +"         and type_id = ?"
