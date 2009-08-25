@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Class to load helix-turn-helix features. The results are expected in a certain format specified by the pattern object below.
  * TODO: Add the capability to handle version number when version is known
- * 
+ *
  * @author nds
  *
  */
@@ -40,32 +40,40 @@ public class HTHLoader extends Loader {
     private int number = 0;
     private String analysisProgramVersion = "unknown"; //Cannot be null in database; get right version number when known; update code to handle commandline args
     private Analysis analysis;
-    
+    boolean notFoundNotFatal = false;
+
     @Override
     protected Set<String> getOptionNames() {
         Set<String> options = new HashSet<String>();
-        Collections.addAll(options, "hth-version");
+        Collections.addAll(options, "hth-version", "not-found-not-fatal");
         return options;
     }
-    
+
     @Override
     protected boolean processOption(String optionName, String optionValue) {
        if (optionName.equals("hth-version")) {
             analysisProgramVersion = optionValue;
             return true;
         }
+       else if (optionName.equals("not-found-not-fatal")) {
+           if (!optionValue.equals("true") && !optionValue.equals("false")) {
+               return false;
+           }
+           notFoundNotFatal = Boolean.valueOf(optionValue);
+           return true;
+       }
         return false;
     }
 
-  
+
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
-        // Add analysis 
+        // Add analysis
       	analysis = new Analysis();
-	analysis.setProgram("helixturnhelix");
-	analysis.setProgramVersion(analysisProgramVersion);
-	sequenceDao.persist(analysis);
-	HTHFile file = new HTHFile(inputStream);
+      	analysis.setProgram("helixturnhelix");
+      	analysis.setProgramVersion(analysisProgramVersion);
+      	sequenceDao.persist(analysis);
+      	HTHFile file = new HTHFile(inputStream);
 
         int n=1;
         for (HTHHit hit: file.hits()) {
@@ -85,19 +93,25 @@ public class HTHLoader extends Loader {
         logger.debug(String.format("Processing feature of name '%s'", hit.getName()));
 
         if (polypeptide == null) {
-            logger.error(String.format("Could not find polypeptide for key '%s'", hit.getName()));
-            return;
+
+            if (notFoundNotFatal) {
+                logger.error(String.format("Could not find polypeptide for key '%s'", hit.getName()));
+                return;
+            }
+            else {
+                throw new RuntimeException(String.format("Could not find polypeptide for key '%s'", hit.getName()));
+            }
         }else {
             number++;
         }
-       
-        //All hits should be of type helix-turn-helix at this stage. 
-        //The createHelixTurnHelix method takes all the essential information from a hit and creates the corresponding feature & featureloc 
+
+        //All hits should be of type helix-turn-helix at this stage.
+        //The createHelixTurnHelix method takes all the essential information from a hit and creates the corresponding feature & featureloc
         HelixTurnHelix helixTurnHelix = sequenceDao.createHelixTurnHelix(polypeptide, hit.getStart(), hit.getEnd(),  hit.getScore(), hit.getMaxScoreAt(), hit.getStdDeviations(), analysis);
         sequenceDao.persist(helixTurnHelix);
-        
+
     }
-    
+
     @Transactional
     public void clear(final String organismCommonName, final String analysisProgram) throws HibernateException, SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
@@ -107,9 +121,9 @@ public class HTHLoader extends Loader {
                }
         });
     }
-    
-    
-    
+
+
+
 }
 
 /* Class corresponding to HTH file */
@@ -137,7 +151,7 @@ class HTHFile {
             }
 
             previousLine = line;
-        }       
+        }
     }
 
     public Collection<HTHHit> hits() {
@@ -147,18 +161,18 @@ class HTHFile {
     private static final Pattern SUMMARY_PATTERN = Pattern.compile(
         "Name: (\\S+)\n"+
         "Start: (\\d+)\n" +
-        "End: (\\d+)\n" +        
+        "End: (\\d+)\n" +
         "Length: (\\d+)\n" +
         "Score: (\\d+\\.\\d+)\n" +
         "Strand: (\\S)\n" +
         "Maximum_score_at: (\\d+)\n" +
-        "Standard_deviations: (\\d+\\.\\d+)\n" 
-      
+        "Standard_deviations: (\\d+\\.\\d+)\n"
+
     );
-    
-    
+
+
     private void parseSummary(CharSequence summary) {
-       
+
         Matcher matcher = SUMMARY_PATTERN.matcher(summary);
         if (matcher.matches()) {
             String name  = matcher.group(1);
@@ -171,21 +185,21 @@ class HTHFile {
             String stdDeviations = new Double(matcher.group(8)).toString();
 
             hits.add(new HTHHit(name, start, end, length, score, strand, maxScoreAt, stdDeviations));
-          
+
         }
         else {
             logger.error("Failed to parse summary:\n" + summary);
         }
-        
+
     }
 }
 
 /* Each 'hit' corresponds to a paragraph beginning with the word 'Feature' in the .hth file */
 class HTHHit {
-    
+
     private String name, strand,score, stdDeviations;
     private int start, end, length, maxScoreAt;
-  
+
     public HTHHit(String name, int start, int end, int length, String score, String strand, int maxScoreAt, String stdDeviations) {
         this.name = name;
         this.start = start;
@@ -196,7 +210,7 @@ class HTHHit {
         this.maxScoreAt = maxScoreAt;
         this.stdDeviations = stdDeviations;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -229,8 +243,8 @@ class HTHHit {
         return score;
     }
 
-   
 
 
-    
+
+
 }
