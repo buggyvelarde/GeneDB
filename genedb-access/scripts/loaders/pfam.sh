@@ -13,7 +13,7 @@ HELP
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` pfam -o <organism> -v <version> [-r] [-k key-type] [-f true|false] <file>
+Usage: `basename $0` pfam -o <organism> -v <version> [-r] [-k key-type] [-x notFoundNotFatal] <file>
 Options:
   -o organism
     The common name of the organism. You can get a list of organisms
@@ -23,8 +23,8 @@ Options:
   -k key-type
   	The type of feature (gene or polypeptide) listed in the input file. 
   	Default polypeptide.
-  -f true|false
-    NotFoundNotFatal. If true the loader will continue if it encounters features 
+  -x notFoundNotFatal
+    If this option is used the loader will continue if it encounters features 
     that are not found in the database. Useful if pfam_scan was run against a 
     slightly out of date set of proteins. Default false.
   -r

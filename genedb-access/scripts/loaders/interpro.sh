@@ -13,7 +13,7 @@ HELP
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` pfam -o <organism> -v <version> [-r] [-k key-type] [-f true|false] <file>
+Usage: `basename $0` interpro -o <organism> -v <version> [-r] [-k key-type] [-x notFoundNotFatal] <file>
 Options:
   -o organism
     The common name of the organism. You can get a list of organisms

@@ -6,14 +6,14 @@ summary() {
 
 loaderHelp() {
     cat <<HELP
-Load pfam predictions, from the file produced by the Prosite prediction program.
+Load Prosite domains, from the file produced by the Prosite prediction program.
 
 HELP
 }
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` prosite -o <organism> -v <version> [-r] [-k key-type] [-f true|false] <file>
+Usage: `basename $0` prosite -o <organism> -v <version> [-r] [-k key-type] [-x notFoundNotFatal] <file>
 Options:
   -o organism
     The common name of the organism. You can get a list of organisms
