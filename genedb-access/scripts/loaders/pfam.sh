@@ -44,7 +44,7 @@ doLoad() {
 	notFoundNotFatal='false'
 	
     OPTIND=0
-    while getopts "do:v:rk:f:$stdopts" option; do
+    while getopts "do:v:rk:x:$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -57,8 +57,15 @@ doLoad() {
             ;;
         k)  keyType="$OPTARG"
         	;;
-        f)  notFoundNotFatal="$OPTARG"
-        	;;
+        x)  case "$OPTARG" in
+            notFoundNotFatal)
+                notFoundNotFatal=true
+                ;;
+            *)  loaderUsage >&2
+                exit 1
+                ;;
+            esac
+            ;;
         *)  process_standard_options "$option"
             ;;
         esac
