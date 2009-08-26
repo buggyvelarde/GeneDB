@@ -83,9 +83,14 @@ for (def row in rows) {
     int num = products['cvterm_id']
 
     // Create a feature_cvterm
-    cmd = "insert into feature_cvterm (feature_id, cvterm_id, pub_id) values(${featureId}, ${cvtermId}, ${pubId})"
-    println cmd
-    db.execute(cmd)
+    try {
+        cmd = "insert into feature_cvterm (feature_id, cvterm_id, pub_id) values(${featureId}, ${cvtermId}, ${pubId})"
+        println cmd
+        db.execute(cmd)
+    }
+    catch (Exception exp) {
+        exp.printStackTrace()
+    }
 
     // Find id of feature_cvterm just added
     int fcid = db.firstRow("select feature_cvterm_id from feature_cvterm where feature_id="+featureId+" and cvterm_id="+cvtermId+" and pub_id="+pubId)['feature_cvterm_id']
