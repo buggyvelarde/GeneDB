@@ -179,6 +179,19 @@
     </sequential>
   </macrodef>
 
+  <macrodef name="compile-and-iajc-target" description="Compile and weave a module">
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+    <attribute name="classpathref" default="@{project}-classpath"/>
+    <sequential>
+      <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+        <classpath refid="aspectj-tools-classpath"/>
+      </taskdef>
+      <iajc sourceRoots="@{topdir}/src" source="1.6" target="1.6"
+             destDir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
+    </sequential>
+  </macrodef>
+
   <macrodef name="iajc-target" description="Compile-time aspectj weaving">
       <attribute name="project" />
       <attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
@@ -187,9 +200,9 @@
       <attribute name="classpathref" default="@{project}-classpath"/>
     <sequential>
       <antcall target="lib-populate-lib-dir" />
-	  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-	    <classpath refid="aspectj-tools-classpath"/>
-	  </taskdef>
+      <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+        <classpath refid="aspectj-tools-classpath"/>
+      </taskdef>
       <iajc
         verbose="false" nowarn="true"
         inpath="@{from-directory}"
@@ -197,7 +210,7 @@
         classpathRef ="@{classpathref}"
         destdir="@{to-directory}" maxmem="1024M" fork="true">
 
-      	 <forkclasspath refid="aspectj-tools-classpath"/>
+       <forkclasspath refid="aspectj-tools-classpath"/>
       </iajc>
     </sequential>
   </macrodef>
