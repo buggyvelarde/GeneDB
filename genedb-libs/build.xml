@@ -187,7 +187,7 @@
         <classpath refid="aspectj-tools-classpath"/>
       </taskdef>
       <iajc sourceRoots="@{topdir}/src" source="1.6" target="1.6"
-             destDir="@{topdir}/ant-build/${classes.dir}" classpathref="@{classpathref}" />
+             destDir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
     </sequential>
   </macrodef>
 
