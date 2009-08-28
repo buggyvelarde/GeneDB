@@ -55,16 +55,17 @@
 
 
     <target name="compile-db" depends="db-populate-lib, db-populate-util" description="Compile">
-        <compile-and-iajc-target project="db" />
+        <compile-target project="db"/>
+        <!-- <compile-and-iajc-target project="db" />
         <uptodate property="db.jar-uptodate" targetfile="${genedb-db.jar}">
             <srcfiles dir="${imported.basedir.db}/${classes.dir}" />
-        </uptodate>
+        </uptodate> -->
     </target>
 
     <target name="db-fulljar" depends="compile-db" unless="db.jar-uptodate"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-        <antcall target="hibernate-instrumentation">
+        <antcall target="build-time-weave">
             <param name="directory" value="${imported.basedir.db}/${classes.dir}"/>
         </antcall>
 
