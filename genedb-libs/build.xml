@@ -33,7 +33,6 @@
 
   <target name="lib-populate-lib-dir" depends="check.lib-lib-uptodate" unless="libs.lib-uptodate">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <populate directory="genedb-libs"/>
     <!-- <ivy:retrieve conf="default"/> -->
   </target>
