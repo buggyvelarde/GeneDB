@@ -186,8 +186,13 @@
       <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
         <classpath refid="aspectj-tools-classpath"/>
       </taskdef>
-      <iajc sourceRoots="@{topdir}/src" source="1.6" target="1.6"
-             destDir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
+      <iajc
+        sourceRoots="@{topdir}/src"
+        source="1.6"
+        target="1.6"
+        verbose="true"
+        destDir="@{topdir}/${classes.dir}"
+        classpathref="@{classpathref}" />
     </sequential>
   </macrodef>
 
