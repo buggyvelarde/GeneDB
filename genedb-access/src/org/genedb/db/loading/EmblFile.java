@@ -30,7 +30,9 @@ public class EmblFile {
 
     private boolean continueOnError = false;
     private String filePath;
-    
+
+    private OverwriteExisting overwriteExisting;
+
     private void dataError(DataError dataError) throws DataError {
         if (continueOnError) {
             logger.error("DataError", dataError);
@@ -70,6 +72,7 @@ public class EmblFile {
     public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError, OverwriteExisting overwriteExisting) throws IOException, ParsingException {
         this.filePath = inputFile;
         this.continueOnError = continueOnError;
+        this.overwriteExisting = overwriteExisting;
         
         String line;
         while (null != (line = reader.readLine())) {
@@ -88,7 +91,7 @@ public class EmblFile {
         }
         if (sequenceSection != null && overwriteExisting.toString().equals("MERGE")) {
             dataError(new DataError(inputFile, "Found sequence data but running with overwriteExisting=MERGE"));
-        }       
+        }
 
         logger.info(String.format("Loaded '%s' from '%s'", getAccession(), inputFile));
     }
@@ -171,7 +174,7 @@ public class EmblFile {
         	 * no great hardship to deal with it specially here.
         	 */
         	if (section instanceof FeatureTable) {
-        		if (featureTable != null) {
+        		if (featureTable != null && !overwriteExisting.toString().equals("MERGE")) {
         			dataError(new DataError("More than one feature table found"));
         		}
         		featureTable = (FeatureTable) section;
@@ -218,7 +221,9 @@ public class EmblFile {
     private IDSection idSection = null;
     private class IDSection extends Section {
         IDSection() throws DataError {
-            if (idSection != null) {
+            //allow multiple ID lines per file for overwriteExisting=MERGE
+            //because this is used for loading auto-generated features from tab files
+            if (idSection != null && !overwriteExisting.toString().equals("MERGE")) {
                 dataError(new DataError("Found more than one ID line"));
             }
             idSection = this;
