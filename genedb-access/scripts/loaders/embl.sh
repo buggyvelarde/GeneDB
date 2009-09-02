@@ -34,6 +34,10 @@ Options:
     These can be restricted by feature type as well: for example
     you can specify -x ignoreQualifiers=CDS:similarity to archive
     all /similarity qualifiers on CDS features.
+  -a analysis
+  	Name of analysis program used to generate features being loaded.
+  	Required for reloading when -overwriteExisting=merge is set.
+  	
 USAGE
     standard_options
     echo
@@ -112,9 +116,11 @@ doLoad() {
     properties=''
     debug=false
     reload=false
-
+	overwriteExisting=no
+	analysis=''
+	
     OPTIND=0
-    while getopts "do:t:x:r$stdopts" option; do
+    while getopts "do:t:x:ra:$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -125,7 +131,9 @@ doLoad() {
         x)  case "$OPTARG" in
             # Documented options
             overwriteExisting=yes)     ;;
-            overwriteExisting=merge)   ;;
+            overwriteExisting=merge)   
+            	overwriteExisting=merge
+            	;;
             overwriteExisting=no)      ;;
             ignoreFeatures=*)          ;;
             ignoreQualifiers=*)        ;;
@@ -143,6 +151,8 @@ doLoad() {
             ;;
         r)  reload=true
             ;;
+        a)  analysis="$OPTARG"
+        	;;
         *)  process_standard_options "$option"
             ;;
         esac
@@ -153,7 +163,13 @@ doLoad() {
         loaderUsage >&2
         exit 1
     fi
-
+	
+	if [ "$reload" ] && [ "$overwriteExisting" == "merge" ] && [ -z "$analysis" ]; then
+		echo >&2 "Must supply analysis to reload when overwriteExisting=merge is set"
+        loaderUsage >&2		
+		exit 1
+	fi
+	
     if [ $# -ne 1 ]; then
         loaderUsage >&2
         exit 1
@@ -168,22 +184,38 @@ doLoad() {
     fi
     
     if $reload; then
-    	exit 1
-        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
-        psql --no-psqlrc <<SQL
-        delete from feature where organism_id in (
-            select organism_id from organism where common_name = '${organism}'
-        );
+    	
+    	if [ "$overwriteExisting" == "merge" ]; then
+			echo >&2 "Deleting ${organism} $analysis features..."
+			
+	        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
+	        psql --no-psqlrc <<SQL1
+	        delete from feature where organism_id in (
+	            select organism_id from organism where common_name = '${organism}'
+	        )
+	        and feature_id in (
+	        	select feature_id from analysisfeature join analysis using (analysis_id)
+	        		where program = '"$analysis"'
+	        );
+			
+SQL1
+		else
+	        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
+	        psql --no-psqlrc <<SQL2
+	        delete from feature where organism_id in (
+	            select organism_id from organism where common_name = '${organism}'
+	        );
 
-        delete from synonym where synonym_id in (
-          select synonym_id from synonym
-          except (
-              select synonym_id from feature_synonym
-              union
-              select synonym_id from library_synonym
-          )
-        );
-SQL
+    	    delete from synonym where synonym_id in (
+    	      select synonym_id from synonym
+    	      except (
+    	          select synonym_id from feature_synonym
+    	          union
+    	          select synonym_id from library_synonym
+    	      )
+    	    );
+SQL2
+		fi
     fi
 
     read_password
