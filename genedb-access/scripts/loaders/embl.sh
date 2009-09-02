@@ -153,7 +153,7 @@ doLoad() {
         loaderUsage >&2
         exit 1
     fi
-    
+
     if [ $# -ne 1 ]; then
         loaderUsage >&2
         exit 1
@@ -168,6 +168,7 @@ doLoad() {
     fi
     
     if $reload; then
+    	exit 1
         export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
         psql --no-psqlrc <<SQL
         delete from feature where organism_id in (
