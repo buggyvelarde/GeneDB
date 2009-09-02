@@ -162,10 +162,18 @@
     </target>
 
     <target name="delete-organism" depends="access-fulljar">
+    
+    
+        <fail message="Can't delete organism with overwriteExisting set to MERGE">
+           <condition>
+               <equals arg1="${load.overwriteExisting}" arg2="MERGE" casesensitive="false"/>
+           </condition>
+       </fail>
+
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
            userid="${dbuser}" password="${dbpassword}">
-
+           
            <classpath>
               <pathelement location="${imported.basedir.access}/lib/postgresql-8.3-603.jdbc4.jar"/>
            </classpath>
