@@ -246,7 +246,7 @@ public class EmblFile {
                 logger.error("Failed to parse ID line: " + data);
                 accession = data.trim().substring(0, data.indexOf(' '));
                 if (accession.endsWith(";")) {
-                    accession = accession.substring(0, accession.length() - 1)
+                    accession = accession.substring(0, accession.length() - 1);
                 }
                 logger.warn(String.format("Taking the sequence identifier to be '%s'", accession));
             } else {
