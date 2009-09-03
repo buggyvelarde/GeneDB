@@ -1,52 +1,35 @@
-<%@ tag display-name="header"
-        body-content="scriptless" %>
-<%@ attribute name="name" required="true" %>
-<%@ attribute name="title" %>
+<%@ tag display-name="header" body-content="scriptless" %>
+<%@ attribute name="name"%>
+<%@ attribute name="organism"%>
+<%@ attribute name="title"  required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib prefix="db" uri="db" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
-	<c:set var="pageTitle" value="${name} - GeneDB"/>
-	<c:if test="!empty title">
-		<c:set var="pageTitle" value="${title}" />
-	</c:if>
-	<title>${pageTitle}</title>
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/site.css"/>" />
-	<link type="text/css" rel="stylesheet" href="<c:url value="/"/>includes/style/emerald.css">
+    <title>${title} - GeneDB</title>
+
+    <script type="text/javascript" src="http://js.sanger.ac.uk/urchin.js"></script>
+
+    <link rel="stylesheet" href="<c:url value="/includes/style/genedb/main.css"/>" type="text/css" />
+
+    <!--  YUI dependencies -->
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/container/container_core.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo/yahoo-min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/event/event-min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
+    <!-- YUI menu -->
+    <script type="text/javascript" src="<c:url value="/includes/yui/build/menu/menu.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
+    <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("start",function() {
+            init();
+            adjustCoordinates()
+        });
+
+</script>
     <jsp:doBody />
-</head>    
-<body>
-	<table align="center" width="100%" height="138px" style="background-image: url('includes/images/a2.gif'); background-repeat: repeat-x;">
-		<tr>
-			<td align="right" valign="bottom">
-				<table align="left">
-					<tr>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/fg.jpg" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/he.jpg" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/pl.jpg" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/ve.gif" style="border: 3px solid #FFFFFF;"/></td>
-					</tr>
-				</table>
-			</td>
-			<td align="center">
-				<table align="center">
-					<tr align="center">
-						<td><h2 style="padding-top: 30px;">${name}</h2></td>
-					</tr>
-				</table>
-			</td>
-			<td align="left" valign="top">
-				<table align="right">
-					<tr align="left">
-						<td width="55px"><img src="<c:url value="/"/>includes/images/vi.jpg" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/ba.jpg" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/nm.gif" style="border: 3px solid #FFFFFF;"/></td>
-						<td width="55px"><img src="<c:url value="/"/>includes/images/bg.jpg" style="border: 3px solid #FFFFFF;"/></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-<ul><c:forEach var="line" items="${ERROR_MSG}">
-<li>${line}
-</c:forEach></ul>
+</head>
+
