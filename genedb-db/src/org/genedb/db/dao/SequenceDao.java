@@ -137,6 +137,42 @@ public class SequenceDao extends BaseDao {
 
         return features.get(0);
     }
+    
+    /**
+     * Get the feature with the specified unique name patter and type, from the
+     * specified organism.
+     * If there is no such feature, logs a message at level <code>INFO</code>
+     * and returns <code>null</code>.
+     *
+     * @param <T>
+     * @param uniqueNamePatter an HQL/SQL pattern
+     * @param organismCommonName the common name of the organism
+     * @param featureClass the type of feature, e.g. <code>Polypeptide.class</code>
+     * @return the feature, or <code>null</code> if there isn't such a feature
+     * @throws RuntimeException if there is more than one feature with the
+     *          specified unique name and type
+     */
+    public <T extends Feature> T getFeatureByUniqueNamePatternAndOrganismCommonName(String uniqueNamePattern, String organismCommonName, Class<T> featureClass) {
+        @SuppressWarnings("unchecked")
+        List<T> features = getSession().createQuery(
+            "from "+featureClass.getName()+" where uniqueName like :uniqueNamePattern" +
+            " and organism.commonName = :organism")
+            .setString("uniqueNamePattern", uniqueNamePattern)
+            .setString("organism", organismCommonName)
+            .list();
+
+        if (features.size() == 0) {
+            logger.info(String.format("Hibernate found no feature of type '%s' with uniqueName pattern '%s' in organism '%s'",
+                featureClass.getSimpleName(), uniqueNamePattern, organismCommonName));
+            return null;
+        }
+        if (features.size() > 1) {
+            throw new RuntimeException(String.format("Found more than one feature of type '%s' with uniqueName '%s' in organism '%s'",
+                featureClass.getSimpleName(), uniqueNamePattern, organismCommonName));
+        }
+
+        return features.get(0);
+    }
 
     /**
      * Return a list of features whose uniqueName matches the given pattern.
@@ -820,7 +856,7 @@ public class SequenceDao extends BaseDao {
     private CvTerm signalPeptideType;
     private CvTerm cleavageSiteProbabilityType;
     public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
-
+	
 	return createSignalPeptide(polypeptide, loc, probability, null);
     }
 
@@ -843,35 +879,35 @@ public class SequenceDao extends BaseDao {
 	// Add analysisfeature
 	if (analysis != null) {
 	    signalPeptide.createAnalysisFeature(analysis);
-	}
+	} 
 	else {
             throw new RuntimeException("Could not create analysisfeature because analysis object is null");
 	}
         return signalPeptide;
     }
-
+    
     //Helix-turn-helix 22.6.2009 NDS
-
+    
     private CvTerm helixTurnHelixType;
     private CvTerm maxScoreAtCvTerm;
     private CvTerm stdDeviationsCvTerm;
-
+    
     public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, int maxScoreAt, String stdDeviations, Analysis analysis) {
-
+        
         if (helixTurnHelixType == null) {
-            /* Looks for the cvterm where the dxref_id corresponds to a dbxref record
+            /* Looks for the cvterm where the dxref_id corresponds to a dbxref record 
              * whose accession is 0001081 and the database is 'SO' */
             helixTurnHelixType = cvDao.getCvTermByDbAcc("SO", "0001081");
             helixTurnHelixType.getCvTermId();
         }
-
+        
         String uniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
-        HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/);
-
+        HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/); 
+        
         /* Add featureloc */
-        FeatureLoc hthLoc = new FeatureLoc(polypeptide /*sourcefeature*/, helixTurnHelix, start /*fmin*/, end /*fmax*/, 0 /*strand*/, null /*phase*/, 0 /*rank*/);
+        FeatureLoc hthLoc = new FeatureLoc(polypeptide /*sourcefeature*/, helixTurnHelix, start /*fmin*/, end /*fmax*/, 0 /*strand*/, null /*phase*/, 0 /*rank*/); 
         helixTurnHelix.addFeatureLoc(hthLoc);
-
+               
         /* Add feature properties */
         helixTurnHelix.addFeatureProp(new Integer(maxScoreAt).toString(), "genedb_misc", "Maximum_score_at", 0 /*rank*/);
         helixTurnHelix.addFeatureProp(stdDeviations, "genedb_misc", "Standard_deviations", 0 /*rank*/);
@@ -884,7 +920,7 @@ public class SequenceDao extends BaseDao {
         }
         return helixTurnHelix;
     }
-
+    
 
     private CvTerm gpiAnchoredType;
     private CvTerm gpiAnchorCleavageSiteType;
@@ -1026,6 +1062,28 @@ public class SequenceDao extends BaseDao {
             numberOfFirstLevelFeaturesDeleted, sourceFeature.getUniqueName()));
     }
 
+    /**
+     * Delete all the featureLocs that point to this sourceFeature
+     *
+     * @param sourceFeature
+     */
+  
+       
+    public void deleteFeatureLocsOn(Feature sourceFeature){
+        logger.info(String.format("Deleting all the feature locs pointing at '%s' (ID=%d)",
+                sourceFeature.getUniqueName(), sourceFeature.getFeatureId()));
+        
+        int numberOfRowsDeleted = getSession().createSQLQuery(
+            " delete from featureloc where srcfeature_id= ? ;")
+            .setInteger(0, sourceFeature.getFeatureId())
+            .executeUpdate();
+        
+        logger.info(String.format("Deleted %d featurelocs pointing to '%s'",
+                numberOfRowsDeleted, sourceFeature.getUniqueName()));
+        
+    }
+        
+    
 
     /* Invoked by Spring */
     public void setCvDao(CvDao cvDao) {
