@@ -185,21 +185,8 @@ doLoad() {
     
     if $reload; then
     	
-    	if [ "$overwriteExisting" == "merge" ]; then
-			echo >&2 "Deleting ${organism} $analysis features..."
-			
-	        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
-	        psql --no-psqlrc <<SQL1
-	        delete from feature where organism_id in (
-	            select organism_id from organism where common_name = '${organism}'
-	        )
-	        and feature_id in (
-	        	select feature_id from analysisfeature join analysis using (analysis_id)
-	        		where program = '"$analysis"'
-	        );
-			
-SQL1
-		else
+    	if [ "$overwriteExisting" != "merge" ]; then
+
 	        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
 	        psql --no-psqlrc <<SQL2
 	        delete from feature where organism_id in (
