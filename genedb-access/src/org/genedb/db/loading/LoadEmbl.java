@@ -1,8 +1,6 @@
 package org.genedb.db.loading;
 
 
-import org.genedb.db.loading.EmblLoader.OverwriteExisting;
-
 import org.gmod.schema.feature.BACEnd;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
@@ -84,7 +82,7 @@ public class LoadEmbl extends FileProcessor {
         }
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
-        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.embl(?:\\.gz)?");
+        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.(embl|tab)(?:\\.gz)?");
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
@@ -137,7 +135,7 @@ public class LoadEmbl extends FileProcessor {
         loader.setOverwriteExisting(overwriteExisting);
         loader.setSloppyControlledCuration(sloppyControlledCuration);
         loader.setGoTermErrorsAreNotFatal(goTermErrorsAreNotFatal);
-        
+
         if (topLevelFeatureType.equals("chromosome")) {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
