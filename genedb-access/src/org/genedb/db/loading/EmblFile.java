@@ -65,15 +65,15 @@ public class EmblFile {
     public EmblFile(File inputFile, Reader reader, boolean continueOnError, OverwriteExisting overwriteExisting) throws IOException, ParsingException {
         this (inputFile.toString(), new BufferedReader(reader), continueOnError, overwriteExisting);
     }
-    public EmblFile(File inputFile, Reader reader, boolean continueOnError) throws IOException, ParsingException { 
+    public EmblFile(File inputFile, Reader reader, boolean continueOnError) throws IOException, ParsingException {
     	this (inputFile.toString(), new BufferedReader(reader), continueOnError, OverwriteExisting.NO);
     }
-    
+
     public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError, OverwriteExisting overwriteExisting) throws IOException, ParsingException {
         this.filePath = inputFile;
         this.continueOnError = continueOnError;
         this.overwriteExisting = overwriteExisting;
-        
+
         String line;
         while (null != (line = reader.readLine())) {
             processLine(inputFile, line);
@@ -160,7 +160,7 @@ public class EmblFile {
         if (sectionType == null) {
             return new UnknownSection(identifier);
         }
-        
+
         Section section = null;
         try {
         	section = sectionType.getDeclaredConstructor(EmblFile.class).newInstance(this);
@@ -174,7 +174,7 @@ public class EmblFile {
         	 * no great hardship to deal with it specially here.
         	 */
         	if (section instanceof FeatureTable) {
-        		if (featureTable != null && !overwriteExisting.toString().equals("MERGE")) {
+        		if (featureTable != null) {
         			dataError(new DataError("More than one feature table found"));
         		}
         		featureTable = (FeatureTable) section;
@@ -221,9 +221,7 @@ public class EmblFile {
     private IDSection idSection = null;
     private class IDSection extends Section {
         IDSection() throws DataError {
-            //allow multiple ID lines per file for overwriteExisting=MERGE
-            //because this is used for loading auto-generated features from tab files
-            if (idSection != null && !overwriteExisting.toString().equals("MERGE")) {
+            if (idSection != null) {
                 dataError(new DataError("Found more than one ID line"));
             }
             idSection = this;
