@@ -50,12 +50,12 @@ public abstract class LuceneQuery implements Query {
     private int order;
 
     @Autowired
-    private transient LuceneIndexFactory luceneIndexFactory;
+    public transient LuceneIndexFactory luceneIndexFactory;
 
     protected transient LuceneIndex luceneIndex;
 
     protected String name;
-    
+
     /**
      * Size of result retrieved
      */
@@ -63,7 +63,7 @@ public abstract class LuceneQuery implements Query {
 
 
     @PostConstruct
-    protected void afterPropertiesSet() {
+    public void afterPropertiesSet() {
         luceneIndex = luceneIndexFactory.getIndex(getluceneIndexName());
     }
 
@@ -111,11 +111,11 @@ public abstract class LuceneQuery implements Query {
                 names.add(t);
             }
             Collections.sort(names);
-            
+
             if(luceneIndex.getMaxResults() == names.size()){
                 isActualResultSizeSameAsMax = true;
             }
-            
+
             return names;
         } catch (CorruptIndexException exp) {
             throw new QueryException(exp);
@@ -163,10 +163,10 @@ public abstract class LuceneQuery implements Query {
                 booleanQuery.add(new BooleanClause(query, Occur.MUST));
             }
             hits = luceneIndex.search(booleanQuery);
-            logger.error(String.format("Lucene query is '%s', results size is '%d'", booleanQuery.toString(), hits.totalHits));
+            logger.info(String.format("Lucene query is '%s', results size is '%d'", booleanQuery.toString(), hits.totalHits));
         } else {
             hits = luceneIndex.search(queries.get(0));
-            logger.error(String.format("Lucene query is '%s', results size is '%d'", queries.get(0).toString(), hits.totalHits));
+            logger.info(String.format("Lucene query is '%s', results size is '%d'", queries.get(0).toString(), hits.totalHits));
         }
         return hits;
     }
