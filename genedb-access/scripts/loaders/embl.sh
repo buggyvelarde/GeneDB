@@ -34,9 +34,6 @@ Options:
     These can be restricted by feature type as well: for example
     you can specify -x ignoreQualifiers=CDS:similarity to archive
     all /similarity qualifiers on CDS features.
-  -a analysis
-  	Name of analysis program used to generate features being loaded.
-  	Required for reloading when -overwriteExisting=merge is set.
   	
 USAGE
     standard_options
@@ -117,10 +114,9 @@ doLoad() {
     debug=false
     reload=false
 	overwriteExisting=no
-	analysis=''
 	
     OPTIND=0
-    while getopts "do:t:x:ra:$stdopts" option; do
+    while getopts "do:t:x:r$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -151,8 +147,6 @@ doLoad() {
             ;;
         r)  reload=true
             ;;
-        a)  analysis="$OPTARG"
-        	;;
         *)  process_standard_options "$option"
             ;;
         esac
@@ -163,13 +157,7 @@ doLoad() {
         loaderUsage >&2
         exit 1
     fi
-	
-	if [ "$reload" ] && [ "$overwriteExisting" == "merge" ] && [ -z "$analysis" ]; then
-		echo >&2 "Must supply analysis to reload when overwriteExisting=merge is set"
-        loaderUsage >&2		
-		exit 1
-	fi
-	
+		
     if [ $# -ne 1 ]; then
         loaderUsage >&2
         exit 1
