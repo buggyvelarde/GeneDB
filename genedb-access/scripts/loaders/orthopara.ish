@@ -1,0 +1,96 @@
+# Common code used by orthologues and paralogues loader.
+# The extension is .ish (Include SHell), so that it's not
+# detected as a loader by the chado_load script.
+
+orthoparaUsage() {
+    cat <<USAGE
+Usage: `basename $0` $1 -n <dataset> -p <program> -v <version>
+                        [-a <algorithm>] [options] <file>
+        - for algorithmically-predicted ${1}s
+
+       `basename $0` $1 -n <dataset> -m [options] <file>
+        - for manually-curated ${1}s
+Options:
+  -n dataset
+    The name of the dataset
+  -p program
+    The name of the program used to predict the ${1}s
+  -v version
+    The version of the program that was used. This should always be supplied
+    if at all possible. Occasionally it is impossible to determine, in which
+    case you should use -v unknown.
+  -a algorithm
+    If applicable, the name of the algorithm. This is optional.
+  -m
+    Indicates that the orthologues are manually curated rather than
+    algorithmically predicted. If this option is specified then -p, -v and -a
+    should not be used.
+  -x notFoundNotFatal
+    If this property is set, it is not a fatal error if a gene mentioned in the
+    input file does not exist. This can be useful when gene models have been
+    deleted or renamed since the $1 data were generated.
+  -x geneNames
+    Treat the names in the input file as gene names, rather than polypeptide
+    or transcript names.
+USAGE
+    standard_options
+    echo
+}
+
+orthoparaLoad() {
+    properties=''
+    debug=false
+
+    OPTIND=0
+    while getopts "dn:p:v:a:mx:$stdopts" option; do
+        case "$option" in
+        d)  debug=true
+            ;;
+        o)  organism="$OPTARG"
+            ;;
+        t)  topLevel="$OPTARG"
+            ;;
+        e)  entryType="$OPTARG"
+            ;;
+        x)  case "$OPTARG" in
+                
+            esac
+            ;;
+        *)  process_standard_options "$option"
+            ;;
+        esac
+    done
+    shift $[ $OPTIND - 1 ]
+    
+    if [ -z "$organism" ]; then
+        loaderUsage >&2
+        exit 1
+    fi
+    
+    if [ $# -ne 1 ]; then
+        loaderUsage >&2
+        exit 1
+    fi
+    
+    file="$1"
+    shift
+    
+    if [ ! -e "$file" ]; then
+        echo >&2 "`basename $0`: no such file or directory '$file'"
+        exit 1
+    fi
+    
+    read_password
+
+    if $debug; then
+        echo "Classpath:"
+        echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
+        set -x
+    fi
+    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
+        -Dload.organismCommonName="$organism" \
+        -Dload.inputDirectory="$file" \
+        -Dload.topLevel="$topLevel" -Dload.entryType="$entryType" \
+        $properties $database_properties \
+        org.genedb.db.loading.LoadFasta
+}
