@@ -102,6 +102,7 @@ for (def row in rows) {
         switch (part) {
         case ~'term=.*':
             term = part.replace("term=","")
+            println "Term is '$term'"
             break
         case ~'evidence=.*':
             evidence = part.replace("evidence=","")
@@ -118,10 +119,14 @@ for (def row in rows) {
     def products = db.firstRow("select cvterm_id from cvterm where name='"+term+"'")
     int num = products['cvterm_id']
     def cmd = "insert into feature_cvtermprop (feature_cvterm_id, type_id, value) values("+fcid+", 26761,'"+evidence+"')"
+    try {
+        db.executeUpdate(cmd)
+    }
+    catch (Exception e) {}
+    cmd = "update feature_cvterm set cvterm_id="+num+" where feature_cvterm_id="+fcid
+    //println cmd
     db.executeUpdate(cmd)
-    cmd = "update feature_cvterm set cvterm_id="+num+" where feature_cvterm_id="+cvtid
-    db.executeUpdate(cmd)
-    cmd = "update feature_cvterm set pub_id="+pubId+" where feature_cvterm_id="+cvtid
+    cmd = "update feature_cvterm set pub_id="+pubId+" where feature_cvterm_id="+fcid
     db.executeUpdate(cmd)
 }
 
