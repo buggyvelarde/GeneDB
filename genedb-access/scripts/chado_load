@@ -66,10 +66,10 @@ dbhost=pgsrv1.internal.sanger.ac.uk
 dbport=5432
 dbname=pathogens
 dbuser="$LOGNAME@sanger.ac.uk"
+dbpassword_from_stdin=false
 
 # These functions may be used by the loaders
 process_standard_options() {
-  dbpassword_from_stdin=false
   case "$1" in
     D)  case "$OPTARG" in
         *:*/*)
