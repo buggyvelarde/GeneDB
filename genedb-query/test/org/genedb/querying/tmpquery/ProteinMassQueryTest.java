@@ -14,19 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:testContext.xml"})
-public class SimpleNameQueryTest {
+public class ProteinMassQueryTest {
 
     @Autowired
-    private SimpleNameQuery simpleNameQuery;
+    private ProteinMassQuery proteinMassQuery;
 
    
     @SuppressWarnings("unchecked")
     @Test
     public void basic() throws QueryException {
 
-        simpleNameQuery.setSearch("Tb927.1.*");
-        List results = simpleNameQuery.getResults();
-        assertEquals(522, results.size());
+        proteinMassQuery.setMin(10);
+        proteinMassQuery.setMax(11);
+        List results = proteinMassQuery.getResults();
+        assertEquals(2542, results.size());
     }
 
 }
