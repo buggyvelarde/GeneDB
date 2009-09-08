@@ -1,7 +1,15 @@
 package org.genedb.querying.tmpquery;
 
+import java.util.List;
+
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.ConstantScoreRangeQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+
+import org.hibernate.validator.Min;
 import org.springframework.validation.Errors;
 
 @QueryClass(
@@ -9,7 +17,7 @@ import org.springframework.validation.Errors;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class ProteinMassQuery extends OrganismHqlQuery {
+public class ProteinMassQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,
@@ -23,9 +31,29 @@ public class ProteinMassQuery extends OrganismHqlQuery {
     )
     private int max = 50000;
 
+    private String type = "polypeptide";
+
+
     @Override
-    protected String getHql() {
-        return "select f.uniqueName from Feature f where f.type.name='polypeptide' and f.seqLen >= :min and f.seqLen <= :max @ORGANISM@ order by f.organism, f.uniqueName";
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
+    }
+
+    @Override
+    protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
+        //Get the range
+        queries.add(
+                new ConstantScoreRangeQuery(
+                        "mass",
+                        String.format("%06d",  min),
+                        String.format("%06d",  max),
+                        true, true));
+
+        //Get the type
+        queries.add(
+                new TermQuery(
+                        new Term("type.name", type)));
+
     }
 
 
@@ -51,13 +79,7 @@ public class ProteinMassQuery extends OrganismHqlQuery {
     protected String[] getParamNames() {
         return new String[] {"min", "max"};
     }
-
-    @Override
-    protected void populateQueryWithParams(org.hibernate.Query query) {
-        super.populateQueryWithParams(query);
-        query.setInteger("min", min);
-        query.setInteger("max", max);
-    }
+   
 
     @Override
     protected void extraValidation(Errors errors) {
