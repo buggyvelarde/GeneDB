@@ -3,4 +3,5 @@ dbport=5432
 dbname=snapshot
 dbuser=genedb_ro
 dbpassword=
+installDir=/software/pathogen/projects/genedb
 indexDir=/tmp
