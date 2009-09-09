@@ -55,13 +55,12 @@
 
   <target name="access-compile" depends="access-init, access-populate-lib, access-populate-util, access-populate-db, access-check-uptodate"
           unless="access.uptodate">
-      <compile-target project="access" />
-      <iajc-target project="access" />
+      <compile-and-iajc-target project="access" />
       <copy todir="${imported.basedir.access}/${classes.dir}" overwrite="true">
         <fileset dir="${imported.basedir.access}/resources" />
         <fileset dir="${imported.basedir.access}/conf" />
       </copy>
-        <touch file="${imported.basedir.access}/${build.dir}/timestamp.txt"/>
+      <touch file="${imported.basedir.access}/${build.dir}/timestamp.txt"/>
   </target>
 
 
