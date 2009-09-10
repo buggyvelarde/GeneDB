@@ -26,7 +26,9 @@
 
       <!--  Used by test.deployment-build.xml  -->
       <!-- <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" /> -->
-
-
+	
+	  <!-- added by GV for unmartialing to JSON using StAX  -->
+	  <dependency org="org.codehaus.jettison" name="com.springsource.org.codehaus.jettison" rev="1.0.1" />
+	
     </dependencies>
 </ivy-module>
