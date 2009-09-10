@@ -12,7 +12,6 @@ public class DateCountQuery extends DateQuery {
         System.err.println("date in hql is '"+date+"'");
         String operator = after ? ">" : "<";
         String typeOfDate = created ? "timeAccessioned" : "timeLastModified";
-        // GV1 inserted @ORGANISM@
         return String.format("select count(*) from Feature f where f.%s %s :date @ORGANISM@ ", typeOfDate, operator);
     }
 
