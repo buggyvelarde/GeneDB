@@ -19,7 +19,6 @@
 
 package org.genedb.db.loading;
 
-
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.util.SequenceUtils;
@@ -58,17 +57,18 @@ import java.util.regex.Pattern;
  * ant load-agp -Dconfig=localcopy -Dorganism=Tcongolense -Dload.mode=2 -Dload.topLevel=chromosome -Dload.createMissingContigs=yes -Dfile=Tcongolense.agp
  * ant load-agp -Dconfig=localcopy -Dorganism=Tcruzi -Dload.mode=1 -Dload.topLevel=chromosome -Dload.createMissingContigs=no -Dfile=Tcruzi_20082009.agp
  * 
- *It can be run in two modes (indicated by the -Dload.mode option). The default is 1.
+ *It can be run in two modes (specified by the -Dload.mode option). The default is 1.
  * 
- * <p>Mode 1 <default>: Loads in a 'new' assembly. This drops and rebuilds the chromosomes/supercontigs according to the new assembly specified in the AGP file
- * and maps any existing features that were mapped onto the contigs to the new top level features. Any reversed contigs are dealt with and contigs that are not 
- * used in the new assembly are placed back in the bin (if there is one). Usually one would expect to find all the contigs in the assembly in the databse already. 
- * If the createMissingContigs option is set to yes, then any missing contigs are created in this mode too.
+ * <p>Mode 1 <default>: Loads in a 'new' assembly. This deletes any existing chromosomes and builds news ones using the information in the AGP file.
+ * It maps any existing features that were mapped onto the contigs to the new chromosomes. Any reversed contigs are dealt with and contigs that are not 
+ * used in the new assembly are placed back in the bin (if there is one). One would usually expect to find all the contigs used in the assembly in the database 
+ * already in this mode. If the createMissingContigs option is set to yes, however, any missing contigs are created in this mode also using information
+ * from archived regions.
  * </p>
  *
  * <p>Mode 2: Loads all the contigs and gaps specified in the AGP file (if they do not exist) as new features and maps any existing features such as genes, 
  * transcripts and exons on the chromosomes to the newly added contigs. This is useful in cases like Tcongolense where the chromosomes exist 
- * but the contigs are not loaded in properly. So, mode 2 would need to be run first (with the old assembly) before running this in mode 1 (with the
+ * but the contigs are not loaded in properly. So, for Congolense, mode 2 would need to be run first (with the old assembly) before running this in mode 1 (with the
  * new assembly).
  * </p>
  * 
@@ -124,14 +124,11 @@ public class AGPLoader {
         int tlfLength = 0, linesRead=0; /* Total length of topLevel feature and lines read */
  
         String residue = new String();
-        this.bin = (TopLevelFeature)sequenceDao.getFeatureByUniqueNamePatternAndOrganismCommonName("%bin%", organism.getCommonName(), topLevelFeatureClass);
-        if(this.bin==null && this.createMissingContigs.equalsIgnoreCase("yes")){
-            throw new RuntimeException(String.format("Could not locate a bin chromosome for %s", organism.getCommonName()));
-        }
+       
         for (AGPLine line : agpFile.lines() ) {
             
             String currentTopLevelName = line.getTopLevelName();
-           // logger.info(line.toString());
+       
             if (!currentTopLevelName.equals(prevTopLevelName) || agpFile.isLastLine(linesRead)) { //Start of a new topLevelFeature or end of file
                 
                 if(agpLines.size()>0){
@@ -156,14 +153,12 @@ public class AGPLoader {
                         }else{ //Gap
                             entryFeature = processGapFeature(entry, topLevelFeature);  
                             residue = residue.concat(entryFeature.getResidues());
-                            //Reset the residue value for the gaps
+                            //Reset the residue value for the gaps as they dont seem to have residues in the database. Doesn't make sense to store them anyway.
                             int seqlen = entryFeature.getSeqLen();
                             entryFeature.setResidues("");
                             entryFeature.setSeqLen(seqlen);
                         }
  
-                        logger.info(String.format("!!Length of residue at this point is %d", residue.length()));
-                
                     }
                    
                     /* Doing some checks on the toplevel feature */
@@ -188,19 +183,15 @@ public class AGPLoader {
                     this.contigsByStart.clear();
                     tlfLength = 0;
                     agpLines.clear(); 
-                    
                 }
-                
                 prevTopLevelName = currentTopLevelName;
                 session.flush();
-                session.clear();
+                session.clear(); //Or else this becomes very very slow 
             }
             agpLines.add(line);
             linesRead++;
-            tlfLength = line.getTopLevelEnd();
-           
+            tlfLength = line.getTopLevelEnd();   
         }
-         
     }
     
     
@@ -208,15 +199,12 @@ public class AGPLoader {
     * Process the top-level feature (tlf) according to the selected mode. In mode 1, if the top-level feature exists, then delete it
     * and create a new one. In mode 2, return the top-level feature with the name specified.
     */
-    
     private TopLevelFeature processTopLevel(String topLevelName, int tlfLength) {
 
         TopLevelFeature existingTopLevelFeature = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(topLevelName, organism.getCommonName() , TopLevelFeature.class);
     	
-    	if(mode.equals("1")){ 
-    	    /*Mode 1: If tlf exists, delete it and add a new one. */
+    	if(mode.equals("1")){
     	    if (existingTopLevelFeature != null) {
-    	        logger.info(String.format("Deleting top level feature (ID=%d): %s and associated featurelocs \n", existingTopLevelFeature.getFeatureId(), topLevelName)); 
     	        this.setContigsAlreadyOnTLF(this.getContigsOnThis(existingTopLevelFeature));
     	        sequenceDao.deleteFeatureLocsOn(existingTopLevelFeature); //Delete any featurelocs on this tlf
     	        existingTopLevelFeature.delete(false); //Delete the toplevel feature but not the features located on this tlf (hence, argument is false)!
@@ -225,21 +213,19 @@ public class AGPLoader {
     	
     	    TopLevelFeature topLevelFeature = TopLevelFeature.make(topLevelFeatureClass, topLevelName, organism);
     	    topLevelFeature.markAsTopLevelFeature();
-    	    topLevelFeature.setSeqLen(new Integer(tlfLength));
+    	    topLevelFeature.setSeqLen(tlfLength);
     	    session.persist(topLevelFeature);
     	    logger.info(String.format("Created new top level feature %s with ID=%d and length %d", topLevelName, topLevelFeature.getFeatureId(), topLevelFeature.getSeqLen()));
     	    return topLevelFeature;
     	    
     	}else{ 
-    	    //Mode 2: Just return the existing tlf with this name, or throw an error if it does not exist
+ 
     	    if (existingTopLevelFeature == null) {
     	        throw new RuntimeException(String.format("Looking for top level feature '%s' which does not exist!", topLevelName));
     	    }
-    	    logger.info(String.format("Found top level feature %s", topLevelName));
     	    this.setContigsAlreadyOnTLF(this.getContigsOnThis(existingTopLevelFeature));
     	    return existingTopLevelFeature;
     	}
-    	
     }
     
     /**
@@ -261,20 +247,17 @@ public class AGPLoader {
             }
         }
         
-        /*Dealing with seqLength and residues of the gap. Setting the residues in the gap is useful to 'reconstruct' the residues in the chromosome */ 
+        /*Dealing with seqLength and residues of the gap. Setting the residues in the gap is useful to 'reconstruct' the residues of the chromosome */ 
         int seqlen = line.getTopLevelEnd()-line.getTopLevelStart();
-        gap.setSeqLen(new Integer(seqlen));
-       
+        gap.setSeqLen(seqlen);
         String residues = new String();
         for(int i=0; i < seqlen; i++){
             residues = residues.concat("n");
         }
-       
         gap.setResidues(residues);
         session.persist(gap);
         session.flush();
         logger.info(String.format("Gap %s at %d-%d", gap.getUniqueName(),line.getTopLevelStart(), line.getTopLevelEnd()));
-
         return gap;
     }
         
@@ -284,21 +267,40 @@ public class AGPLoader {
      * In mode 2, if a contig cannot be found, a new one is always created.
      * In mode 1, all contigs should (in theory) already be in the database. However, in some organisms like Congolense, it may be necessary 
      * to create contigs even in mode 2 as the contig features have not been added properly. This is indicated by the createMissingContigs option. 
-     * If set to 'yes', a new contig is created. By parsing the name in the AGP file, we can also find out if this contig needs to be reversed 
-     * (it will have a _reversed attached to the contig name). In this case, we make use of the helper method reverseContig().
+     * If set to 'yes', a new contig is created. By parsing the name and strand in the AGP file, we can also find out if this contig needs to be reversed. 
+     * In this case, we make use of the helper method reverseContig().
      * 
      * @param line
      * @param topLevelFeature
      */
     private Feature processContigFeature(AGPLine line, TopLevelFeature topLevelFeature) {
         
+        boolean reverse_contig = false; 
+     
         String uniqueName = line.getEntryName(); //Uniquename of contig
+        Pattern TURN_PATTERN = Pattern.compile("(\\S+)_turn");
+        Matcher matcher = TURN_PATTERN.matcher(uniqueName);
+        if (matcher.matches()){ //Definitely reverse this contig
+            uniqueName = matcher.group(1);
+            reverse_contig = true;
+        }
+        if(line.getEntryStrand().equals("-")){
+            uniqueName = reverseName(uniqueName);
+        }
+        
         Feature contig = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism.getCommonName(), Feature.class);
         
         if(contig!=null){
+            //logger.info(String.format(""));
+            if(reverse_contig){
+                contig = reverseContig((Contig)contig);
+            }
             FeatureLoc floc = contig.getFeatureLoc(0, 0);
-            if(floc==null || floc.getSourceFeature()==null || floc.getSourceFeature().getFeatureId()!=topLevelFeature.getFeatureId()){
+            if(floc==null || floc.getSourceFeature()==null || floc.getSourceFeature().getFeatureId()!=topLevelFeature.getFeatureId()){ //This test works for Tcruzi & Congolense. But need to may be 'set' properties instead of adding a new featureloc
                 topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0); 
+                logger.info("Found contig " + contig.getUniqueName());
+            }else{
+                logger.warn(String.format("Contig %s exists but featureloc (locgroup=0, rank=0) is not null or not as expected. Check.", uniqueName ));
             }
             
         }else if(contig==null){
@@ -308,41 +310,43 @@ public class AGPLoader {
             if(mode.equals("2")){
                 /*In this mode: Always create missing contigs */
                 contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
-                topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand?*/, new Integer(0), 0, 0); 
+                topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0); 
                 residue = topLevelFeature.getResidues(line.getTopLevelStart(), line.getTopLevelEnd());
                 contig.setResidues(residue);
                 
-                logger.info(String.format("Created contig %s (%d). Got residue from chromosome %s (%d-%d)", 
-                        contig.getUniqueName(), contig.getFeatureId(), topLevelFeature.getUniqueName(),line.getTopLevelStart(), line.getTopLevelEnd()));
+                logger.info(String.format("Created contig %s (%d). Got residue from chromosome %s (%d-%d)", contig.getUniqueName(), contig.getFeatureId(), topLevelFeature.getUniqueName(),line.getTopLevelStart(), line.getTopLevelEnd()));
                 
             }else if(mode.equals("1")){
-                
-                /* If it's a contig to be reversed: If there is a contig (the non-reversed version) then call reverseContig(). If there isn't, one can be created 
-                 * with _reversed (with the residue gotten by using the fmin and fmax values of the archived feature (if there are any))
-                 */
-               
-                Pattern REV_PATTERN = Pattern.compile("(\\S+)_reversed");
-                Matcher matcher = REV_PATTERN.matcher(uniqueName);
-                
-                if (matcher.matches()){
-                    /* If it's a contig to be reversed, perhaps the non-reversed version is in the database */
-                    uniqueName = matcher.group(1);
-                    contig = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism.getCommonName(), Feature.class);
+  
+                if (line.getEntryStrand().equals("-")){
+                    /* If it's a contig to be reversed, perhaps the non-reversed version is in the database? */
+                    String rev_uniqueName = reverseName(uniqueName);
+                    logger.info("***The reversed contig name of (while looking for non-reversed version is " + rev_uniqueName);
+                    contig = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(rev_uniqueName, organism.getCommonName(), Feature.class);
                     if(contig!=null){
                         contig = reverseContig((Contig)contig);
+                        
                     /* If not, we can create the non-reversed version (if we are allowed) using information from the bin and reverse it */
                     }else{
                         if(createMissingContigs.equalsIgnoreCase("yes")){
+                            uniqueName = reverseName(uniqueName);
                             contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
-                            FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%");
+                            FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%"); 
                             if(archivedFloc!=null){
-                                residue = bin.getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
-                                logger.info(String.format("Creating contig %s (%d). Getting residue from bin %s (%d-%d)", 
-                                                           contig.getUniqueName(), contig.getFeatureId(), bin.getUniqueName(), archivedFloc.getFmin(), archivedFloc.getFmax()));
+                                residue = (archivedFloc.getSourceFeature()).getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
+                                logger.info(String.format("Creating contig %s (%d). Getting residue from  %s (%d-%d)", 
+                                                           contig.getUniqueName(), contig.getFeatureId(), archivedFloc.getSourceFeature().getUniqueName(), archivedFloc.getFmin(), archivedFloc.getFmax()));
                             }
                             contig.setResidues(residue);
-                            
-                            contig = reverseContig((Contig)contig);
+                            session.persist(contig);
+                            session.flush();
+                            if(reverse_contig){
+                                contig = reverseContig((Contig)contig);
+                            }else{
+                                //Just rename the contig to _reversed
+                                contig.setUniqueName(rev_uniqueName.concat("_reversed"));
+                                session.flush();
+                            }
                             
                         }else{
                             throw new RuntimeException(String.format("Looking for contig '%s' which does not exist!", uniqueName));
@@ -350,21 +354,21 @@ public class AGPLoader {
                     }//End if contig==null and reverse
                     topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand?*/, new Integer(0), 0, 0); 
                     
-                }else{
+                }else{ //On +ve strand
                     if(createMissingContigs.equalsIgnoreCase("yes")){
                         contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
                         FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%");
                         if(archivedFloc!=null){
-                            residue = bin.getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
+                            residue = (archivedFloc.getSourceFeature()).getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
                             logger.info(String.format("Creating contig %s (%d). Getting residue from bin %s (%d-%d)", 
-                                                       contig.getUniqueName(), contig.getFeatureId(), bin.getUniqueName(), archivedFloc.getFmin(), archivedFloc.getFmax()));
+                                                       contig.getUniqueName(), contig.getFeatureId(), archivedFloc.getSourceFeature().getUniqueName(), archivedFloc.getFmin(), archivedFloc.getFmax()));
                         }
                         contig.setResidues(residue);
                         
                         topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), /*new Integer(line.getEntryStrand()).intValue()*/0, new Integer(0), 0, 0);
                         
                     }else{
-                        throw new RuntimeException(String.format("!!Looking for contig '%s' which does not exist!", uniqueName));
+                        throw new RuntimeException(String.format("Looking for contig '%s' which does not exist!", uniqueName));
                     }
                 }
 
@@ -406,12 +410,12 @@ public class AGPLoader {
                         if(fmaxcontig!=null && !fmincontig.getUniqueName().equals(fmaxcontig.getUniqueName())){ //More sanity checks
 
                             if(fmaxcontig.getStrand()!=fmincontig.getStrand()){
-                                logger.info(String.format("!!Feature %s lies on two contigs (%s, %s) on two strands!", f.getUniqueName(), fmincontig.getUniqueName(), fmaxcontig.getUniqueName()));
+                                logger.warn(String.format("Feature %s lies on two contigs (%s, %s) on two strands!", f.getUniqueName(), fmincontig.getUniqueName(), fmaxcontig.getUniqueName()));
                             
                             }else{
                                 
                                 if(fmaxcontig.getStart()!=fmincontig.getStop()){ //Contigs not adjacent
-                                    logger.info(String.format("!!Feature %s lies on two contigs (%s, %s) that are not adjacent, so double check the featurelocs!", f.getUniqueName(), fmincontig.getUniqueName(), fmaxcontig.getUniqueName()));
+                                    logger.warn(String.format("Feature %s lies on two contigs (%s, %s) that are not adjacent, so double check the featurelocs!", f.getUniqueName(), fmincontig.getUniqueName(), fmaxcontig.getUniqueName()));
                                 }
 
                                 logger.info(String.format("Feature %s(%d-%d) located on %s : (%d-%d) and %s : (%d-%d)",
@@ -427,29 +431,18 @@ public class AGPLoader {
                                 session.persist(fmaxfloc);
                             }
                         }else{
-                            logger.info(String.format("!!Feature %s fmax partial but no possible contig for fmax", f.getUniqueName()));
+                            logger.warn(String.format("!!Feature %s fmax partial but no possible contig for fmax", f.getUniqueName()));
                         }
 
-                    }else{
-                        //logger.info(String.format("The feature '%s'(%d-%d) lies on contig '%s' (%d-%d)", f.getUniqueName(), floc.getFmin(), floc.getFmax(), contig.getUniqueName(), contig.getStart(), contig.getStop()));                        
-                        FeatureLoc newFloc = contig.addLocatedChild(f, 
-                                floc.getFmin()-contig.getStart(), 
-                                floc.getFmax()-contig.getStart(), 
-                                floc.getStrand(), 
-                                floc.getPhase(), 
-                                1,
-                                0); 
-                        //TODO: ALSO, IS CHROMOSOME STRAND SAME AS CONTIG STRAND?? Yes.
+                    }else{ 
+                        FeatureLoc newFloc = contig.addLocatedChild(f, floc.getFmin()-contig.getStart(), floc.getFmax()-contig.getStart(), floc.getStrand(), floc.getPhase(), 1, 0); 
                         session.persist(newFloc);
                     }
 
                 }else{
-                    logger.info(String.format("!!Feature %s does NOT appear to lie on a contig!",f.getUniqueName() ));
+                    logger.warn(String.format("Feature %s does NOT appear to lie on a contig!",f.getUniqueName() ));
                 }
-
             }
-
-            //end if not a contig
         }
         logger.info(String.format("Remapped %d features (that were not contigs or gaps) onto contigs from the tlf", count));
     }
@@ -479,18 +472,10 @@ public class AGPLoader {
  
                         if(!feature_floc.isFmaxPartial() && !feature_floc.isFminPartial()){
  
-                            FeatureLoc new_floc = contig_srcfeature.addLocatedChild(feature, 
-                                                                                    feature_floc.getFmin()+contig_floc.getFmin(), 
-                                                                                    feature_floc.getFmax()+contig_floc.getFmin(),
-                                                                                    feature_floc.getStrand(), 
-                                                                                    feature_floc.getPhase(),
-                                                                                    0,
-                                                                                    0);
-                           
+                            FeatureLoc new_floc = contig_srcfeature.addLocatedChild(feature, feature_floc.getFmin()+contig_floc.getFmin(), feature_floc.getFmax()+contig_floc.getFmin(), feature_floc.getStrand(), feature_floc.getPhase(), 0, 0);
                             session.persist(new_floc);
                             logger.info(String.format("New featureloc for %s is %s", feature.getUniqueName(), new_floc.toString()));
-                            
-                         
+        
                         }else{
                             
                             FeatureLoc second_feature_floc = feature.getFeatureLoc(2, 0); //This should get the featureloc on the second contig
@@ -527,18 +512,31 @@ public class AGPLoader {
      ***************************************************************************************************************************/ 
     
     /**
+     * Takes the name of a contig and returns its reversed version
+     */
+    private String reverseName(String name){
+        Pattern REV_PATTERN = Pattern.compile("(\\S+)_reversed");
+        Matcher matcher = REV_PATTERN.matcher(name);
+        if (matcher.matches()){
+            return matcher.group(1);
+        }
+        return new String(name.concat("_reversed"));   
+    }
+    
+    
+    /**
      *  Returns all the features that start on this toplevelfeature (hence, fmin not partial)
      */
     private List<Feature> getFeaturesOnThis(Feature tlf){
-        //session.flush();
-        session.refresh(tlf);
+        session.refresh(tlf); //Only way to get this to recognise the new featurelocs was to do a refresh (redo this!)
         List<Feature> featuresOnTLF = new ArrayList<Feature>();
         for (FeatureLoc featureLoc: tlf.getFeatureLocsForSrcFeatureId()) {
             if (featureLoc.getRank() != 0) {
                 continue;
             }
             Feature feature = featureLoc.getFeature();
-            if (!featureLoc.isFminPartial()){ 
+            String unwantedArchivedFeatureName = tlf.getUniqueName().concat(":archived:source:1");
+            if (!featureLoc.isFminPartial() && !feature.getUniqueName().equals(unwantedArchivedFeatureName)){ 
                 featuresOnTLF.add(feature);
             } 
         }
@@ -569,11 +567,8 @@ public class AGPLoader {
                 features.add(feature);
             } 
         }
-        return features;  
-        
+        return features;   
     }
-    
- 
     
    /**
     * Gets the featureLoc of an archived contig on the bin. This is particularly helpful with Congolense where all the contigs are archived
@@ -581,7 +576,6 @@ public class AGPLoader {
     * @return
     */
     private FeatureLoc getArchivedContigFeatureloc(String namePattern){
-        
         FeatureProp featureProp = (FeatureProp)session.createQuery("from FeatureProp where value like :namePattern") 
                                   .setString("namePattern", namePattern)
                                   .uniqueResult();
@@ -594,9 +588,8 @@ public class AGPLoader {
                 return featureLoc;
             }
         }
-        logger.info(String.format("!!Not found featureloc for %s in bin",namePattern));
-        return null;
-                
+        logger.warn(String.format("Not found featureloc for %s in bin",namePattern));
+        return null;            
     }
     
     /**
@@ -610,6 +603,7 @@ public class AGPLoader {
      */
     private void putUnusedContigsInBin(List<Feature> originalContigs, Collection<Feature> newContigs){
         
+        this.bin = (TopLevelFeature)sequenceDao.getFeatureByUniqueNamePatternAndOrganismCommonName("%bin%", organism.getCommonName(), topLevelFeatureClass);
         if(bin==null){
             logger.error("Trying to put unused contigs back in the bin but there is no bin!");
             return;
@@ -619,12 +613,11 @@ public class AGPLoader {
         logger.info(String.format("Contigs to put back in the bin are: %s", StringUtils.collectionToCommaDelimitedString(originalContigs)));
         
         for(Feature feature: originalContigs){
-          
             if(bin.getSeqLen()>0 && feature.getSeqLen()>0 && feature.getResidues()!=null && bin.getResidues()!=null){
-                bin.addLocatedChild(feature, bin.getSeqLen(), bin.getSeqLen() + feature.getSeqLen(),feature.getStrand(), new Integer(0), 0, 0);
+                bin.addLocatedChild(feature, bin.getSeqLen(), bin.getSeqLen() + feature.getSeqLen(), new Integer(1), new Integer(0), 0, 0);
                 bin.setResidues(bin.getResidues().concat(feature.getResidues()));
             }else{
-                logger.error(String.format("!!Not got enough information to relocate contig %s in the bin %s", feature.getUniqueName(), bin.getUniqueName()));
+                logger.error(String.format("Not got enough information to relocate contig %s in the bin %s", feature.getUniqueName(), bin.getUniqueName()));
             }
         }
     }
@@ -638,15 +631,14 @@ public class AGPLoader {
      * @param contig that should be reversed
      */
   
-    @Transactional(rollbackFor=DataError.class) 
     private Feature reverseContig(Contig contig){
-        logger.info(String.format("Contig sent into reverse method %s", contig.getUniqueName()));
+        logger.info(String.format("**Contig sent into reverse method %s", contig.getUniqueName()));
+        session.flush();
         
-        String uniquename = contig.getUniqueName().concat("_reversed");
-        final Feature contig_rev = TopLevelFeature.make(Contig.class, uniquename, organism); //make a new contig
+        String uniquename = reverseName(contig.getUniqueName());
+        Feature contig_rev = TopLevelFeature.make(Contig.class, uniquename, organism); //make a new contig
         contig_rev.setResidues(SequenceUtils.reverseComplement((contig.getResidues()).toLowerCase())); //reverse complement the sequence 
         contig_rev.setSeqLen(contig.getSeqLen());
-        logger.info("Seq length of new reversed contig " + contig_rev.getSeqLen());
         session.persist(contig_rev);
  
         for(Feature feature: this.getFeaturesOnThis(contig)){
@@ -655,9 +647,9 @@ public class AGPLoader {
            
              if(!feature_floc.isFminPartial() && !feature_floc.isFmaxPartial()){
                  //Change the values in this featureloc
-                 final int fmin = contig_rev.getSeqLen()-feature_floc.getFmax();
-                 final int fmax = contig_rev.getSeqLen()-feature_floc.getFmin();
-                 final Short strand = (short) -feature_floc.getStrand(); 
+                 int fmin = contig_rev.getSeqLen()-feature_floc.getFmax();
+                 int fmax = contig_rev.getSeqLen()-feature_floc.getFmin();
+                 Short strand = (short) -feature_floc.getStrand(); 
                
                  feature_floc.setFmin(fmin);
                  feature_floc.setFmax(fmax);
@@ -667,7 +659,6 @@ public class AGPLoader {
                  
                  session.saveOrUpdate(feature_floc); //This saveOrUpdate does not seem to get noticed until I force a refresh??
                  session.flush();
-                
                  logger.info(String.format("Feature %s (originally on %s) remapped onto reversed contig %s", feature.getUniqueName(), contig.getUniqueName(), feature_floc.toString())); 
                  
              }else{
@@ -751,7 +742,6 @@ public class AGPLoader {
  * CLASSES TO REPRESENT INFORMATION IN AN AGP FILE 
  ***************************************************************************************************************************/
 class AGPFile {
-    private static final Logger logger = Logger.getLogger(AGPFile.class);   
     
     private List<AGPLine> lines = new ArrayList<AGPLine>();
     
@@ -760,7 +750,6 @@ class AGPFile {
         String line;
         int lineNumber = 0;
         while (null != (line = reader.readLine())) { //While not end of file
- 
             lineNumber++;
             AGPLine newLine = new AGPLine(lineNumber, line);
             lines.add(newLine);   
@@ -803,15 +792,11 @@ class AGPLine {
             this.topLevelStart = Integer.parseInt(matcher_contig.group(2))-1;//subtract 1 to convert to interbase coordinates
             this.topLevelEnd = Integer.parseInt(matcher_contig.group(3)); 
             this.entryType = matcher_contig.group(5);           
-            this.entryName = matcher_contig.group(6);   
+            this.entryName = matcher_contig.group(6).trim();   
             this.entryStart = Integer.parseInt(matcher_contig.group(7));
             this.entryEnd = Integer.parseInt(matcher_contig.group(8));
             this.entryStrand = matcher_contig.group(9);
-            
-            if(this.entryStrand.equals("-1") || this.entryStrand.equals("-")){ //If contig is on the negative strand, append '_reversed' to contig name
-                this.entryName = (this.entryName.trim()).concat("_reversed");
-            }
-
+ 
         }else if (matcher_gap.matches() && matcher_gap.group(5).equals("N")){ //Making sure it's a gap line
  
             this.topLevelName = matcher_gap.group(1);
@@ -869,7 +854,6 @@ class AGPLine {
     
     @Override
     public String toString(){
-
         return String.format("%s\t%d\t%d\t%s\t%s\n", topLevelName, topLevelStart, topLevelEnd, entryType, entryName);
     }
 
