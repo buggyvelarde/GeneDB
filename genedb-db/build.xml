@@ -56,10 +56,11 @@
 
     <target name="compile-db" depends="db-populate-lib, db-populate-util" description="Compile">
         <compile-target project="db"/>
-        <!-- <compile-and-iajc-target project="db" />
+        <iajc-target project="db"/>
+        <!-- <compile-and-iajc-target project="db" /> -->
         <uptodate property="db.jar-uptodate" targetfile="${genedb-db.jar}">
             <srcfiles dir="${imported.basedir.db}/${classes.dir}" />
-        </uptodate> -->
+        </uptodate>
     </target>
 
     <target name="db-fulljar" depends="compile-db" unless="db.jar-uptodate"
