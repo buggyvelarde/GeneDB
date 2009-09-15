@@ -17,9 +17,9 @@
   <property name="lib.dir" value="lib/" />
 
   <path id="aspectj-tools-classpath">
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.3.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.3.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.3.RELEASE.jar"/>
   </path>
 
 
@@ -57,7 +57,7 @@
           <fileset dir="${lib-dir}">
               <include name="*.jar"/>
               <include name="license-*.txt"/>
-          	  <include name="ivy.timestamp.txt"/>
+              <include name="ivy.timestamp.txt"/>
           </fileset>
       </delete>
       <clean-target project="access" topdir="${imported.basedir.libs}/../genedb-access"/>
@@ -83,7 +83,7 @@
   <target name="ivy-retrieve">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
-  	<ivy:retrieve conf="default"/>
+    <ivy:retrieve conf="default"/>
   </target>
 
 
