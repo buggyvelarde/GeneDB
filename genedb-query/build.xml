@@ -78,8 +78,8 @@
     <uptodate property="query.lib-uptodate" srcfile="${imported.basedir.query}/ivy.xml" targetfile="${query.ivy-timestamp}" />
   </target>
 
-	<target name="query-clean">
-		<clean-target project="query" />
-	</target>
+  <target name="query-clean">
+    <clean-target project="query" />
+  </target>
 
 </project>
