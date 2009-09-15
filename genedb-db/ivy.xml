@@ -1,9 +1,9 @@
 <ivy-module version="2.0">
     <info organisation="org.genedb" module="genedb-db"/>
     <dependencies>
-      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M3" />
-      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M3" />
-      <dependency org="org.springframework" name="org.springframework.test" rev="3.0.0.M3" />
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M4" />
+      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M4" />
+      <dependency org="org.springframework" name="org.springframework.test" rev="3.0.0.M4" />
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
       <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
       <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
