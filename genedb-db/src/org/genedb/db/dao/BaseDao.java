@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public class BaseDao {
 
     private static final Logger logger = Logger.getLogger(BaseDao.class);
