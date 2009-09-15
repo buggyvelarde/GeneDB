@@ -92,6 +92,14 @@
   <macrodef name="populate">
     <attribute name="directory"/>
     <sequential>
+      <delete>
+          <fileset dir="../@{directory}/lib">
+              <include name="*.jar"/>
+              <include name="license-*.txt"/>
+              <include name="ivy.timestamp.txt"/>
+          </fileset>
+      </delete>
+      <mkdir dir="../@{directory}/lib" />
       <antcall target="ivy-retrieve">
         <param name="ivy.lib.dir"  value="../@{directory}/lib"/>
         <param name="ivy.dep.file" value="../@{directory}/ivy.xml"/>
