@@ -287,7 +287,7 @@
             <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
-	
+
     <target name="LuceneIndex" depends="check-config, iajc-web">
            <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
@@ -409,6 +409,9 @@
     <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.1.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
     <move file="${imported.basedir.web}/lib/com.springsource.javax.el-1.0.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
 
+    <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
+    <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
+
     <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
     <copy todir="${imported.basedir.web}/lib">
         <fileset dir="${imported.basedir.libs}/lib/biojava">
@@ -468,7 +471,7 @@
         <arg value="/nfs/pathdb/genedb/${indexSet}/cache" />
       </java>
     </target>
-	
+
 
     <target name="runTranscriptAnalyzer2" depends="compile-web">
       <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer2">
@@ -525,7 +528,7 @@
             <arg value="/Users/sangerinstitute/Downloads/lucene"/>
         </java>
     </target>
-	
+
 
 
 
