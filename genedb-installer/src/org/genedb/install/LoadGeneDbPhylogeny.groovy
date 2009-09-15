@@ -1024,7 +1024,7 @@ class LoadGeneDbPhylogeny {
                     <property name="curatorName" value="Nick Thomson" />
                 </organism>
                 <organism name="Styphimurium">
-                    <property name="taxonId" value="90370" />
+                    <property name="taxonId" value="568708" />
                     <property name="fullName" value="Salmonella enterica subsp. enterica serovar Typhimurium str. D23580" />
                     <property name="newOrg" value="true" />
                     <property name="translationTable" value="11"/>
