@@ -17,9 +17,9 @@
   <property name="lib.dir" value="lib/" />
 
   <path id="aspectj-tools-classpath">
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.3.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.3.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.3.RELEASE.jar"/>
   </path>
 
 
