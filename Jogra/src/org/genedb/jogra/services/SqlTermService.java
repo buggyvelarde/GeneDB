@@ -39,29 +39,40 @@ public class SqlTermService implements TermService {
     /**
      * Takes a list of TaxonNodes (corresponding to the selection of organisms) and a cv type
      * (e.g. genedb_products) and returns all the corresponding terms 
+     * 12.8.2009: Updated the SQL below by removing the join between cv & cvterm to make the rationaliser faster
+     * 14.9.2009: Re-ordering the where clauses also made a big difference
      */
     @Override
     public List<Term> getTerms(List<TaxonNode> selectedTaxons, final String cvType) {
+
+        String SQL_TO_GET_CV_ID = "select cv_id from cv where name='" + cvType +"'";
+        int cv_id = jdbcTemplate.queryForInt(SQL_TO_GET_CV_ID);
       
         String SQL_TO_GET_TERMS =   
             "select distinct lower(cvt.name), cvt.name, cvt.cvterm_id " +
-            "from feature_cvterm fcvt, cvterm cvt, cv cv, organism o, feature f " +
-            "where fcvt.cvterm_id = cvt.cvterm_id " +
-            "and cvt.cv_id = cv.cv_id " +
-            "and cv.name='" + cvType + "' " +
-            "and fcvt.feature_id = f.feature_id " +
-            "and f.organism_id=o.organism_id " +
-            "and o.common_name IN (" + getTaxonNamesInSQLFormat(selectedTaxons) +") " +
+            "from feature_cvterm fcvt, cvterm cvt, organism o, feature f where " +
+            "cvt.cv_id = " + cv_id + " and " +
+            "fcvt.cvterm_id = cvt.cvterm_id and " +
+            "fcvt.feature_id = f.feature_id and " +
+            "f.organism_id=o.organism_id and " +
+            "o.common_name IN (" + getTaxonNamesInSQLFormat(selectedTaxons) +") " +
             "order by lower(cvt.name), cvt.name";
-                
+        
+        logger.info(SQL_TO_GET_TERMS);
+        
+            
+        //Mapper for terms
         RowMapper<Term> mapper = new RowMapper<Term>() {
             public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), cvType);
                 return term;
             }
         };
-     
-        List<Term> terms = jdbcTemplate.query(SQL_TO_GET_TERMS, mapper);
+        
+        //List of terms
+        List<Term> terms = new ArrayList<Term>();
+        terms = jdbcTemplate.query(SQL_TO_GET_TERMS, mapper);
+      
         return terms;
     }
     
