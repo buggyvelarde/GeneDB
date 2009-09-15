@@ -1023,6 +1023,17 @@ class LoadGeneDbPhylogeny {
                     <property name="shortName" value="S. Typhi" />
                     <property name="curatorName" value="Nick Thomson" />
                 </organism>
+                <organism name="Styphimurium">
+                    <property name="taxonId" value="90370" />
+                    <property name="fullName" value="Salmonella enterica subsp. enterica serovar Typhimurium str. D23580" />
+                    <property name="newOrg" value="true" />
+                    <property name="translationTable" value="11"/>
+                    <property name="curatorEmail" value="nrt"/>
+                    <property name="htmlFullName" value="<i>Salmonella enterica</i> subsp. enterica serovar Typhimurium str. D23580'"/>
+                    <property name="htmlShortName" value="<i>S. Typhimurium</i>'"/>
+                    <property name="shortName" value="S. Typhimurium" />
+                    <property name="curatorName" value="Nick Thomson" />
+                </organism>
             </node>
             <organism name="Smarcescens">
                     <property name="taxonId" value="615" />
