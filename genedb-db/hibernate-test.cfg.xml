@@ -8,7 +8,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:11111/malaria_workshop</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:11111/pathogens</property>
         <property name="hibernate.connection.username">pathdb</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
