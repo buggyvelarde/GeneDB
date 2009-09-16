@@ -10,9 +10,13 @@
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
             </url>
-            <url name="com.springsource.repository.bundles.release">
+            <url name="com.springsource.repository.bundles.milestone">
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+            </url>
+            <url name="com.springsource.repository.bundles.snapshot">
+                <ivy pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+                <artifact pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
             </url>
             <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/>
             <ibiblio name="lab.public.rel" root="http://ulisse.pin.unifi.it:8080/archiva/repository/lab.public.rel" m2compatible="true"/>
