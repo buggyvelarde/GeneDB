@@ -27,7 +27,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -68,8 +67,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private List<TaxonNode> selectedTaxons;
     private static String username;
     private static String password;
-
-
+ 
     public Jogra() {
         EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber<GeneDBMessage>() {
             public void onEvent(final GeneDBMessage ese) {
@@ -78,7 +76,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         });
 
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //N/A on macs for now
         } catch (final Exception exp) {
             logger.info("Unable to set Nimbus L&F");
             logger.debug("Unable to set Nimbus L&F", exp);
@@ -106,10 +104,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         EventBus.subscribeStrongly("selection", new EventTopicSubscriber<List<String>>() {
             public void onEvent(String topic, List<String> selection) {
-              System.out.println("Selection is " + selection.toString() );
-//                System.out.println("Topic is " + topic );
+            
                 setSelectedOrganismNames(selection);
-                System.out.println("JOGRA: Picked up " + selection.toString());
+                logger.info("JOGRA: Picked up " + selection.toString());
             }
 
 
@@ -143,9 +140,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent arg0) {
-                System.err.println("About to publish ace");
+                System.err.println("About to publish application closing event");
                 EventBus.publish(new ApplicationClosingEvent());
-                System.err.println("Just published ace");
+                System.err.println("Just published application closing event");
                 System.exit(0);  // FIXME - should we be catching the above event?
             }
         });
@@ -212,8 +209,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             }
         });
     }
-
-
 
 
 
@@ -290,7 +285,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         configurer.setProperties(properties);
         
         /** Check if the org....* files exist in the root directory and if they do, delete them **/
-        // Store lucene indices somewhere harmless as not needed, but created automatically
+        // Store lucene indices somewhere harmless as they are not needed, but are created automatically
         //System.setProperty("hibernate.search.default.indexBase", System.getProperty("java.io.tmpdir"));
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
@@ -382,7 +377,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
         dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
         dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
-        //dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds"); 
         
         try {
             dblogin.validateUser();
