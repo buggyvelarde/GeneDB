@@ -27,8 +27,8 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.hibernate.validator.ClassValidator;
-import org.hibernate.validator.InvalidValue;
+//import org.hibernate.validator.ClassValidator;
+//import org.hibernate.validator.InvalidValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.util.StringUtils;
@@ -200,21 +200,21 @@ public abstract class LuceneQuery implements Query {
         return "";
     }
 
-    @Override
+    //@Override
     public void validate(Object target, Errors errors) {
         //@SuppressWarnings("unchecked") T query = (T) target;
-        ClassValidator queryValidator = new ClassValidator(this.getClass());
-        InvalidValue[] invalids = queryValidator.getInvalidValues(target);
-        for (InvalidValue invalidValue: invalids){
-            errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
-        }
-
-        extraValidation(errors);
+//        ClassValidator queryValidator = new ClassValidator(this.getClass());
+//        InvalidValue[] invalids = queryValidator.getInvalidValues(target);
+//        for (InvalidValue invalidValue: invalids){
+//            errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+//        }
+//
+//        extraValidation(errors);
     }
 
     protected abstract void extraValidation(Errors errors);
 
-    @Override
+    //@Override
     @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return this.getClass().isAssignableFrom(clazz);

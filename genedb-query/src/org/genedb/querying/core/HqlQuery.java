@@ -21,8 +21,8 @@ package org.genedb.querying.core;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.validator.ClassValidator;
-import org.hibernate.validator.InvalidValue;
+//import org.hibernate.validator.ClassValidator;
+//import org.hibernate.validator.InvalidValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -135,21 +135,21 @@ public abstract class HqlQuery implements Query {
     }
 
 
-    @Override
+    //@Override
     public void validate(Object target, Errors errors) {
         //@SuppressWarnings("unchecked") T query = (T) target;
-        ClassValidator queryValidator = new ClassValidator(this.getClass());
-        InvalidValue[] invalids = queryValidator.getInvalidValues(target);
-        for (InvalidValue invalidValue: invalids){
-            errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
-        }
+        //ClassValidator queryValidator = new ClassValidator(this.getClass());
+        //InvalidValue[] invalids = queryValidator.getInvalidValues(target);
+        //for (InvalidValue invalidValue: invalids){
+        //    errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+        //}
 
-        extraValidation(errors);
+        //extraValidation(errors);
     }
 
     protected abstract void extraValidation(Errors errors);
 
-    @Override
+    //@Override
     @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return this.getClass().isAssignableFrom(clazz);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
-import org.hibernate.validator.NotEmpty;
+//import org.hibernate.validator.NotEmpty;
 import org.springframework.validation.Errors;
 
 @QueryClass(
@@ -21,7 +21,7 @@ public class GeneLocationQuery extends OrganismHqlQuery {
             order=1,
             title="Name of feature"
     )
-    @NotEmpty(message="{topLevelFeatureName.empty}")
+//    @NotEmpty(message="{topLevelFeatureName.empty}")
     private String topLevelFeatureName;
 
 
@@ -50,11 +50,11 @@ public class GeneLocationQuery extends OrganismHqlQuery {
         sb.append("where fl.sourceFeature.uniqueName=:topLevelFeatureName ");
         sb.append("and fl.fmin >= :min ");
         sb.append("and fl.fmax <= :max @ORGANISM@ ");
-        
+
         if(pseudogenes){
             sb.append(RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES);
         }else{
-            sb.append(RESTRICT_TO_TRANSCRIPTS_ONLY);            
+            sb.append(RESTRICT_TO_TRANSCRIPTS_ONLY);
         }
         sb.append(" order by f.organism, f.uniqueName");
         return sb.toString();

@@ -9,7 +9,7 @@ import org.apache.lucene.search.TermQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
-import org.hibernate.validator.Min;
+//import org.hibernate.validator.Min;
 import org.springframework.validation.Errors;
 
 @QueryClass(
@@ -79,7 +79,7 @@ public class ProteinMassQuery extends OrganismLuceneQuery {
     protected String[] getParamNames() {
         return new String[] {"min", "max"};
     }
-   
+
 
     @Override
     protected void extraValidation(Errors errors) {
