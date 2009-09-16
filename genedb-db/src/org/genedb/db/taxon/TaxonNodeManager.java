@@ -55,7 +55,7 @@ public class TaxonNodeManager implements InitializingBean {
 
     @Transactional
     public void afterPropertiesSet() throws Exception {
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        //Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         //TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         try {
         //System.err.println("Session is '"+session+"'");
