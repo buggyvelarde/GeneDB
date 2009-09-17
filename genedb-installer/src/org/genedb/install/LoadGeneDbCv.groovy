@@ -266,7 +266,7 @@ class LoadGeneDbCv {
                 <!-- terms used from samtools alignment format -->
                 <term name="chrcontigref" description="Chromosome or Contig reference"/>
                 <term name="position" description="position of the SNP base"/>
-                <term name="refbase" description="reference base"/>
+                <term name="refbase" description="base of the reference chromosome or contig"/>
                 <term name="SNPbase" description="base call at SNP position"/>
                 <term name="consensus_base" description="base called by maq consensus"/>
                 <term name="consensus_quality" description="consensus quality"/>
