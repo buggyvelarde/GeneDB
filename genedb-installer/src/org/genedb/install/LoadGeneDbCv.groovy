@@ -39,7 +39,7 @@ class LoadGeneDbCv {
         db = Sql.newInstance(
             'jdbc:postgresql://pgsrv2:5432/pathdev',
             'rn2@sanger.ac.uk',
-            'xxxxxxx',
+            'xxxxx',
             'org.postgresql.Driver')
             
 
@@ -263,6 +263,23 @@ class LoadGeneDbCv {
             	<term name="commandline_str" description="Full command line string used to execute the application" />
             	<term name="strain_id" description="unique name of the strain" />
             	<term name="strain_sample_id" description="unique name of the sample for a particular strain" />
+                <!-- terms used from samtools alignment format -->
+                <term name="chrcontigref" description="Chromosome or Contig reference"/>
+                <term name="position" description="position of the SNP base"/>
+                <term name="refbase" description="reference base"/>
+                <term name="SNPbase" description="base call at SNP position"/>
+                <term name="consensus_base" description="base called by maq consensus"/>
+                <term name="consensus_quality" description="consensus quality"/>
+                <term name="SNP_quality" description="SNP quality"/>
+                <term name="max_mapping_quality" description="maximum mapping quality"/>
+                <term name="read_coverage" description="read coverage or depth coverage"/>
+                <term name="A_Count" description="Number of A"/>
+                <term name="C_Count" description="Number of C"/>
+                <term name="G_count" description="Number of G"/>
+                <term name="T_count" description="Number of T"/>
+                <term name="N_count" description="Number of N"/>
+                <term name="star_count" description="Number of star symbols"/>
+                <!-- terms used by ssaha alignment program -->
                 <term name="ssaha" description="tool for very fast matching and alignment of DNA sequences">
                 	<term name="ssaha_call" description="call at a particular genome location"/>
                 	<term name="ssaha_scalar_result" description="Output that results in a single value for the whole data set">
