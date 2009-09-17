@@ -11,7 +11,7 @@
   <import file="${imported.basedir.access}/../genedb-libs/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-util/build.xml"/>
-
+  
   <property file="property-file.${config}" />
   <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
 
@@ -162,6 +162,22 @@
          </java>
     </target>
 
+    <target name="load-SNPs" depends="access-fulljar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadSNPs">
+            <sysproperty key="load.inputDirectory" value="/Users/rn2/variationDB/bacteria/load"/>
+            <sysproperty key="load.fileNamePattern" value=".*.snp"/>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+
+    <target name="load-Pileups" depends="access-fulljar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadPileups">
+            <sysproperty key="load.inputDirectory" value="/Users/rn2/variationDB/bacteria/load"/>
+            <sysproperty key="load.fileNamePattern" value=".*.pileup"/>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target> 
+
     <target name="delete-organism" depends="access-fulljar">
     
     
@@ -203,6 +219,22 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+    
+	<target name="load-SNPs" depends="access-fulljar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadSNPs">
+            <sysproperty key="load.inputDirectory" value="/Users/rn2/variationDB/bacteria/load"/>
+            <sysproperty key="load.fileNamePattern" value=".*.snp"/>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+
+    <target name="load-Pileups" depends="access-fulljar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadPileups">
+            <sysproperty key="load.inputDirectory" value="/Users/rn2/variationDB/bacteria/load"/>
+            <sysproperty key="load.fileNamePattern" value=".*.pileup"/>
             <jvmarg line="-Xmx512M"/>
         </java>
     </target>
