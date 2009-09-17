@@ -90,6 +90,15 @@
     <bean id="vulgarLoader" class="org.genedb.db.loading.VulgarLoader">
         <property name="transactionManager" ref="jdbcTransactionManager"/>
     </bean>
+    
+    <bean id="snpsLoader" class="org.genedb.db.loading.SNPsLoader"
+        scope="prototype">
+         <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate"/>
+    </bean>
+    <bean id="pileupsLoader" class="org.genedb.db.loading.PileupsLoader"
+        scope="prototype">
+         <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate"/>
+    </bean>
 
     <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader"
         scope="prototype">
@@ -97,7 +106,7 @@
         <property name="organismDao" ref="organismDao"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
-
+    
     <!--  auxiliary loaders -->
     <bean id="auxiliaryLoader" abstract="true" init-method="afterPropertiesSet">
         <property name="featureUtils" ref="featureUtils" />
@@ -146,7 +155,7 @@
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
         <property name="username"><value>${dbuser}</value></property>
-        <property name="password"><value>${dbpassword}</value></property>
+        <property name="password"><value>${dbpassword}</value></property>        
     </bean>
 
     <!-- Database Property -->
