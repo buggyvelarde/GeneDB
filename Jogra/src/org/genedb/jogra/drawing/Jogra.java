@@ -77,6 +77,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //N/A on macs for now
+           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (final Exception exp) {
             logger.info("Unable to set Nimbus L&F");
             logger.debug("Unable to set Nimbus L&F", exp);
@@ -377,6 +378,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
         dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
         dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
+        dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds");
         
         try {
             dblogin.validateUser();
