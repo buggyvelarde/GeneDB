@@ -15,7 +15,7 @@
            <all-permissions/>
          </security>
          <resources>
-           <j2se version="1.4+ 1.4.2" initial-heap-size="32m" max-heap-size="200m"/>
+           <j2se version="1.4+ 1.4.2" initial-heap-size="32m" max-heap-size="512m"/>
              <jar href="sartemis_current.jar"/>
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis :: Gene Builder" />
            <property name="artemis.environment" value="UNIX" />
