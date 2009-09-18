@@ -78,8 +78,8 @@
         <filter-name>UriSessionIdFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-  
+
+
 
     <servlet>
         <servlet-name>headless-test</servlet-name>
@@ -93,11 +93,36 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
+
+    <!-- <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping> -->
     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Basket/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Download/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/gmodrest/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/History/*</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Homepage</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/NamedFeature/*</url-pattern>
+    </servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/BrowseCategory</url-pattern>
     </servlet-mapping>
@@ -117,23 +142,15 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ComplexQuery/*</url-pattern>
     </servlet-mapping>
-        <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/DownloadFeatures</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Search/*</url-pattern>
     </servlet-mapping>
-        <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/History/*</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/NamedFeature</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
+        <url-pattern>/History2/*</url-pattern>
+    </servlet-mapping>-->
+    <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/NameSearch</url-pattern>
     </servlet-mapping>
@@ -199,7 +216,7 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/Query</url-pattern>
+        <url-pattern>/Query/*</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
@@ -231,10 +248,6 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/Basket</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
         <url-pattern>/ResultsNavigator</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
@@ -244,5 +257,5 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDistributor</url-pattern>
-     </servlet-mapping>
+     </servlet-mapping> -->
 </web-app>

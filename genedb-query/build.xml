@@ -35,7 +35,7 @@
     <jar-target project="query" />
   </target>
 
-  <target name="query-check-jar" depends="query-compile">
+  <target name="query-check-jar" depends="query-iajc">
      <uptodate property="query.jar-uptodate" targetfile="${genedb-query.jar}">
         <srcfiles dir="${imported.basedir.query}/${classes.dir}" includes="**" />
      </uptodate>

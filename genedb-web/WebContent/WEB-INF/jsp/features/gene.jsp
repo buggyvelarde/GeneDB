@@ -47,8 +47,8 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 <script language="javascript">
 //<![CDATA[
 function addToBasket(geneid){
-    var url = "/Basket";
-    var postData = "name="+geneid;
+    var url = "/Basket/"+geneid;
+    //var postData = "name="+geneid;
     var callback = {
         success: function(o) {
             document.getElementById('basketbutton').src = "/includes/images/alreadyInBasket.gif";
@@ -59,7 +59,7 @@ function addToBasket(geneid){
         }
     }
 
-    var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callback, postData);
+    var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback);
 }
 //]]>
 </script>

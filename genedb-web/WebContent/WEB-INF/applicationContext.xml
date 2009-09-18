@@ -5,10 +5,10 @@
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
 
     default-init-method="postConstruction">
 
@@ -44,7 +44,7 @@
 
     <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="sessionFactory" ref="sessionFactory" />        
+        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
@@ -94,7 +94,7 @@
             <prop key="hibernate.bytecode.provider">javassist</prop>
             <prop key="hibernate.jdbc.batch_size">20</prop>
             <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-            <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
+            <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop>
         </props>
      </property>
     </bean>
@@ -132,7 +132,7 @@
     <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
         <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
     </bean>
-    
+
 
 
     <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
@@ -141,7 +141,7 @@
         <property name="properties">
             <props>
                 <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-                <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
+                <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop>
                 <prop key="hibernate.jdbc.batch_size">20</prop>
             </props>
         </property>

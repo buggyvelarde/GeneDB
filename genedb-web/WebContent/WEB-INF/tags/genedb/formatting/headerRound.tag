@@ -205,9 +205,9 @@
                             </div>
                         </div>
                     </li>
-          <!--  <li class="yuimenubaritem">
-            <a class="yuimenuitemlabel" href="<c:url value="/History/View"/>">History</a>
-          </li> -->
+                   <li class="yuimenubaritem">
+                        <a class="yuimenuitemlabel" href="<c:url value="/History"/>">History</a>
+                   </li>
                 </ul>
             </div>
       </div></td>
