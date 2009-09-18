@@ -100,12 +100,13 @@ public class BuildTestDatabase {
     }
 
     private void copyPublicSchemaData() throws SQLException {
-        for (String tableName: "cv cvterm db organism".split("\\s+")) {
+        for (String tableName: "cv cvterm db organism phylotree".split("\\s+")) {
             copyTableData(tableName, null);
         }
 
-        copyTableData("dbxref", "dbxref_id in (select dbxref_id from cvterm)");
-        copyTableData("pub",    "uniquename = 'null'");
+        copyTableData("public", "phylonode", null, "phylonode_id"); // We need parent nodes before children
+        copyTableData("public", "dbxref", "dbxref_id in (select dbxref_id from cvterm)");
+        copyTableData("public", "pub",    "uniquename = 'null'");
 
         if (organismIdString != null) {
             copyOrganismData();
@@ -184,15 +185,22 @@ public class BuildTestDatabase {
     }
 
     private void copyTableData(String schema, String tableName, String condition) throws SQLException {
-        copyTableData(schema, tableName, condition, true);
+        copyTableData(schema, tableName, condition, null);
     }
 
-    private void copyTableData(String schema, String tableName, String condition, boolean batch) throws SQLException {
+    private void copyTableData(String schema, String tableName, String condition,  String order) throws SQLException {
+        copyTableData(schema, tableName, condition, order, true);
+    }
+
+    private void copyTableData(String schema, String tableName, String condition, String order, boolean batch) throws SQLException {
         logger.info(String.format("Copying contents of table '%s' (%s)", tableName, condition));
 
         String selectStatement = "select * from \""+tableName+"\"";
         if (condition != null) {
             selectStatement += " where (" + condition + ")";
+        }
+        if (order != null) {
+            selectStatement += " order by " + order;
         }
 
         Statement sourceSt = source.createStatement();
@@ -261,7 +269,11 @@ public class BuildTestDatabase {
                 }
             }
             if (!failureFound) {
-                logger.error(String.format("%s failed on item #%d", description, updateCounts.length + 1), e.getCause());
+                logger.error(String.format("%s failed on item #%d", description, updateCounts.length + 1));
+                Throwable t = e;
+                do {
+                    logger.error("Caused by", t);
+                } while (null != (t = t.getCause()));
             }
 
             throw e;
