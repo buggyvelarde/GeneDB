@@ -8,6 +8,7 @@
 
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
+      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.7.0" />
 
 
       <!-- The Hibernate Search package in the Spring repository hasn't been updated yet. So we include it, and a couple

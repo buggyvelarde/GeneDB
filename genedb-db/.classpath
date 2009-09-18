@@ -46,8 +46,6 @@
 	<classpathentry kind="lib" path="lib/com.springsource.org.eclipse.persistence-sources-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.annotations.common-3.3.0.ga.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.annotations.common-sources-3.3.0.ga.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.jboss.util-2.0.4.GA.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.jboss.util-sources-2.0.4.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.objectweb.asm.attrs-1.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.objectweb.asm.attrs-sources-1.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.serp-1.13.1.jar"/>
@@ -59,13 +57,14 @@
 	<classpathentry kind="lib" path="lib/hibernate-search-3.1.0.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hsqldb-1.8.0.9.jar"/>
 	<classpathentry kind="lib" path="lib/biojava-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.M4.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.M4.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.M4.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.M4.jar" sourcepath="lib/org.springframework.orm-sources-3.0.0.M4.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.M4.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.M4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.M4.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.jboss.util-2.2.9.GA.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.CI-394.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

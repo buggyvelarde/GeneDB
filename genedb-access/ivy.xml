@@ -7,7 +7,7 @@
 
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
-      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" />
+      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.7.0" />
       <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
 

@@ -63,5 +63,11 @@
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.3-603.jdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.CI-394.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
