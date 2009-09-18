@@ -25,6 +25,7 @@ import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.support.WebRequestDataBinder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,12 +41,12 @@ public class TaxonNodeBindingFormController {
     private HistoryManagerFactory historyManagerFactory;
 
     @InitBinder
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder srdb)
+    protected void initBinder(HttpServletRequest request, WebRequestDataBinder wrdb)
             throws Exception {
         if (taxonNodeArrayPropertyEditor == null) {
             throw new RuntimeException("Required property 'taxonNodeArrayPropertyEditor' is missing for "+this.getClass());
         }
-        srdb.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+        wrdb.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
     }
 
     //@Required

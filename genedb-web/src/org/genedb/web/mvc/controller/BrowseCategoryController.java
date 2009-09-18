@@ -65,7 +65,7 @@ public class BrowseCategoryController {
 
     private CvDao cvDao;
 
-    @Autowired
+    //@Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
     @InitBinder
@@ -89,7 +89,7 @@ public class BrowseCategoryController {
             HttpSession session,
             Model model) {
         logger.warn("Called method 2");
-        
+
         model.addAttribute("categories", BrowseCategory.values());
         model.addAttribute("browseCategory", bean);
 

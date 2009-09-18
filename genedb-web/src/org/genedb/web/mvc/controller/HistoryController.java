@@ -1,48 +1,32 @@
 package org.genedb.web.mvc.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+//import net.sf.json.JSONArray;
+import net.sf.json.spring.web.servlet.view.JsonView;
+
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.web.mvc.history.commandline.HistoryParser;
+import org.genedb.web.mvc.history.commandline.ParseException;
+import org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.google.common.collect.Maps;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.spring.web.servlet.view.JsonView;
-
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.query.Result;
-import org.genedb.query.SimpleListResult;
-import org.genedb.query.history.History;
-import org.genedb.query.history.SimpleHistory;
-import org.genedb.querying.history.HistoryItem;
-import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.history.HistoryType;
-import org.genedb.web.mvc.history.commandline.HistoryParser;
-import org.genedb.web.mvc.history.commandline.ParseException;
-
-import org.gmod.schema.mapped.Feature;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
@@ -50,7 +34,10 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
  * @author Adrian Tivey
  */
 @Controller
-public class HistoryController extends MultiActionController implements InitializingBean {
+@RequestMapping("/History")
+public class HistoryController {
+
+    Logger logger = Logger.getLogger(HistoryController.class);
 
     private SequenceDao sequenceDao;
     private FileCheckingInternalResourceViewResolver viewChecker;
@@ -63,38 +50,46 @@ public class HistoryController extends MultiActionController implements Initiali
     private static final SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
     private static final int SESSION_FAILED_ERROR_CODE = 500;
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
-    String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
-    Pattern pattern = Pattern.compile(compile);
+
 
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        // Deliberately empty
-    }
+    @RequestMapping(method=RequestMethod.GET, value="/${historyItem}")
+    public ModelAndView editHistoryItem(HttpServletRequest request,HttpServletResponse response,
+            @PathVariable("historyItem") int historyItem) {
 
-    /**
-     * Simple redirection to a JSP that does an AJAX-y request to viewData
-     *
-     * @param request current HTTP request
-     * @param response current HTTP response
-     * @return a ModelAndView to render the response
-     */
-    public ModelAndView View(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return new ModelAndView("history/noSession");
-        }
-        //return new ModelAndView(historyView);
-        Map<String, Object> model = Maps.newHashMap();
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        model.put("items", historyManager.getHistoryItems());
-        return new ModelAndView("history/index", model);
+
+        Map<String,Object> model = new HashMap<String,Object>();
+        model.put("history", historyItem);
+        HistoryItem item = historyManager.getHistoryItems().get(historyItem-1);
+        //String internalName = item.getInternalName();
+
+        model.put("items", item.getIds());
+        model.put("historyName", item.getName());
+
+        return new ModelAndView("history/editHistoryItem",model);
     }
 
 
-    public ModelAndView viewData(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(method=RequestMethod.DELETE, params="historyItem")
+    public ModelAndView deleteHistoryItem(HttpServletRequest request,HttpServletResponse response,
+            @RequestParam("historyItem") int historyItem) {
+
+        HttpSession session = request.getSession(false);
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        logger.info("Removing item from history");
+        historyManager.removeItem(historyItem, historyManager.getVersion());
+        return new ModelAndView("redirect:/History/View");
+    }
+
+
+    @RequestMapping(method=RequestMethod.GET)
+    public ModelAndView listHistory(HttpServletRequest request,
+            HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             // No session
@@ -105,182 +100,81 @@ public class HistoryController extends MultiActionController implements Initiali
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
 
         Map<String,Object> model = new HashMap<String,Object>();
-        JSONArray items = JSONArray.fromObject(historyManager.getHistoryItems());
-        model.put("items",items);
+        model.put("items", historyManager.getHistoryItems());
 
-        return new ModelAndView(jsonView, model);
+        return new ModelAndView("history/list", model);
     }
 
 
-    public ModelAndView Download(HttpServletRequest request,HttpServletResponse response) {
-        String history = null;
-        try {
-            history = ServletRequestUtils.getRequiredStringParameter(request, "history");
-        } catch (ServletRequestBindingException exp) {
-            // No history item chosen - redirect to view history
-            // TODO Flash message
-        }
+//    public ModelAndView EditName(HttpServletRequest request,HttpServletResponse response) {
+//        HttpSession session = request.getSession(false);
+//        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+//        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+//        String newName = ServletRequestUtils.getStringParameter(request, "value","");
+//
+//        int count = Integer.parseInt(history) - 1;
+//
+//        List<HistoryItem> historyItems = historyManager.getHistoryItems();
+//        HistoryItem changedItem = historyItems.get(count);
+//        boolean exists = false;
+//
+//        for (HistoryItem historyItem : historyItems) {
+//            if(historyItem.getName().equals(newName) &&
+//                    historyItem.getHistoryType().equals(changedItem.getHistoryType())) {
+//                exists = true;
+//            }
+//        }
+//
+//        if(!exists) {
+//            changedItem.setName(newName);
+//        } else {
+//            try {
+//                response.sendError(511);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return null;
+//    }
 
-        HttpSession session = request.getSession(false);
-        // TODO Session may be null
-
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        String formalHistoryName = historyManager.getFormalName(history);
-
-        if (formalHistoryName == null) {
-            // No history item chosen - redirect to view history
-            // TODO Flash message
-        }
-
-        Map<String,Object> model = new HashMap<String,Object>();
-        model.put("history", formalHistoryName);
-        return new ModelAndView(downloadView,model);
-    }
-
-
-    public ModelAndView EditHistory(HttpServletRequest request,HttpServletResponse response) {
-        String history = ServletRequestUtils.getStringParameter(request, "history","0");
-        String remove = ServletRequestUtils.getStringParameter(request, "remove","false");
-
-        if (history == "0") {
-            //be.reject("no.download.history");
-            return new ModelAndView(editView);
-        }
-        HttpSession session = request.getSession(false);
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        if (remove.equals("true")) {
-            logger.info("history is " + remove);
-            historyManager.removeItem(Integer.parseInt(history)-1, historyManager.getVersion());
-            return new ModelAndView("redirect:/History/View");
-        }
-
-        Map<String,Object> model = new HashMap<String,Object>();
-        model.put("history", history);
-        int item = Integer.parseInt(history);
-        HistoryItem historyItem = historyManager.getHistoryItems().get(item-1);
-        String internalName = historyItem.getInternalName();
-
-
-        Matcher matcher = pattern.matcher(internalName);
-
-        String organism = null;
-        String category = null;
-        String term = null;
-
-        while(matcher.find()) {
-            organism = matcher.group(1);
-            category = matcher.group(2);
-            term = matcher.group(3);
-        }
-
-        model.put("historyName", historyItem.getName());
-        model.put("organism", organism);
-        model.put("category", category);
-        model.put("term", term);
-
-        return new ModelAndView(editView,model);
-    }
-
-
-
-
-
-    public ModelAndView EditName(HttpServletRequest request,HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        String history = ServletRequestUtils.getStringParameter(request, "history","0");
-        String newName = ServletRequestUtils.getStringParameter(request, "value","");
-
-        int count = Integer.parseInt(history) - 1;
-
-        List<HistoryItem> historyItems = historyManager.getHistoryItems();
-        HistoryItem changedItem = historyItems.get(count);
-        boolean exists = false;
-
-        for (HistoryItem historyItem : historyItems) {
-            if(historyItem.getName().equals(newName) &&
-                    historyItem.getHistoryType().equals(changedItem.getHistoryType())) {
-                exists = true;
-            }
-        }
-
-        if(!exists) {
-            changedItem.setName(newName);
-        } else {
-            try {
-                response.sendError(511);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            // No session
-            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
-                "false");
-            if ("true".equals(secondTry)) {
-                // TODO Maybe use built in error handling
-                return new ModelAndView("history/noSession");
-            }
-            // Try and create session and return here
-            session = request.getSession(true);
-            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
-        }
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-
-        String history = ServletRequestUtils.getStringParameter(request, "history","0");
-        String id = ServletRequestUtils.getStringParameter(request, "ids","");
-        String type = ServletRequestUtils.getStringParameter(request, "type","");
-
-        ArrayList<String> ids = new ArrayList<String>();
-        String list[] = id.split(",");
-        for (String s : list) {
-            ids.add(s);
-        }
-        HistoryItem item = historyManager.getHistoryItems().get(Integer.parseInt(history)-1);
-
-        if(type.equals("MODIFY")) {
-            item.setIds(ids);
-            item.setHistoryType(HistoryType.MANUAL);
-        } else {
-            String name = item.getName();
-            String time = sdf.format(Calendar.getInstance().getTime());
-            name = String.format("%s Modified %s", name,time);
-            historyManager.addHistoryItem(name,HistoryType.MANUAL,ids);
-        }
-        return new ModelAndView("redirect:/History/View");
-    }
-
-    @SuppressWarnings("unchecked")
-    public ModelAndView Test(HttpServletRequest request, HttpServletResponse response) {
-        JSONArray array = new JSONArray();
-        JSONObject obj = new JSONObject();
-        obj.put("index", 1);
-        // obj.put("name", "Query 1");
-        // obj.put("type", "query 1");
-        obj.put("noresults", 378);
-        // obj.put("tools", "orthologs");
-        // obj.put("download",
-        // "http://localhost:8080/genedb-web/DownloadFeatures?historyItem=1");
-        array.add(obj);
-        JSONObject obj1 = new JSONObject();
-        obj1.put("total", 1);
-        obj1.put("queries", array);
-        PrintWriter out = null;
-        try {
-            out = response.getWriter();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        out.print(obj1);
-        out.close();
-        return new ModelAndView("history/historyIndex", obj1);
-    }
+//    public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
+//        HttpSession session = request.getSession(false);
+//        if (session == null) {
+//            // No session
+//            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
+//                "false");
+//            if ("true".equals(secondTry)) {
+//                // TODO Maybe use built in error handling
+//                return new ModelAndView("history/noSession");
+//            }
+//            // Try and create session and return here
+//            session = request.getSession(true);
+//            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
+//        }
+//        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+//
+//        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+//        String id = ServletRequestUtils.getStringParameter(request, "ids","");
+//        String type = ServletRequestUtils.getStringParameter(request, "type","");
+//
+//        ArrayList<String> ids = new ArrayList<String>();
+//        String list[] = id.split(",");
+//        for (String s : list) {
+//            ids.add(s);
+//        }
+//        HistoryItem item = historyManager.getHistoryItems().get(Integer.parseInt(history)-1);
+//
+//        if(type.equals("MODIFY")) {
+//            item.setIds(ids);
+//            item.setHistoryType(HistoryType.MANUAL);
+//        } else {
+//            String name = item.getName();
+//            String time = sdf.format(Calendar.getInstance().getTime());
+//            name = String.format("%s Modified %s", name,time);
+//            historyManager.addHistoryItem(name,HistoryType.MANUAL,ids);
+//        }
+//        return new ModelAndView("redirect:/History/View");
+//    }
 
     // public ModelAndView RenameItem(HttpServletRequest request,
     // HttpServletResponse response) {
@@ -506,7 +400,6 @@ public class HistoryController extends MultiActionController implements Initiali
         }
 
         //historyManager.addHistoryItems("merged", historyItem.getIds());
-
         return new ModelAndView("redirect:/History/View");
     }
 

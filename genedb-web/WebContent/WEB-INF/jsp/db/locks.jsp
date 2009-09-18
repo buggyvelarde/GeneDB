@@ -26,11 +26,11 @@ td.false {color: red}
 			<td class="${row['granted']}">${row['procpid']}</td>
 		    <td class="${row['granted']}">${row['usename']}</td>
 		    <td class="${row['granted']}">${row["current_query"]}</td>
-			<td class="${row["granted"]}">${row["backend_start"]}</td>
-			<td class="${row["granted"]}">${row["relation"]}</td>
-			<td class="${row["granted"]}">${row["relname"]}</td>
-			<td class="${row["granted"]}">${row["transactionid"]}</td>
-			<td class="${row["granted"]}">${row["mode"]}</td>
+			<td class="${row['granted']}">${row["backend_start"]}</td>
+			<td class="${row['granted']}">${row["relation"]}</td>
+			<td class="${row['granted']}">${row["relname"]}</td>
+			<td class="${row['granted']}">${row["transactionid"]}</td>
+			<td class="${row['granted']}">${row["mode"]}</td>
 		</tr>
 	</c:forEach>
 </table>

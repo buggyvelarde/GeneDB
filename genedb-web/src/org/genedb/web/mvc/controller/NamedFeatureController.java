@@ -36,9 +36,9 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -60,7 +60,6 @@ import com.sleepycat.collections.StoredMap;
  */
 @Controller
 @RequestMapping("/NamedFeature")
-@SessionAttributes("results")
 //@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
 public class NamedFeatureController extends TaxonNodeBindingFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
@@ -84,25 +83,28 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         this.hmFactory = hmFactory;
     }
 
-    @RequestMapping(method=RequestMethod.GET)
-    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response, HttpSession session, 
-            NameLookupBean nlb, BindingResult be) throws Exception {
+    @RequestMapping(method=RequestMethod.GET, value="/{name}")
+    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+            NameLookupBean nlb,
+            BindingResult be,
+            @PathVariable("name") String name
+            ) throws Exception {
 
-        logger.debug("Trying to find NamedFeature of '"+nlb.getName()+"'");
-        
-        //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params 
+        logger.debug("Trying to find NamedFeature of '"+name+"'");
+
+        //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params
         if (session == null) {
             logger.warn("There is no session - redirecting to force one.");
-            return new ModelAndView("redirect:/NamedFeature?name="+nlb.getName());
+            return new ModelAndView("redirect:/NamedFeature?name="+name);
         }
         if (!isCurrentCacheValid(nlb.getKey(), session)){
             logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
-            return new ModelAndView("redirect:/NamedFeature?name="+nlb.getName());
+            return new ModelAndView("redirect:/NamedFeature?name="+name);
         }
 
-        Feature feature = sequenceDao.getFeatureByUniqueName(nlb.getName(), Feature.class);
+        Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
         if (feature == null) {
-            logger.warn(String.format("Failed to find feature '%s'", nlb.getName()));
+            logger.warn(String.format("Failed to find feature '%s'", name));
             be.reject("no.results");
             return new ModelAndView("redirect:/Query");
         }
@@ -111,7 +113,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (transcript == null) {
             // If feature isn't transcript redirect - include model
             // is it part of a gene
-            logger.warn(String.format("Failed to find transcript for an id of '%s'", nlb.getName()));
+            logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
             be.reject("no.results");
             return new ModelAndView("redirect:/Query");
         }
@@ -125,7 +127,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
             Iterator<Entry<Integer, TranscriptDTO>> it = bmf.getDtoMap().entrySet().iterator();
             logger.error(it.getClass().getName());
-            
+
             //it.close();
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         }
@@ -171,12 +173,12 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         return new ModelAndView(viewName, model);
     }
-    
+
     /**
      * This is to help verify if the current session key used to access the GeneSummary search results is still alive
      * @param session the current session ,possibly null
-     * @param key 
-     * @return true, if there is no key, or if the key exists and is from the 
+     * @param key
+     * @return true, if there is no key, or if the key exists and is from the
      * correct session and is in the results cache
      */
     private boolean isCurrentCacheValid(String key, HttpSession session){
@@ -189,7 +191,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (!key.startsWith(session.getId())) {
             return false;
         }
-        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();            
+        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();
         return storedMap.containsKey(key);
     }
 
@@ -223,7 +225,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
 
     public static class NameLookupBean {
-        private String name;
         private boolean detailsOnly = false;
         private boolean addToBasket = false;
         private String key;
@@ -262,15 +263,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             this.addToBasket = addToBasket;
         }
 
-        public String getName() {
-            return this.name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-
         public boolean isDetailsOnly() {
             return detailsOnly;
         }
@@ -288,7 +280,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             return null;
         }
     }
-
 
 
     public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {

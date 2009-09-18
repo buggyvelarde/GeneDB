@@ -28,12 +28,10 @@ import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -46,35 +44,19 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/Basket")
 public class BasketController {
-     private static final Logger logger = Logger.getLogger(BasketController.class);
+
+    private static final Logger logger = Logger.getLogger(BasketController.class);
 
     private SequenceDao sequenceDao;
-
-
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
-
-
     private HistoryManagerFactory hmFactory;
     private ModelBuilder modelBuilder;
 
-
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
-    }
-
-
-    public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
-        this.hmFactory = hmFactory;
-    }
-
-
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping(method=RequestMethod.GET, value="/{name}")
     protected void addFeatureToBasket(
+            @PathVariable("name") String name,
             HttpSession session,
-            HttpServletResponse response,
-            @RequestParam("name") String name) throws Exception {
+            HttpServletResponse response
+    ) throws Exception {
 
         logger.debug("Trying to find NamedFeature of '"+name+"'");
 
@@ -100,5 +82,16 @@ public class BasketController {
         return;
     }
 
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
+    }
+
+    public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
+        this.hmFactory = hmFactory;
+    }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
 
 }

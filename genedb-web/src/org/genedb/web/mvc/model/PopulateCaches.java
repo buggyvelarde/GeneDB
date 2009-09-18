@@ -121,9 +121,12 @@ public class PopulateCaches {
                 break;
             }
 
+
             if (!config.isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
+                logger.trace("About to create context map");
                 CacheDBHelper.populateContextMapCache(
                         feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
+                logger.trace("Created context map ");
             }
 
             @SuppressWarnings("unchecked")
@@ -184,7 +187,7 @@ public class PopulateCaches {
     }
 
     //DtoDb dtoDb;
-    
+
     private void populateDtoCache(AbstractGene gene) {
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
