@@ -295,7 +295,7 @@ class PileupsLoader {
 
             String chromosomeReference=line.getFields()[0];
             
-            String offset=line.getFields()[2];
+            String offset=line.getFields()[1];
 
             // Convert offset-->interbase coordinates
             Integer fmin = Integer.parseInt(offset);
