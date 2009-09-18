@@ -280,7 +280,7 @@ class PileupsLoader {
                 "insert into variation.Feature("+
                 " organism_id,uniquename,type_id,is_analysis,is_obsolete,timeaccessioned,timelastmodified"+
                 ") values ("+
-                "?,?,(select cvterm_id as type_id from cvterm where name='ssaha_call'),true,false,?,?"+
+                "?,?,(select cvterm_id as type_id from cvterm where name='variation_call'),true,false,?,?"+
                 ")"
                 ,pileupFile.metaline().get_Chado_Organism_ID(),pileupFeatureUniqueName,new java.sql.Timestamp(analysistimestamp.getTime()),new java.sql.Timestamp(analysistimestamp.getTime()));
             if (n != 1) {
