@@ -2,7 +2,6 @@ package org.gmod.schema.mapped;
 
 
 
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 
@@ -24,7 +23,6 @@ public class Cv implements Serializable {
     // Fields
     @Id
     @Column(name="cv_id", unique=false, nullable=false, insertable=true, updatable=true)
-    @DocumentId
     private int cvId;
 
     @Column(name="name", unique=true, nullable=false, insertable=true, updatable=true)
