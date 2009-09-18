@@ -59,7 +59,7 @@ import com.sleepycat.collections.StoredMap;
  * @author Adrian Tivey (art)
  */
 @Controller
-@RequestMapping("/NamedFeature")
+@RequestMapping("/feature")
 //@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
 public class NamedFeatureController extends TaxonNodeBindingFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
