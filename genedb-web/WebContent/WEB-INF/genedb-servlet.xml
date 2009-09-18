@@ -86,7 +86,7 @@
         <!--  -->
     </bean>
 
-
+<!--
     <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="sequenceDao" ref="sequenceDao"/>
@@ -97,7 +97,7 @@
     <bean id="luceneDataFetcher" class="org.genedb.web.mvc.controller.download.LuceneDataFetcher">
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
     </bean>
-
+-->
     <bean id="freemarkerConfig"
         class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <!-- FIXME STS complains where is superclass -->
