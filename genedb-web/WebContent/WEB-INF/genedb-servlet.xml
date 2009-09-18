@@ -10,7 +10,7 @@
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
-    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.querying.core" />
     <context:spring-configured/>
     <context:mbean-export/>
 
@@ -84,6 +84,18 @@
     <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
         <!--  -->
+    </bean>
+
+
+    <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
+        <property name="sequenceDao" ref="sequenceDao"/>
+        <property name="downloadView" value="download/download" />
+        <property name="dataFetcher" ref="luceneDataFetcher" />
+    </bean>
+
+    <bean id="luceneDataFetcher" class="org.genedb.web.mvc.controller.download.LuceneDataFetcher">
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
     </bean>
 
     <bean id="freemarkerConfig"
@@ -407,7 +419,6 @@
         <property name="jsonConfig" ref="jsonConfig" />
     </bean>
 
-
     <bean id="openSessionInView"
         class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
         <property name="sessionFactory">
@@ -415,25 +426,8 @@
         </property>
     </bean>
 
-  <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
-        <property name="embossDir">
-          <value>${psu.emboss.directory}</value>
-        </property>
-    </bean>
-
   <bean id="cachedFileFactory"
         class="org.genedb.web.mvc.controller.cgview.CachedFileFactory" />
-
-  <bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
-      <property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
-      <property name="formView" value="graphics/circularGenomeForm" />
-            <property name="cachedFileFactory" ref="cachedFileFactory" />
-            <property name="embossDigestParser" ref="embossDigestParser"/>
-            <property name="embossDirectoryName">
-               <value>${emboss.directory}</value>
-            </property>
-      <property name="diagramView" value="graphics/circularGenome" />
-    </bean>
 
 
     <bean id="searchControllerResolver"
