@@ -4,10 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.genedb.web.mvc.model.types.DBXRefType;
+
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-import common.Logger;
 
 public class FeatureRelationshipMapper implements ParameterizedRowMapper<FeatureRelationshipMapper>  {
 
@@ -35,7 +36,7 @@ public class FeatureRelationshipMapper implements ParameterizedRowMapper<Feature
         this.typeId = typeId;
     }
 
-    public static final String TYPE_RESTRICTED_SQL = 
+    public static final String TYPE_RESTRICTED_SQL =
         " select fr.*" +
         " from feature_relationship fr, cvterm cvt, cv" +
         " where fr.type_id = cvt.cvterm_id" +
@@ -45,28 +46,28 @@ public class FeatureRelationshipMapper implements ParameterizedRowMapper<Feature
         " and cv.name = ?";
     Logger logger = Logger.getLogger(FeatureRelationshipMapper.class);
 
-    
+
     private SimpleJdbcTemplate template;
-    
+
     private int subjectId;
     private int objectId;
     private int typeId;
-    
+
     private String cvtermName;
     private String cvName;
-    
+
     @Override
-    public FeatureRelationshipMapper mapRow(ResultSet rs, int rowNum) throws SQLException {        
-        //Get frMapper details 
+    public FeatureRelationshipMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
+        //Get frMapper details
         FeatureRelationshipMapper frMapper = new FeatureRelationshipMapper();
         frMapper.setSubjectId(rs.getInt("subject_id"));
         frMapper.setObjectId(rs.getInt("object_id"));
         frMapper.setCvtermName(rs.getString("cvtname"));
         frMapper.setCvName(rs.getString("cvname"));
-        
+
         return frMapper;
     }
-    
+
     public SimpleJdbcTemplate getTemplate() {
         return template;
     }

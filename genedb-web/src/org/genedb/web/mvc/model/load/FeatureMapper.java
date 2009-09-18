@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-import common.Logger;
 
 public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
     Logger logger = Logger.getLogger(FeatureMapper.class);
@@ -27,15 +27,15 @@ public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
     private int seqLen;
     private String residues;
     private Date timeLastModified;
-    
+
     private int fmax;
     private int fmin;
     private int strand;
     private int sourceFeatureId;
-    
+
     private String cvtName;
     private String cvName;
-    
+
     @Override
     public FeatureMapper mapRow(ResultSet rs, int rowNum) throws SQLException {
         FeatureMapper mapper = new FeatureMapper();
@@ -49,7 +49,7 @@ public class FeatureMapper implements ParameterizedRowMapper<FeatureMapper> {
         mapper.setTimeLastModified(rs.getDate("timelastmodified"));
         return mapper;
     }
-    
+
     public int getFeatureId() {
         return featureId;
     }

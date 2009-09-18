@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.model.load;
 
+import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
@@ -10,10 +11,9 @@ import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.gmod.schema.utils.PeptideProperties;
 
-import common.Logger;
 
 /**
- * 
+ *
  * lo2@author sangerinstitute
  * Much of these methods contain snippets from the Polypeptide class
  */
@@ -92,7 +92,7 @@ public class PolypeptidePropertiesHelper {
         return -1.0;
     }
 
-    
+
     /**
      * Calculate the charge of a polypeptide.
      *
