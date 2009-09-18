@@ -2,26 +2,18 @@
 
 <project name="test-deployment" default="test-deployment" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <property name="host" value="http://developer.genedb.org"/>
-    <property name="prefix" value=""/> <!-- Include trailing slash -->
+  <property name="host" value="http://developer.genedb.org"/>
+  <property name="prefix" value="ci-web/"/> <!-- Include trailing slash -->
 
-    <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
-    <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
+  <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
 
   <path id="groovy-script-jars">
-    <fileset dir="lib">
+    <fileset dir="${imported.basedir.web}/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
 
-  <target name="fetch-groovy-jars">
-    <ivy:settings file="../genedb-libs/ivysettings.xml" />
-    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
-    <property name="ivy.lib.dir" value="lib/groovy"/>
-    <ivy:retrieve conf="groovy"/>
-  </target>
-
-  <target name="test-deployment" depends="fetch-groovy-jars">
+  <target name="test-deployment">
     <taskdef name="groovy"
            classname="org.codehaus.groovy.ant.Groovy"
            classpathref="groovy-script-jars"/>
@@ -31,6 +23,7 @@
       <![CDATA[
         downloadAndGrep("${args[0]}/${args[1]}Homepage", "yoelii")
         downloadAndGrep("${args[0]}/${args[1]}feature/PF07_0048", "Duffy")
+    	//return 0
 
         def downloadAndGrep(address, searchPattern) {
           if (!(new URL(address).getText() =~ searchPattern)) {
@@ -41,8 +34,8 @@
     </groovy>
   </target>
 
-    <target name="wait">
-        <sleep minutes="3" />
-    </target>
+  <target name="wait">
+    <sleep minutes="3" />
+  </target>
 
 </project>
