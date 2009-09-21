@@ -42,7 +42,7 @@ public class JograProgressBar extends JPanel  {
 
     
     public JograProgressBar(String title){
-        this(title,Position.TOP_LEFT); //Default is centre
+        this(title,Position.CENTRE); //Default is centre
     }
 
    
