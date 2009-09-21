@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2009 Genome Research Limited.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Library General Public License as published by the Free
+ * Software Foundation; either version 2 of the License or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB. If not, write to the Free
+ * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
+ * USA
+ */
+
 package org.genedb.jogra.services;
 
 import org.genedb.db.taxon.TaxonNode;
@@ -21,7 +40,7 @@ import javax.sql.DataSource;
 /**
  * This class is like a Data Access Object for terms in that it handles all the SQL needed for querying, updating and deleting terms.
  * We use the Spring JDBCTemplate here to have more control over the sql we execute rather than using the existing DAOs which use 
- * Hibernate. Also, Hibernate could make the rationaliser much slower.
+ * Hibernate. 
  * 
  * @author nds
  *
@@ -40,7 +59,7 @@ public class SqlTermService implements TermService {
      * Takes a list of TaxonNodes (corresponding to the selection of organisms) and a cv type
      * (e.g. genedb_products) and returns all the corresponding terms 
      * 12.8.2009: Updated the SQL below by removing the join between cv & cvterm to make the rationaliser faster
-     * 14.9.2009: Re-ordering the where clauses also made a big difference
+     * 14.9.2009: Re-ordering the where clauses also made a big difference on speed
      */
     @Override
     public List<Term> getTerms(List<TaxonNode> selectedTaxons, final String cvType) {
@@ -49,14 +68,15 @@ public class SqlTermService implements TermService {
         int cv_id = jdbcTemplate.queryForInt(SQL_TO_GET_CV_ID);
       
         String SQL_TO_GET_TERMS =   
-            "select distinct lower(cvt.name), cvt.name, cvt.cvterm_id " +
+            "select distinct cvt.name, cvt.cvterm_id " +
             "from feature_cvterm fcvt, cvterm cvt, organism o, feature f where " +
             "cvt.cv_id = " + cv_id + " and " +
             "fcvt.cvterm_id = cvt.cvterm_id and " +
             "fcvt.feature_id = f.feature_id and " +
             "f.organism_id=o.organism_id and " +
-            "o.common_name IN (" + getTaxonNamesInSQLFormat(selectedTaxons) +") " +
-            "order by lower(cvt.name), cvt.name";
+            "o.common_name IN (" + getTaxonNamesInSQLFormat(selectedTaxons) +") "; // +
+          //  "order by lower(cvt.name), cvt.name";
+        /* Removed the ordering here to further increase the speed. Will order in the collection in the rationaliser */
         
         logger.info(SQL_TO_GET_TERMS);
         
@@ -97,9 +117,7 @@ public class SqlTermService implements TermService {
 
   
     public RationaliserResult rationaliseTerm(List<Term> oldTerms, String newText, boolean changeAllOrganisms, List<TaxonNode> selectedTaxons) throws SQLException {
-
-
-        
+     
         List<Term> termsAdded = new ArrayList<Term>();
         List<Term> termsDeleted = new ArrayList<Term>();
         final String type = oldTerms.get(0).getType(); /* Safe to assume that the type of all the terms sent to this method are of the same type */
@@ -117,13 +135,10 @@ public class SqlTermService implements TermService {
                 Term old_sql = old; 
                 old_sql.setName(old_sql.getName().replaceAll("'", "\\\\'"));
                 String newText_sql =  newText.replaceAll("'", "\\\\'");
-              
-               
-                
+           
                 if(changeAllOrganisms){ //Update CvTerm. This changes it for all organisms.
                     
                     String SQL_TO_UPDATE_NAME = "update cvterm set name=E'" + newText_sql + "' where name=E'" + old_sql.getName() + "'";
-               
                     jdbcTemplate.execute(SQL_TO_UPDATE_NAME);
                     termsDeleted.add(old);
                     termsAdded.add(new Term(old.getId(),newText, type));
@@ -223,8 +238,8 @@ public class SqlTermService implements TermService {
        String namesInSQLFormat = getTaxonNamesInSQLFormat(selectedTaxons);
        
        String SQL_TO_GET_SYS_IDS = "select feature.uniquename from feature, feature_cvterm, organism" +
-                                  " where feature.feature_id=feature_cvterm.feature_id" +
-                                  " and feature_cvterm.cvterm_id=" + term.getId() +
+                                  " where feature_cvterm.cvterm_id=" + term.getId() +
+                                  " and feature.feature_id=feature_cvterm.feature_id " +
                                   " and feature.organism_id=organism.organism_id" +
                                   " and organism.common_name IN (" + namesInSQLFormat +")";
       
@@ -251,6 +266,8 @@ public class SqlTermService implements TermService {
      }
     
    
+    /** PRIVATE HELPER METHODS **/
+    
     /**
      * Private helper method to get the taxon scope for a given term. 
      * Returns the set of taxons that this term is 'connected' to
@@ -270,8 +287,7 @@ public class SqlTermService implements TermService {
         return scope;
     }
     
-    /** PRIVATE HELPER METHODS **/
-    
+ 
     /** 
      *  Takes a list of taxons and returns their names in a comma-separated string. 
      *  This is different to the taxonNode.getAllChildrenNamesInSQLFormat() because the 
@@ -316,11 +332,6 @@ public class SqlTermService implements TermService {
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
     }
-    
-    
-    
-    
-    
    
     
 }
