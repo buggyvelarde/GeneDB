@@ -9,6 +9,7 @@ package org.genedb.jogra.drawing;
 
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.drawing.JograProgressBar.Position;
 import org.genedb.jogra.services.DatabaseLogin;
 import org.genedb.jogra.services.MessageService;
 import org.genedb.jogra.services.DatabaseLogin.AbortException;
@@ -375,10 +376,10 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
    
         DatabaseLogin dblogin = new DatabaseLogin();
         
-        dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
         dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
+        dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
         dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
-        dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds");
+        //dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds");
         
         try {
             dblogin.validateUser();
@@ -388,11 +389,12 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         } catch (AbortException exp) {
             System.exit(65);
         }
-
+        JograProgressBar jpb = new JograProgressBar("Loading Jogra...", Position.CENTRE); //Progress bar added for better user information
         Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword(), dblogin.getDBUrl());
         application.testTransactions();
         application.init();
         application.makeMain();
+        jpb.stop();
         application.showMain();
         if (args.length > 0) {
             application.newActivation(args);
