@@ -62,7 +62,7 @@ public class OrganismTree implements JograPlugin {
      */
     public JPanel getMainWindowPlugin(){
         final JPanel panel = new JPanel();
-        final JLabel label = new JLabel("Restrict products by organism");
+        final JLabel label = new JLabel("Restrict terms by organism");
         final JButton button = new JButton("Load organism tree");
         //When user clicks button, load a new frame with Jtree
         ActionListener actionListener = new ActionListener(){
@@ -121,7 +121,7 @@ public class OrganismTree implements JograPlugin {
                     TreePath tp[] = checkboxTree.getCheckingRoots();
                     for(TreePath p: tp){
                         userSelection.add(p.getLastPathComponent().toString());
-                        System.out.println("Added: " + p.getLastPathComponent().toString());
+                        logger.info("Added: " + p.getLastPathComponent().toString());
                     }
                     frame.setVisible(false); //Make frame disappear
                     //frame.dispose(); //Or should frame be disposed??
@@ -156,6 +156,7 @@ public class OrganismTree implements JograPlugin {
         List<TaxonNode> childrenList = taxonNode.getChildren();
         Vector childrenVector = new Vector();
         for(TaxonNode child : childrenList){
+
            if(child.isLeaf()){
                childrenVector.add(child.getLabel());
            }else{
