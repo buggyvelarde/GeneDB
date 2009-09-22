@@ -41,7 +41,7 @@ public class HomepageController {
     public static final String DUMMY_UNKNOWN = "XXX";
 
     private static String HOMEPAGE = "homepages/";
-    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "topPage";
+    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "frontPage";
     private static String DEFAULT_STYLE = "childListing"; // FIXME
 
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
