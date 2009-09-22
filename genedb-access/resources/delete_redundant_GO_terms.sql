@@ -31,7 +31,7 @@ and evidence_type.name = 'evidence'
 and evidence_type_cv.name = 'genedb_misc'
 and specific_evidence.type_id = evidence_type.cvterm_id
 and general_evidence.type_id = evidence_type.cvterm_id
-and specific.cvterm_id < general.cvterm_id
+and specific.cvterm_id <> general.cvterm_id
 and general_evidence.value in (
       'inferred from electronic annotation'
     , 'Inferred from Electronic Annotation'
