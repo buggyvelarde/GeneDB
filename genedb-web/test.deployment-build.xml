@@ -21,7 +21,7 @@
       <arg value="${host}"/>
       <arg value="${prefix}" />
       <![CDATA[
-        downloadAndGrep("${args[0]}/${args[1]}Homepage", "yoelii")
+        downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
         downloadAndGrep("${args[0]}/${args[1]}feature/PF07_0048", "Duffy")
     	//return 0
 
