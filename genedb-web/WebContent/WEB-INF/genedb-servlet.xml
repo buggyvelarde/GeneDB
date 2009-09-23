@@ -17,8 +17,9 @@
 
     <!-- ============================= VIEW RESOLVERS ============================= -->
 
+    <!--
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-        <property name="order" value="1" />
+        <property name="order" value="2" />
         <property name="mediaTypes">
             <map>
                 <entry key="xml" value="application/xml"/>
@@ -71,11 +72,12 @@
            </list>
        </property>
     </bean>
+    -->
 
     <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
         <property name="order" value="2" />
         <property name="prefixMap">
-            <map>
+            <map><!--
                 <entry key="xml">
                     <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
                         <property name="contentType" value="application/xml" />
@@ -85,16 +87,19 @@
                             </bean>
                         </property>
                     </bean>
-                </entry>
+                </entry> -->
+                <entry key="jsp" value-ref="checkingViewResolver" />
             </map>
         </property>
     </bean>
 
+<!--
     <bean id="viewResolver"
         class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
         <property name="basename" value="views" />
         <property name="order" value="3" />
     </bean>
+-->
 
     <bean id="checkingViewResolver"
         class="org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver"
@@ -118,12 +123,16 @@
         <property name="taxonNodeManager" ref="taxonNodeManager" />
         <!--  -->
     </bean>
-	
+    
+    	
 	<bean id="restController" 		class="org.genedb.web.mvc.controller.RestController" />
 	<bean id="servicesController" 	class="org.genedb.web.mvc.controller.services.ServicesController" />
-		
-	 
+	
 <!--
+    <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController">
+        <property name="queryFactory" ref="queryFactory" />
+    </bean>
+
     <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="sequenceDao" ref="sequenceDao"/>
@@ -289,6 +298,11 @@
       - This bean is a MultiActionController that manages general View rendering.
       - It uses the "clinicControllerResolver" bean below for method name resolution.
       -->
+
+    <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController" >
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="cvDao" ref="cvDao" />
+    </bean>
 
     <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
     </bean>
