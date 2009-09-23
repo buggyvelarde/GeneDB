@@ -2,20 +2,19 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<format:headerRound title="Category List" bodyClass="genePage">
-  <st:init />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
-
+<format:header title="Category List" />
+<format:page>
+<br>
 
 <c:url value="/Search" var="url">
 	<c:param name="organism" value="${organism}" />
 	<c:param name="category" value="${category}" />
 </c:url>
-<div id="geneResultsPanel"><format:genePageSection
+<div id="geneResultsPanel">
+<format:genePageSection
 	className="whiteBox">
 	<display:table name="results" id="row" pagesize="30"
-		requestURI="/BrowseCategory" class="simple" cellspacing="0"
+		requestURI="/category" class="simple" cellspacing="0"
 		cellpadding="4">
 		<display:column title="Category - ${category}">
 			<c:url value="${url}" var="final">
@@ -29,4 +28,4 @@
 	</display:table>
 </format:genePageSection></div>
 
-<format:footer />
+</format:page>
