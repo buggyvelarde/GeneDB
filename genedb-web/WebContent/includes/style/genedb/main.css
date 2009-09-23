@@ -12,7 +12,7 @@ html input {
 body {
 	font-family: Tahoma, Verdana;
 	font-size: 62.5%;
-	background: url(../image/body-bg.gif) repeat-y top center #999999;
+	background: url(../../image/body-bg.gif) repeat-y top center #999999;
 
 }
 
@@ -63,7 +63,7 @@ br {
 
 #navigation {
 	height: 37px;
-	background: url(../image/navigation-bg.gif) no-repeat;
+	background: url(../../image/navigation-bg.gif) no-repeat;
 }
 
 #navigation a {
@@ -131,7 +131,7 @@ br {
 
 #navigation .has-sub {
 	margin-right: 50px;
-	background: url(../image/nav-arrow-down.gif) right no-repeat;
+	background: url(../../image/nav-arrow-down.gif) right no-repeat;
 }
 
 #col-1-1 {
@@ -214,84 +214,84 @@ br {
 }
 
 .main-light-grey-top {
-	background: url(../image/main-bg-top-grey.gif);
+	background: url(../../image/main-bg-top-grey.gif);
 	height: 12px;
 	width: 604px;
 	overflow: hidden;
 }
 
 .main-light-grey-bot {
-	background: url(../image/main-bg-bottom-grey.gif);
+	background: url(../../image/main-bg-bottom-grey.gif);
 	height: 12px;
 	width: 604px;
 	overflow: hidden;
 }
 
 .main-grey-3-4-top {
-	background: url(../image/main-bg-top-grey-3-4.gif);
+	background: url(../../image/main-bg-top-grey-3-4.gif);
 	height: 12px;
 	width: 736px;
 	overflow: hidden;
 }
 
 .main-grey-3-4-bot {
-	background: url(../image/main-bg-bottom-grey-3-4.gif);
+	background: url(../../image/main-bg-bottom-grey-3-4.gif);
 	height: 12px;
 	width: 736px;
 	overflow: hidden;
 }
 
 .main-blue-3-4-top {
-	background: url(../image/main-bg-top-blue-3-4.gif);
+	background: url(../../image/main-bg-top-blue-3-4.gif);
 	height: 12px;
 	width: 170px;
 	overflow: hidden;
 }
 
 .main-blue-3-4-bot {
-	background: url(../image/main-bg-bottom-blue-3-4.gif);
+	background: url(../../image/main-bg-bottom-blue-3-4.gif);
 	height: 12px;
 	width: 170px;
 	overflow: hidden;
 }
 
 .main-blue-top {
-	background: url(../image/main-bg-top-blue.gif);
+	background: url(../../image/main-bg-top-blue.gif);
 	height: 12px;
 	width: 604px;
 	overflow: hidden;
 }
 
 .main-blue-bot {
-	background: url(../image/main-bg-bottom-blue.gif);
+	background: url(../../image/main-bg-bottom-blue.gif);
 	height: 12px;
 	width: 604px;
 	overflow: hidden;
 }
 
 .full-light-grey-top {
-	background: url(../image/full-bg-top-grey.gif);
+	background: url(../../image/full-bg-top-grey.gif);
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
 }
 
 .full-light-grey-bot {
-	background: url(../image/full-bg-bottom-grey.gif);
+	background: url(../../image/full-bg-bottom-grey.gif);
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
 }
 
 .full-blue-top {
-	background: url(../image/full-bg-top-blue.gif) 0 0 no-repeat;
+	background: url(../../image/full-bg-top-blue.gif) 0 0 no-repeat;
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
 }
 
 .full-blue-bot {
-	background: url(../image/full-bg-bottom-blue.gif) 0 0 no-repeat;
+	background: url(../../image/full-bg-bottom-blue.gif) 0 0 no-repeat;
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
@@ -318,14 +318,14 @@ br {
 }
 
 .baby-blue-top {
-	background: url(../image/content-bg-top-blue.gif);
+	background: url(../../image/content-bg-top-blue.gif);
 	height: 12px;
 	width: 292px;
 	overflow: hidden;
 }
 
 .baby-blue-bot {
-	background: url(../image/content-bg-bottom-blue.gif);
+	background: url(../../image/content-bg-bottom-blue.gif);
 	height: 12px;
 	width: 292px;
 	overflow: hidden;
@@ -352,28 +352,28 @@ br {
 }
 
 .light-grey-top {
-	background: url(../image/content-bg-top-grey.gif);
+	background: url(../../image/content-bg-top-grey.gif);
 	height: 12px;
 	width: 292px;
 	overflow: hidden;
 }
 
 .light-grey-bot {
-	background: url(../image/content-bg-bottom-grey.gif);
+	background: url(../../image/content-bg-bottom-grey.gif);
 	height: 12px;
 	width: 292px;
 	overflow: hidden;
 }
 
 .footer-top {
-	background: url(../image/footer-bg-top-grey.gif);
+	background: url(../../image/footer-bg-top-grey.gif);
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
 }
 
 .footer-bot {
-	background: url(../image/footer-bg-bottom-grey.gif);
+	background: url(../../image/footer-bg-bottom-grey.gif);
 	height: 12px;
 	width: 916px;
 	overflow: hidden;
