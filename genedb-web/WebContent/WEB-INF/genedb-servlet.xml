@@ -32,37 +32,37 @@
                     <property name="marshaller">
                        <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
                          <property name="autodetectAnnotations" value="true" />
-                         
-                         <!-- 
+    -->
+                         <!--
                          	GV1 possible way to rename BeanPropertyBindingResult to resultset,
-                         	currently not needed because using supportedClasses property (below) 
+                         	currently not needed because using supportedClasses property (below)
                          -->
                          <!-- <property name="aliases">
                          	<map>
                          		<entry key="resultset" value="org.springframework.validation.BeanPropertyBindingResult" />
                          	</map>
                          </property> -->
-                         
-                         <!-- 
-                         	GV1 this filters off all the BeanPropertyBindingResult and its 
-                         	standard properties... is there a better way to do this? 
-                         -->
+
+                         <!--
+                         	GV1 this filters off all the BeanPropertyBindingResult and its
+                         	standard properties... is there a better way to do this?
+                         --><!--
                          <property name="supportedClasses">
                          	<list>
-                         		<!-- see org.genedb.web.mvc.controller.RestController and org.genedb.web.mvc.controller.GmodRestControllerV1-->
-                         		<value>org.genedb.web.mvc.controller.BaseResult</value>
+                         		--><!-- see org.genedb.web.mvc.controller.RestController and org.genedb.web.mvc.controller.GmodRestControllerV1-->
+                         	<!--<value>org.genedb.web.mvc.controller.BaseResult</value>
                          		<value>org.genedb.web.mvc.controller.ErrorModel</value>
                          		<value>org.genedb.web.mvc.controller.FeatureStatus</value>
                          		<value>org.genedb.web.mvc.controller.OrganismSetResult</value>
                          		<value>org.genedb.web.mvc.controller.OrganismStatus</value>
                          		<value>org.genedb.web.mvc.controller.OrganismStatusList</value>
                          		<value>org.genedb.web.mvc.controller.ResultSet</value>
-                         		
+-->
                          		<!--<value>org.genedb.web.mvc.controller.OrganismResultSet</value>
                          		<value>org.genedb.web.mvc.controller.BaseResultSet</value>
                          		<value>org.genedb.web.mvc.controller.Organism</value>-->
-                         		
-                         		
+
+                         		<!--
                          	</list>
                          </property>
                        </bean>
@@ -123,11 +123,11 @@
         <property name="taxonNodeManager" ref="taxonNodeManager" />
         <!--  -->
     </bean>
-    
-    	
+
+
 	<bean id="restController" 		class="org.genedb.web.mvc.controller.RestController" />
 	<bean id="servicesController" 	class="org.genedb.web.mvc.controller.services.ServicesController" />
-	
+
 <!--
     <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController">
         <property name="queryFactory" ref="queryFactory" />
