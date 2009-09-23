@@ -38,7 +38,7 @@ window.onload=startList;
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Apicomplexan Protozoa" />
+<img src="<c:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Apicomplexan Protozoa" />
 <select>
 <option>Choose...</option>
 </select>
@@ -46,14 +46,14 @@ window.onload=startList;
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
+<img src="<c:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
 <select>
 <option>Choose...</option>
 </select>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
+<img src="<c:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
 <select>
 <option>Choose...</option>
 </select>
@@ -64,14 +64,14 @@ window.onload=startList;
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
+<img src="<c:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
 <select>
 <option>Choose...</option>
 </select>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
+<img src="<c:url value="/"/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
 <select>
 
 <option>Choose...</option>
@@ -79,7 +79,7 @@ window.onload=startList;
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
-<img src="<c:url value="/"/>/includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
+<img src="<c:url value="/"/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
 <select>
 <option>Choose...</option>
 </select>
