@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  *
  */
 @Controller
-@RequestMapping("/rest/")
+@RequestMapping("/service/")
 public class RestController {
 	
 	private static final Logger logger = Logger.getLogger(RestController.class);
@@ -59,12 +58,12 @@ public class RestController {
     @Qualifier("sequenceDao")
     SequenceDao sequenceDao;
 	
-	private final String viewName = "serviceView";
+	private final String viewName = "xml:";
 	
 	@RequestMapping(method=RequestMethod.GET, value={"/test", "/test.*"})
 	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
 	{
-		ModelAndView mav = new ModelAndView("rest");
+		ModelAndView mav = new ModelAndView(viewName);
 		mav.addObject("hello", "world");
 		return mav;
 	}
