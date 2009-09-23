@@ -70,6 +70,7 @@
         <listener-class>org.genedb.web.mvc.controller.ResultCacheSessionListener</listener-class>
     </listener>
 
+<!--
     <filter>
         <filter-name>UriSessionIdFilter</filter-name>
           <filter-class>org.genedb.web.filters.UriSessionIdFilter</filter-class>
@@ -78,7 +79,7 @@
         <filter-name>UriSessionIdFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+-->
 
 
     <servlet>
@@ -104,11 +105,15 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/category/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/Download/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/service/*</url-pattern>
+        <url-pattern>/feature/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
@@ -124,13 +129,13 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/feature/*</url-pattern>
-    </servlet-mapping>
-<!--    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/BrowseCategory</url-pattern>
+        <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+    <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/GoFeature</url-pattern>
     </servlet-mapping>
