@@ -12,7 +12,7 @@ public class PrefixViewResolver implements ViewResolver, Ordered {
 
     private Logger logger = Logger.getLogger(PrefixViewResolver.class);
 
-    private Map<String, View> prefixMap;
+    private Map<String, ViewResolver> prefixMap;
 
     private int order;
 
@@ -23,16 +23,17 @@ public class PrefixViewResolver implements ViewResolver, Ordered {
             return null;
         }
         String prefix = viewName.substring(0, index);
-        logger.trace("Prefix is '"+prefix+"'");
+        String suffix= viewName.substring(index+1);
+        logger.error("Prefix is '"+prefix+"'");
         if (prefixMap.containsKey(prefix)) {
-            View ret = prefixMap.get(prefix);
-            logger.trace(String.format("Returning view '%s'", ret));
-            return ret;
+            ViewResolver vr = prefixMap.get(prefix);
+            logger.error(String.format("Returning view '%s' to '%s'", suffix, vr));
+            return vr.resolveViewName(suffix, locale);
         }
         return null;
     }
 
-    public void setPrefixMap(Map<String, View> prefixMap) {
+    public void setPrefixMap(Map<String, ViewResolver> prefixMap) {
         this.prefixMap = prefixMap;
     }
 
