@@ -32,10 +32,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +56,7 @@ import javax.servlet.http.HttpSession;
  * @author Adrian Tivey (art)
  */
 @Controller
-@RequestMapping("/BrowseCategory")
+@RequestMapping("/category")
 public class BrowseCategoryController {
 
     private String formView;
@@ -82,6 +84,19 @@ public class BrowseCategoryController {
         model.addAttribute("browseCategory", bc);
         return formView;
     }
+
+    @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
+    public ModelAndView listCategory(HttpSession session,
+            @PathVariable BrowseCategory category,
+            @RequestParam("taxons") TaxonNode[] taxons,
+            Model model) {
+        BrowseCategoryController.BrowseCategoryBean bean = new BrowseCategoryBean();
+        bean.setCategory(category);
+        bean.setTaxons(taxons);
+
+        return setUpForm(bean, session, model);
+    }
+
 
     @RequestMapping(method = RequestMethod.GET, params = {"category","taxons"})
     public ModelAndView setUpForm(
@@ -135,36 +150,6 @@ public class BrowseCategoryController {
         return reference;
     }
 
-//    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
-//        BrowseCategoryBean bcb = (BrowseCategoryBean) command;
-//        String category = bcb.getCategory().toString();
-//        Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());
-//
-//        /* This is to include all the cvs starting with CC. In future when the other cvs have more terms in,
-//         * this can be removed and the other cvs starting with CC can be added to BrowseCategory
-//         */
-//        List<CountedName> results;
-//        if(category.equals("ControlledCuration")) {
-//            results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category, orgNames);
-//        } else {
-//            results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
-//        }
-//
-//        if (results .isEmpty()) {
-//            logger.info("result is null");
-//            be.reject("no.results");
-//            // FIXME return showForm(request, response, be);
-//        }
-//        logger.debug(results.get(0));
-//
-//        // Go to list results page
-//        ModelAndView mav = new ModelAndView(successView);
-//        mav.addObject("results", results);
-//        mav.addObject("category", category);
-//        mav.addObject("organism",bcb.getOrganism());
-//        return mav;
-//    }
-
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
@@ -194,5 +179,10 @@ public class BrowseCategoryController {
 
     public void setSuccessView(String successView) {
         this.successView = successView;
+    }
+
+
+    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
     }
 }
