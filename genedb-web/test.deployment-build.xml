@@ -27,7 +27,7 @@
         }
         catch (Exception exp) {
            System.err.println(exp)
-           System.exec("tail -50 /nfs/pathdb/genedb/ci-web/logs/catalina.out")
+           println "tail -50 /nfs/pathdb/genedb/ci-web/logs/catalina.out".execute().text
         }
         //return 0
 
