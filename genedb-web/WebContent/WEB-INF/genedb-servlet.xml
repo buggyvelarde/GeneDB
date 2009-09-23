@@ -89,6 +89,18 @@
                         <property name="marshaller">
                             <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
                                 <property name="autodetectAnnotations" value="true" />
+                                <property name="supportedClasses">
+        	                 		<list>
+                         				<!-- see org.genedb.web.mvc.controller.RestController and org.genedb.web.mvc.controller.GmodRestControllerV1 -->
+		                         		<value>org.genedb.web.mvc.controller.BaseResult</value>
+		                         		<value>org.genedb.web.mvc.controller.ErrorModel</value>
+		                         		<value>org.genedb.web.mvc.controller.FeatureStatus</value>
+		                         		<value>org.genedb.web.mvc.controller.OrganismSetResult</value>
+		                         		<value>org.genedb.web.mvc.controller.OrganismStatus</value>
+		                         		<value>org.genedb.web.mvc.controller.OrganismStatusList</value>
+		                         		<value>org.genedb.web.mvc.controller.ResultSet</value>
+                         			</list>
+                         		</property>
                             </bean>
                         </property>
                     </bean>
