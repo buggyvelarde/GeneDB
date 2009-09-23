@@ -57,9 +57,11 @@
                          		<value>org.genedb.web.mvc.controller.OrganismStatusList</value>
                          		<value>org.genedb.web.mvc.controller.ResultSet</value>
                          		
-                         		<value>org.genedb.web.mvc.controller.OrganismResultSet</value>
+                         		<!--<value>org.genedb.web.mvc.controller.OrganismResultSet</value>
                          		<value>org.genedb.web.mvc.controller.BaseResultSet</value>
-                         		<value>org.genedb.web.mvc.controller.Organism</value>
+                         		<value>org.genedb.web.mvc.controller.Organism</value>-->
+                         		
+                         		
                          	</list>
                          </property>
                        </bean>
