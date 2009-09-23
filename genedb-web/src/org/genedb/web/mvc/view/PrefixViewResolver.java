@@ -39,8 +39,8 @@ public class PrefixViewResolver implements ViewResolver, Ordered {
             return vr.resolveViewName(suffix, locale);
         }
         if (viewMap.containsKey(prefix)) {
-            View view = null;//new View();
-            //logger.error(String.format("Returning view '%s' to '%s'", suffix, vr));
+            View view = viewMap.get(prefix);
+            logger.trace(String.format("Returning view of type '%s'", view.getClass()));
             return view;
         }
         return null;
