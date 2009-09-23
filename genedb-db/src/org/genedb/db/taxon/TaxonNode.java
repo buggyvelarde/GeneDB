@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class TaxonNode implements Serializable {
 
-	private transient Logger logger = Logger.getLogger(TaxonNode.class);
+	private static final Logger logger = Logger.getLogger(TaxonNode.class);
 
     private String taxonId;
     transient private TaxonNode parent;
@@ -49,14 +49,12 @@ public class TaxonNode implements Serializable {
                                                                 // orgs later
 
         Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
-        // System.err.println("Looking at '"+shortName+"'");
         if (pos != null && pos.size() > 0) {
             if (pos.size() > 1) {
-                System.err.println("We have too many PhylonodeOrganisms");
+                logger.error("We have too many PhylonodeOrganisms");
             } else {
                 Organism org = pos.iterator().next().getOrganism();
                 organism = true;
-                // System.err.println("Found organism for '"+shortName+"'");
                 // TODO What organism props do we want?
 
                 this.taxonId = org.getPropertyValue("genedb_misc", "taxonId");
@@ -76,10 +74,8 @@ public class TaxonNode implements Serializable {
                 populated = org.isPopulated();
                 String fullName = org.getGenus() + ' ' + org.getSpecies();
                 names.put(TaxonNameType.FULL, fullName);
-
             }
         }
-
     }
 
     public boolean isRoot() {
@@ -203,17 +199,13 @@ public class TaxonNode implements Serializable {
 	}
 
 	public void setChildrenPopulated(boolean childrenPopulated) {
-		logger.error("I'm called : "+toString());
+		logger.trace("setChildrenPopulated called : " + toString());
 		if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
-			logger.error("Trying to call on parent");
+			logger.trace("Trying to call on parent");
 			getParent().setChildrenPopulated(true);
 		} else {
-			logger.error("Not calling on parent");
+			logger.trace("Not calling on parent");
 		}
 		this.childrenPopulated = childrenPopulated;
 	}
-
-//    public void setHasOrganismFeature(boolean hasOrganismFeature) {
-//        this.hasOrganismFeature = hasOrganismFeature;
-//    }
 }
