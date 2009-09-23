@@ -21,9 +21,15 @@
       <arg value="${host}"/>
       <arg value="${prefix}" />
       <![CDATA[
-        downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
-        downloadAndGrep("${args[0]}/${args[1]}feature/PF07_0048", "Duffy")
-    	//return 0
+        try {
+            downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
+            downloadAndGrep("${args[0]}/${args[1]}feature/PF07_0048", "Duffy")
+        }
+        catch (Exception exp) {
+           System.err.println(exp)
+           System.exec("tail -50 /nfs/pathdb/genedb/ci-web/logs/catalina.out")
+        }
+        //return 0
 
         def downloadAndGrep(address, searchPattern) {
           if (!(new URL(address).getText() =~ searchPattern)) {
