@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class TaxonNode implements Serializable {
 
-	private static final Logger logger = Logger.getLogger(TaxonNode.class);
+    private static final Logger logger = Logger.getLogger(TaxonNode.class);
 
     private String taxonId;
     transient private TaxonNode parent;
@@ -194,18 +194,18 @@ public class TaxonNode implements Serializable {
         return populated;
     }
 
-	public boolean isChildrenPopulated() {
-		return childrenPopulated;
-	}
+    public boolean isChildrenPopulated() {
+        return childrenPopulated;
+    }
 
-	public void setChildrenPopulated(boolean childrenPopulated) {
-		logger.trace("setChildrenPopulated called : " + toString());
-		if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
-			logger.trace("Trying to call on parent");
-			getParent().setChildrenPopulated(true);
-		} else {
-			logger.trace("Not calling on parent");
-		}
-		this.childrenPopulated = childrenPopulated;
-	}
+    public void setChildrenPopulated(boolean childrenPopulated) {
+        logger.trace("setChildrenPopulated called : " + toString());
+        if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
+            logger.trace("Trying to call on parent");
+            getParent().setChildrenPopulated(true);
+        } else {
+            logger.trace("Not calling on parent");
+        }
+        this.childrenPopulated = childrenPopulated;
+    }
 }
