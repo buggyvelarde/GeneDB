@@ -76,8 +76,13 @@
 
     <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
         <property name="order" value="2" />
-        <property name="prefixMap">
-            <map><!--
+        <property name="viewResolverMap">
+            <map>
+                <entry key="jsp" value-ref="checkingViewResolver" />
+            </map>
+        </property>
+        <property name="viewMap">
+            <map>
                 <entry key="xml">
                     <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
                         <property name="contentType" value="application/xml" />
@@ -87,8 +92,7 @@
                             </bean>
                         </property>
                     </bean>
-                </entry> -->
-                <entry key="jsp" value-ref="checkingViewResolver" />
+                </entry>
             </map>
         </property>
     </bean>
