@@ -6,6 +6,7 @@ import org.genedb.web.mvc.controller.WebConstants;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,11 +29,11 @@ public class ResultsNavigatorController {
         this.resultsCacheFactory = resultsCacheFactory;
     }
 
-    @RequestMapping(method = RequestMethod.GET )
+    @RequestMapping(method = RequestMethod.GET, value="/{key}" )
     public ModelAndView navigate(
             HttpSession session,
             @RequestParam(value="index") int index,
-            @RequestParam(value="key") String key//,
+            @PathVariable(value="key") String key//,
             //@RequestParam(value="taxonNodeName", required=false) String taxonNodeName
             ) {
 
@@ -72,7 +73,7 @@ public class ResultsNavigatorController {
 //            ret.addObject("taxonNodeName", taxonNodeName);
 //        }
         String uniqueName = results.get(checkedIndex).getSystematicId();
-        ret.setViewName("redirect:/NamedFeature?name="+uniqueName);
+        ret.setViewName("redirect:/feature/"+uniqueName);
         return ret;
     }
 

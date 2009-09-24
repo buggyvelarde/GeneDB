@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,9 +61,9 @@ public class ResultsController {
         return "redirect:/QueryList";
     }
 
-    @RequestMapping(method = {RequestMethod.GET} , params= "key")
+    @RequestMapping(method = {RequestMethod.GET} , value="/{key}")
     public String setUpForm(
-            @RequestParam(value="key") String key,
+            @PathVariable(value="key") String key,
             @RequestParam(value="taxonNodeName", required=false) String taxonNodeName,
             ServletRequest request,
             HttpSession session,

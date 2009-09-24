@@ -14,15 +14,14 @@
 <format:genePageSection
 	className="whiteBox">
 	<display:table name="results" id="row" pagesize="30"
-		requestURI="/category" class="simple" cellspacing="0"
+		requestURI="/category/${category}" class="simple" cellspacing="0"
 		cellpadding="4">
 		<display:column title="Category - ${category}">
 			<c:url value="${url}" var="final">
 				<c:param name="term" value="${row.name}" />
 			</c:url>
-			<a
-				href="<c:url value="/Query"><c:param name="q" value="controlledCuration" /><c:param name="cvTermName" value="${row.name}" /><c:param name="taxons" value="${taxons}" /><c:param name="cv" value="${category}"/></c:url>"><c:out
-				value="${row.name}" /></a>
+			<a href="<c:url value="/Query/controlledCuration">"><c:param name="cvTermName" value="${row.name}" /><c:param name="taxons" value="${taxons}" /><c:param name="cv" value="${category}"/></c:url>">
+				<c:out value="${row.name}" /></a>
 		</display:column>
 		<display:column property="count" title="Count" />
 	</display:table>
