@@ -129,6 +129,18 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/Query/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Results/*</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ResultsNavigator/*</url-pattern>
+     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -254,14 +266,6 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ContextMapWindow</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/ResultsNavigator</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/Results</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
