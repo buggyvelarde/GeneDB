@@ -14,8 +14,14 @@
         <fileset dir="${imported.basedir.Jogra}/lib">
             <include name="*.jar" />
         </fileset>
+         <fileset dir="${imported.basedir.Jogra}/images">
+            <include name="*.png" />
+            <include name="*.gif" />
+            <include name="*.jpg" />
+        </fileset>
         <pathelement location="${genedb-db.jar}" />
         <pathelement location="${java.home}/lib/javaws.jar" />
+       
     </path>
 	
 	<!-- Need to make the util jar file known as cvDao is being used -->
@@ -72,19 +78,44 @@
 		
 	<!-- Create a jar -->
 	
-	 <target name="Jogra-fulljar" depends="Jogra-compile"
-	        description="Create an unsigned JAR">
-	        <pathconvert property="classpath-for-manifest" pathsep=" "
-	            refid="Jogra-classpath" />
-	        <jar-target project="Jogra">
+	 <target name="Jogra-fulljar" depends="Jogra-compile" description="Create an unsigned JAR">
+	        <pathconvert property="classpath-for-manifest" pathsep=" " refid="Jogra-classpath" />
+	        <jar-target project="Jogra" >
+                <fileset dir="${imported.basedir.Jogra}/images">
+                   <include name="*.*" />
+                </fileset>
 	            <manifest>
 	                <attribute name="Implementation-Title" value="Jogra" />
 	                <attribute name="Implementation-Version" value="${version}" />
 	                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
 	                <attribute name="Class-Path" value="${classpath-for-manifest}" />        <!-- "resources.jar" --> 
 	            </manifest>
+            
 	        </jar-target>
 	    </target>
+     
+     <!--  target name="create-jar" depends="Jogra-compile" description="Create an unsigned JAR">
+     <jar
+             destfile="${Jogra.jar}"
+             basedir="${imported.basedir.Jogra}"
+             includes="${genedb-db.jar} {java.home}/lib/javaws.jar">
+            <fileset dir="${imported.basedir.Jogra}/lib">
+               <include name="*.jar" />
+            </fileset>
+            <fileset dir="${imported.basedir.Jogra}/images">
+               <include name="*.png" />
+               <include name="*.gif" />
+               <include name="*.jpg" />
+            </fileset>
+            <manifest>
+                 <attribute name="Implementation-Title" value="Jogra" />
+                 <attribute name="Implementation-Version" value="${version}" />
+                 <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
+                 <attribute name="Class-Path" value="${classpath-for-manifest}" />       
+             </manifest>
+      </jar>
+          
+     </target -->
 	
 	
 	<!-- Sign jar created above -->
