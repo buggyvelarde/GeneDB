@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +34,9 @@ public class PrefixViewResolver implements ViewResolver, Ordered {
             suffix= viewName.substring(index+1);
         }
         logger.error("Prefix is '"+prefix+"'");
+        if ("redirect".equals(prefix)) {
+            return new RedirectView(suffix, true);
+        }
         if (viewResolverMap.containsKey(prefix)) {
             ViewResolver vr = viewResolverMap.get(prefix);
             logger.error(String.format("Returning view '%s' to '%s'", suffix, vr));

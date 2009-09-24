@@ -136,7 +136,7 @@ public class BrowseCategoryController {
         logger.debug(results.get(0));
 
         // Go to list results page
-        ModelAndView mav = new ModelAndView(successView);
+        ModelAndView mav = new ModelAndView("jsp:list/categories");
         mav.addObject("results", results);
         mav.addObject("category", bean.getCategory());
         mav.addObject("taxons", orgName);
