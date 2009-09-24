@@ -105,6 +105,9 @@
                         </property>
                     </bean>
                 </entry>
+                <entry key="service">
+                	<bean class="org.genedb.web.mvc.view.ServiceView" />
+                </entry>
             </map>
         </property>
     </bean>
