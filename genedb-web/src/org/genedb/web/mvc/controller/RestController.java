@@ -20,6 +20,7 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.DateAndTypeQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
 import org.genedb.querying.tmpquery.DateQuery;
+import org.genedb.web.mvc.view.ServiceView;
 import org.gmod.schema.mapped.Organism;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,13 +59,13 @@ public class RestController {
     @Qualifier("sequenceDao")
     SequenceDao sequenceDao;
 	
-	private final String viewName = "xml:";
+	private final String viewName = "service:";
 	
 	@RequestMapping(method=RequestMethod.GET, value={"/test", "/test.*"})
 	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView mav = new ModelAndView(viewName);
-		mav.addObject("hello", "world");
+		mav.addObject(ServiceView.SERVICE_ROOT, "world");
 		return mav;
 	}
 	
@@ -124,24 +125,18 @@ public class RestController {
 			}
 			
 			String taxonomyID = taxon.getTaxonId();
-			String extension = getExtension(request);
-			String url = "http://" + request.getServerName() + ":8080/rest/genome/changes"+ extension + "?taxonomyID=" + taxonomyID;
-			
-			if ((since!= null) && (since.length() > 0))
-				url += "&since=" + since ;
 			
 			OrganismStatus os = new OrganismStatus();
 			os.features_changed = Integer.parseInt(results.get(0).toString());
 			os.name = taxon.getName(TaxonNameType.FULL);
 			os.taxonomyID = taxonomyID;
-			os.url = url;
 			
 			oList.addOrganism(os);
 			
 		}
 		
     	ModelAndView mav = new ModelAndView(viewName);
-    	mav.addObject(rs);
+    	mav.addObject(ServiceView.SERVICE_ROOT, rs);
         return mav;
     }
     
@@ -154,7 +149,7 @@ public class RestController {
      * @return
      */
     @SuppressWarnings("unchecked")
-	@RequestMapping("/genome/changes")
+    @RequestMapping(method=RequestMethod.GET, value={"/genome/changes", "/genome/changes.*"})
     public ModelAndView genomeStatusByTaxonomyID( 
     		HttpServletRequest request, 
             HttpServletResponse response) 
@@ -213,7 +208,7 @@ public class RestController {
 		
 		
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(rs);
+        mav.addObject(ServiceView.SERVICE_ROOT, rs);
         return mav;
     }
 	
@@ -308,24 +303,7 @@ public class RestController {
 		return sinceDate;
 	}
     
-    /**
-     * Generates and appropriate extension based on the existing http request.
-     * 
-     * @param request
-     * @return
-     */
-    private String getExtension(HttpServletRequest request)
-    {
-    	String extension = "";
-		if (request.getRequestURI().contains(".json"))
-		{
-			extension = ".json";
-		} else if (request.getRequestURI().contains(".xml"))
-		{
-			extension = ".xml";
-		}
-		return extension;
-    }
+    
 	
 }
 
@@ -422,9 +400,9 @@ class OrganismStatus extends BaseResult
 	@XStreamAsAttribute
 	public int features_changed;
 	
-	@XStreamAlias("url")
-	@XStreamAsAttribute
-	public String url;
+	//@XStreamAlias("url")
+	//@XStreamAsAttribute
+	//public String url;
 	
 	@XStreamAlias("taxonomyID")
 	@XStreamAsAttribute
