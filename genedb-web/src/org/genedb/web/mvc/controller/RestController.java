@@ -20,7 +20,6 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.DateAndTypeQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
 import org.genedb.querying.tmpquery.DateQuery;
-import org.genedb.web.mvc.view.ServiceView;
 import org.gmod.schema.mapped.Organism;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,7 +64,7 @@ public class RestController {
 	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView mav = new ModelAndView(viewName);
-		mav.addObject(ServiceView.SERVICE_ROOT, "world");
+		mav.addObject("hello", "world");
 		return mav;
 	}
 	
@@ -136,7 +135,7 @@ public class RestController {
 		}
 		
     	ModelAndView mav = new ModelAndView(viewName);
-    	mav.addObject(ServiceView.SERVICE_ROOT, rs);
+    	mav.addObject(rs);
         return mav;
     }
     
@@ -208,7 +207,7 @@ public class RestController {
 		
 		
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(ServiceView.SERVICE_ROOT, rs);
+        mav.addObject(rs);
         return mav;
     }
 	

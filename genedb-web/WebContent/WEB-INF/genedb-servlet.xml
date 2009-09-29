@@ -73,7 +73,12 @@
        </property>
     </bean>
     -->
-
+	<bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
+		<property name="order" value="1" />
+		<property name="serviceView">
+			<bean class="org.genedb.web.mvc.view.ServiceView" />
+		</property>
+	</bean>
     <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
         <property name="order" value="2" />
         <property name="viewResolverMap">
@@ -105,10 +110,10 @@
                         </property>
                     </bean>
                 </entry>
-                <entry key="service">
+                <!--<entry key="service">
                 	<bean class="org.genedb.web.mvc.view.ServiceView" />
                 </entry>
-            </map>
+            --></map>
         </property>
     </bean>
 
