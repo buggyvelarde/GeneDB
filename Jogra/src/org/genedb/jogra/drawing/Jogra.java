@@ -55,7 +55,7 @@ import javax.swing.border.Border;
 
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
 
-    private static int TIMER_DELAY = 10*1000;
+    public static int TIMER_DELAY = 10*1000;
     private static final Logger logger = Logger.getLogger(Jogra.class);
     private Map<String, JograPlugin> pluginMap;
     private SingleInstanceService sis;
