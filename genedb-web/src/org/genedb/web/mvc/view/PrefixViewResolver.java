@@ -33,13 +33,13 @@ public class PrefixViewResolver implements ViewResolver, Ordered {
         if (index < viewName.length() ) {
             suffix= viewName.substring(index+1);
         }
-        logger.error("Prefix is '"+prefix+"'");
+        logger.trace("Prefix is '"+prefix+"'");
         if ("redirect".equals(prefix)) {
             return new RedirectView(suffix, true);
         }
         if (viewResolverMap.containsKey(prefix)) {
             ViewResolver vr = viewResolverMap.get(prefix);
-            logger.error(String.format("Returning view '%s' to '%s'", suffix, vr));
+            logger.trace(String.format("Returning view '%s' to '%s'", suffix, vr));
             return vr.resolveViewName(suffix, locale);
         }
         if (viewMap.containsKey(prefix)) {
