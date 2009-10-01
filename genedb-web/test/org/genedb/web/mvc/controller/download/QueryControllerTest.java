@@ -103,7 +103,7 @@ public class QueryControllerTest {
 				session.getAttribute(WebConstants.FLASH_MSG));
 
 		//Check for correct view
-		Assert.assertEquals("Wrong view returned.", "redirect:/NamedFeature?name="+results.get(0), view);
+		Assert.assertEquals("Wrong view returned.", "redirect:/feature?name="+results.get(0), view);
 
 	}
 
