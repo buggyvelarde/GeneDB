@@ -39,9 +39,9 @@ class LoadGeneDbCv {
         db = Sql.newInstance(
             'jdbc:postgresql://pgsrv2:5432/pathdev',
             'rn2@sanger.ac.uk',
-            'xxxxx',
+            'xxxxxxx',
             'org.postgresql.Driver')
-            
+
 
          cvDataSet = db.dataSet("cv")
 
@@ -95,18 +95,18 @@ class LoadGeneDbCv {
 
             case 'term':
                 checkAttributeExists(node, "description")
-				
+
 				System.out.println("encountered term ->"+node.'@name');
-								
+
                 int newDbXRef = createDbXRef(node)
                 int newCvTerm=-1;
                 if(newDbXRef!=-1){
-                
+
                 newCvTerm = createCvTerm(node, newDbXRef)
                 }else{
-                	System.out.println("insertion failed at dbxref for "+node.'@name');	
+                	System.out.println("insertion failed at dbxref for "+node.'@name');
                 }
-                if(newDbXRef!=-1 && newCvTerm!=-1){                
+                if(newDbXRef!=-1 && newCvTerm!=-1){
 				System.out.println("Successfully inserted new cvterm ->"+node.'@name');
 				if (nestedCvTerm > 0) {
                     // Create feature relationship
@@ -143,7 +143,7 @@ class LoadGeneDbCv {
     int createDbXRef(def node) {
         String name = node.'@name';
         String description = node.'@description';
-                
+
         if (writeBack) {
             try {
                 dbXRefDataSet.add(
@@ -160,7 +160,7 @@ class LoadGeneDbCv {
         }
         int id = db.rows("SELECT dbxref_id from dbxref where description='"+description+"' and accession='"+description+"' and db_id="+currentDb)[0]["dbxref_id"];
         return id;
-        
+
     }
 
 
@@ -340,7 +340,7 @@ class LoadGeneDbCv {
                 </term>
             </term>
 
-            
+
             <term name="misc_application" description="Applications we couldn't think of where else to put">
                 <term name="RepeatMasker" description="Mask repeats ge for blasting" />
             </term>
@@ -369,11 +369,11 @@ class LoadGeneDbCv {
         <term name="GPI_anchor_cleavage_site_property" description="A property of a GPI_anchor_cleavage_site feature">
             <term name="GPI_cleavage_site_score" description="The score assigned to this GPI cleavage site by dgpi"/>
         </term>
-        
+
         <term name="HTH_property" description="A property of a helix-turn-helix motif">
         	<term name="Maximum_score_at" description="Maximum score in a helix turn helix hit"/> <!-- Get proper description -->
         	<term name="Standard_deviations" description="Standard deviations"/> <!-- Get proper description -->
-        	
+
         </term>
 
         <term name="feature_cvterm_props" description="Keys for storing information specifically for FeatureCvTermProps">
@@ -407,6 +407,7 @@ class LoadGeneDbCv {
             <term name="mitochondrialTranslationTable" description="Translation table used for mitochondrial DNA" />
             <term name="translationTable" description="Translation table" />
             <term name="app_www_homePage" description="Style of homepage wanted, if any" />
+            <term name="app_www_homePage_mainDescription" description="Main section of homepage text" />
             <term name="htmlShortName" description="The short name in HTML format" />
             <term name="htmlFullName" description="The full name in HTML format" />
             <term name="populated" description="This property is set on organisms that are populated with data"/>
