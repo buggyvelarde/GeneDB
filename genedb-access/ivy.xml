@@ -14,7 +14,7 @@
 -->
       <!-- The Hibernate Search package in the Spring repository hasn't been updated yet. So we include it, and a couple
       of dependencies explicitly. -->
-       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.1.GA" />
+      <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.1.1.GA"/>
 <!--
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
       <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
