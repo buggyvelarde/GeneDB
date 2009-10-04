@@ -10,6 +10,7 @@ import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.OrganismProp;
 import org.gmod.schema.mapped.Phylonode;
 import org.gmod.schema.mapped.PhylonodeOrganism;
+import org.gmod.schema.mapped.PhylonodeProp;
 
 import org.apache.log4j.Logger;
 
@@ -22,13 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 /**
  * @author art
  *
  */
 public class TaxonNode implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(TaxonNode.class);
+	private transient Logger logger = Logger.getLogger(TaxonNode.class);
 
     private String taxonId;
     transient private TaxonNode parent;
@@ -38,7 +41,7 @@ public class TaxonNode implements Serializable {
     private boolean organism = false;
     private boolean populated = false;
     private boolean childrenPopulated = false;
-    private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>();
+    private Map<String, String> appDetails = Maps.newHashMap();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
 
     public TaxonNode(Phylonode phylonode) {
@@ -49,6 +52,7 @@ public class TaxonNode implements Serializable {
                                                                 // orgs later
 
         Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
+        // System.err.println("Looking at '"+shortName+"'");
         if (pos != null && pos.size() > 0) {
             if (pos.size() > 1) {
                 logger.error("We have too many PhylonodeOrganisms");
@@ -74,6 +78,10 @@ public class TaxonNode implements Serializable {
                 populated = org.isPopulated();
                 String fullName = org.getGenus() + ' ' + org.getSpecies();
                 names.put(TaxonNameType.FULL, fullName);
+
+                for (PhylonodeProp phylonodeProp : phylonode.getPhylonodeProps()) {
+                	appDetails.put(phylonodeProp.getType().getName(), phylonodeProp.getValue());
+                }
             }
         }
     }
@@ -123,11 +131,8 @@ public class TaxonNode implements Serializable {
         return webLinkable;
     }
 
-    public Map<String, Object> getAppDetails(String key) {
-        if (appDetails.containsKey(key)) {
-            return Collections.unmodifiableMap(appDetails.get(key));
-        }
-        return Collections.emptyMap();
+    public Map<String, String> getAppDetails() {
+    	return Collections.unmodifiableMap(appDetails);
     }
 
     public List<String> getAllChildrenNames() {
@@ -194,18 +199,18 @@ public class TaxonNode implements Serializable {
         return populated;
     }
 
-    public boolean isChildrenPopulated() {
-        return childrenPopulated;
-    }
+	public boolean isChildrenPopulated() {
+		return childrenPopulated;
+	}
 
-    public void setChildrenPopulated(boolean childrenPopulated) {
-        logger.trace("setChildrenPopulated called : " + toString());
-        if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
-            logger.trace("Trying to call on parent");
-            getParent().setChildrenPopulated(true);
-        } else {
-            logger.trace("Not calling on parent");
-        }
-        this.childrenPopulated = childrenPopulated;
-    }
+	public void setChildrenPopulated(boolean childrenPopulated) {
+		if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
+			logger.trace("Trying to call on parent from child");
+			getParent().setChildrenPopulated(true);
+		} else {
+			logger.trace("Not calling on parent from child");
+		}
+		this.childrenPopulated = childrenPopulated;
+	}
+
 }
