@@ -24,14 +24,9 @@ import org.genedb.db.dao.PhylogenyDao;
 
 import org.gmod.schema.mapped.Phylonode;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +40,6 @@ import java.util.Set;
 public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
-    private SessionFactory sessionFactory;
 
 
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -221,10 +215,6 @@ public class TaxonNodeManager implements InitializingBean {
         this.phylogenyDao = phylogenyDao;
     }
 
-    @Required
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public List<String> getNamesListForTaxons(TaxonNode[] taxons) {
         if (taxons == null || taxons.length == 0) {
