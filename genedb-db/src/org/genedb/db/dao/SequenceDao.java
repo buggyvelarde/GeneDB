@@ -137,7 +137,7 @@ public class SequenceDao extends BaseDao {
 
         return features.get(0);
     }
-    
+
     /**
      * Get the feature with the specified unique name patter and type, from the
      * specified organism.
@@ -694,7 +694,7 @@ public class SequenceDao extends BaseDao {
         }
 
         String nameToUse;
-        for (int n=1; featureExists(nameToUse = String.format("%s:%d", uniqueName, n)); n++);
+        for (int n=1; featureExists(nameToUse = String.format("%s:%d", uniqueName, n)); n++)
         logger.debug(String.format("Feature '%s' will be named '%s'", uniqueName, nameToUse));
         return nameToUse;
     }
@@ -856,7 +856,7 @@ public class SequenceDao extends BaseDao {
     private CvTerm signalPeptideType;
     private CvTerm cleavageSiteProbabilityType;
     public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
-	
+
 	return createSignalPeptide(polypeptide, loc, probability, null);
     }
 
@@ -879,35 +879,34 @@ public class SequenceDao extends BaseDao {
 	// Add analysisfeature
 	if (analysis != null) {
 	    signalPeptide.createAnalysisFeature(analysis);
-	} 
-	else {
-            throw new RuntimeException("Could not create analysisfeature because analysis object is null");
+	} else {
+	    throw new RuntimeException("Could not create analysisfeature because analysis object is null");
 	}
         return signalPeptide;
     }
-    
+
     //Helix-turn-helix 22.6.2009 NDS
-    
+
     private CvTerm helixTurnHelixType;
     private CvTerm maxScoreAtCvTerm;
     private CvTerm stdDeviationsCvTerm;
-    
+
     public HelixTurnHelix createHelixTurnHelix(Polypeptide polypeptide, int start, int end, String score, int maxScoreAt, String stdDeviations, Analysis analysis) {
-        
+
         if (helixTurnHelixType == null) {
-            /* Looks for the cvterm where the dxref_id corresponds to a dbxref record 
+            /* Looks for the cvterm where the dxref_id corresponds to a dbxref record
              * whose accession is 0001081 and the database is 'SO' */
             helixTurnHelixType = cvDao.getCvTermByDbAcc("SO", "0001081");
             helixTurnHelixType.getCvTermId();
         }
-        
+
         String uniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
-        HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/); 
-        
+        HelixTurnHelix helixTurnHelix = new HelixTurnHelix(polypeptide.getOrganism(), helixTurnHelixType, uniqueName, true /*analysis*/, false /*obsolete*/);
+
         /* Add featureloc */
-        FeatureLoc hthLoc = new FeatureLoc(polypeptide /*sourcefeature*/, helixTurnHelix, start /*fmin*/, end /*fmax*/, 0 /*strand*/, null /*phase*/, 0 /*rank*/); 
+        FeatureLoc hthLoc = new FeatureLoc(polypeptide /*sourcefeature*/, helixTurnHelix, start /*fmin*/, end /*fmax*/, 0 /*strand*/, null /*phase*/, 0 /*rank*/);
         helixTurnHelix.addFeatureLoc(hthLoc);
-               
+
         /* Add feature properties */
         helixTurnHelix.addFeatureProp(new Integer(maxScoreAt).toString(), "genedb_misc", "Maximum_score_at", 0 /*rank*/);
         helixTurnHelix.addFeatureProp(stdDeviations, "genedb_misc", "Standard_deviations", 0 /*rank*/);
@@ -920,7 +919,7 @@ public class SequenceDao extends BaseDao {
         }
         return helixTurnHelix;
     }
-    
+
 
     private CvTerm gpiAnchoredType;
     private CvTerm gpiAnchorCleavageSiteType;
@@ -1067,23 +1066,23 @@ public class SequenceDao extends BaseDao {
      *
      * @param sourceFeature
      */
-  
-       
+
+
     public void deleteFeatureLocsOn(Feature sourceFeature){
         logger.info(String.format("Deleting all the feature locs pointing at '%s' (ID=%d)",
                 sourceFeature.getUniqueName(), sourceFeature.getFeatureId()));
-        
+
         int numberOfRowsDeleted = getSession().createSQLQuery(
             " delete from featureloc where srcfeature_id= ? ;")
             .setInteger(0, sourceFeature.getFeatureId())
             .executeUpdate();
-        
+
         logger.info(String.format("Deleted %d featurelocs pointing to '%s'",
                 numberOfRowsDeleted, sourceFeature.getUniqueName()));
-        
+
     }
-        
-    
+
+
 
     /* Invoked by Spring */
     public void setCvDao(CvDao cvDao) {
