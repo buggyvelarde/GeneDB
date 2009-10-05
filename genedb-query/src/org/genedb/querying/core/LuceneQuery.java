@@ -98,6 +98,7 @@ public abstract class LuceneQuery implements Query {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List getResults() throws QueryException {
         List names = new ArrayList();
         try {
