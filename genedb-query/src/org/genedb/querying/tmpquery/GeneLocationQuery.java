@@ -1,11 +1,8 @@
 package org.genedb.querying.tmpquery;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
-//import org.hibernate.validator.NotEmpty;
+
 import org.springframework.validation.Errors;
 
 @QueryClass(
