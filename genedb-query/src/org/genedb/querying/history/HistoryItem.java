@@ -2,10 +2,11 @@ package org.genedb.querying.history;
 
 import org.genedb.querying.core.Query;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryItem {
+public class HistoryItem implements Serializable {
 
     private String name;
 
