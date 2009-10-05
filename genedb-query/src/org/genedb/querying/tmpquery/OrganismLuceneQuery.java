@@ -21,19 +21,20 @@ import java.util.List;
 public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQuery {
 
     private static final long serialVersionUID = -1581819678507010911L;
+
     protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
     protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
     protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
     protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
-    
+
     protected static final TermQuery mRNAQuery = new TermQuery(new Term("type.name", "mRNA"));
     protected static final TermQuery pseudogenicTranscriptQuery = new TermQuery(new Term("type.name","pseudogenic_transcript"));
     protected static final BooleanQuery productiveTranscriptQuery = new BooleanQuery();
-    
+
     static {
         geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
         geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
-        
+
         productiveTranscriptQuery.add(mRNAQuery, Occur.SHOULD);
         productiveTranscriptQuery.add(pseudogenicTranscriptQuery, Occur.SHOULD);
     }
@@ -105,7 +106,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     protected void extraValidation(Errors errors) {
         // Deliberately empty
     }
-    
+
     /**
      * Replace all lucene reserved characters by escaping them
      * @param searchText
