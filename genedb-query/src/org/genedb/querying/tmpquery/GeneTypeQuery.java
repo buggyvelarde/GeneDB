@@ -31,9 +31,7 @@ public class GeneTypeQuery extends OrganismLuceneQuery {
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-        queries.add(
-                new TermQuery(
-                        new Term("type.name", type)));
+        queries.add(new TermQuery(new Term("type.name", type)));
     }
 
     @Override
