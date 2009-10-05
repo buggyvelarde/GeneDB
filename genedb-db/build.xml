@@ -260,7 +260,7 @@
     </target>
 
     <target name="check.db-lib-uptodate" depends="init-db" if="db.ivy-timestamp-exists">
-      <uptodate property="db.lib-uptodate" srcfile="ivy.xml" targetfile="${imported.basedir.db}/lib/ivy.timestamp.txt" />
+      <uptodate property="db.lib-uptodate" srcfile="${imported.basedir.db}/ivy.xml" targetfile="${imported.basedir.db}/lib/ivy.timestamp.txt" />
     </target>
 
 
