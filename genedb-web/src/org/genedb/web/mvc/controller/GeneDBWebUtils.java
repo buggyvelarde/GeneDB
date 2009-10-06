@@ -183,6 +183,7 @@ public class GeneDBWebUtils {
         return Integer.toString(length);
     }
 
+
     private SequenceDao sequenceDao;
 
     public void setSequenceDao(SequenceDao sequenceDao) {

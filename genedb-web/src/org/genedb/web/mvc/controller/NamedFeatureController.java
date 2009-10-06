@@ -23,6 +23,7 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
+import org.genedb.util.Pair;
 import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
@@ -84,22 +85,28 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     }
 
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
-    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+    public ModelAndView lookUpFeature(HttpServletRequest request,
+            HttpServletResponse response,
+            HttpSession session,
             NameLookupBean nlb,
             BindingResult be,
-            @PathVariable("name") String name
+            @PathVariable("name") String nameAndExtension
             ) throws Exception {
 
-        logger.debug("Trying to find NamedFeature of '"+name+"'");
+
+        Pair<String, String> pair = parseExtension(nameAndExtension);
+        String name = pair.getFirst();
+        String extension = pair.getSecond();
+        logger.warn("Trying to find NamedFeature of '"+name+"'");
 
         //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params
         if (session == null) {
             logger.warn("There is no session - redirecting to force one.");
-            return new ModelAndView("redirect:/NamedFeature?name="+name);
+            return new ModelAndView("redirect:/feature/"+name);
         }
         if (!isCurrentCacheValid(nlb.getKey(), session)){
             logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
-            return new ModelAndView("redirect:/NamedFeature?name="+name);
+            return new ModelAndView("redirect:/feature/"+name);
         }
 
         Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
@@ -128,7 +135,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Iterator<Entry<Integer, TranscriptDTO>> it = bmf.getDtoMap().entrySet().iterator();
             logger.error(it.getClass().getName());
 
-            //it.close();
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         }
 
@@ -149,8 +155,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         model.put("dto", dto);
 
 
-        if (nlb.getKey() != null &&
-                StringUtils.hasText(nlb.getKey()) &&
+        if (StringUtils.hasText(nlb.getKey()) &&
                 (nlb.getResultsLength() > 0) &&
                 (nlb.getIndex() > 0) &&
                 nlb.getIndex() <= nlb.getResultsLength()) {
@@ -169,6 +174,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         } else {
             logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
+        }
+
+        if (StringUtils.hasLength(extension)) {
+            return new ModelAndView(extension + ":", "dto", dto);
         }
 
         return new ModelAndView(viewName, model);

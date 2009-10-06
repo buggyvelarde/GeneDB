@@ -56,7 +56,7 @@ public class HistoryController {
         this.viewChecker = viewChecker;
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/${historyItem}")
+    @RequestMapping(method=RequestMethod.GET, value="/{historyItem}")
     public ModelAndView editHistoryItem(HttpServletRequest request,HttpServletResponse response,
             @PathVariable("historyItem") int historyItem) {
 

@@ -22,6 +22,8 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
+import org.genedb.db.taxon.TaxonNodeList;
+import org.genedb.db.taxon.TaxonNodeListFormatter;
 import org.genedb.querying.tmpquery.BrowseCategory;
 
 import org.gmod.schema.utils.CountedName;
@@ -57,7 +59,7 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 @RequestMapping("/category")
-public class BrowseCategoryController {
+public class BrowseCategoryController extends BaseController {
 
     private String formView;
     private String successView;
@@ -70,10 +72,7 @@ public class BrowseCategoryController {
     //@Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-    }
+
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -88,7 +87,7 @@ public class BrowseCategoryController {
     @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
     public ModelAndView listCategory(HttpSession session,
             @PathVariable BrowseCategory category,
-            @RequestParam("taxons") TaxonNode[] taxons,
+            @RequestParam("taxons") TaxonNodeList taxons,
             Model model) {
         BrowseCategoryController.BrowseCategoryBean bean = new BrowseCategoryBean();
         bean.setCategory(category);
@@ -117,12 +116,12 @@ public class BrowseCategoryController {
         /* This is to include all the cvs starting with CC. In future when the other cvs have more terms in,
          * this can be removed and the other cvs starting with CC can be added to BrowseCategory
          */
-        TaxonNode[] taxons = bean.getTaxons();
+        TaxonNodeList taxons = bean.getTaxons();
         String orgName = "Root";
         List<String> orgNames = new ArrayList<String>();
-        if (taxons != null && taxons.length > 0) {
-            orgName = taxons[0].getLabel();
-            for (TaxonNode tn : taxons) {
+        if (taxons.getNodes().size() > 0) {
+            orgName = taxons.getNodes().get(0).getLabel();
+            for (TaxonNode tn : taxons.getNodes()) {
                 orgNames.addAll(tn.getAllChildrenNames());
             }
         }
@@ -157,12 +156,12 @@ public class BrowseCategoryController {
     public static class BrowseCategoryBean {
 
         private BrowseCategory category;
-        private TaxonNode[] taxons;
+        private TaxonNodeList taxons;
 
-        public TaxonNode[] getTaxons() {
+        public TaxonNodeList getTaxons() {
             return taxons;
         }
-        public void setTaxons(TaxonNode[] taxons) {
+        public void setTaxons(TaxonNodeList taxons) {
             this.taxons = taxons;
         }
         public BrowseCategory getCategory() {
