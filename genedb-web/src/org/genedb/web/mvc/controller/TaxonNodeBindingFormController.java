@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Adrian Tivey (art)
  */
-public class TaxonNodeBindingFormController {
+public class TaxonNodeBindingFormController extends BaseController {
 
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
     private HistoryManagerFactory historyManagerFactory;
