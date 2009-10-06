@@ -12,14 +12,14 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-query"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
-	<classpathentry kind="lib" path="lib/lucene-core-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.apache.log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-3.3.1.GA.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.CI-394.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.junit-4.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.apache.lucene-2.4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
