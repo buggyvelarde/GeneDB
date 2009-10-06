@@ -8,19 +8,19 @@ CVS=`basename "$0"`/../..
 DB_NIGHTLY="-h pgsrv2 nightly"
 DB_PATHOGENS="-h pgsrv1 pathogens"
 
-mkdir $SAFETY
-rm -fr $SAFETY/*
+#mkdir $SAFETY
+#rm -fr $SAFETY/*
 
 # Safety copies
-cp -r $NIGHTLY/cache $SAFETY
-cp -r $NIGHTLY/lucene $SAFETY
+#cp -r $NIGHTLY/cache $SAFETY
+#cp -r $NIGHTLY/lucene $SAFETY
 
 
-pg_dump -c -h pathdbsrv1-dmz nightly > ${SAFETY}/dump.sql
+#pg_dump -c -h pathdbsrv1-dmz nightly > ${SAFETY}/dump.sql
 
 
 # Reset nightly
-./ensure_db_not_in_use nightly
+./ensure_db_not_in_use.sh nightly
 dropdb $DB_NIGHTLY
 createdb $DB_NIGHTLY
 
