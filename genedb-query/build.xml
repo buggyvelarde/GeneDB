@@ -75,7 +75,7 @@
   </target>
 
   <target name="check.query-lib-uptodate" depends="init-query">
-    <uptodate property="query.lib-uptodate" srcfile="${imported.basedir.query}/ivy.xml" targetfile="${query.ivy-timestamp}" />
+    <uptodate property="query.lib-uptodate" srcfile="${imported.basedir.query}/ivy.xml" targetfile="${imported.basedir.query}${query.ivy-timestamp}" />
   </target>
 
   <target name="query-clean">
