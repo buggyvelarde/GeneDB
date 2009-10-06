@@ -12,7 +12,7 @@
 
     default-init-method="postConstruction">
 
-    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core" />
     <context:spring-configured/>
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
     <tx:annotation-driven mode="aspectj"/>
@@ -44,7 +44,7 @@
 
     <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="sessionFactory" ref="sessionFactory" />
+        <!-- <property name="sessionFactory" ref="sessionFactory" /> -->
     </bean>
 
     <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
