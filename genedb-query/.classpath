@@ -65,5 +65,6 @@
 	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.RC1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.RC1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.com.google.common.collect-0.8.0.20080820.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
