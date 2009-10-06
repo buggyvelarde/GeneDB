@@ -198,7 +198,25 @@ br {
 	color: #8b031b;
 }
 
+#taxonFrameId li {
+    margin-left: 10px;
+ }
+
+
 /* Classes be beyond ere' ... and more pirates */
+
+.taxonIFrame {
+    border: 1px solid #D3D3D3;
+    width: 300px;
+    height: 140px;
+    overflow: auto;
+    text-align: left;
+}
+
+.float-left-and-offset {
+    float: left;
+    padding: 18px 0px 0px 0px;
+}
 
 .float-left {
 	float: left;
@@ -206,6 +224,12 @@ br {
 
 .float-right {
 	float: right;
+}
+
+
+.pagelinks {
+    background: #dedede;
+    padding: 0 20px;
 }
 
 .main-light-grey {
@@ -391,6 +415,10 @@ br {
 	padding: 0.7em 0 0.35em 0;
 }
 
+.search-data-table {
+    width: 916px;
+}
+
 .search-data-table th {
 	text-transform: uppercase;
 	font-weight: lighter;
@@ -430,7 +458,7 @@ br {
 	color: #57a9db;
 }
 
-.tr-grey {
+.even {
 	background: #dddddd;
 }
 
