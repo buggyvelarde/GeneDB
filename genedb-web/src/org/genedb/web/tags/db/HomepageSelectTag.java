@@ -9,13 +9,13 @@ import java.util.List;
 import javax.servlet.jsp.JspWriter;
 
 public class HomepageSelectTag extends AbstractHomepageTag {
-    
+
     @Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
         List<TaxonNode> nodes = new ArrayList<TaxonNode>();
         getAllChildren(root, nodes);
-        
-        out.write("<select name=\"organism\" onChange=\"document.location.href='/Homepage?org='+this.value\">");
+
+        out.write("<select name=\"organism\" onChange=\"document.location.href='/Homepage/\'+this.value\">");
         for (TaxonNode node : nodes) {
             out.write("<option value=\"");
             out.write(node.getLabel());
@@ -25,7 +25,7 @@ public class HomepageSelectTag extends AbstractHomepageTag {
         }
         out.write("</select>");
     }
-    
+
     private void getAllChildren(TaxonNode node, List<TaxonNode> list) {
         list.add(node);
         for (TaxonNode child : node.getChildren()) {

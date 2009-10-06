@@ -14,24 +14,25 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public abstract class AbstractHomepageTag extends SimpleTagSupport {
 
-    private String top = "Root"; // FIXME
-    
-    
+    private String DEFAULT_TOP = "Root";
+    private String top = DEFAULT_TOP;
+
+
     @Override
     public void doTag() throws JspException, IOException {
-        TaxonNodeManager tnm = (TaxonNodeManager) 
+        TaxonNodeManager tnm = (TaxonNodeManager)
             getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
-        
+
         TaxonNode topNode = tnm.getTaxonNodeForLabel(top);
-        
+
         if (topNode == null) {
             throw new JspException("Homepage Tag: Can't identify taxonNode for '"+top+"'");
         }
-        
+
         JspWriter out = getJspContext().getOut();
         display(topNode, out);
     }
-    
+
     abstract protected void display(TaxonNode node, JspWriter out) throws IOException;
 
     public void setTop(String top) {

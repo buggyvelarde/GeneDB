@@ -54,7 +54,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         out.write("\"");
 
         if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())){
-            out.write(" selected ");;
+            out.write(" selected ");
         }
         out.write(">");
         if (indent > 7) {
