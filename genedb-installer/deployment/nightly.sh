@@ -5,27 +5,34 @@ SAFETY=${NIGHTLY}/backup
 INVESTIGATION=${NIGHTLY}/failed
 CVS=`basename "$0"`/../..
 
+DB_NIGHTLY="-h pgsrv2 nightly"
+DB_PATHOGENS="-h pgsrv1 pathogens"
+
 mkdir $SAFETY
 rm -fr $SAFETY/*
 
 # Safety copies
 cp -r $NIGHTLY/cache $SAFETY
 cp -r $NIGHTLY/lucene $SAFETY
+
+
 pg_dump -c -h pathdbsrv1-dmz nightly > ${SAFETY}/dump.sql
 
 
-# Shut off access to nightly
-
+# Reset nightly
+./ensure_db_not_in_use nightly
+dropdb $DB_NIGHTLY
+createdb $DB_NIGHTLY
 
 # Copy pathogens into nightly and run fix-up scripts
-pg_dump -h pgsrv1-c pathogens | psql nightly
+pg_dump $DB_PATHOGENS | psql $DB_NIGHTLY
+
 cd ${CVS}/genedb-ng/sql/cleanup
 for sql in *.sql; do
   echo "Running cleanup script $sql"
-  <"$sql" ssh dmz-postgres psql staging
+  <"$sql" psql $DB_NIGHTLY
 done
 
-# Allow access to nightly
 
 
 # Run incremental updates
@@ -54,8 +61,3 @@ done
 
 #Deploy the nightly web server into position
 #ant -Ddeploy=nightly final_deploy
-
-
-
-
-
