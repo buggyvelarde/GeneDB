@@ -9,6 +9,7 @@
       <dependency org="org.springframework" name="org.springframework.expression" rev="3.0.0.RC1" />
 
       <dependency org="org.antlr" name="com.springsource.org.antlr" rev="3.0.1" />
+      <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
 
 <!--
       <dependency org="org.hibernate" name="com.springsource.org.hibernate.validator" rev="3.1.0.GA" />
