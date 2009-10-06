@@ -17,9 +17,6 @@ and (
     ) or (
         organism.genus = 'Streptococcus'
         and organism.species in ('pneumoniae TIGR4', 'pneumoniae D39')
-    ) or (
-        organism.genus = 'Eimeria'
-        and organism.species = 'tenella'
     )
 )
 ;
