@@ -89,8 +89,9 @@
 <div id="col-4-2">
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
-<a href=""><img src="/includes/images/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
-<a href=""><img src="/includes/images/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
+<format:addToBasket uniqueName="${dto.uniqueName}" />
+<a href="<c:url value="/"/>/featureSequence/${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
+<a href=""><img src="<c:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
 </div>
 <div class="main-blue-3-4-bot"></div>
 </div><!-- end internal column -right -->
@@ -230,30 +231,6 @@
     </c:if>
 </c:if>
 
-
-<div class="full-light-grey-bot"></div>
-<br />
-<div class="full-light-grey-top"></div>
-<div class="light-grey">
-<h2>BROKEN Predicted Peptide Data</h2>
-<table cellpadding="4" cellspacing="4" border="0" class="sequence-table">
-<tr>
-<th>Isoelectric Point</th><td>pH 7.05</td>
-</tr>
-<tr>
-<th>Mass</th><td>193.55 kDa</td>
-</tr>
-<tr>
-<th>Charge</th><td>11.5</td>
-</tr>
-<tr>
-<th>Amino Acids</th><td>1806</td>
-</tr>
-</table>
-</div>
-<div class="full-light-grey-bot"></div>
-<br />
-
 <c:if test="${dto.ims != null}">
 <format:genePageSection>
 <h2>Protein map</h2>
@@ -323,7 +300,7 @@ ${dto.ims.imageMap}
 <tr><td></td><td></td></tr>
 <tr><th>Curated Orthologues</th><td>
 <c:forEach items="${dto.orthologueNames}" var="orthologueName">
-  <a href="<c:url value="/NamedFeature"><c:param name="name" value="${orthologueName}" /></c:url>">${orthologueName}</a>
+  <a href="<c:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
 </c:forEach>
 </td></tr>
 </table>

@@ -3,7 +3,8 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:header title="Feature: ${dto.uniqueName}" />
+<format:header title="Feature: ${dto.uniqueName}">
+</format:header>
 <format:page>
 <br>
 
