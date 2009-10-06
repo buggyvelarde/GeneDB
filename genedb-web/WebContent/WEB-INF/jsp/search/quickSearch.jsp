@@ -1,11 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
-<format:headerRound title="Quick Search">
-    <st:init />
-    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
+<format:header title="Quick Search" />
+<format:page>
 <br>
-
-
 
 <table width=100% border=0>
     <tr>
@@ -18,9 +14,7 @@
                 <table border=0 width="100%">
                     <tr>
                         <td width="30%">
-                          <form:form commandName="query" action="QuickSearchQuery"
-                            method="GET">
-                            <input type="hidden" name="q" value="quickSearchQuery" />
+                          <form:form commandName="query" action="/QuickSearchQuery" method="GET">
                             <table width="100%">
                                 <tr>
                                     <td>Organism:</td>
@@ -104,5 +98,5 @@
 </table>
 
 
-<format:footer />
+</format:page>
 

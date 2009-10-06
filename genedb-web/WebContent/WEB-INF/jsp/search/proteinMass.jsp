@@ -1,14 +1,13 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:headerRound title="Protein Mass Search">
-    <st:init />
-    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
+<format:header title="Protein Mass Search" />
+<format:page>
+<br>
+
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="Query" method="GET">
-        <input type="hidden" name="q" value="proteinMass" />
+        <form:form commandName="query" action="/Query/proteinMass" method="GET">
             <table border=0>
                 <tr>
                     <td>
@@ -48,4 +47,4 @@
 
 
 <br><query:results />
-<format:footer />
+</format:page>
