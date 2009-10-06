@@ -12,24 +12,8 @@
     <script type="text/javascript" src="http://js.sanger.ac.uk/urchin.js"></script>
 
     <link rel="stylesheet" href="<c:url value="/includes/style/genedb/main.css"/>" type="text/css" />
+    <script type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 
-    <!--  YUI dependencies -->
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/container/container_core.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo/yahoo-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/event/event-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
-    <!-- YUI menu -->
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/menu/menu.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
-    <script type="text/javascript">
-        YAHOO.util.Event.onContentReady("start",function() {
-            init();
-            adjustCoordinates()
-        });
-
-</script>
     <jsp:doBody />
 </head>
 

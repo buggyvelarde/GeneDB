@@ -13,21 +13,23 @@
 
 <div id="container">
 <div id="header">
-<a href="/Homepage"><img src="<c:url value="/"/>includes/image/GeneDB-logo.png" border="0" height="52" width="290" alt="GeneDB" class="float-left" /></a>
+<a href="<c:url value="/"/>Homepage"><img src="<c:url value="/"/>includes/image/GeneDB-logo.png" border="0" height="52" width="290" alt="GeneDB" class="float-left-and-offset" /></a>
 
 <div class="float-right" >
 <div class="baby-blue-top"></div>
 <div id="search" class="baby-blue">
-<form action="" method="post">
+<form action="<c:url value="/"/>QuickSearchQuery" method="get">
 <table cellpadding="0" cellspacing="0" width="100%" class="search-table">
 <tr>
-<td><input type="text" name="search" class="search-box" /></td><td align="right"><input type="image" src="<c:url value="/"/>includes/image/button-search.gif" /></td>
+<td>
+<input type="hidden" name="pseudogenes" value="true" />
+<input type="hidden" name="product" value="true" />
+<input type="hidden" name="allNames" value="true" />
+<input type="text" name="searchText" class="search-box" /></td><td align="right"><input type="image" src="<c:url value="/"/>includes/image/button-search.gif" /></td>
 </tr>
 <tr>
 <td colspan="2">
-<select>
-<option>All organisms</option>
-</select>
+<db:simpleselect/>
 </td>
 </tr>
 </table>
@@ -42,29 +44,35 @@
 
 <div id="navigation">
 <ul id="nav">
-<li><a href="/Homepage">Home</a></li>
+<li class="has-sub"><a href="/Homepage">Home</a>
+<ul class="sub-menu">
+<li><a href="">Weebles</a></li>
+<li><a href="">wobble</a></li>
+<li><a href="">but</a></li>
+</ul>
+</li>
 <li class="has-sub"><a href="">About us</a>
 <ul class="sub-menu">
-<li><a href="">One</a></li>
-<li><a href="">A really long title just for testing</a></li>
-<li><a href="">Three</a></li>
+<li><a href="<c:url value="/feature/Tb927.1.710"/>">Tb927.1.710</a></li>
+<li><a href="<c:url value="/feature/Tb927.1.700"/>">Tb927.1.700</a></li>
+<li><a href="<c:url value="/feature/Tb927.1.710"/>">Three</a></li>
 </ul>
 <!-- end sub menu -->
 </li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
-<li><a href="<c:url value="/Query/geneType&taxons=${taxonNodeName}&newSearch=true"/>" >By Gene Type</a></li>
-<li><a href="<c:url value="/Query/geneLocation&taxons=${taxonNodeName}&newSearch=true"/>" >By Location</a></li>
-<li><a href="<c:url value="/Query/proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" >By Protein Length</a></li>
-<li><a href="<c:url value="/Query/proteinMass&taxons=${taxonNodeName}&newSearch=true"/>">By Molecular Mass</a></li>
-<li><a href="<c:url value="/Query/proteinNumTM&taxons=${taxonNodeName}&newSearch=true"/>">By No. TM domains</a></li>
-<li><a href="<c:url value="/"/>Query/proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true">By Targeting Seqs.</a></li>
-<li><a href="<c:url value="/"/>Query/simpleName&taxons=${taxonNodeName}&newSearch=true">Gene names</a></li>
-<li><a href="<c:url value="/"/>Query/product&taxons=${taxonNodeName}&newSearch=true">Product</a></li>
-<li><a href="<c:url value="/"/>Query/curation&taxons=${taxonNodeName}&newSearch=true">Curated annotations [comments & notes]</a></li>
-<li><a href="<c:url value="/"/>Query/go&taxons=${taxonNodeName}&newSearch=true">GO term/id</a></li>
-<li><a href="<c:url value="/"/>Query/ec&taxons=${taxonNodeName}&newSearch=true">EC number</a></li>
-<li><a href="<c:url value="/"/>Query/pfam&taxons=${taxonNodeName}&newSearch=true">Pfam ID or keyword</a></li>
+<li><a href="<c:url value="/Query/geneType?taxons=${taxonNodeName}"/>" >By Gene Type</a></li>
+<li><a href="<c:url value="/Query/geneLocation?taxons=${taxonNodeName}"/>" >By Location</a></li>
+<li><a href="<c:url value="/Query/proteinLength?taxons=${taxonNodeName}"/>" >By Protein Length</a></li>
+<li><a href="<c:url value="/Query/proteinMass?taxons=${taxonNodeName}"/>">By Molecular Mass</a></li>
+<li><a href="<c:url value="/Query/proteinNumTM?taxons=${taxonNodeName}"/>">By No. TM domains</a></li>
+<li><a href="<c:url value="/"/>Query/proteinTargetingSeq?taxons=${taxonNodeName}">By Targeting Seqs.</a></li>
+<li><a href="<c:url value="/"/>Query/simpleName?taxons=${taxonNodeName}">Gene names</a></li>
+<li><a href="<c:url value="/"/>Query/product?taxons=${taxonNodeName}">Product</a></li>
+<!-- <li><a href="<c:url value="/"/>Query/curation?taxons=${taxonNodeName}">Curated annotations [comments & notes]</a></li> -->
+<li><a href="<c:url value="/"/>Query/go?taxons=${taxonNodeName}">GO term/id</a></li>
+<li><a href="<c:url value="/"/>Query/ec?taxons=${taxonNodeName}">EC number</a></li>
+<li><a href="<c:url value="/"/>Query/pfam?taxons=${taxonNodeName}">Pfam ID or keyword</a></li>
 </ul>
 <!-- end sub menu -->
 </li>
@@ -79,9 +87,9 @@
 </li>
 <li class="has-sub">Pages
 <ul class="sub-menu">
-<li><a href="index.html">Home</a></li>
+<li><a href="index.html">About us</a></li>
 <li><a href="search.html">Search results</a></li>
-<li><a href="entrypoint.html">Database entry point</a></li>
+<li><a href="<c:url value="/History"/>">Database entry point</a></li>
 <li><a href="infantum.html">L. infantum JPCM5</a></li>
 </ul><!-- end sub menu -->
 </li>
@@ -103,7 +111,7 @@
 </td>
 
 <td valign="top" align="right">
-<p><a href="">Send us your comments on GeneDB</a> | Version 4.88</p>
+<p><a href="">Send us your comments on GeneDB</a> | Version 4.98</p>
 </td>
 </tr>
 </table>
