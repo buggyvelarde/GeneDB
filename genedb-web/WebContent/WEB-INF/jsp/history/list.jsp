@@ -8,18 +8,8 @@
 <br>
 
 <div id="col-2-1">
-<h1>Results <span class="number">1</span> to <span class="number">30</span> of <span class="number">33,499</span> results shown.</h1>
-<div class="full-light-grey-top"></div>
-<div class="main-light-grey">
-Previous &nbsp; <a href="">1</a>, <a href="">2</a>, <a href="">3</a>, <a href="">4</a>, <a href="">5</a>, <a href="">6</a>, <a href="">7</a>, <a href="">8</a> &nbsp; <a href="">Next</a>
 
-</div>
-<div class="full-light-grey-bot"></div>
-<br />
-<div class="full-blue-top"></div>
-
-<div id="geneResultsPanel">
-    <display:table name="items" id="row" pagesize="30" requestURI="/History/View" class="simple" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
+    <display:table name="items" id="row" pagesize="30" requestURI="/History/View" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
         <display:column title="No." style="width: 100px;">
             ${row_rowNum}
         </display:column>
@@ -42,6 +32,6 @@ Previous &nbsp; <a href="">1</a>, <a href="">2</a>, <a href="">3</a>, <a href=""
             <form:form method="DELETE" action="/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
         </display:column>
     </display:table>
-</div>
 
+</div>
 </format:page>
