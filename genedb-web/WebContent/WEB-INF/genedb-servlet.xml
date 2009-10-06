@@ -73,14 +73,9 @@
        </property>
     </bean>
     -->
-	<bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
-		<property name="order" value="1" />
-		<property name="serviceView">
-			<bean class="org.genedb.web.mvc.view.ServiceView" />
-		</property>
-	</bean>
+
     <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
-        <property name="order" value="2" />
+        <property name="order" value="1" />
         <property name="viewResolverMap">
             <map>
                 <entry key="jsp" value-ref="checkingViewResolver" />
@@ -89,6 +84,19 @@
         <property name="viewMap">
             <map>
                 <entry key="xml">
+                    <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+                        <property name="contentType" value="application/xml" />
+                        <property name="marshaller">
+                            <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                                <property name="autodetectAnnotations" value="true" />
+                            </bean>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="json">
+                	<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+                </entry>
+                <entry key="service-xml">
                     <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
                         <property name="contentType" value="application/xml" />
                         <property name="marshaller">
@@ -110,20 +118,9 @@
                         </property>
                     </bean>
                 </entry>
-                <!--<entry key="service">
-                	<bean class="org.genedb.web.mvc.view.ServiceView" />
-                </entry>
-            --></map>
+            </map>
         </property>
     </bean>
-
-<!--
-    <bean id="viewResolver"
-        class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
-        <property name="basename" value="views" />
-        <property name="order" value="3" />
-    </bean>
--->
 
     <bean id="checkingViewResolver"
         class="org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver"
@@ -132,15 +129,22 @@
             value="org.springframework.web.servlet.view.JstlView" />
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
-        <property name="order" value="4" />
+        <property name="order" value="2" />
     </bean>
 
+	<bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
+		<property name="order" value="3" />
+		<property name="serviceView">
+			<bean class="org.genedb.web.mvc.view.ServiceView" />
+		</property>
+	</bean>
 
     <!-- ========================= CONTROLLER DEFINITIONS ========================= -->
 
     <bean id="HomepageController"
         class="org.genedb.web.mvc.controller.HomepageController">
-        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="taxonNodeManager" ref="taxonNodeManager" />
+        <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
     </bean>
 
     <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
@@ -152,22 +156,37 @@
 	<bean id="restController" 		class="org.genedb.web.mvc.controller.RestController" />
 	<bean id="servicesController" 	class="org.genedb.web.mvc.controller.services.ServicesController" />
 
+
+    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
+        <property name="queryFactory" ref="queryFactory" />
+        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    </bean>
+
 <!--
     <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController">
         <property name="queryFactory" ref="queryFactory" />
     </bean>
-
+-->
     <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
         <property name="historyManagerFactory" ref="historyManagerFactory" />
-        <property name="sequenceDao" ref="sequenceDao"/>
+        <property name="sequenceDao" ref="sequenceDao" />
         <property name="downloadView" value="download/download" />
-        <property name="dataFetcher" ref="luceneDataFetcher" />
+        <property name="dataFetcher" ref="dtoDataFetcher" />
     </bean>
 
     <bean id="luceneDataFetcher" class="org.genedb.web.mvc.controller.download.LuceneDataFetcher">
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
     </bean>
--->
+
+
+    <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
+        <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+        <!-- <property name="">
+            <bean class="org.genedb.web.mvc.controller.download.DtoDataRowMapper" />
+        </property> -->
+    </bean>
+
     <bean id="freemarkerConfig"
         class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <!-- FIXME STS complains where is superclass -->
@@ -324,8 +343,12 @@
       -->
 
     <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController" >
-        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
         <property name="cvDao" ref="cvDao" />
+    </bean>
+
+    <bean id="taxonNodeListFormatter" class="org.genedb.db.taxon.TaxonNodeListFormatter">
+        <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
 
     <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
@@ -391,11 +414,6 @@
     <bean name="historyManagerFactory"
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
-    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
-        <property name="queryFactory" ref="queryFactory" />
-        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
-    </bean>
 
     <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
         <property name="queryFactory" ref="queryFactory" />
@@ -411,10 +429,6 @@
 
     <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController">
             <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    </bean>
-
-    <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController">
-        <property name="queryFactory" ref="queryFactory" />
     </bean>
 
     <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
@@ -435,6 +449,14 @@
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+        <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+        <property name="validExtensions">
+            <set>
+                <value>jsp</value>
+                <value>xml</value>
+                <value>json</value>
+            </set>
+        </property>
     </bean>
     <!-- <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" /> -->
