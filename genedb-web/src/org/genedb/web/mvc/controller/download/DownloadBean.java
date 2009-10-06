@@ -24,15 +24,14 @@ import java.util.List;
 
 
 public class DownloadBean {
-    
+
     private int historyItem = 0;
     private int version;
     private OutputDestination outputDestination = OutputDestination.TO_BROWSER;
     private OutputFormat outputFormat;
     private List<OutputOption> outputOption;
-    private boolean json = false;
     private SequenceType sequenceType;
-    
+
     public OutputDestination getOutputDestination() {
         return outputDestination;
     }
@@ -73,14 +72,6 @@ public class DownloadBean {
         this.version = version;
     }
 
-    public boolean isJson() {
-        return json;
-    }
-
-    public void setJson(boolean json) {
-        this.json = json;
-    }
-
     public SequenceType getSequenceType() {
         return sequenceType;
     }
@@ -88,7 +79,7 @@ public class DownloadBean {
     public void setSequenceType(SequenceType sequenceType) {
         this.sequenceType = sequenceType;
     }
-    
-    
+
+
 }
 

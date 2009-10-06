@@ -8,5 +8,6 @@ public enum SequenceType {
     INTERGENIC_5,
     INTERGENIC_3,
     CDS_RNA,
+    INTERGENIC_3and5,
     EMBL;
 }

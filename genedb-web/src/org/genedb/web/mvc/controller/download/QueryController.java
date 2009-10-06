@@ -14,10 +14,12 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,26 +41,50 @@ public class QueryController extends AbstractGeneDBFormController{
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
-    
-    
+
+
     private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
 
     @RequestMapping(method = RequestMethod.GET)
-    public String setUpForm() {
-        return "redirect:/QueryList";
+    public String setUpForm(
+            @RequestParam(value="filter", required=false) String filterName,
+            Model model) {
+
+        Map<String, Query> queries = queryFactory.listQueries(filterName);
+        Map<String, Query> results = new HashMap<String, Query>();
+        for (Map.Entry<String, Query> entry : queries.entrySet()) {
+            String key = StringUtils.delete(entry.getKey(), "Query");
+            results.put(key, entry.getValue());
+        }
+        model.addAttribute("queries", results);
+        return "list/queryList";
+    }
+
+    @RequestMapping(method = RequestMethod.GET , value="/{queryName}")
+    public String chooseFormHandling(
+            @PathVariable(value="queryName") String queryName,
+            @RequestParam(value="suppress", required=false) String suppress,
+            ServletRequest request,
+            HttpSession session,
+            Model model) throws QueryException {
+
+        if (request.getParameterMap().size() > 1) {
+            return processForm(queryName, suppress, request, session, model);
+        } else {
+            return displayForm(queryName, request, session, model);
+        }
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, params={"newSearch", "q"})
-    public String processFormFirstPass(
-            @RequestParam(value="q") String queryName,
+    public String displayForm(
+            String queryName,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
 
         Query query = findQueryType(queryName, session);
         if (query==null){
-            return "redirect:/QueryList";
+            return "redirect:/Query";
         }
 
         //Initialise model data somehow
@@ -67,13 +93,12 @@ public class QueryController extends AbstractGeneDBFormController{
 
         model.addAttribute("taxonNodeName", findTaxonName(query));
         return "search/"+queryName;
-    }    
-    
-    
-    @RequestMapping(method = RequestMethod.GET , params= "q")
+    }
+
+
     public String processForm(
-            @RequestParam(value="q") String queryName,
-            @RequestParam(value="suppress", required=false) String suppress,
+            String queryName,
+            String suppress,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
@@ -81,7 +106,8 @@ public class QueryController extends AbstractGeneDBFormController{
         //Find query for request
         Query query = findQueryType(queryName, session);
         if (query==null){
-            return "redirect:/QueryList";
+            logger.error(String.format("Unable to find query of name '%s'", queryName));
+            return "redirect:/Query";
         }
 
         //Initialise model data somehow
@@ -104,7 +130,7 @@ public class QueryController extends AbstractGeneDBFormController{
             count = new MutableInteger(0);
         }
         count.increment(1);
-        
+
         //Validate initialised form
         query.validate(query, errors);
         if (errors.hasErrors()) {
@@ -150,15 +176,15 @@ public class QueryController extends AbstractGeneDBFormController{
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
             resultsKey = cacheResults(gs, query, queryName, session.getId());
-            return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
+            return "redirect:/feature/" + gs.get(0).getSystematicId();
 
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
             resultsKey = cacheResults(gs2, query, queryName, session.getId());
-            model.addAttribute("key", resultsKey);
+            //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '"+gs2.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
-            return "redirect:/Results";
+            return "redirect:/Results/"+resultsKey;
         }
     }
 

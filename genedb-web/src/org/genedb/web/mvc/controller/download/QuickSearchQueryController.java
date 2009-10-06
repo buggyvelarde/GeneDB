@@ -45,18 +45,19 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
         QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
-        
+
         if (query==null){
-            return "redirect:/QueryList";
+            return "redirect:/Query";
         }
 
         // Initialise model data somehow
         model.addAttribute("query", query);
-        logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
+        logger.error("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
         initialiseQueryForm(query, request);
-        
-        if (query!= null && StringUtils.isEmpty(query.getSearchText())){
-            return "redirect:/QueryList";
+
+        if (query != null && StringUtils.isEmpty(query.getSearchText())){
+            logger.error("The query isn't null but no search terms. Returning to Query list");
+            return "redirect:/Query";
         }
 
         QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();
@@ -95,39 +96,39 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         String taxonName = findTaxonName(query);
         String resultsKey = null;
 
-        logger.debug("The number of results is '"+quickSearchQueryResults.getResults().size());
+        logger.error("The number of results is '"+quickSearchQueryResults.getResults().size());
 
 
 
         switch (quickSearchQueryResults.getQuickResultType()) {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
-            logger.debug("No results found for query");
+            logger.error("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
             return "search/" + QUERY_NAME;
 
         case SINGLE_RESULT_IN_CURRENT_TAXON:
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
             cacheResults(gs, query, QUERY_NAME, session.getId());
-            logger.debug("The result is "+gs.get(0));
-            return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
+            logger.error("The result is "+gs.get(0));
+            return "redirect:/feature/" + gs.get(0).getSystematicId();
 
         case MULTIPLE_RESULTS_IN_CURRENT_TAXON:
             List<GeneSummary> gs2 = quickSearchQueryResults.getResults();
             resultsKey = cacheResults(gs2, query, QUERY_NAME, session.getId());
-            model.addAttribute("key", resultsKey);
+            //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.debug("Found results for query (Size: '" + gs2.size() + "' key: '" + resultsKey
+            logger.error("Found results for query (Size: '" + gs2.size() + "' key: '" + resultsKey
                     + "')- redirecting to Results controller");
-            return "redirect:/Results";
+            return "redirect:/Results/"+resultsKey;
 
         case ALL_ORGANISMS_IN_ALL_TAXONS:
             List<GeneSummary> gs3 = quickSearchQueryResults.getResults();
             resultsKey = cacheResults(gs3, query, QUERY_NAME, session.getId());
-            model.addAttribute("key", resultsKey);
+            //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.debug("Found results for query (Size: '" + gs3.size() + "' key: '" + resultsKey
+            logger.error("Found results for query (Size: '" + gs3.size() + "' key: '" + resultsKey
                     + "')- redirecting to Results controller");
-            return "redirect:/Results";
+            return "redirect:/Results/"+resultsKey;
 
         default:
             return "";

@@ -105,9 +105,9 @@ public class DownloadFeaturesController {
             BindException be) throws Exception {
 
         DownloadBean db = (DownloadBean) command;
-        if(!db.isJson()) {
-            return new ModelAndView(downloadView);
-        }
+//        if(!db.isJson()) {
+//            return new ModelAndView(downloadView);
+//        }
 
         int historyItem = db.getHistoryItem()-1;
 

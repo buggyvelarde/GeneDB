@@ -8,18 +8,18 @@ import java.util.List;
 
 public class ResultEntry implements Serializable {
 
-    List<GeneSummary> results;
+    public List<GeneSummary> results;
 
-    Query query;
+    public Query query;
 
-    int numOfResults;
+    public int numOfResults;
 
-    String queryName;
-    
+    public String queryName;
+
     /**
-     * Indicates that the results has been expanded either through a lucene search 
+     * Indicates that the results has been expanded either through a lucene search
      * or passed through it at a later time in the ResultsController
      */
-    boolean expanded;
+    public boolean expanded;
 
 }
