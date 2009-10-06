@@ -441,7 +441,7 @@
     </target>
 
     <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
-      <uptodate property="web.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+      <uptodate property="web.lib-uptodate" srcfile="${imported.basedir.web}/ivy.xml" targetfile="${imported.basedir.web}/lib/ivy.timestamp.txt" />
     </target>
 
     <target name="martinHack" depends="check-config, compile-web">
@@ -534,9 +534,20 @@
 
 
     <target name="load-transcript-cache" depends="compile-web">
-        <compile-target project="web"/>
         <java fork="true" dir="${imported.basedir.db}"
                 maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.load.TranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="load-simple-transcript-cache" depends="compile-web">
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.simple.SimpleTranscriptLoader">
             <classpath>
                 <path refid="web-tests-classpath"/>
                 <pathelement location="${imported.basedir.web}/ant-build/classes"/>
