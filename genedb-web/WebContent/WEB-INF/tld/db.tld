@@ -169,7 +169,7 @@
 
 
  <tag>
-   <name>simplehomepageselect</name>
+   <name>homepageselect</name>
    <tag-class>org.genedb.web.tags.db.HomepageSelectTag</tag-class>
    <body-content>empty</body-content>
        <attribute>
