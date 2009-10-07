@@ -125,12 +125,16 @@
     </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/Homepage</url-pattern>
+        <url-pattern>/Homepage/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Query/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/QuickSearchQuery</url-pattern>
+     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Results/*</url-pattern>
@@ -154,10 +158,6 @@
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/BrowseTerm</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/CircularGenomeForm</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
@@ -189,19 +189,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/Admin/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
         <url-pattern>/Organism</url-pattern>
     </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Genome/*</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/LuceneSearch</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
@@ -238,10 +230,6 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Query/*</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/QuickSearchQuery</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
