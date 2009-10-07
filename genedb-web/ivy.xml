@@ -12,7 +12,7 @@
       <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RC1" conf="default->*" />
       <dependency org="org.springframework" name="org.springframework.asm" rev="3.0.0.RC1" conf="default->*" />
 
-
+      <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" conf="default->*" />
 <!--
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.io" rev="1.4.0" conf="default->*" />
@@ -29,12 +29,7 @@
       -->
       <dependency org="org.codehaus.jettison" name="com.springsource.org.codehaus.jettison" rev="1.0.1" />
 
-      <!-- The Hibernate Search package in the Spring repository hasn't been updated yet. So we include it, and a couple
-      of dependencies explicitly. --><!--
-      <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
-      <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />-->
       <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.1.1.GA"/>
-      <!-- <dependency org="org.slf4j" name="com.springsource.slf4j.org.apache.log4j" rev="1.5.6"/>-->
       <dependency org="org.slf4j" name="com.springsource.slf4j.log4j" rev="1.5.6"/>
 
     </dependencies>
