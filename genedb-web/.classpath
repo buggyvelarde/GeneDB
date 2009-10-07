@@ -12,9 +12,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib-compiletime/com.springsource.javax.servlet.jsp-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-3.3.1.GA.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-2.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.codehaus.groovy-1.5.7.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-search-3.1.0.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.jdom-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.apache.poi-3.0.2.FINAL.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.com.google.common.collect-0.8.0.20080820.jar"/>
@@ -72,18 +69,22 @@
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.codehaus.jackson-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.aop-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.aspects-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.0.0.CI-394.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.junit-4.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.CI-394.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.CI-394.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.apache.lucene-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.aop-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.aspects-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.RC1.jar" sourcepath="lib/org.springframework.beans-sources-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.RC1.jar" sourcepath="lib/org.springframework.context-sources-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.RC1.jar" sourcepath="lib/org.springframework.core-sources-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.RC1.jar" sourcepath="lib/org.springframework.jdbc-sources-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.oxm-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.0.0.RC1.jar" sourcepath="lib/org.springframework.web.servlet-sources-3.0.0.RC1.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.search-3.1.1.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.codehaus.jettison-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.codehaus.groovy-1.6.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
