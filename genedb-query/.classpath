@@ -53,10 +53,9 @@
 	<classpathentry kind="lib" path="lib/com.springsource.serp-1.13.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0 (MacOS X Default)"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-3.3.1.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.objectweb.asm-1.5.3.jar"/>
-	<classpathentry kind="lib" path="classpath"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.apache.lucene-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.RC1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.RC1.jar"/>
