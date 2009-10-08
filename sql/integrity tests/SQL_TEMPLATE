@@ -1,0 +1,7 @@
+
+# These sql tests are expected to contain some explanatory text at the start. Each line of this text 
+# is expected to start with a #. This will be displayed on the webpage to give a better understanding
+# of what the test is checking for. This is followed by the actual SQL statement below. Any comments
+# in the SQL statement should be within /* */ on that line.
+
+sql statement; /* comments */

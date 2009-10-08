@@ -1,3 +1,6 @@
+
+#Are the uniquenames truly unique?
+
 select feature1.uniquename
      , feature1.feature_id as feature1_id
      , feature1.type_id    as feature1_type

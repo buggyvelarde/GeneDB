@@ -1,26 +1,10 @@
-/*
 
-select feature.uniquename
-     , ft.name as type
-from feature
-join featureloc using (feature_id)
-join cvterm ft on feature.type_id = ft.cvterm_id
-join featureprop using (feature_id)
-join cvterm proptype on proptype.cvterm_id = featureprop.type_id
-join cv propcv on proptype.cv_id = propcv.cv_id
-where propcv.name = 'genedb_misc' and proptype.name = 'top_level_seq'
-;
+# Look for features that:
+#  - have a sequence
+#  - are a source feature
+#  - do not have a source feature
+#  - are not marked as top_level_seq
 
-*/
-
-
-/*
- Look for features that:
-  - have a sequence
-  - are a source feature
-  - do not have a source feature
-  - are not marked as top_level_seq
-*/
 
 select organism.common_name
      , feature.feature_id

@@ -1,3 +1,7 @@
+ 
+#Checks that all transcript components lie within the transcript
+
+
 select locsub.feature_id as sub_id
      , sub.uniquename as sub_uniquename
      , locsub.fmin as sub_min
@@ -12,13 +16,13 @@ join feature_relationship sub_transcript on sub_transcript.subject_id = sub.feat
 join feature transcript on sub_transcript.object_id = transcript.feature_id
 join featureloc loctranscript on loctranscript.feature_id = transcript.feature_id
 where transcript.type_id in (
-      321 /*mRNA*/
-    , 339 /*rRNA*/
-    , 340 /*tRNA*/
-    , 361 /*snRNA*/
-    , 604 /*pseudogenic_transcript*/
+      321 
+    , 339 
+    , 340 
+    , 361 
+    , 604 
 )
  and (locsub.fmax > loctranscript.fmax
    or locsub.fmin < loctranscript.fmin)
- and sub.type_id <> 191 /*polypeptide*/
+ and sub.type_id <> 191 
 ;

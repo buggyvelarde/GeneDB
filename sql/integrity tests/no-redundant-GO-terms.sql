@@ -1,3 +1,5 @@
+#Checks that there are no redundant GO terms
+
 select feature.uniquename
      , general.feature_cvterm_id
      , cv.name

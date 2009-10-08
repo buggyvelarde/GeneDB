@@ -1,3 +1,5 @@
+#No more than one colour for features
+
 select feature.feature_id
      , feature.uniquename
      , fp1.featureprop_id as fp1_featureprop_id

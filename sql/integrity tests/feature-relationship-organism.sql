@@ -1,3 +1,6 @@
+
+#Checks that feature relationships with organisms are in order 
+
 select *
 from feature_relationship
 join feature subject_feature on subject_feature.feature_id = feature_relationship.subject_id

@@ -1,3 +1,5 @@
+#Checks that all pubmed ids have dbxrefs
+
 select * from pub
 where uniquename like 'PMID:%'
 and not exists (

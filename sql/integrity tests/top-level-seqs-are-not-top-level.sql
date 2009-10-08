@@ -1,6 +1,6 @@
-/*
- Look for features that are marked as top_level_seq but are located on something else
-*/
+
+#Look for features that are marked as top_level_seq but are located on something else
+
 select organism.common_name
          , feature.feature_id
          , feature.uniquename

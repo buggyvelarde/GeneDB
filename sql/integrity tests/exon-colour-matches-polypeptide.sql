@@ -1,3 +1,5 @@
+#Exon colour matches polypeptide.
+
 select organism.common_name as organism
      , transcript.uniquename as transcript
      , transcript_exon.rank

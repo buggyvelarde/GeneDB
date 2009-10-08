@@ -1,4 +1,5 @@
-/* List colourless exons with colourful polypeptides */
+#List colourless exons with colourful polypeptides 
+
 select exon.uniquename as exon
      , transcript.uniquename as transcript
      , polypeptide.uniquename as polypeptide
