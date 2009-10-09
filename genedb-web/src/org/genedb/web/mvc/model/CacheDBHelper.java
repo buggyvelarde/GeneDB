@@ -113,7 +113,7 @@ public class CacheDBHelper {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        model.put("tilePrefix", "/Image?key=");
+        model.put("tilePrefix", "/Image/");
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
