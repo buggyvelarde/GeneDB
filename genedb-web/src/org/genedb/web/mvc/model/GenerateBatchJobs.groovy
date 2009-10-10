@@ -5,7 +5,7 @@ export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
-cd "/nfs/pathdb/.hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-ng/genedb-web"
+cd "/nfs/pathdb/.hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-web"
 '''
 
 def queueName = "yesterday";
@@ -77,7 +77,7 @@ boolean worked = true
 def scriptDir = new File(baseDir, "scripts")
 while (jobList.size() > 0) {
     sleep 300000; // 5 *60*1000
-    
+
     List finishedJobs = new ArrayList()
     for (job in jobList) {
         File f = new File("${baseDir}/scripts/${job}.script.err")
@@ -93,7 +93,7 @@ while (jobList.size() > 0) {
         } else {
             System.err.print(" ${job}")
         }
-    } 
+    }
     for (job in finishedJobs) {
         jobList.remove(job)
     }
