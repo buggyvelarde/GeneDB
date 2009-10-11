@@ -5,9 +5,9 @@ import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 
@@ -23,9 +23,9 @@ public class ImageController {
 
     private BerkeleyMapFactory bmf;
 
-    @RequestMapping(method = RequestMethod.GET , params= "key")
+    @RequestMapping(method = RequestMethod.GET , value="/{key}")
     public void sendBackImage(
-            @RequestParam(value="key") String key,
+            @PathVariable(value="key") String key,
             ServletResponse response) {
 
 
