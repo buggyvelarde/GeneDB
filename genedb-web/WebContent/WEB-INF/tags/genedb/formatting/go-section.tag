@@ -7,32 +7,32 @@
 <%@ taglib prefix="db" uri="db" %>
 
 <c:if test="${fn:length(featureCvTerms) > 0}">
-      <c:forEach items="${featureCvTerms}" var="fctDTO" varStatus="status">
-        <tr>
-        <th class="label"><c:if test="${status.first}">${title}</c:if></th>
-        <td class="value name"><a href="http://www.genedb.org/amigo-cgi/term-details.cgi?term=GO%3A${fctDTO.typeAccession}">${fctDTO.typeName}</a></td>
-        <td class="value qualifiers">
-            <c:forEach items="${fctDTO.props.qualifier}" var="qualifier" varStatus="st">
-                <c:if test="${!st.first}"> | </c:if>
-                ${qualifier}
-            </c:forEach>
-        </td>
-        <td class="value evidence">
-            <c:forEach items="${fctDTO.props.evidence}" var="evidence">
-                    ${evidence}
-            </c:forEach>&nbsp;
-            <c:forEach items="${fctDTO.pubs}" var="pub">
-                (${pub.uniqueName})
-            </c:forEach>
-        </td>
-        <td class="value accession">
-            <c:forEach items="${fctDTO.dbXRefDtoList}" var="fctdbx">
-                <a href="${fctdbx.urlPrefix}${fctdbx.accession}">${fctdbx.dbName}:${fctdbx.accession}</a>
-            </c:forEach>
-            <c:if test="${fctDTO.withFrom != 'null'}">
-                    <db:dbXRefLink dbXRef="${fctDTO.withFrom}"/>
-            </c:if>
-        </td>
-        </tr>
-      </c:forEach>
- </c:if>
+  <c:forEach items="${featureCvTerms}" var="fctDTO" varStatus="status">
+  <tr>
+  <th><c:if test="${status.first}">${title}</c:if></th>
+  <td><a href="http://www.genedb.org/amigo-cgi/term-details.cgi?term=GO%3A${fctDTO.typeAccession}">${fctDTO.typeName}</a></td>
+  <td">
+    <c:forEach items="${fctDTO.props.qualifier}" var="qualifier" varStatus="st">
+      <c:if test="${!st.first}"> | </c:if>
+      ${qualifier}
+    </c:forEach>
+  </td>
+  <td class="grey-text">
+    <c:forEach items="${fctDTO.props.evidence}" var="evidence">
+    ${evidence}
+    </c:forEach>&nbsp;
+    <c:forEach items="${fctDTO.pubs}" var="pub">
+    (${pub})
+    </c:forEach>
+  </td>
+  <td>
+    <c:forEach items="${fctDTO.dbXRefDtoList}" var="fctdbx">
+      <a href="${fctdbx.urlPrefix}${fctdbx.accession}">${fctdbx.dbName}:${fctdbx.accession}</a>
+    </c:forEach>
+    <c:if test="${fctDTO.withFrom != 'null'}">
+      <db:dbXRefLink dbXRef="${fctDTO.withFrom}"/>
+    </c:if>
+  </td>
+  </tr>
+  </c:forEach>
+</c:if>
