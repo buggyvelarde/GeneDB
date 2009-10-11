@@ -277,7 +277,7 @@ function reloadDetails(name) {
 
     loading = true;
     var loadingDetailsTimer = setTimeout('$("#geneDetailsLoading").show()', 2000);
-    $("#geneDetails").fadeTo("slow", 0.4).load(base + "NamedFeature/"+name+"&detailsOnly=true", null, function () {
+    $("#geneDetails").fadeTo("slow", 0.4).load(base + "feature/"+name+"&detailsOnly=true", null, function () {
         clearTimeout(loadingDetailsTimer);
         loadedTranscriptName = name;
         document.title = "Transcript "+name+" - GeneDB";
