@@ -148,89 +148,26 @@
   </format:genePageSection>
 </c:if>
 
-<c:if test="${!dto.pseudo}">
-<%-- Predicted Peptide Section --%>
-<div id="peptideRow" class="row">
 <c:set var="hasAlgorithmData" value="${fn:length(dto.algorithmData) > 0}"/>
-<c:if test="${hasAlgorithmData}">
-  <c:set var="peptidePropertiesClass" value="leftBox"/>
-</c:if>
-<format:genePageSection id="peptideProperties" className="${peptidePropertiesClass}">
-<div class="heading">Predicted Peptide Data</div>
-<table>
-                <c:if test="${dto.polypeptideProperties.isoelectricPoint != null}">
-                    <tr>
-                        <td class="label">Isoelectric Point</td>
-                        <td class="value">pH ${dto.polypeptideProperties.isoelectricPoint}</td>
-                    </tr>
-                </c:if>
-                <c:if test="${dto.polypeptideProperties.hasMass}">
-                    <tr>
-                        <td class="label">Mass</td>
-                        <td class="value">${dto.polypeptideProperties.mass}</td>
-                    </tr>
-                </c:if>
-                <tr>
-                    <td class="label">Charge</td>
-                    <td class="value">${dto.polypeptideProperties.charge}</td>
-                </tr>
-                <tr>
-                    <td class="label">Amino Acids</td>
-                    <td class="value">${dto.polypeptideProperties.aminoAcids}</td>
-                </tr>
-                </table>
-            </format:genePageSection>
-
-            <c:if test="${hasAlgorithmData}">
-                <format:genePageSection id="peptideAlgorithms" className="rightBox">
-                    <div class="heading">Algorithmic Predictions</div>
-                    <table>
-                    <c:if test="${dto.algorithmData.SignalP != null}">
-                        <tr>
-                            <td class="label">SignalP</td>
-                            <td class="value">Predicted ${dto.algorithmData.SignalP.prediction}
-                            (Signal peptide probability ${dto.algorithmData.SignalP.peptideProb},
-                            signal anchor probability ${dto.algorithmData.SignalP.anchorProb}).
-                            <c:if test="${dto.algorithmData.SignalP.cleavageSite != null}">
-                                Predicted cleavage site at ${dto.algorithmData.SignalP.cleavageSite}
-                                with probability ${dto.algorithmData.SignalP.cleavageSiteProb}.
-                            </c:if></td>
-                        </tr>
-                    </c:if>
-                    <c:if test="${dto.algorithmData.TMHMM != null}">
-                        <tr>
-                            <td class="label">TMHMM</td>
-                            <td class="value">Predicted ${fn:length(dto.algorithmData.TMHMM)}
-                            transmembrane region<c:if test="${fn:length(dto.algorithmData.TMHMM) > 1}">s</c:if>
-                            at locations
-                            <c:forEach var="helix" varStatus="status" items="${dto.algorithmData.TMHMM}"><%--
-                                --%><c:if test="${!status.first && !status.last}">,</c:if>
-                                <c:if test="${status.last && !status.first}">and </c:if>
-                                ${helix}</c:forEach>.</td>
-                        </tr>
-                    </c:if>
-                    <c:if test="${dto.algorithmData.DGPI != null && dto.algorithmData.DGPI.anchored}">
-                        <tr>
-                            <td class="label">DGPI</td>
-                            <td class="value">
-                                <c:if test="${dto.algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
-                                <c:if test="${!dto.algorithmData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
-                                <c:if test="${dto.algorithmData.DGPI.location != null}">Predicted cleavage site at ${dto.algorithmData.DGPI.location} with score ${dto.algorithmData.DGPI.score}.</c:if>
-                            </td>
-                        </tr>
-                    </c:if>
-                    <c:if test="${dto.algorithmData.PlasmoAP != null}">
-                        <tr>
-                            <td class="label">PlasmoAP</td>
-                            <td class="value">${dto.algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${dto.algorithmData.PlasmoAP.score}).</td>
-                        </tr>
-                    </c:if>
-                </table></format:genePageSection>
-            </c:if>
+<c:choose>
+  <c:when test="${hasAlgorithmData}">
+    <format:algorithmPredictions algData="${dto.algorithmData}"/>
+    <div id="col-4-2">
+      <div class="sub-grey-3-4-top"></div>
+        <div class="light-grey-nopad">
+          <format:peptideProperties pepProps="${dto.polypeptideProperties}"/>
         </div>
-    </c:if>
-</c:if>
+      <div class="sub-grey-3-4-bot"></div>
+    </div><!-- end internal column -right -->
+  </c:when>
+  <c:otherwise>
+    <format:genePageSection>
+      <format:peptideProperties pepProps="${dto.polypeptideProperties}"/>
+    </format:genePageSection>
+  </c:otherwise>
+</c:choose>
 
+<br/>
 <c:if test="${dto.ims != null}">
 <format:genePageSection>
 <h2>Protein map</h2>
@@ -238,16 +175,16 @@ ${dto.ims.imageMap}
 <!--[if lte IE 6]>
 <div style="position:relative; height: ${dto.ims.height}px">
 <div style="position:absolute; z-index: 1000;">
-  <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap">
+  <img src="<c:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap">
 </div>
 <div style="position:static; z-index: 900;">
-  <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
-       style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:url value="/Image?key=" />${dto.ims.path}', sizingMethod='image')"/>
+  <img src="<c:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
+       style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:url value="/Image/" />${dto.ims.path}', sizingMethod='image')"/>
 </div>
 </div>
 <![endif]-->
 <![if ! lte IE 6]>
-  <img src="<c:url value="/Image?key=" />${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage">
+  <img src="<c:url value="/Image/" />${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage" border="0">
 <![endif]>
 </format:genePageSection>
 </c:if>
@@ -291,19 +228,21 @@ ${dto.ims.imageMap}
 
 <%-- Ortholog / Paralog Section --%>
 <c:if test="${fn:length(dto.clusterIds) + fn:length(dto.orthologueNames) > 0}">
-<format:genePageSection id="orthologs">
-<h2>Orthologues and Paralogues</h2>
-<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
-<c:forEach items="${dto.clusterIds}" var="clusterId">
-  <tr><td>${clusterId}</td><td><a href="<c:url value="/Orthologs"><c:param name="cluster" value="${clusterId}" /></c:url>">Look up others in cluster</a></span></td></tr>
-</c:forEach>
-<tr><td></td><td></td></tr>
-<tr><th>Curated Orthologues</th><td>
-<c:forEach items="${dto.orthologueNames}" var="orthologueName">
-  <a href="<c:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
-</c:forEach>
-</td></tr>
-</table>
-</format:genePageSection>
+  <format:genePageSection>
+  <h2>Orthologues and Paralogues</h2>
+  <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
+    <c:forEach items="${dto.clusterIds}" var="clusterId">
+      <tr><td>${clusterId}</td><td><a href="<c:url value="/Orthologs"><c:param name="cluster" value="${clusterId}" /></c:url>">Look up others in cluster</a></span></td></tr>
+    </c:forEach>
+    <tr><td></td><td></td></tr>
+    <tr><th>Curated Orthologues</th><td>
+    <c:forEach items="${dto.orthologueNames}" var="orthologueName">
+      <a href="<c:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
+    </c:forEach>
+    </td></tr>
+  </table>
+  </format:genePageSection>
+</c:if>
+
 </c:if>
 
