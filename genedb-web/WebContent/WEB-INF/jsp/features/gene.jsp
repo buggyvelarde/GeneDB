@@ -75,6 +75,8 @@
     Loading Gene Details...
 </format:genePageSection>
  --%>
+
+<br /><br />
 <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
 </div>
