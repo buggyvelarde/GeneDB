@@ -279,6 +279,20 @@ br {
 	overflow: hidden;
 }
 
+.sub-grey-3-4-top {
+	background: url(../../image/sub-bg-top-grey-3-4.gif);
+	height: 12px;
+	width: 170px;
+	overflow: hidden;
+}
+
+.sub-grey-3-4-bot {
+	background: url(../../image/sub-bg-bottom-grey-3-4.gif);
+	height: 12px;
+	width: 170px;
+	overflow: hidden;
+}
+
 .main-blue-top {
 	background: url(../../image/main-bg-top-blue.gif);
 	height: 12px;
@@ -360,6 +374,11 @@ br {
 	padding: 0 20px;
 }
 
+
+.light-grey-nopad {
+	background: #dedede;
+}
+
 .light-grey a {
 	color: #8b031b;
 	text-decoration: underline;
@@ -370,6 +389,13 @@ br {
 }
 
 .light-grey h2 {
+	padding: 0;
+	color: #004797;
+	font-size: 16px;
+}
+
+
+.light-grey-nopad h2 {
 	padding: 0;
 	color: #004797;
 	font-size: 16px;
@@ -492,3 +518,180 @@ br {
 .clear {
 	clear: both;
 }
+
+/* Context map styles */
+
+#contextMapOuterDiv {
+    clear: both;
+    position: relative;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#contextMapDiv {
+    border: 1px solid #D3D3D3;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 62px;
+    cursor: default; /* changed to "move" on loading */
+    background-color: #F0F0E4;
+    z-index: 1;
+}
+
+div.highlighter {
+    position: absolute;
+    display: none;
+    background: black;
+    font-size: 1px;
+    z-index: 2;
+}
+
+#contextMapLoading {
+    margin-left: 20px;
+}
+
+img#contextMapLoadingImage {
+    position:absolute;
+    top:50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+}
+
+div.contextMapContent {
+    position: absolute;
+    left: 0px;
+}
+
+img.contextMapImage {
+    position:absolute;
+    z-index: 3;
+}
+
+#contextMapTopPanel {
+    position: relative;
+    width: 100%;
+}
+
+#contextMapThumbnailDiv {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 700px;
+    height: 17px;
+}
+
+img#chromosomeThumbnailImage {
+    position: absolute;
+    top: 3px;
+    height: 9px;
+}
+/* An IE-specific hack for transparency is in the page itself */
+
+img#chromosomeThumbnailWindow {
+    position: absolute;
+    top: 0px;
+    margin-left: -2px;
+    cursor: move;
+}
+
+img.transcriptBlock {
+    position: absolute;
+    cursor: pointer;
+    z-index: 4;
+}
+
+div#errorMessage {
+    font-family: sans-serif;
+    font-size: 25px;
+    text-align: center;
+    padding-top: 20px;
+    color: gray;
+}
+
+#contextMapInfoPanel {
+    position: absolute;
+    display: none;
+    background: white;
+    color: #228;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 38em;
+    height: 6em;
+    margin-left: 4%;
+    padding-left: 1em;
+    padding-top: 1em;
+    font-size: 14px;
+    font-family: sans-serif;
+    z-index: 100;
+}
+
+#contextMapInfoPanel #selectedGeneName {
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
+#contextMapInfoPanel #selectedGeneProducts {
+    clear: left;
+}
+
+
+#contextMapInfoPanel .label {
+    width: 6em;
+}
+#contextMapInfoPanel .value {
+       padding-bottom: 0.2em;
+}
+
+#contextMapInfoPanel #loadDetails {
+    position: absolute;
+    right: 6px;
+    bottom: 3px;
+    font-size: 80%;
+}
+
+.closeButton {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+}
+
+.homeButton {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    z-index: 5;
+}
+
+
+/* Other .closeButton and .homeButton entries are in gene.jsp */
+
+#geneDetailsLoading {
+    position: absolute;
+    width: 15em;
+    top: 200px;
+    left: 200px;
+    font-size: 2em;
+    display: none;
+    z-index: 200;
+}
+
+#geneDetailsLoading .inner {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 10px;
+}
+#geneDetailsLoading .inner img {
+    padding-left: 0.5em;
+    padding-right: 1em;
+}
+
