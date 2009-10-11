@@ -10,7 +10,7 @@ var cruise = false;
 function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, transcript) {
     originalTranscriptName = loadedTranscriptName = transcript;
     base = baseArg;
-    imageController = base + "Image?key=";
+    imageController = base + "Image/";
     contextMapDiv = document.getElementById("contextMapDiv");
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
@@ -277,7 +277,7 @@ function reloadDetails(name) {
 
     loading = true;
     var loadingDetailsTimer = setTimeout('$("#geneDetailsLoading").show()', 2000);
-    $("#geneDetails").fadeTo("slow", 0.4).load(base + "feature/"+name+"&detailsOnly=true", null, function () {
+    $("#geneDetails").fadeTo("slow", 0.4).load(base + "feature/"+name+"?detailsOnly=true", null, function () {
         clearTimeout(loadingDetailsTimer);
         loadedTranscriptName = name;
         document.title = "Transcript "+name+" - GeneDB";
