@@ -69,12 +69,12 @@
     <div class="value" id="selectedGeneName"></div>
     <div class="value" id="selectedGeneProducts"></div>
 </div>
-
+<%--
 <format:genePageSection id="geneDetailsLoading" className="greyBox">
     <img src="<c:url value="/includes/image/loading.gif"/>">
     Loading Gene Details...
 </format:genePageSection>
-
+ --%>
 <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
 </div>
