@@ -1,11 +1,12 @@
 package org.genedb.query.sql;
 
+import org.apache.log4j.Logger;
 import org.genedb.query.AbstractQuery;
-import org.genedb.query.Param;
 import org.genedb.query.Result;
 import org.genedb.query.SimpleListResult;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -21,8 +22,15 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
  */
 public class SqlQuery extends AbstractQuery implements DataSourceAware {
 
-    private String sql;
-    private DataSource dataSource;
+    protected String sql;
+    protected DataSource dataSource;
+    
+    /**
+     * The args that will be injected into the sql statement placeholders ('?'). 
+     */
+    protected Object[] args;
+    
+    private static final Logger logger = Logger.getLogger(SqlQuery.class);
     
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -31,8 +39,24 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
     public void setSql(String sql) {
         this.sql = sql;
     }
-
     
+    /**
+     * A setter for the args object. It's protected so that the subclasses have to call it. 
+     * 
+     * @param args
+     */
+    protected void setArgs(Object[] args)
+    {
+    	this.args = args;
+    }
+    
+    
+    public Object[] getArgs()
+    {
+    	return args.clone();
+    }
+    
+   
     
     /**
      * @param args
@@ -57,19 +81,42 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
      */
     public Result process() {
         final SimpleListResult slr = new SimpleListResult();
-        //slr.setType();
         JdbcTemplate jt = new JdbcTemplate(dataSource);
-        Object[] args = {"pombe", "cdc%"};
-        //Object[] args = new Object[0];
+        
         jt.query(sql, args,
             new RowCallbackHandler() {
             public void processRow(ResultSet rs) throws SQLException {
-            slr.add(rs.getString("geneId"));
+            	ResultSetMetaData meta = rs.getMetaData(); 
+            	int colNum = meta.getColumnCount();
+            	
+            	Object[] result = new Object[colNum];
+            	
+            	// gv1 notes that this doesn't take into account column names
+            	for (int i = 1; i <= colNum;i++)
+            	{
+            		result[i-1] = rs.getObject(i);
+            	}
+            	slr.add(result);
             }
         }
         );
         return slr;
     }
+    
+    /**
+     * 
+     * Will run the query using the supplied callBack.
+     * 
+     * @param callBack
+     * @throws Exception
+     */
+	public void processCallBack(RowCallbackHandler callBack) 
+	{
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		logger.debug(args);
+		logger.debug(sql);
+		jt.query(sql, args, callBack);
+	}
 
     
 //    @Override

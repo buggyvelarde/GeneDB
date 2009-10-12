@@ -72,6 +72,14 @@
 
   <target name="query-populate-lib" depends="check.query-lib-uptodate" unless="query.lib-uptodate">
     <populate directory="genedb-query" />
+  	
+  	<!-- 
+  		gv1 - hack to include dependencies needed by unit tests, which are otherwise deleted prior to build 
+  		@TODO art suggesed we should find out why these dependencies are here in the first place
+  	--> 
+  	<copy file="${basedir}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.query}/lib" />
+  	<copy file="${basedir}/../genedb-libs/lib/biojava/bytecode-0.91.jar" todir="${imported.basedir.query}/lib" />
+  	<copy file="${basedir}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.query}/lib" />
   </target>
 
   <target name="check.query-lib-uptodate" depends="init-query">
@@ -79,7 +87,7 @@
   </target>
 
   <target name="query-clean">
-    <clean-target project="query" />
+     <clean-target project="query" /> 
   </target>
 
 </project>

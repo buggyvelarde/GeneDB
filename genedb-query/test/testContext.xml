@@ -91,7 +91,10 @@
     
     <bean id="simpleNameQuery" class="org.genedb.querying.tmpquery.SimpleNameQuery"/>
     <bean id="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery"/>
-    
+    <bean id="dateCountQuery" class="org.genedb.querying.tmpquery.DateCountQuery" />
+    <bean id="changedGeneFeaturesQuery" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
 
     <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
         <property name="luceneIndexList">
