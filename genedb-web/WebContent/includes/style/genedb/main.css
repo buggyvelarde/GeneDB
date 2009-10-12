@@ -69,6 +69,7 @@ br {
 #navigation a {
 	color: #ffffff;
 	text-decoration: none;
+	z-index: 120;
 }
 
 #navigation ul { /* all lists */
@@ -80,6 +81,7 @@ br {
 	margin-left: 22px;
 	font-size: 1.2em;
 	color: #fff;
+	z-index: 120;
 }
 
 #navigation li { /* all list items */
@@ -89,6 +91,7 @@ br {
 	margin-right: 35px;
 	margin-top: 1px;
 	padding-bottom: 2px;
+	z-index: 120;
 }
 
 #navigation li ul { /* second-level lists */
@@ -99,6 +102,7 @@ br {
 	font-size: 1em;
 	background: #396f90;
 	margin: 0px;
+	z-index: 120;
 }
 
 #navigation li:hover ul, #navigation li.over ul { /* lists nested under hovered list items */
@@ -112,6 +116,7 @@ br {
 	-moz-border-radius-bottomright: 6px;
 	-webkit-border-bottom-left-radius: 6px;
 	-webkit-border-bottom-right-radius: 6px;
+	z-index: 120;
 }
 
 #navigation li ul li {
@@ -119,19 +124,23 @@ br {
 	white-space: nowrap;
 	padding: 0.3em 0.5em;
 	margin: 0;
+	z-index: 120;
 }
 
 #navigation li ul li:hover, #navigation li ul li.over { /* lists nested under hovered list items */
 	background: #4e95c2;
+	z-index: 120;
 }
 
 #navigation li ul li:hover a, #navigation li ul li.over a {
 	color: #ffffff;
+	z-index: 120;
 }
 
 #navigation .has-sub {
 	margin-right: 50px;
 	background: url(../../image/nav-arrow-down.gif) right no-repeat;
+	z-index: 120;
 }
 
 #col-1-1 {
