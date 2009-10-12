@@ -176,7 +176,7 @@ function loadTiles(chrlen, tileData) {
 
     chromosomeThumbnailWindow = document.createElement("img");
     chromosomeThumbnailWindow.id = "chromosomeThumbnailWindow";
-    chromosomeThumbnailWindow.src=base + "ContextMapWindow?width=" + windowPixelWidth;
+    chromosomeThumbnailWindow.src=base + "ContextMapWindow/" + windowPixelWidth;
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailWindow);
 
     chromosomeThumbnailWindow.style.left="0px";

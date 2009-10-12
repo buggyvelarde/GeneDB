@@ -3,9 +3,9 @@ package org.genedb.web.gui;
 import org.genedb.util.ColorUtils;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -37,10 +37,10 @@ public class ContextMapWindowController {
     private final IndexColorModel colorModel = ColorUtils.colorModelFor(Color.WHITE, FRAME_COLOR);
 
 
-    @RequestMapping(method=RequestMethod.GET)
+    @RequestMapping(method=RequestMethod.GET, value="/{width}")
     public void writeImage(HttpServletResponse resp,
             OutputStream out,
-            @RequestParam("width") int width) throws IOException {
+            @PathVariable("width") int width) throws IOException {
 
         resp.setContentType(MIME_TYPE);
 
