@@ -139,6 +139,10 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Image/*</url-pattern>
      </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Orthologs/*</url-pattern>
+     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Query/*</url-pattern>
@@ -222,10 +226,6 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/OrganismChooser</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/Orthologs</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>

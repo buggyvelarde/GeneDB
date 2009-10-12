@@ -12,6 +12,7 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,9 +54,9 @@ public class OrthologsController extends BaseCachingController {
         this.sequenceDao = sequenceDao;
     }
 
-    @RequestMapping(method = RequestMethod.GET , params= "cluster")
+    @RequestMapping(method = RequestMethod.GET , value="/{cluster}")
     public String processForm(
-            @RequestParam(value="cluster") String clusterName,
+            @PathVariable(value="cluster") String clusterName,
             @RequestParam(value="suppress", required=false) String suppress,
             ServletRequest request,
             HttpSession session,
@@ -81,8 +82,6 @@ public class OrthologsController extends BaseCachingController {
         }
 
 
-
-
         switch (orthologs.size()) {
         case 0:
             // TODO return to an error page displaying proper message
@@ -95,12 +94,12 @@ public class OrthologsController extends BaseCachingController {
             List<GeneSummary> gs = possiblyConvertList(orthologs);
             String resultsKey = cacheResults(gs, null, null, session.getId());
 
-            model.addAttribute("key", resultsKey);
+//            model.addAttribute("key", resultsKey);
 //            model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '"+gs.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
             model.addAttribute("resultsSize", gs.size());
             //viewName = "list/results2";
-            return "redirect:/Results";
+            return "redirect:/Results/"+resultsKey;
         }
         return viewName;
     }

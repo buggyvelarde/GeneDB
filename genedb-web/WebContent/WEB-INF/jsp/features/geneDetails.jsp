@@ -141,9 +141,9 @@
   <format:genePageSection id="geneOntology">
   <h2>Gene Ontology</h2>
   <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
-    <format:go-section title="Biological Process" featureCvTerms="${dto.goBiologicalProcesses}" organism="${organism}"/>
-    <format:go-section title="Cellular Component" featureCvTerms="${dto.goCellularComponents}" organism="${organism}"/>
-    <format:go-section title="Molecular Function" featureCvTerms="${dto.goMolecularFunctions}" organism="${organism}"/>
+    <format:go-section title="Biological Process" featureCvTerms="${dto.goBiologicalProcesses}" category="biological_process" organism="${organism}"/>
+    <format:go-section title="Cellular Component" featureCvTerms="${dto.goCellularComponents}" category="cellular_component" organism="${organism}"/>
+    <format:go-section title="Molecular Function" featureCvTerms="${dto.goMolecularFunctions}" category="molecular_function" organism="${organism}"/>
   </table>
   </format:genePageSection>
 </c:if>
@@ -232,7 +232,7 @@ ${dto.ims.imageMap}
   <h2>Orthologues and Paralogues</h2>
   <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
     <c:forEach items="${dto.clusterIds}" var="clusterId">
-      <tr><td>${clusterId}</td><td><a href="<c:url value="/Orthologs"><c:param name="cluster" value="${clusterId}" /></c:url>">Look up others in cluster</a></span></td></tr>
+      <tr><td>${clusterId}</td><td><a href="<c:url value="/Orthologs/" />${clusterId}">Look up others in cluster</a></span></td></tr>
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
