@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,13 +19,13 @@ import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.QueryException;
-import org.genedb.querying.tmpquery.DateAndTypeQuery;
+import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
-import org.genedb.querying.tmpquery.DateQuery;
 import org.gmod.schema.mapped.Organism;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,7 +79,7 @@ public class RestController {
      * @param response
      * @return
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method=RequestMethod.GET, value={"/genomes/changes", "/genomes/changes.*"})
     public ModelAndView getGenomesStatus(
     		HttpServletRequest request, 
@@ -99,7 +101,7 @@ public class RestController {
 		
 		List<TaxonNode> taxonList = getAllTaxons();
     	
-		ResultSet rs = new ResultSet();
+		RestResultSet rs = new RestResultSet();
 		rs.since = sinceDate.toString();
 		rs.name = "genomes/changes";
 		
@@ -115,6 +117,7 @@ public class RestController {
 			
 			TaxonNode[] taxons = {taxon};
 			dateCountQuery.setTaxons( taxons );
+			
 			
 			List<Object> results = new ArrayList<Object>();
 			try {
@@ -147,7 +150,7 @@ public class RestController {
      * @param response
      * @return
      */
-    @SuppressWarnings("unchecked")
+    
     @RequestMapping(method=RequestMethod.GET, value={"/genome/changes", "/genome/changes.*"})
     public ModelAndView genomeStatusByTaxonomyID( 
     		HttpServletRequest request, 
@@ -173,41 +176,37 @@ public class RestController {
 			return new ErrorReport(viewName, ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
 		}
 		
-		DateAndTypeQuery dateQuery = (DateAndTypeQuery) applicationContext.getBean("dateAndTypeQuery", DateQuery.class); 
-    	dateQuery.setDate(sinceDate);
-        dateQuery.setAfter(true);
-        dateQuery.setCreated(false);
-        dateQuery.setTaxons( taxons );
-    	
-        List<Object> results = new ArrayList<Object>();
-		try {
-			results = (List<Object>) dateQuery.getResults();
-		} catch (Exception e) {
-			return new ErrorReport(viewName, ErrorType.QUERY_FAILURE, "The query has failed : " + e.getMessage());
-		}
-        int count = results.size();
-        
-        OrganismSetResult rs = new OrganismSetResult();
-		rs.since = sinceDate.toString();
-		rs.name = "genome/changes";
-		rs.taxonomyID = taxonomyID;
-		rs.count = count;
+		Organism o = organismDao.getOrganismByCommonName(taxons[0].getLabel());
 		
-		// remember to cast the result Objects to Object[]s
-		// Java can't tell these are lists until you force 
-		// the cast
-		for (Object result : results)
-		{
-			Object[] resultArray = (Object[]) result;
-			FeatureStatus fs = new FeatureStatus();
-			fs.id = (String) resultArray[0];
-			fs.type = (String) resultArray[1];
-			rs.addResult(fs);
-		}
+		ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeaturesQuery", ChangedGeneFeaturesQuery.class);
+		changedGeneFeaturesQuery.setDate(sinceDate);
+		changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
+		
+		final OrganismSetResult organismSetResult = new OrganismSetResult();
+		organismSetResult.since = sinceDate.toString();
+		organismSetResult.name = "genome/changes";
+		organismSetResult.taxonomyID = taxonomyID;
+		organismSetResult.count = 0;
+		
+		
+		changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
+		    public void processRow(ResultSet rs) throws SQLException {
+				FeatureStatus fs = new FeatureStatus();
+				
+				fs.id = rs.getObject("uniquename").toString(); 
+				fs.type = rs.getObject("type").toString(); 
+				fs.timelastmodified = rs.getObject("time").toString(); 
+				fs.rootID = rs.getObject("rootname").toString(); 
+				fs.rootType = rs.getObject("roottype").toString(); 
+				
+				organismSetResult.addResult(fs);
+				organismSetResult.count += 1;
+			}
+		});
 		
 		
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(rs);
+        mav.addObject(organismSetResult);
         return mav;
     }
 	
@@ -365,7 +364,7 @@ class BaseResult
 }
 
 @XStreamAlias("results")
-class ResultSet extends BaseResult
+class RestResultSet extends BaseResult
 {
 	@XStreamAlias("since")
 	@XStreamAsAttribute
@@ -381,7 +380,7 @@ class ResultSet extends BaseResult
 }
 
 @XStreamAlias("result")
-class OrganismSetResult extends ResultSet
+class OrganismSetResult extends RestResultSet
 {
 	@XStreamAlias("count")
 	@XStreamAsAttribute
@@ -421,6 +420,7 @@ class OrganismStatusList extends BaseResult
 	}
 }
 
+
 @XStreamAlias("feature")
 class FeatureStatus extends BaseResult
 {
@@ -431,7 +431,25 @@ class FeatureStatus extends BaseResult
 	@XStreamAlias("id")
 	@XStreamAsAttribute
 	public String id;
+	
+	@XStreamAlias("rootID")
+	@XStreamAsAttribute
+	public String rootID;
+	
+	@XStreamAlias("rootType")
+	@XStreamAsAttribute
+	public String rootType;
+	
+	@XStreamAlias("timelastmodified")
+	@XStreamAsAttribute
+	public String timelastmodified;
+	
 }
+
+
+
+
+
 
 
 
