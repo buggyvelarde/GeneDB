@@ -232,6 +232,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 i++;
                 try {
                     logger.error(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
+                    System.err.println(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
                     session.index(gene);
 
                     for (Transcript transcript : gene.getTranscripts()) {
@@ -257,7 +258,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
             batchCount++;
             //logger.info(String.format("Indexed '%d'pc ('%d' of '%d'), %d hours, %d mins left", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), hours, mins));
-
+            System.err.println(String.format("Indexed '%d'pc ('%d' of '%d')", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size()));
             if (failed) {
                 failedToLoad.addAll(thisBatch);
             } else {
