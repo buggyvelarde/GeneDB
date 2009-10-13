@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -21,12 +22,17 @@ import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureCvTermProp;
+import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -81,13 +87,10 @@ public class RestController {
      */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method=RequestMethod.GET, value={"/genomes/changes", "/genomes/changes.*"})
-    public ModelAndView getGenomesStatus(
-    		HttpServletRequest request, 
-            HttpServletResponse response)
+    public ModelAndView getGenomesStatus(@RequestParam("since") String since)
     {
     	DateCountQuery dateCountQuery = (DateCountQuery) applicationContext.getBean("dateCountQuery", DateCountQuery.class);
     	
-    	String since = request.getParameter("since");
     	Date sinceDate = Calendar.getInstance().getTime();
     	try {
 			sinceDate = getDateFromString(since);
@@ -101,12 +104,9 @@ public class RestController {
 		
 		List<TaxonNode> taxonList = getAllTaxons();
     	
-		RestResultSet rs = new RestResultSet();
+		ChangedOrganismSetResult rs = new ChangedOrganismSetResult();
 		rs.since = sinceDate.toString();
 		rs.name = "genomes/changes";
-		
-		OrganismStatusList oList = new OrganismStatusList();
-		rs.addResult(oList);
 		
 		for (TaxonNode taxon : taxonList)
 		{
@@ -133,7 +133,7 @@ public class RestController {
 			os.name = taxon.getName(TaxonNameType.FULL);
 			os.taxonomyID = taxonomyID;
 			
-			oList.addOrganism(os);
+			rs.addResult(os);
 			
 		}
 		
@@ -152,12 +152,9 @@ public class RestController {
      */
     
     @RequestMapping(method=RequestMethod.GET, value={"/genome/changes", "/genome/changes.*"})
-    public ModelAndView genomeStatusByTaxonomyID( 
-    		HttpServletRequest request, 
-            HttpServletResponse response) 
+    public ModelAndView genomeStatusByTaxonomyID(@RequestParam("since") String since,  @RequestParam("taxonomyID") String taxonomyID) 
     {
     	
-    	String taxonomyID = request.getParameter("taxonomyID");
     	if ((taxonomyID == null) || (taxonomyID.length() == 0 ))
     		return new ErrorReport(viewName, ErrorType.MISSING_PARAMETER, "please supply a taxonomyID");
     	
@@ -168,7 +165,6 @@ public class RestController {
     	TaxonNode[] taxons = {taxon};
     	
     	
-    	String since = request.getParameter("since");
     	Date sinceDate = Calendar.getInstance().getTime();
     	try {
 			sinceDate = getDateFromString(since);
@@ -182,7 +178,7 @@ public class RestController {
 		changedGeneFeaturesQuery.setDate(sinceDate);
 		changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
 		
-		final OrganismSetResult organismSetResult = new OrganismSetResult();
+		final ChangedFeatureSetResult organismSetResult = new ChangedFeatureSetResult();
 		organismSetResult.since = sinceDate.toString();
 		organismSetResult.name = "genome/changes";
 		organismSetResult.taxonomyID = taxonomyID;
@@ -193,11 +189,13 @@ public class RestController {
 		    public void processRow(ResultSet rs) throws SQLException {
 				FeatureStatus fs = new FeatureStatus();
 				
-				fs.id = rs.getObject("uniquename").toString(); 
-				fs.type = rs.getObject("type").toString(); 
-				fs.timelastmodified = rs.getObject("time").toString(); 
-				fs.rootID = rs.getObject("rootname").toString(); 
-				fs.rootType = rs.getObject("roottype").toString(); 
+				fs.id = rs.getObject("id").toString();
+				fs.uniquename = rs.getObject("uniquename").toString();
+				fs.type = rs.getObject("type").toString();
+				fs.timelastmodified = rs.getObject("time").toString();
+				fs.rootID = rs.getObject("rootid").toString();
+				fs.rootUniquename = rs.getObject("rootname").toString(); 
+				fs.rootType = rs.getObject("roottype").toString();
 				
 				organismSetResult.addResult(fs);
 				organismSetResult.count += 1;
@@ -210,6 +208,109 @@ public class RestController {
         return mav;
     }
 	
+    
+    /**
+     * 
+     * Returns a some details for a feature.
+     * 
+     * @param request
+     * @param response
+     * @param uniqueName
+     * @return
+     */
+	@RequestMapping(value={"/feature/", "/feature.*" })
+    public ModelAndView getFeature( @RequestParam("uniqueName") String uniqueName )
+    {
+        
+		RestResultSet result = new RestResultSet();
+		result.name = "/feature";
+		
+        Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);
+        
+        Organism org = feature.getOrganism();
+        
+        Collection<FeatureCvTerm> fcv = feature.getFeatureCvTerms();
+        
+        FeatureSummary fsum = new FeatureSummary();
+        
+        result.addResult(fsum);
+        
+        OrganismSummary osum = new OrganismSummary();
+        osum.genus = org.getGenus();
+        osum.abbreviation = org.getAbbreviation();
+        osum.commonName = org.getCommonName();
+        osum.species = org.getSpecies();
+        osum.taxonomyID = org.getPropertyValue("genedb_misc", "taxonId"); 
+        
+        fsum.isAnalysis = feature.isAnalysis();
+        fsum.isObsolete = feature.isObsolete();
+        fsum.id = Integer.toString(feature.getFeatureId());
+        fsum.uniquename = feature.getUniqueName();
+        fsum.organism = osum;
+        
+        logger.debug("timelastaccessioned " + feature.getTimeAccessioned());
+        logger.debug("timelastmodified " + feature.getTimeLastModified());
+        
+        Date timelastaccessioned = feature.getTimeAccessioned();
+        Date timelastmodified = feature.getTimeLastModified();
+        
+        if (timelastaccessioned != null)
+        	fsum.timelastaccessioned = timelastaccessioned.toString();
+        
+        if (timelastmodified != null)
+        	fsum.timelastmodified = timelastmodified.toString();
+        
+        fsum.type = feature.getType().getName();
+        
+        for (FeatureRelationship relationship : feature.getFeatureRelationshipsForSubjectId())
+        {
+        	Feature child = relationship.getObjectFeature();
+        	LinkedFeatureSummary csum = new LinkedFeatureSummary();
+        	csum.id = Integer.toString(child.getFeatureId());
+        	csum.uniquename = child.getUniqueName();
+        	csum.type = child.getType().getName();
+        	csum.relationship = relationship.getType().getName();
+        	fsum.parents.add(csum);
+        }
+        
+        for (FeatureRelationship relationship : feature.getFeatureRelationshipsForObjectId())
+        {
+        	Feature parent = relationship.getSubjectFeature();
+        	LinkedFeatureSummary psum = new LinkedFeatureSummary();
+        	psum.id = Integer.toString(parent.getFeatureId());
+        	psum.uniquename = parent.getUniqueName();
+        	psum.type = parent.getType().getName();
+        	psum.relationship = relationship.getType().getName();
+        	fsum.children.add(psum);
+        }
+        
+        for (FeatureCvTerm  cv : fcv)
+        {
+        	 
+        	List<FeatureCvTermProp> props = cv.getFeatureCvTermProps();
+        	CVTermSummary csum = new CVTermSummary();
+        	
+        	for (FeatureCvTermProp prop : props)
+        	{
+        		String type = prop.getType().getName();
+        		String value = prop.getValue();
+        		
+        		CVTermPropSummary psum = new CVTermPropSummary();
+        		psum.type = type;
+        		psum.value = value;
+        		
+        		csum.props.add(psum);
+        	}
+        	
+        	csum.name = cv.getCvTerm().getName();
+        	fsum.cvterms.add(csum);
+        }
+        
+        ModelAndView mav = new ModelAndView(viewName);
+        mav.addObject(result);
+        return mav;
+        
+    }
 	
 	/*
 	 * 
@@ -366,10 +467,6 @@ class BaseResult
 @XStreamAlias("results")
 class RestResultSet extends BaseResult
 {
-	@XStreamAlias("since")
-	@XStreamAsAttribute
-	public String since;
-	
 	@XStreamImplicit()
 	private List<BaseResult> results = new ArrayList<BaseResult>();
 	
@@ -379,16 +476,31 @@ class RestResultSet extends BaseResult
 	}
 }
 
-@XStreamAlias("result")
-class OrganismSetResult extends RestResultSet
+@XStreamAlias("results")
+class ChangedFeatureSetResult extends RestResultSet
 {
-	@XStreamAlias("count")
+	@XStreamAlias("since")
 	@XStreamAsAttribute
-	public int count;
+	public String since;
 	
 	@XStreamAlias("taxonomyID")
 	@XStreamAsAttribute
 	public String taxonomyID;
+	
+	@XStreamAlias("count")
+	@XStreamAsAttribute
+	public int count;
+}
+
+
+@XStreamAlias("results")
+class ChangedOrganismSetResult extends RestResultSet
+{
+
+	
+	@XStreamAlias("since")
+	@XStreamAsAttribute
+	public String since;
 }
 
 @XStreamAlias("organism")
@@ -408,17 +520,17 @@ class OrganismStatus extends BaseResult
 	
 }
 
-@XStreamAlias("organisms")
-class OrganismStatusList extends BaseResult
-{
-	@XStreamImplicit(itemFieldName="organism")
-	private List<OrganismStatus> oStatuses = new ArrayList<OrganismStatus>();
-	
-	public void addOrganism(OrganismStatus os)
-	{
-		oStatuses.add(os);
-	}
-}
+//@XStreamAlias("organisms")
+//class OrganismStatusList extends BaseResult
+//{
+//	@XStreamImplicit(itemFieldName="organism")
+//	private List<OrganismStatus> oStatuses = new ArrayList<OrganismStatus>();
+//	
+//	public void addOrganism(OrganismStatus os)
+//	{
+//		oStatuses.add(os);
+//	}
+//}
 
 
 @XStreamAlias("feature")
@@ -431,6 +543,14 @@ class FeatureStatus extends BaseResult
 	@XStreamAlias("id")
 	@XStreamAsAttribute
 	public String id;
+	
+	@XStreamAlias("uniquename")
+	@XStreamAsAttribute
+	public String uniquename;
+	
+	@XStreamAlias("rootUniquename")
+	@XStreamAsAttribute
+	public String rootUniquename;
 	
 	@XStreamAlias("rootID")
 	@XStreamAsAttribute
@@ -448,8 +568,117 @@ class FeatureStatus extends BaseResult
 
 
 
+@XStreamAlias("feature")
+class FeatureSummary extends BaseResult
+{
+	@XStreamAlias("type")
+	@XStreamAsAttribute
+	public String type;
+	
+	@XStreamAlias("id")
+	@XStreamAsAttribute
+	public String id;
+	
+	@XStreamAlias("uniquename")
+	@XStreamAsAttribute
+	public String uniquename;
+	
+	@XStreamAlias("timelastmodified")
+	@XStreamAsAttribute
+	public String timelastmodified;
+	
+	@XStreamAlias("timelastaccessioned")
+	@XStreamAsAttribute
+	public String timelastaccessioned;
+	
+	@XStreamAlias("residues")
+	public String residues;
+	
+	@XStreamAlias("isAnalysis")
+	@XStreamAsAttribute
+	public boolean isAnalysis;
+	
+	@XStreamAlias("isObsolete")
+	@XStreamAsAttribute
+	public boolean isObsolete;
+	
+	@XStreamAlias("organism")
+	public OrganismSummary organism;
+	
+	@XStreamAlias("children")
+	public List<LinkedFeatureSummary> children = new ArrayList<LinkedFeatureSummary>();
+	
+	@XStreamAlias("parents")
+	public List<LinkedFeatureSummary> parents = new ArrayList<LinkedFeatureSummary>();
+	
+	@XStreamAlias("cvterms")
+	public List<CVTermSummary> cvterms = new ArrayList<CVTermSummary>();
+	
+}
 
+@XStreamAlias("feature")
+class LinkedFeatureSummary extends BaseResult
+{
+	@XStreamAlias("type")
+	@XStreamAsAttribute
+	public String type;
+	
+	@XStreamAlias("id")
+	@XStreamAsAttribute
+	public String id;
+	
+	@XStreamAlias("uniquename")
+	@XStreamAsAttribute
+	public String uniquename;
+	
+	@XStreamAlias("relationship")
+	@XStreamAsAttribute
+	public String relationship;
+}
 
+@XStreamAlias("cvterm")
+class CVTermSummary extends BaseResult
+{
+	
+	@XStreamAlias("props")
+	public List<CVTermPropSummary> props = new ArrayList<CVTermPropSummary>();
+}
+
+@XStreamAlias("cvtermprop")
+class CVTermPropSummary extends BaseResult
+{
+	@XStreamAlias("type")
+	@XStreamAsAttribute
+	public String type;
+	
+	@XStreamAlias("value")
+	@XStreamAsAttribute
+	public String value;
+}
+
+@XStreamAlias("organism")
+class OrganismSummary extends BaseResult
+{
+	@XStreamAlias("abbreviation")
+	@XStreamAsAttribute
+	public String abbreviation;
+	
+	@XStreamAlias("genus")
+	@XStreamAsAttribute
+	public String genus;
+	
+	@XStreamAlias("species")
+	@XStreamAsAttribute
+	public String species;
+	
+	@XStreamAlias("commonName")
+	@XStreamAsAttribute
+	public String commonName;
+	
+	@XStreamAlias("taxonomyID")
+	@XStreamAsAttribute
+	public String taxonomyID;
+}
 
 
 
