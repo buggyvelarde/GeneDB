@@ -334,6 +334,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(), feature.getClass()));
                     session.index(feature);
                 } catch (Exception exp) {
+                    System.err.println(exp);
                     logger.error("Batch failed", exp);
                     failed = true;
                 }
