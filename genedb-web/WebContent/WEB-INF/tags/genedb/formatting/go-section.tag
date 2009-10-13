@@ -1,10 +1,12 @@
 <%@ tag display-name="go-section" body-content="empty"%>
 <%@ attribute name="featureCvTerms" type="java.util.Collection" required="true" %>
 <%@ attribute name="organism" type="java.lang.String" required="true" %>
+<%@ attribute name="category" type="java.lang.String" required="true" %>
 <%@ attribute name="title" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="db" uri="db" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
 
 <c:if test="${fn:length(featureCvTerms) > 0}">
   <c:forEach items="${featureCvTerms}" var="fctDTO" varStatus="status">
@@ -32,6 +34,9 @@
     <c:if test="${fctDTO.withFrom != 'null'}">
       <db:dbXRefLink dbXRef="${fctDTO.withFrom}"/>
     </c:if>
+  </td>
+  <td>
+  <format:n-others count="${fctDTO.count}" cvTermName="${fctDTO.typeName}" taxons="${dto.organismCommonName}" cv="${category}" suppress="${dto.uniqueName}" />
   </td>
   </tr>
   </c:forEach>
