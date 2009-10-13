@@ -248,9 +248,6 @@ public class RestController {
         fsum.uniquename = feature.getUniqueName();
         fsum.organism = osum;
         
-        logger.debug("timelastaccessioned " + feature.getTimeAccessioned());
-        logger.debug("timelastmodified " + feature.getTimeLastModified());
-        
         Date timelastaccessioned = feature.getTimeAccessioned();
         Date timelastmodified = feature.getTimeLastModified();
         
@@ -510,27 +507,11 @@ class OrganismStatus extends BaseResult
 	@XStreamAsAttribute
 	public int features_changed;
 	
-	//@XStreamAlias("url")
-	//@XStreamAsAttribute
-	//public String url;
-	
 	@XStreamAlias("taxonomyID")
 	@XStreamAsAttribute
 	public String taxonomyID;
 	
 }
-
-//@XStreamAlias("organisms")
-//class OrganismStatusList extends BaseResult
-//{
-//	@XStreamImplicit(itemFieldName="organism")
-//	private List<OrganismStatus> oStatuses = new ArrayList<OrganismStatus>();
-//	
-//	public void addOrganism(OrganismStatus os)
-//	{
-//		oStatuses.add(os);
-//	}
-//}
 
 
 @XStreamAlias("feature")
