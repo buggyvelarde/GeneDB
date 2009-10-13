@@ -13,7 +13,7 @@
   <c:set var="phrase" value="Others" />
 </c:if>
 <c:if test="${others >= 1}">
-(<a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" />
+(<a href="<c:url value="/Query/controlledCuration">
                         <c:param name="taxons" value="${taxons}" />
                         <c:param name="cvTermName" value="${cvTermName}" />
                         <c:param name="cv" value="${cv}" />
