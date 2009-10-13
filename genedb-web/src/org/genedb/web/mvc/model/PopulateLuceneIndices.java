@@ -81,7 +81,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * high, we run out of heap space.
      */
     private static final int DEFAULT_BATCH_SIZE = 10;
-    
+
     private int batchSize = DEFAULT_BATCH_SIZE;
 
     /**
@@ -111,7 +111,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String indexBaseDirectory;
     private String organism;
     private int numBatches = -1;
-    
+
     private int featureStart = -1;
     private int featureEnd;
 
@@ -145,7 +145,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-        
+
         return session;
     }
 
@@ -170,29 +170,29 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public void indexFeatures() {
         FullTextSession session = newSession(batchSize);
-        
+
         indexGenes(session);
-        
+
         //for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
         //    indexFeatures(featureClass, numBatches, session);
         //}
         session.close();
         logger.trace("Leaving indexFeatures");
     }
-    
+
     private Set<Integer> indexGenes(FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
-        
+
         String hql = "select featureId from AbstractGene where obsolete=false";
-        
+
         if (featureStart > 0) {
             hql += " and featureId >= "+featureStart;
         }
         if (featureEnd > 0) {
             hql += " and featureId < "+featureEnd;
         }
-        
+
         if (organism != null) {
             hql += " and organism.commonName = '"+organism +"'";
         }
@@ -200,40 +200,40 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
 
         logger.info("Indexing AbstractGenes");
-        
+
         @SuppressWarnings("unchecked") List<Integer> allIds = idQuery.list();
-        
+
         int batchCount = 0;
         int start = 0;
         int end = start + batchSize;
         //long startTime = new Date().getTime();
-        
+
         while (start < allIds.size()) {
             if (end > allIds.size()) {
                 end = allIds.size();
             }
-            
+
             List<Integer> thisBatch = allIds.subList(start, end);
-            
+
             String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
-            
+
             Query featureQuery = session.createQuery("from Feature where featureId in ("+ids+")");
-            
+
             if (numBatches > 0) {
                 featureQuery.setMaxResults(numBatches * batchSize);
             }
             //featureQuery.setMaxResults(BATCH_SIZE);
-            
+
             @SuppressWarnings("unchecked") List<AbstractGene> genes = featureQuery.list();
-            
+
             boolean failed = false;
             int i=0;
             for (AbstractGene gene : genes) {
                 i++;
                 try {
-                    logger.debug(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
+                    logger.error(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
                     session.index(gene);
-                    
+
                     for (Transcript transcript : gene.getTranscripts()) {
                         session.index(transcript);
                         if (transcript instanceof ProductiveTranscript) {
@@ -243,9 +243,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
                                 session.index(protein);
                             }
                         }
-                        
+
                     }
-                    
+
                 } catch (Exception exp) {
                     logger.error("Batch failed", exp);
                     failed = true;
@@ -254,7 +254,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     System.err.print('.');
                 }
              }
-          
+
             batchCount++;
             //logger.info(String.format("Indexed '%d'pc ('%d' of '%d'), %d hours, %d mins left", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), hours, mins));
 
@@ -264,11 +264,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 session.flushToIndexes();
             }
             session.clear();
-            
+
             start = end;
             end = start + batchSize;
         }
-            
+
         logger.trace("Leaving batchIndexFeatures");
         return failedToLoad;
     }
@@ -291,40 +291,40 @@ public class PopulateLuceneIndices implements IndexUpdater {
             int numBatches, FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
-        
+
         String hql = "select featureId from "+featureClass.getName()+" where obsolete=false";
-        
+
         if (organism != null) {
             hql += " and organism.commonName = '"+organism +"'";
         }
         Query idQuery = session.createQuery(hql);
-        
+
         //if (numBatches > 0) {
         //    q.setMaxResults(numBatches * BATCH_SIZE);
         //}
         //q.setMaxResults(BATCH_SIZE);
 
         logger.info(String.format("Indexing %s", featureClass));
-        
+
         @SuppressWarnings("unchecked") List<Integer> allIds = idQuery.list();
-        
+
         int batchCount = 0;
         int start = 0;
         int end = start + batchSize;
-        
+
         while (start < allIds.size()) {
             if (end > allIds.size()) {
                 end = allIds.size();
             }
-            
+
             List<Integer> thisBatch = allIds.subList(start, end);
-            
+
             String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
-            
+
             Query featureQuery = session.createQuery("from "+featureClass.getName()+" where featureId in ("+ids+")");
-            
+
             @SuppressWarnings("unchecked") List<Feature> features = featureQuery.list();
-            
+
             boolean failed = false;
             int i=0;
             for (Feature feature : features) {
@@ -340,7 +340,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     System.err.print('.');
                 }
              }
-          
+
             batchCount++;
             logger.info(String.format("Indexed '%d' ('%d' of '%d') of type '%s'", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), featureClass));
 
@@ -350,11 +350,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 session.flushToIndexes();
             }
             session.clear();
-            
+
             start = end;
             end = start + batchSize;
         }
-            
+
         logger.trace("Leaving batchIndexFeatures");
         return failedToLoad;
     }
@@ -391,15 +391,15 @@ public class PopulateLuceneIndices implements IndexUpdater {
         transaction.commit();
         session.close();
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
     public void indexFeatures(List<Integer> featureIds) {
         FullTextSession session = newSession(batchSize);
         //Transaction transaction = session.beginTransaction();
@@ -592,19 +592,19 @@ public class PopulateLuceneIndices implements IndexUpdater {
         /* Index location */
         @Option(shortName="i", longName="index", description="Directory where the indices are stored")
         String getIndexDirectory();
-        
+
         /* Batch size */
         @Option(shortName="b", description="(Optional) batch size")
         int getBatchSize();
         void setBatchSize(int batchSize);
         boolean isBatchSize();
-        
+
         /* Feature start */
         @Option(shortName="s", description="(Optional) featureId start")
         int getFeatureStart();
         void setFeatureStart(int featureStart);
         boolean isFeatureStart();
-        
+
         /* Feature end */
         @Option(shortName="e", description="(Optional) featureId end")
         int getFeatureEnd();
@@ -668,15 +668,15 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if  (iga.isNumBatches()) {
             indexer.setNumBatches(iga.getNumBatches());
         }
-    
+
         if (iga.isBatchSize()) {
             indexer.setBatchSize(iga.getBatchSize());
         }
-        
+
         if (iga.isFeatureStart()) {
             indexer.setFeatureStart(iga.getFeatureStart());
         }
-        
+
         if (iga.isFeatureEnd()) {
             indexer.setFeatureEnd(iga.getFeatureEnd());
         }
@@ -695,5 +695,5 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public void setFeatureEnd(int featureEnd) {
         this.featureEnd = featureEnd;
     }
-    
+
 }
