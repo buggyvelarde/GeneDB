@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Tivey (art)
  */
 @Controller
-@RequestMapping("/FeatureSequence")
+@RequestMapping("/featureSequence")
 public class FeatureSequenceController {
     private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
 

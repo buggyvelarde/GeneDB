@@ -76,7 +76,7 @@
 </format:genePageSection>
  --%>
 
-<br /><br />
+<br />
 <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
 </div>
