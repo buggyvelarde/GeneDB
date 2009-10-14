@@ -26,7 +26,7 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class ProductiveTranscript extends Transcript {
-    
+
     private transient Logger logger = Logger.getLogger(ProductiveTranscript.class);
 
     ProductiveTranscript() {
@@ -152,19 +152,19 @@ public abstract class ProductiveTranscript extends Transcript {
         return super.createExon(exonUniqueName, fmin, fmax, phase);
     }
 
-    
+
     @Transient
     @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
     @Analyzer(impl = AllNamesAnalyzer.class)
     public String getAllTranscriptNames() {
         StringBuilder allNames = new StringBuilder();
-        
+
         //gene name like say PGKC should be indexed on it's transcript
         if (gene!= null && gene.getName() != null) {
             allNames.append(' ');
             allNames.append(gene.getName());
             allNames.append(' ');
-            
+
             //
             if(gene.getName().contains("-")){
                 allNames.append(' ');
@@ -173,30 +173,31 @@ public abstract class ProductiveTranscript extends Transcript {
             }
             logger.debug("Transcript's gene name: " + gene.getName());
         }
-        
+
         if(gene!= null && gene.getSynonyms().size()>0){
             for (Synonym synonym : gene.getSynonyms()){
                 allNames.append(' ');
                 allNames.append(synonym.getName());
                 allNames.append(' ');
                 logger.debug("Transcript's gene synonym: " + synonym.getName());
-            } 
+            }
         }
-        
-        
+
+
         //Process Unique Name
         String uniqueName = getUniqueName();
-        
-        //if say Smp_000030.1:mRNA is uniqueName, then add Smp_000030 and  Smp_000030.1    
+
+        //if say Smp_000030.1:mRNA is uniqueName, then add Smp_000030 and  Smp_000030.1
         int before = uniqueName.toLowerCase().indexOf(":");
-        String firstPart = uniqueName.substring(0, before);
-            
-        //add something like Smp_000030.1
-        allNames.append(' ');
-        allNames.append(firstPart);          
-        allNames.append(' ');
-        logger.debug("Transcript's name: " + firstPart);
-            
+        if (before != -1) {
+            String firstPart = uniqueName.substring(0, before);
+            //add something like Smp_000030.1
+            allNames.append(' ');
+            allNames.append(firstPart);
+            allNames.append(' ');
+            logger.debug("Transcript's name: " + firstPart);
+        }
+
         if (this.getGene().getTranscripts().size() > 1) {
             // Multiply spliced
             Transcript first = getGene().getFirstTranscript();
@@ -206,7 +207,7 @@ public abstract class ProductiveTranscript extends Transcript {
                 allNames.append(' ');
                 logger.debug("First Transcript' other name: " + this.getGene().getUniqueName());
             }
-              
+
         }
         return allNames.toString();
     }
