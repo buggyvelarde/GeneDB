@@ -51,14 +51,7 @@
 <li><a href="">but</a></li>
 </ul>
 </li>
-<li class="has-sub"><a href="">About us</a>
-<ul class="sub-menu">
-<li><a href="<c:url value="/feature/Tb927.1.710"/>">Tb927.1.710</a></li>
-<li><a href="<c:url value="/feature/Tb927.1.700"/>">Tb927.1.700</a></li>
-<li><a href="<c:url value="/feature/Tb927.1.710"/>">Three</a></li>
-</ul>
-<!-- end sub menu -->
-</li>
+<li><a href="">About us</a></li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
 <li><a href="<c:url value="/Query/geneType?taxons=${taxonNodeName}"/>" >By Gene Type</a></li>
@@ -85,14 +78,14 @@
 <li><a href="<c:url value="/"/>category/molecular_function?taxons=${taxonNodeName}">Molecular Function</a></li>
 </ul>
 </li>
-<li class="has-sub">Pages
+<li><a href="<c:url value="/History"/>">History</a></li>
+<li class="has-sub"><a href="">Temp. Testing</a>
 <ul class="sub-menu">
-<li><a href="index.html">About us</a></li>
-<li><a href="search.html">Search results</a></li>
-<li><a href="<c:url value="/History"/>">Database entry point</a></li>
-<li><a href="infantum.html">L. infantum JPCM5</a></li>
-</ul><!-- end sub menu -->
-</li>
+<li><a href="<c:url value="/feature/Tb927.1.710"/>">Tb927.1.710</a></li>
+<li><a href="<c:url value="/feature/Tb927.1.700"/>">Tb927.1.700</a></li>
+<li><a href="<c:url value="/feature/Tb927.1.710"/>">Three</a></li>
+</ul>
+<!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
 
@@ -111,7 +104,9 @@
 </td>
 
 <td valign="top" align="right">
-<p><a href="">Send us your comments on GeneDB</a> | Version 4.98</p>
+<p>Comments/Questions:
+<a href="<c:url value="/Feedback" />">Curator/Data</a> or
+<a href="<c:url value="/Feedback" />">website</a> | Version 4.98</p>
 </td>
 </tr>
 </table>
