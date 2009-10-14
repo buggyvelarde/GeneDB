@@ -8,7 +8,7 @@
 <div id="col-4-1">
 <div class="main-grey-3-4-top"></div>
 <div class="light-grey">
-<span class="float-right grey-text">Last Modified March 10, 2009</span>
+<span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
 <h2>General Information</h2>
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 
