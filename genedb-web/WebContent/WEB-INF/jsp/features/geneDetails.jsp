@@ -72,6 +72,27 @@
 <td>${dto.topLevelFeatureType} ${dto.topLevelFeatureDisplayName}; ${dto.location}</td>
 </tr>
 
+<c:if test="${!empty dto.dbXRefDTOs}">
+  <tr>
+    <th>See Also</td>
+    <td>
+    <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
+      <c:if test="${!empty dbxref.urlPrefix}">
+        <c:set var="urlPrefix" value="${dbxref.urlPrefix}"/>
+        <c:set var="urlSuffix" value=""/>
+        <c:if test="${dbxref.urlPrefix=='/DbLinkRedirector?db=EC&acc='}">
+          <c:set var="urlPrefix" value="/DbLinkRedirect?db=EC&acc="/>
+        </c:if>
+        <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
+          <c:set var="urlSuffix" value=".html"/>
+        </c:if>
+        <span><a href="${urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.dbName}:${dbxref.accession}</a><%--
+        --%><c:if test="${!status.last}">, </c:if></span>
+      </c:if>
+    </c:forEach>
+    </td>
+  </tr>
+</c:if>
 
 <c:if test="${dto.organismCommonName=='Lmajor' || dto.organismCommonName=='Linfantum' || dto.organismCommonName=='Lbraziliensis' || dto.organismCommonName=='Tbruceibrucei927'}">
 <tr>
@@ -90,7 +111,7 @@
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
 <format:addToBasket uniqueName="${dto.uniqueName}" />
-<a href="<c:url value="/"/>/featureSequence/${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
+<a href="<c:url value="/"/>featureSequence/${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
 <a href=""><img src="<c:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
 </div>
 <div class="main-blue-3-4-bot"></div>
