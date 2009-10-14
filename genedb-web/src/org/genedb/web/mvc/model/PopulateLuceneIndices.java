@@ -11,6 +11,7 @@ import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.hibernate.CacheMode;
@@ -173,9 +174,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         indexGenes(session);
 
-        //for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
-        //    indexFeatures(featureClass, numBatches, session);
-        //}
+        for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
+            indexFeatures(featureClass, numBatches, session);
+        }
         session.close();
         logger.trace("Leaving indexFeatures");
     }
@@ -216,6 +217,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             List<Integer> thisBatch = allIds.subList(start, end);
 
             String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
+            logger.debug(String.format("The list of ids being looked up is '%s'", ids));
 
             Query featureQuery = session.createQuery("from Feature where featureId in ("+ids+")");
 
@@ -231,16 +233,17 @@ public class PopulateLuceneIndices implements IndexUpdater {
             for (AbstractGene gene : genes) {
                 i++;
                 try {
-                    logger.error(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
-                    System.err.println(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
+                    logger.info(String.format("Indexing '%s' (%s)", gene.getUniqueName(), gene.getClass()));
                     session.index(gene);
 
                     for (Transcript transcript : gene.getTranscripts()) {
+                        logger.info(String.format("Indexing '%s' (%s)", transcript.getUniqueName(), transcript.getClass()));
                         session.index(transcript);
                         if (transcript instanceof ProductiveTranscript) {
                             ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
                             Polypeptide protein = productiveTranscript.getProtein();
                             if (protein != null) {
+                                logger.info(String.format("Indexing '%s' (%s)", protein.getUniqueName(), gene.getClass()));
                                 session.index(protein);
                             }
                         }
@@ -644,6 +647,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
     }
 
     public static void main(String[] args) {
+
+        PropertyConfigurator.configure("/nfs/pathdb/.hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-web/WebContent/WEB-INF/log4j.properties");
 
         Cli<PopulateLuceneIndicesArgs> cli = CliFactory.createCli(PopulateLuceneIndicesArgs.class);
         PopulateLuceneIndicesArgs iga = null;
