@@ -104,14 +104,15 @@
                                 <property name="autodetectAnnotations" value="true" />
                                 <property name="supportedClasses">
         	                 		<list>
-                         				<!-- see org.genedb.web.mvc.controller.RestController and org.genedb.web.mvc.controller.GmodRestControllerV1 -->
+                         				<!-- see org.genedb.web.mvc.controller.RestController -->
+                         				<!-- Build broken - most of these files don't exist
 		                         		<value>org.genedb.web.mvc.controller.BaseResult</value>
 		                         		<value>org.genedb.web.mvc.controller.ErrorModel</value>
 		                         		<value>org.genedb.web.mvc.controller.FeatureStatus</value>
 		                         		<value>org.genedb.web.mvc.controller.OrganismSetResult</value>
 		                         		<value>org.genedb.web.mvc.controller.OrganismStatus</value>
 		                         		<value>org.genedb.web.mvc.controller.OrganismStatusList</value>
-		                         		<value>org.genedb.web.mvc.controller.ResultSet</value>
+		                         		<value>org.genedb.web.mvc.controller.ResultSet</value> -->
                          			</list>
                          		</property>
                             </bean>
@@ -233,12 +234,12 @@
     <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
     <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
     <bean name="quickSearchQuery" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
-	
-	
+
+
 	<bean id="changedGeneFeaturesQuery" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
     	<property name="dataSource" ref="dataSource" />
     </bean>
-	
+
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
 
