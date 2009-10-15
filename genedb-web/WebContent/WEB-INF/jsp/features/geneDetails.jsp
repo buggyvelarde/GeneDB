@@ -180,6 +180,7 @@
         </div>
       <div class="sub-grey-3-4-bot"></div>
     </div><!-- end internal column -right -->
+    <br class="clear" />
   </c:when>
   <c:otherwise>
     <format:genePageSection>
@@ -188,7 +189,6 @@
   </c:otherwise>
 </c:choose>
 
-<br/>
 <c:if test="${dto.ims != null}">
 <format:genePageSection>
 <h2>Protein map</h2>
