@@ -56,4 +56,3 @@
   </div>
 <div class="main-grey-3-4-bot"></div>
 </div>
-</div>
