@@ -28,6 +28,7 @@ import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,11 +47,11 @@ public class SequenceDistributorController {
 
     private SequenceDao sequenceDao;
 
-    @RequestMapping(method=RequestMethod.GET)
+    @RequestMapping(method=RequestMethod.GET, value="/{name}/{type}/{destination}")
     public String process(
-            @RequestParam(value="name") String uniqueName,
-            @RequestParam(value="destination") String destination,
-            @RequestParam(value="type") String sequenceType
+            @PathVariable(value="name") String uniqueName,
+            @PathVariable(value="destination") String destination,
+            @PathVariable(value="type") String sequenceType
     ) {
 
         Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);

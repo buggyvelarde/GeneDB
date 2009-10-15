@@ -163,7 +163,11 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ResultsNavigator/*</url-pattern>
      </servlet-mapping>
-    <servlet-mapping>
+     <servlet-mapping>
+       <servlet-name>genedb</servlet-name>
+        <url-pattern>/SequenceDistributor/*</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
@@ -255,8 +259,5 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/MotifSearch</url-pattern>
      </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/SequenceDistributor</url-pattern>
-     </servlet-mapping> -->
+      -->
 </web-app>
