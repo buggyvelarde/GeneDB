@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<format:headerRound title="Gene Sequences ${gene.displayName}">
+<format:header title="Gene Sequences ${gene.displayName}">
 <c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
 <c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
 <c:url value="/" var="base"/>
-</format:headerRound>
+</format:header>
 <format:page>
 
     <c:if test="${!empty protein}">
