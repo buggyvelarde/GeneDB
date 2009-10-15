@@ -34,7 +34,9 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -53,22 +55,23 @@ import com.google.common.collect.Maps;
  * @author Adrian Tivey (art)
  */
 @Controller
-@RequestMapping("/featureSequence")
+@RequestMapping("/featureSeq")
 public class FeatureSequenceController {
     private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
 
     private SequenceDao sequenceDao;
     private String geneSequenceView;
 
-    @RequestMapping
+    @RequestMapping(method=RequestMethod.GET, value="/{name}")
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-            FeatureSequenceBean fsb, BindingResult be) throws Exception {
+            @PathVariable("name") String name) throws Exception {
 
-        Feature feature = sequenceDao.getFeatureByUniqueName(fsb.getName(), Feature.class);
+        Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
         if (feature == null) {
-            logger.warn(String.format("Failed to find feature '%s'", fsb.getName()));
-            be.reject("no.results");
-            return showForm(request, response, be);
+            logger.warn(String.format("Failed to find feature '%s'", name));
+            //be.reject("no.results");
+            //return showForm(request, response, be);
+            return new ModelAndView("redirect:/feature/notFound.jsp");
         }
 
         String viewName = geneSequenceView;
@@ -125,13 +128,6 @@ public class FeatureSequenceController {
         }
 
         return new ModelAndView(viewName, model);
-    }
-
-
-    // TODO
-    private ModelAndView showForm(HttpServletRequest request,
-            HttpServletResponse response, BindingResult be) {
-        throw new NotImplementedException("Missing code");
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {

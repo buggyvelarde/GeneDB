@@ -111,7 +111,7 @@
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
 <format:addToBasket uniqueName="${dto.uniqueName}" />
-<a href="<c:url value="/"/>featureSequence/${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
+<a href="<c:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
 <a href=""><img src="<c:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
 </div>
 <div class="main-blue-3-4-bot"></div>
