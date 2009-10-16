@@ -507,6 +507,10 @@ br {
 	font-weight: bold;
 }
 
+.sequence {
+	font-family: Monospaced;
+}
+
 /* Search (header) box stuff */
 
 .search-box {
