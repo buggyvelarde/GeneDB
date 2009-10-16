@@ -7,7 +7,7 @@
 <c:url value="/" var="base"/>
 </format:header>
 <format:page>
-
+<div id="col-2-1">
     <c:if test="${!empty protein}">
     <format:genePageSection id="proteinSequence">
         <div class="heading">Protein</div>
@@ -47,5 +47,5 @@
         <br><misc:format-sequence sequence="${cds}"/>
     </format:genePageSection>
     </c:if>
-
+</div>
 </format:page>
