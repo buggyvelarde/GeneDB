@@ -12,7 +12,9 @@
 <br>
 
 <div id="col-2-1">
-
+<div id="navigatePages">
+    <query:navigatePages />
+</div>
 <%-- Here we put those styles that contain URLs --%>
 <style>
 * html img#chromosomeThumbnailImage {
