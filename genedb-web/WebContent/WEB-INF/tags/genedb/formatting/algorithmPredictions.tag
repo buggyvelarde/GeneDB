@@ -38,7 +38,7 @@
     </c:if>
     <c:if test="${algData.DGPI != null && algData.DGPI.anchored}">
       <tr>
-        <td>DGPI</td>
+        <th>DGPI</th>
         <td>
           <c:if test="${algData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
           <c:if test="${!algData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
