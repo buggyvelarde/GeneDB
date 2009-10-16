@@ -508,7 +508,7 @@ br {
 }
 
 .sequence {
-	font-family: Monospaced;
+	font-family: monospace;
 }
 
 /* Search (header) box stuff */
