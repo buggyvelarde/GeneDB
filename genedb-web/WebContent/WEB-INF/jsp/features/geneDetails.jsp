@@ -215,6 +215,11 @@ ${dto.ims.imageMap}
   <format:genePageSection>
   <h2>Domain Information</h2>
   <table cellpadding="4" cellspacing="4" border="0" class="sequence-table">
+  <tr>
+    <td colspan="2"></td>
+    <td class="domainPosition">Position</td>
+    <td class="domainScore">E-value</td>
+  </tr>
   <c:forEach var="subsection" varStatus="status" items="${dto.domainInformation}">
     <tr>
       <td>
