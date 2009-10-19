@@ -117,6 +117,12 @@ class InterProRow implements DomainRow {
      *  In the actual file, fields are separated by tab characters.
      */
     InterProRow(int lineNumber, String[] rowFields) {
+        
+        this.comment == false;
+        if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
+            this.comment == true;
+        }
+        
         this.lineNumber = lineNumber;
         this.key        = rowFields[COL_KEY];
         this.nativeProg = rowFields[COL_NATIVE_PROG];
@@ -203,7 +209,9 @@ class InterProRow implements DomainRow {
 	public String evalue() {
 		return null;
 	}
-
+    public Boolean comment() {
+        return comment;
+    }
     public String getDate() {
         return date.withDashes();
     }
@@ -261,7 +269,11 @@ class PfamRow implements DomainRow {
      */
     public PfamRow(int lineNumber, String[] rowFields) {
 
-    	if (rowFields.length == 15 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PF") && rowFields[COL_SIG].equals("1")) {
+        this.comment == false;
+        if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
+            this.comment == true;
+        }
+        else if (rowFields.length == 15 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PF") && rowFields[COL_SIG].equals("1")) {
 
     		this.lineNumber = lineNumber;
     		this.key        = rowFields[COL_KEY];
@@ -315,7 +327,9 @@ class PfamRow implements DomainRow {
 	public String evalue() {
 		return evalue;
 	}
-
+    public Boolean comment() {
+        return comment;
+    }
 
     @Override
     public String toString() {
@@ -364,7 +378,11 @@ class PrositeRow implements DomainRow {
      */
     public PrositeRow(int lineNumber, String[] rowFields) {
 
-    	if (rowFields.length == 7 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PS")) {
+        this.comment == false;
+        if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
+            this.comment == true;
+        }
+        else if (rowFields.length == 7 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PS")) {
 
     		this.lineNumber = lineNumber;
     		this.key        = rowFields[COL_KEY];
@@ -419,7 +437,10 @@ class PrositeRow implements DomainRow {
 	public String evalue() {
 		return null;
 	}
-
+    public Boolean comment() {
+        return comment;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -523,7 +544,10 @@ class DomainFile {
             else {
                 throw new IllegalArgumentException(String.format("Loader for program '%s' has not been implemented", analysisProgram));
             }
-
+            
+            if (row.comment() != null) { //skipping comment lines
+                continue;
+            }
             if (row.db() == null) {
                 if (!unrecognisedProgs.contains(row.nativeProg())) {
                     logger.warn(String.format("Unrecognised program '%s', first encountered on line %d", row.nativeProg(), lineNumber));
