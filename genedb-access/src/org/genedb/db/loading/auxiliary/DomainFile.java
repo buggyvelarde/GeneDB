@@ -44,6 +44,7 @@ interface DomainRow {
 	public int fmax();
 	public String score();
 	public String evalue();
+	public Boolean comment();
 }
 
 
@@ -58,6 +59,7 @@ class InterProRow implements DomainRow {
     private static final Logger logger = Logger.getLogger(InterProRow.class);
 
     int lineNumber;
+    Boolean comment;
     String key, nativeProg, db, nativeAcc, nativeDesc, score;
     DomainAcc acc = DomainAcc.NULL;
     int fmin, fmax;
@@ -118,9 +120,9 @@ class InterProRow implements DomainRow {
      */
     InterProRow(int lineNumber, String[] rowFields) {
         
-        this.comment == false;
+        this.comment = false;
         if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
-            this.comment == true;
+            this.comment = true;
         }
         
         this.lineNumber = lineNumber;
@@ -232,6 +234,7 @@ class InterProRow implements DomainRow {
 class PfamRow implements DomainRow {
 
     int lineNumber;
+    Boolean comment;
     String key, nativeProg, db, nativeAcc, nativeDesc, score, evalue, version;
     DomainAcc acc = DomainAcc.NULL;
     int fmin, fmax;
@@ -269,9 +272,9 @@ class PfamRow implements DomainRow {
      */
     public PfamRow(int lineNumber, String[] rowFields) {
 
-        this.comment == false;
+        this.comment = false;
         if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
-            this.comment == true;
+            this.comment = true;
         }
         else if (rowFields.length == 15 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PF") && rowFields[COL_SIG].equals("1")) {
 
@@ -343,6 +346,7 @@ class PfamRow implements DomainRow {
 class PrositeRow implements DomainRow {
 
     int lineNumber;
+    Boolean comment;
     String key, nativeProg, db, nativeAcc, nativeDesc, nativeName, version;
     DomainAcc acc = DomainAcc.NULL;
     int fmin, fmax;
@@ -378,9 +382,9 @@ class PrositeRow implements DomainRow {
      */
     public PrositeRow(int lineNumber, String[] rowFields) {
 
-        this.comment == false;
+        this.comment = false;
         if (rowFields.length == 0 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
-            this.comment == true;
+            this.comment = true;
         }
         else if (rowFields.length == 7 && rowFields[COL_NATIVE_ACC].substring(0, 2).equals("PS")) {
 
