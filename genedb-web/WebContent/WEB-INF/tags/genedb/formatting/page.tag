@@ -44,6 +44,9 @@
 
 <div id="navigation">
 <ul id="nav">
+<li><a href="/Homepage">Home</a>
+</li>
+<%--
 <li class="has-sub"><a href="/Homepage">Home</a>
 <ul class="sub-menu">
 <li><a href="">Weebles</a></li>
@@ -51,6 +54,7 @@
 <li><a href="">but</a></li>
 </ul>
 </li>
+--%>
 <li><a href="">About us</a></li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
