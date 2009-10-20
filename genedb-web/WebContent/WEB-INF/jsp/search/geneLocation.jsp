@@ -2,7 +2,7 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<format:header title="EC Search" />
+<format:header title="Location Search" />
 <format:page>
 <br />
 
