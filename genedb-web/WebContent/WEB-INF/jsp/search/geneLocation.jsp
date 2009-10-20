@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:headerRound title="Gene Location Search">
-    <st:init />
-    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
-<br>
+
+<format:header title="EC Search" />
+<format:page>
+<br />
+
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form commandName="query" action="Query" method="GET">
@@ -30,7 +30,7 @@
                         <br><form:input id="maxLocation" path="max"/>
                         <br><font color="red"><form:errors path="max" /></font>
                     </td>
-                    
+
                      <td>
                          <b>Pseudogene:</b>
                           <br><form:checkbox id="pseudogenes" path="pseudogenes" />
@@ -62,8 +62,5 @@
 </div>
 
 
-
-
-
 <br><query:results />
-<format:footer />
+</format:page>
