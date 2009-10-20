@@ -10,9 +10,7 @@
 	<c:param name="organism" value="${organism}" />
 	<c:param name="category" value="${category}" />
 </c:url>
-<div id="geneResultsPanel">
-<format:genePageSection
-	className="whiteBox">
+  <div id="col-2-1">
 	<display:table name="results" id="row" pagesize="30"
 		requestURI="/category/${category}" class="simple" cellspacing="0"
 		cellpadding="4">
@@ -25,6 +23,6 @@
 		</display:column>
 		<display:column property="count" title="Count" />
 	</display:table>
-</format:genePageSection></div>
+  </div>
 
 </format:page>
