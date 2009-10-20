@@ -12,7 +12,7 @@
 </c:url>
   <div id="col-2-1">
 	<display:table name="results" id="row" pagesize="30"
-		requestURI="/category/${category}" class="simple" cellspacing="0"
+		requestURI="/category/${category}" cellspacing="0"
 		cellpadding="4" class="search-data-table">
 		<display:column title="Category - ${category}">
 			<c:url value="${url}" var="final">
