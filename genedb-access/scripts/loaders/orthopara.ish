@@ -6,16 +6,16 @@ orthoparaUsage() {
     cat <<USAGE
 Usage: `basename $0` $1 -n <dataset> -p <program> -v <version>
                         [-a <algorithm>] [options] <file>
-        - for algorithmically-predicted ${1}s
+        - for algorithmically-predicted ${1}
 
        `basename $0` $1 -n <dataset> -m [options] <file>
-        - for manually-curated ${1}s
+        - for manually-curated ${1}
 Options:
   -n dataset
     The name of the dataset. Existing orthologues or paralogues with the same 
     dataset name and program will be deleted.
   -p program
-    The name of the program used to predict the ${1}s
+    The name of the program used to predict the ${1}
   -v version
     The version of the program that was used. This should always be supplied
     if at all possible. Occasionally it is impossible to determine, in which
@@ -23,7 +23,7 @@ Options:
   -a algorithm
     If applicable, the name of the algorithm. This is optional.
   -m
-    Indicates that the ${1}s are manually curated rather than algorithmically 
+    Indicates that the ${1} are manually curated rather than algorithmically 
     predicted. If this option is specified then -p, -v and -a should not be used.
   -x notFoundNotFatal
     If this property is set, it is not a fatal error if a gene mentioned in the
@@ -51,6 +51,7 @@ orthoparaLoad() {
     if [ "$1" == "paralogues" ]; then
         paralogues=true
     fi
+    echo >&2 "loading $1"
     
     OPTIND=0
     while getopts "dn:p:v:a:mx:$stdopts" option; do
@@ -83,8 +84,9 @@ orthoparaLoad() {
             ;;
         esac
     done
+
     shift $[ $OPTIND - 1 ]
-        
+
     if [ $# -ne 1 ]; then
         loaderUsage >&2
         exit 1
@@ -118,13 +120,40 @@ orthoparaLoad() {
         set -x
     fi
     
+    echo >&2 "$properties $database_properties"
+    
+ 
+    if [ "$manual" == "false" ]; then
+    
+        echo >&2 "Deleting orthologues/paralogues from dataset $dataset"
+        
+        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
+        psql --no-psqlrc <<SQL
+        
+            delete
+            from feature
+            using analysisfeature join analysis using (analysis_id)
+            , organism
+            where analysisfeature.feature_id = feature.feature_id
+            and feature.organism_id = organism.organism_id
+            and organism.common_name = 'dummy'
+            and feature.type_id = (
+              select cvterm_id
+              from cvterm join cv using (cv_id)
+              where cv.name = 'sequence' and cvterm.name = 'protein_match'
+            )
+            and feature.uniquename like '${dataset}:%'
+            and analysis.program = '$program'
+            ;
+SQL
+    fi
     
     java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
         $properties $database_properties \
-        org.genedb.db.loading.Load reload-orthologues \
         -Dload.dataset="$dataset" -Dload.analysis.paralogues="$paralogues" \
-        -Dload.inputDirectory="$file" -Dload.orthologues.notFoundNotFatal="$notFoundNotFatal" \
         -Dload.analysis.program="$program" -Dload.analysis.programVersion="$version" \
-        -Dload.orthologues.manual="$manual" -Dload.orthologues.geneNames="$geneNames"
+        -Dload.orthologues.manual="$manual" -Dload.orthologues.geneNames="$geneNames" \
+        -Dload.orthologues.notFoundNotFatal="$notFoundNotFatal"  -Dload.inputDirectory="$file" \
+        org.genedb.db.loading.LoadOrthologues
         
 }
