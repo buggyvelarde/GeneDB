@@ -105,15 +105,14 @@ window.onload=startList;
 <h2>Information</h2>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-<a href="">Guide to GeneDB</a>
+<a href="<c:url value="/Page/guide"/>">Guide to GeneDB</a>
 <p>What is GeneDB, and what's in it?<br />
 Navigating/Searching GeneDB<br />
 Contacting Us/Feedback<br />
-
 Privacy Policy<br />
 </p>
 <br />
-<p><a href="">Data Release Policy</a></p>
+<p><a href="<c:url value="/Page/releases"/>">Data Release Policy</a></p>
 </div>
 <div class="baby-blue-bot"></div>
 
