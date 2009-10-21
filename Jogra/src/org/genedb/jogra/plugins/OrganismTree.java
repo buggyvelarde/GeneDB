@@ -1,12 +1,20 @@
 /*
- * ORGANISM TREE PLUG-IN FOR JOGRA (April 2009)
- * This plug-in displays a Jtree with the hierarchy of organisms and allows the user to select an organism or a class of organisms.
- * This information is then used to restrict the products in the rationaliser (i.e. only products pertaining to selected organism(s) will be displayed.
- * This selection can potentially be transferred to other Jogra plugins in the future.
+ * Copyright (c) 2009 Genome Research Limited.
  *
- * 19.5.2009: Added capability to receive multiple organism selections from user
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Library General Public License as published by the Free
+ * Software Foundation; either version 2 of the License or (at your option) any
+ * later version.
  *
- * @author nds
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB. If not, write to the Free
+ * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
+ * USA
  */
 
 package org.genedb.jogra.plugins;
@@ -43,9 +51,17 @@ import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.tree.TreePath;
 
+/**
+ * Organism-Tree/Organism-Chooser plugin for Jogra. Displays the organisms in the database in a hierarchical view and allows
+ * the user to select as many as necessary. This selection is then published on the EventBus for other plug-ins that need it,
+ * like the Term Rationaliser. We make use of the TaxonNodeManager class from genedb/db to extract the tree of organisms.
+ * Started: April 2009
+ *
+ * @author nds
+ */
 public class OrganismTree implements JograPlugin {
     private TaxonNodeManager taxonNodeManager;
-    private List<String> userSelection = new ArrayList<String>(); //Stores the user's selected organism name
+    private List<String> userSelection = new ArrayList<String>(); //Stores the organism names that the user selects
     private Jogra jogra;
 
     private static final Logger logger = Logger.getLogger(OrganismTree.class);
@@ -62,7 +78,7 @@ public class OrganismTree implements JograPlugin {
      */
     public JPanel getMainWindowPlugin(){
         final JPanel panel = new JPanel();
-        final JLabel label = new JLabel("Restrict terms by organism");
+        final JLabel label = new JLabel("Select organism(s) to work with");
         final JButton button = new JButton("Load organism tree");
         //When user clicks button, load a new frame with Jtree
         ActionListener actionListener = new ActionListener(){
@@ -71,7 +87,7 @@ public class OrganismTree implements JograPlugin {
                     new SwingWorker<JFrame, Void>() {
                         @Override
                         protected JFrame doInBackground() throws Exception {
-                          return getMainPanel();
+                               return getMainPanel();
                         }
                     }.execute();
                 }catch(Exception e){ //handle exceptions better later
@@ -93,9 +109,9 @@ public class OrganismTree implements JograPlugin {
      * @return
      */
     public JFrame getMainPanel() {
-        final JFrame frame = new JFrame("Hierarchy of organisms currently on database");
+        final JFrame frame = new JFrame("Organisms currently in the database");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final JButton button = new JButton("Select an organism");   //Create button to confirm user selection. Disabled at first
+        final JButton button = new JButton("Select");   //Create button to confirm user selection. Disabled at first
 
         //TaxonNodeManager created and initialised at start up. Create JTree
         TaxonNode taxonNode = taxonNodeManager.getTaxonNodeForLabel("Root");
@@ -121,13 +137,11 @@ public class OrganismTree implements JograPlugin {
                     TreePath tp[] = checkboxTree.getCheckingRoots();
                     for(TreePath p: tp){
                         userSelection.add(p.getLastPathComponent().toString());
-                        logger.info("Added: " + p.getLastPathComponent().toString());
                     }
                     frame.setVisible(false); //Make frame disappear
                     //frame.dispose(); //Or should frame be disposed??
                    
                     EventBus.publish("selection", userSelection); //EventBus publish mechanism here needs to be tested later
-                    //jogra.setChosenOrganism(userSelection); //Tell Jogra about the user's selection
                     logger.info("ORGANISM TREE: User selected " + userSelection.toString());
                 }catch(Exception e){ //handle exceptions better
                     logger.debug(e);
