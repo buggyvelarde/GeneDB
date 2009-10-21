@@ -1,4 +1,4 @@
-#No more than one colour for features
+#Checks if there are features with more than one colour associated with them that have the same rank
 
 select feature.feature_id
      , feature.uniquename
@@ -10,6 +10,7 @@ from feature
 join featureprop fp1 using (feature_id)
 join featureprop fp2 using (feature_id)
 where fp1.featureprop_id < fp2.featureprop_id
+and fp1.rank = fp2.rank /* NDS: Added in rank check ? */
 and fp1.type_id = fp2.type_id
 and fp2.type_id in (
     select cvterm.cvterm_id

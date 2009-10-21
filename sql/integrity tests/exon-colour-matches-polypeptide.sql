@@ -1,4 +1,6 @@
-#Exon colour matches polypeptide.
+#The colour assigned to exon should match the colour of the polypeptide.
+#(Complication in correcting this is deciding which colour is correct.)
+
 
 select organism.common_name as organism
      , transcript.uniquename as transcript
@@ -19,12 +21,36 @@ join featureprop exon_colour on exon_colour.feature_id = exon.feature_id
 join featureprop polypeptide_colour on polypeptide_colour.feature_id = polypeptide.feature_id
 left join feature_cvterm polypeptide_product on polypeptide_product.feature_id = polypeptide.feature_id
 left join cvterm product on polypeptide_product.cvterm_id = product.cvterm_id
-where transcript.type_id = 321 /*mRNA*/
-and   exon.type_id = 234 /*exon*/
-and   polypeptide.type_id = 191 /*polypeptide*/
-and   exon_colour.type_id = 26768 /*colour*/
-and   polypeptide_colour.type_id = 26768 /*colour*/
-and   (product.cv_id is null or product.cv_id = 25 /*genedb_products*/)
+where transcript.type_id = (
+                  select cvterm.cvterm_id
+                  from cvterm join cv on cvterm.cv_id = cv.cv_id
+                  where cv.name = 'sequence'
+                  and cvterm.name = 'mRNA')
+and   exon.type_id = (
+                  select cvterm.cvterm_id
+                  from cvterm join cv on cvterm.cv_id = cv.cv_id
+                  where cv.name = 'sequence'
+                  and cvterm.name = 'exon')
+and   polypeptide.type_id = (
+                  select cvterm.cvterm_id
+                  from cvterm join cv on cvterm.cv_id = cv.cv_id
+                  where cv.name = 'sequence'
+                  and cvterm.name = 'polypeptide')
+and   exon_colour.type_id = (
+                  select cvterm.cvterm_id
+                  from cvterm join cv on cvterm.cv_id = cv.cv_id
+                  where cv.name = 'genedb_misc'
+                  and cvterm.name = 'colour')
+and   polypeptide_colour.type_id = (
+                  select cvterm.cvterm_id
+                  from cvterm join cv on cvterm.cv_id = cv.cv_id
+                  where cv.name = 'genedb_misc'
+                  and cvterm.name = 'colour')
+and   (product.cv_id is null or product.cv_id = (
+                  select cv_id 
+                  from cv 
+                  where name='genedb_products'))
 and   (exon_colour.value is null <> polypeptide_colour.value is null
         or exon_colour.value <> polypeptide_colour.value)
+orde by organism.common_name
 ;

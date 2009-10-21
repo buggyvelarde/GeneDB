@@ -1,4 +1,5 @@
-#List colourless exons with colourful polypeptides 
+#List colourless exons with colourful polypeptides. 
+#Solution: Assign the polypeptide colour to exon. 
 
 select exon.uniquename as exon
      , transcript.uniquename as transcript
@@ -44,3 +45,5 @@ and not exists (
     )
 )
 ;
+
+

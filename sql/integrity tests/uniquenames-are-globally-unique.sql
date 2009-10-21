@@ -3,10 +3,16 @@
 
 select feature1.uniquename
      , feature1.feature_id as feature1_id
-     , feature1.type_id    as feature1_type
+     , type1.name          as feature1_type
+     , organism1.genus || ' ' || organism1.species as feature1_organism
      , feature2.feature_id as feature2_id
-     , feature2.type_id    as feature2_type
+     , type2.name          as feature2_type
+     , organism2.genus || ' ' || organism2.species as feature2_organism
 from feature feature1
+ join organism organism1 on feature1.organism_id = organism1.organism_id
+ join cvterm type1 on feature1.type_id = type1.cvterm_id
 join feature feature2 using (uniquename)
+ join organism organism2 on feature2.organism_id = organism2.organism_id
+ join cvterm type2 on feature2.type_id = type2.cvterm_id
 where feature1.feature_id < feature2.feature_id
 ;

@@ -22,6 +22,7 @@ where transcript.type_id in (
     , 361 
     , 604 
 )
+ and locsub.srcfeature_id = loctranscript.srcfeature_id
  and (locsub.fmax > loctranscript.fmax
    or locsub.fmin < loctranscript.fmin)
  and sub.type_id <> 191 

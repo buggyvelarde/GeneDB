@@ -1,5 +1,5 @@
 
-#Transcript has consistent colour
+#Checks that transcripts and their exons have consistent colouring
 
 select organism.common_name as organism
      , transcript.uniquename as transcript
@@ -24,4 +24,5 @@ and   exon2.type_id = 234 /*exon*/
 and   exon2_colour.type_id = 26768 /*colour*/
 and   exon1.feature_id < exon2.feature_id
 and   exon1_colour.value <> exon2_colour.value
+order by organism.common_name
 ;
