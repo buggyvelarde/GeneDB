@@ -55,7 +55,7 @@
 </ul>
 </li>
 --%>
-<li><a href="">About us</a></li>
+<li><a href="<c:url value="/Page/aboutUs" />">About us</a></li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
 <li><a href="<c:url value="/Query/geneType?taxons=${taxonNodeName}"/>" >By Gene Type</a></li>
@@ -83,12 +83,6 @@
 </ul>
 </li>
 <li><a href="<c:url value="/History"/>">History</a></li>
-<li class="has-sub"><a href="">Temp. Testing</a>
-<ul class="sub-menu">
-<li><a href="<c:url value="/feature/Tb927.1.710"/>">Tb927.1.710</a></li>
-<li><a href="<c:url value="/feature/Tb927.1.700"/>">Tb927.1.700</a></li>
-<li><a href="<c:url value="/feature/Tb927.1.710"/>">Three</a></li>
-</ul>
 <!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
