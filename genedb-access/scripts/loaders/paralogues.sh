@@ -17,5 +17,5 @@ HELP
 }
 
 doLoad() {
-    orthoparaLoad paralogues
+    orthoparaLoad "$@"
 }
