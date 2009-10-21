@@ -164,6 +164,8 @@
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
 
+   <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
+
 <!--
     <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController">
         <property name="queryFactory" ref="queryFactory" />
