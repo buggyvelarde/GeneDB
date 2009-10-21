@@ -2,6 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,10 +24,10 @@ public class DbLinkRedirectController {
         return "redirect:/Homepage";
     }
 
-    @RequestMapping(method = RequestMethod.GET , params= {"db", "acc"})
+    @RequestMapping(method = RequestMethod.GET , value="/{db}/{acc}")
     public String processForm(
-            @RequestParam(value="db") String dbName,
-            @RequestParam(value="acc") String acc) {
+            @PathVariable(value="db") String dbName,
+            @PathVariable(value="acc") String acc) {
 
         if (dbName.equalsIgnoreCase("EC")) {
             StringBuilder url = new StringBuilder();

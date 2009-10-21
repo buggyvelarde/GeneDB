@@ -69,7 +69,6 @@
     <listener>
         <listener-class>org.genedb.web.mvc.controller.ResultCacheSessionListener</listener-class>
     </listener>
-
 <!--
     <filter>
         <filter-name>UriSessionIdFilter</filter-name>
@@ -80,8 +79,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 -->
-
-
     <servlet>
         <servlet-name>headless-test</servlet-name>
         <servlet-class>org.genedb.web.gui.InitHeadlessToolkitServlet</servlet-class>
@@ -114,6 +111,10 @@
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ContextMapWindow/*</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/DbLinkRedirect</url-pattern>
      </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
@@ -230,10 +231,6 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Curation</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/DbLinkRedirect</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
