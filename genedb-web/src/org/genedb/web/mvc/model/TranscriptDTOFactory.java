@@ -473,7 +473,11 @@ public class TranscriptDTOFactory {
         }
         Collection<FeatureSynonym> featureSynonyms = transcript.getFeatureSynonyms();
         //Get the map of lists of synonyms
-        ret.setSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+        ret.setTranscriptSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+
+        featureSynonyms = gene.getFeatureSynonyms();
+        //Get the map of lists of synonyms
+        ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
     }
 
 
