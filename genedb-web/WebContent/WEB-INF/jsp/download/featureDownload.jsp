@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <format:headerRound title="Feature Download" bodyClass="genePage">
 	<st:init />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="featureDownload">
 	<format:genePageSection className="whiteBox">
