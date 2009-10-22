@@ -17,10 +17,10 @@ function addToBasket(geneid){
 
 <c:choose>
 <c:when test="${inBasket eq false}">
-<img id="basketbutton" src="<c:url value="/" />includes/image/button-view-sequence.gif" onclick="addToBasket('${dto.uniqueName}')" height="46" width="144" style="cursor: pointer; cursor: hand;">
+<img id="basketbutton" src="<misc:url value="/" />includes/image/button-view-sequence.gif" onclick="addToBasket('${dto.uniqueName}')" height="46" width="144" style="cursor: pointer; cursor: hand;">
 </c:when>
 <c:otherwise>
-<img src="<c:url value="/includes/images/alreadyInBasket.gif" />">
+<img src="<misc:url value="/includes/images/alreadyInBasket.gif" />">
 </c:otherwise>
 </c:choose>
 

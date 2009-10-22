@@ -13,19 +13,19 @@
 
 <div id="container">
 <div id="header">
-<a href="<c:url value="/"/>Homepage"><img src="<c:url value="/"/>includes/image/GeneDB-logo.png" border="0" height="52" width="290" alt="GeneDB" class="float-left-and-offset" /></a>
+<a href="<misc:url value="/"/>Homepage"><img src="<misc:url value="/"/>includes/image/GeneDB-logo.png" border="0" height="52" width="290" alt="GeneDB" class="float-left-and-offset" /></a>
 
 <div class="float-right" >
 <div class="baby-blue-top"></div>
 <div id="search" class="baby-blue">
-<form action="<c:url value="/"/>QuickSearchQuery" method="get">
+<form action="<misc:url value="/"/>QuickSearchQuery" method="get">
 <table cellpadding="0" cellspacing="0" width="100%" class="search-table">
 <tr>
 <td>
 <input type="hidden" name="pseudogenes" value="true" />
 <input type="hidden" name="product" value="true" />
 <input type="hidden" name="allNames" value="true" />
-<input type="text" name="searchText" class="search-box" /></td><td align="right"><input type="image" src="<c:url value="/"/>includes/image/button-search.gif" /></td>
+<input type="text" name="searchText" class="search-box" /></td><td align="right"><input type="image" src="<misc:url value="/"/>includes/image/button-search.gif" /></td>
 </tr>
 <tr>
 <td colspan="2">
@@ -55,34 +55,34 @@
 </ul>
 </li>
 --%>
-<li><a href="<c:url value="/Page/aboutUs" />">About us</a></li>
+<li><a href="<misc:url value="/Page/aboutUs" />">About us</a></li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
-<li><a href="<c:url value="/Query/geneType?taxons=${taxonNodeName}"/>" >By Gene Type</a></li>
-<li><a href="<c:url value="/Query/geneLocation?taxons=${taxonNodeName}"/>" >By Location</a></li>
-<li><a href="<c:url value="/Query/proteinLength?taxons=${taxonNodeName}"/>" >By Protein Length</a></li>
-<li><a href="<c:url value="/Query/proteinMass?taxons=${taxonNodeName}"/>">By Molecular Mass</a></li>
-<li><a href="<c:url value="/Query/proteinNumTM?taxons=${taxonNodeName}"/>">By No. TM domains</a></li>
-<li><a href="<c:url value="/"/>Query/proteinTargetingSeq?taxons=${taxonNodeName}">By Targeting Seqs.</a></li>
-<li><a href="<c:url value="/"/>Query/simpleName?taxons=${taxonNodeName}">Gene names</a></li>
-<li><a href="<c:url value="/"/>Query/product?taxons=${taxonNodeName}">Product</a></li>
-<!-- <li><a href="<c:url value="/"/>Query/curation?taxons=${taxonNodeName}">Curated annotations [comments & notes]</a></li> -->
-<li><a href="<c:url value="/"/>Query/go?taxons=${taxonNodeName}">GO term/id</a></li>
-<li><a href="<c:url value="/"/>Query/ec?taxons=${taxonNodeName}">EC number</a></li>
-<li><a href="<c:url value="/"/>Query/pfam?taxons=${taxonNodeName}">Pfam ID or keyword</a></li>
+<li><a href="<misc:url value="/Query/geneType?taxons=${taxonNodeName}"/>" >By Gene Type</a></li>
+<li><a href="<misc:url value="/Query/geneLocation?taxons=${taxonNodeName}"/>" >By Location</a></li>
+<li><a href="<misc:url value="/Query/proteinLength?taxons=${taxonNodeName}"/>" >By Protein Length</a></li>
+<li><a href="<misc:url value="/Query/proteinMass?taxons=${taxonNodeName}"/>">By Molecular Mass</a></li>
+<li><a href="<misc:url value="/Query/proteinNumTM?taxons=${taxonNodeName}"/>">By No. TM domains</a></li>
+<li><a href="<misc:url value="/"/>Query/proteinTargetingSeq?taxons=${taxonNodeName}">By Targeting Seqs.</a></li>
+<li><a href="<misc:url value="/"/>Query/simpleName?taxons=${taxonNodeName}">Gene names</a></li>
+<li><a href="<misc:url value="/"/>Query/product?taxons=${taxonNodeName}">Product</a></li>
+<!-- <li><a href="<misc:url value="/"/>Query/curation?taxons=${taxonNodeName}">Curated annotations [comments & notes]</a></li> -->
+<li><a href="<misc:url value="/"/>Query/go?taxons=${taxonNodeName}">GO term/id</a></li>
+<li><a href="<misc:url value="/"/>Query/ec?taxons=${taxonNodeName}">EC number</a></li>
+<li><a href="<misc:url value="/"/>Query/pfam?taxons=${taxonNodeName}">Pfam ID or keyword</a></li>
 </ul>
 <!-- end sub menu -->
 </li>
 <li class="has-sub"><a href="">Browse</a>
 <ul class="sub-menu">
-<li><a href="<c:url value="/"/>category/genedb_products?taxons=${taxonNodeName}">Products</a></li>
-<li><a href="<c:url value="/"/>category/ControlledCuration?taxons=${taxonNodeName}">Controlled Curation</a></li>
-<li><a href="<c:url value="/"/>category/biological_process?taxons=${taxonNodeName}">Biological Process</a></li>
-<li><a href="<c:url value="/"/>category/cellular_component?taxons=${taxonNodeName}">Cellular Component</a></li>
-<li><a href="<c:url value="/"/>category/molecular_function?taxons=${taxonNodeName}">Molecular Function</a></li>
+<li><a href="<misc:url value="/"/>category/genedb_products?taxons=${taxonNodeName}">Products</a></li>
+<li><a href="<misc:url value="/"/>category/ControlledCuration?taxons=${taxonNodeName}">Controlled Curation</a></li>
+<li><a href="<misc:url value="/"/>category/biological_process?taxons=${taxonNodeName}">Biological Process</a></li>
+<li><a href="<misc:url value="/"/>category/cellular_component?taxons=${taxonNodeName}">Cellular Component</a></li>
+<li><a href="<misc:url value="/"/>category/molecular_function?taxons=${taxonNodeName}">Molecular Function</a></li>
 </ul>
 </li>
-<li><a href="<c:url value="/History"/>">History</a></li>
+<li><a href="<misc:url value="/History"/>">History</a></li>
 <!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
@@ -103,8 +103,8 @@
 
 <td valign="top" align="right">
 <p>Comments/Questions:
-<a href="<c:url value="/Feedback" />">Curator/Data</a> or
-<a href="<c:url value="/Feedback" />">website</a> | Version 4.98</p>
+<a href="<misc:url value="/Feedback" />">Curator/Data</a> or
+<a href="<misc:url value="/Feedback" />">website</a> | Version 4.98</p>
 </td>
 </tr>
 </table>

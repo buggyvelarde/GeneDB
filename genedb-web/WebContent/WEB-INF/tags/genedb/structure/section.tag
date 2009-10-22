@@ -8,7 +8,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
-<c:set var="contextPath"><c:url value="/"/></c:set>
+<c:set var="contextPath"><misc:c:url value="/"/></c:set>
 <c:set var="imgLoc">${contextPath}includes/images/tri.gif</c:set>
 
 <c:if test="${!collapsed}">

@@ -15,20 +15,20 @@
     <script type="text/javascript" src="http://js.sanger.ac.uk/urchin.js"></script>
 
 
-    <link rel="stylesheet" href="<c:url value="/includes/style/alternative.css"/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value="/includes/yui/build/reset-fonts/reset-fonts.css"/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value="/includes/yui/build/assets/skins/sam/menu.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<misc:url value="/includes/style/alternative.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<misc:url value="/includes/yui/build/reset-fonts/reset-fonts.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<misc:url value="/includes/yui/build/assets/skins/sam/menu.css"/>" type="text/css" />
 
     <!--  YUI dependencies -->
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/container/container_core.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/yahoo/yahoo-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/event/event-min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/container/container_core.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/animation/animation-min.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/yahoo/yahoo-min.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/event/event-min.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
     <!-- YUI menu -->
-    <script type="text/javascript" src="<c:url value="/includes/yui/build/menu/menu.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/yui/build/menu/menu.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/phylogeny.js"/>"></script>
     <script type="text/javascript">
       var navigationMenuBar;
         YAHOO.util.Event.onContentReady("navigation", function () {
@@ -89,10 +89,10 @@
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
-        <td id="logo" valign="top" align="left" rowspan="2"><a href="<c:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<c:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
+        <td id="logo" valign="top" align="left" rowspan="2"><a href="<misc:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<misc:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
-        <form name="searchForm" action="<c:url value="/"/>QuickSearchQuery" method="GET">
+        <form name="searchForm" action="<misc:url value="/"/>QuickSearchQuery" method="GET">
           <input type="hidden" name="taxons" value="${taxonNodeName}">
           <input type="hidden" name="pseudogenes" value="true"/>
           <input type="hidden" name="product" value="true"/>
@@ -106,7 +106,7 @@
           </a>&nbsp;&nbsp;&nbsp;
         </span>
         <div id="advancedSearch">
-            <form name="advSearchForm" action="<c:url value="/Query"/>" method="GET">
+            <form name="advSearchForm" action="<misc:url value="/Query"/>" method="GET">
             <table id="advSearchTable" cellpadding="2">
               <tr>
                 <td width="20%" style="text-align:left;">Search </td>
@@ -151,28 +151,28 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem"> <%-- Genes By Type --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&taxons=${taxonNodeName}&newSearch=true"/>" title="ProteinLength Search">By Gene Type</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/Query?q=geneType&taxons=${taxonNodeName}&newSearch=true"/>" title="ProteinLength Search">By Gene Type</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Location --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/Query?q=geneLocation&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
                                     </li>
                                     <%-- <li class="yuimenuitem">  Genes By Prediction Method
                                         <font color="gray">By Prediction Method</font>
                                     </li> --%>
                                      <li class="yuimenuitem"> <%-- Proteins By Length --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"><%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Mass Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Mass Search">By Molecular Mass</a>
                                     </li>
                                      <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By No. TM domains</a>
                                     </li>
                                     <%-- <li class="yuimenuitem">  Motif Search
                                         <font color="gray">Motif Search</font>
                                     </li> --%>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
                                     </li>
                                      <%-- class="yuimenuitem"> Proteins By Annotation Status
                                         <font color="gray">By Annotation Status</font>
@@ -187,26 +187,26 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonNodeName}" title="Browse Products">Products</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonNodeName}" title="Browse Products">Products</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonNodeName}" title="Browse Curation">Controlled Curation</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonNodeName}" title="Browse Curation">Controlled Curation</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonNodeName}" title="Browse GO Biological Process">Biological Process</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonNodeName}" title="Browse GO Biological Process">Biological Process</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonNodeName}" title="Browse GO Cellular Component">Cellular Component</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonNodeName}" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
+                                        <a class="yuimenuitemlabel" href="<misc:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </li>
                    <li class="yuimenubaritem">
-                        <a class="yuimenuitemlabel" href="<c:url value="/History"/>">History</a>
+                        <a class="yuimenuitemlabel" href="<misc:url value="/History"/>">History</a>
                    </li>
                 </ul>
             </div>

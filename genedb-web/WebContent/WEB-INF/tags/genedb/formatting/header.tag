@@ -11,8 +11,8 @@
 
     <script type="text/javascript" src="http://js.sanger.ac.uk/urchin.js"></script>
 
-    <link rel="stylesheet" href="<c:url value="/includes/style/genedb/main.css"/>" type="text/css" />
-    <script type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
+    <link rel="stylesheet" href="<misc:url value="/includes/style/genedb/main.css"/>" type="text/css" />
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 
     <jsp:doBody />
 </head>
