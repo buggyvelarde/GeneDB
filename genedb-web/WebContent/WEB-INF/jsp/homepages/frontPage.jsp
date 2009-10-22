@@ -38,18 +38,18 @@ window.onload=startList;
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
-<img src="<c:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Apicomplexan Protozoa" />
+<img src="<misc:url value="/includes/image/dataset-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
 <db:homepageselect top="Apicomplexa"/>
 </td>
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
-<img src="<c:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
+<img src="<misc:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
 <db:homepageselect top="Kinetoplastida" />
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
-<img src="<c:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
+<img src="<misc:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
 <db:homepageselect top="Helminths"/>
 </td>
 
@@ -58,17 +58,17 @@ window.onload=startList;
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
-<img src="<c:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
+<img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
 <db:homepageselect top="bacteria"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
-<img src="<c:url value="/"/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
+<img src="<misc:url value="/"/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
 <db:homepageselect top="Root" />
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
-<img src="<c:url value="/"/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
+<img src="<misc:url value="/"/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
 <db:homepageselect top="Root"/>
 </td>
 </tr>
@@ -94,9 +94,9 @@ window.onload=startList;
 <h2>Go to our</h2>
 <div class="light-grey-top"></div>
 <div class="light-grey">
-&raquo; <a href="<c:url value="/Query" />">Query page</a><br />
-&raquo; <a href="<c:url value="/cgi-bin/amigo/go.cgi"/>">AmiGO</a><br />
-&raquo; <a href="<c:url value="/JBrowse"/>">JBrowse</a><br />
+&raquo; <a href="<misc:url value="/Query" />">Query page</a><br />
+&raquo; <a href="<misc:url value="/cgi-bin/amigo/go.cgi"/>">AmiGO</a><br />
+&raquo; <a href="<misc:url value="/JBrowse"/>">JBrowse</a><br />
 &raquo; <a href="http://www.genedb.org/">Classic GeneDB</a><br />
 </div>
 <div class="light-grey-bot"></div>
@@ -104,14 +104,14 @@ window.onload=startList;
 <h2>Information</h2>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-<a href="<c:url value="/Page/guide"/>">Guide to GeneDB</a>
+<a href="<misc:url value="/Page/guide"/>">Guide to GeneDB</a>
 <p>What is GeneDB, and what's in it?<br />
 Navigating/Searching GeneDB<br />
 Contacting Us/Feedback<br />
 Privacy Policy<br />
 </p>
 <br />
-<p><a href="<c:url value="/Page/releases"/>">Data Release Policy</a></p>
+<p><a href="<misc:url value="/Page/releases"/>">Data Release Policy</a></p>
 </div>
 <div class="baby-blue-bot"></div>
 
