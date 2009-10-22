@@ -165,6 +165,9 @@
     </bean>
 
    <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
+   
+   <bean id="jbrowseController" class="org.genedb.web.mvc.controller.JBrowseController" />
+   
 
 <!--
     <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController">

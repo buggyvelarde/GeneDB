@@ -180,6 +180,10 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/JBrowse</url-pattern>
+    </servlet-mapping>
     <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/GoFeature</url-pattern>
