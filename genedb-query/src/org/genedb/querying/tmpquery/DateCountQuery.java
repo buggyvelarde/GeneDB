@@ -6,7 +6,12 @@ package org.genedb.querying.tmpquery;
  *
  */
 public class DateCountQuery extends DateQuery {
-
+	
+	@Override
+    public String getQueryDescription() {
+    	return "Returns the number of features changed in an oranism since a certain date.";
+    }
+	
 	@Override
     protected String getHql() {
         System.err.println("date in hql is '"+date+"'");

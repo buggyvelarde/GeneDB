@@ -30,6 +30,11 @@ public class PfamQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Search for pfam domains.";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

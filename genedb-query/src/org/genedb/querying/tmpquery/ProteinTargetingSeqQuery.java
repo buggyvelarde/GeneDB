@@ -36,7 +36,11 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
     )
     private boolean apicoplast;
 
-
+    @Override
+    public String getQueryDescription() {
+    	return "Search for SignalP, GPI anchored or Apicoplast proteins.";
+    }
+    
     @Override
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";

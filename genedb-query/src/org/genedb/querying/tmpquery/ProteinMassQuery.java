@@ -38,6 +38,11 @@ public class ProteinMassQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Returns proteins of a certain mass.";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<Query> queries) {

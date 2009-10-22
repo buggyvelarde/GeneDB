@@ -37,7 +37,11 @@ public class GeneLocationQuery extends OrganismHqlQuery {
 
     @QueryParam(order = 4, title = "Include pseudogenes")
     private boolean pseudogenes = true;
-
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Search for a gene by specifing its location on a chromosome, contig or other top level feature.";
+    }
 
     @Override
     protected String getHql() {

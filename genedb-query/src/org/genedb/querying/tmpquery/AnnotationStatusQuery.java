@@ -15,7 +15,12 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
             title="Include automatic genes"
     )
     private boolean automatic = false;
-
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Search by annotation status.";
+    }
+    
     @Override
     protected String getHql() {
         return "select f.uniqueName from Feature f where f.annotation = :automatic order by f.organism";

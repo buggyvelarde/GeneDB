@@ -25,7 +25,11 @@ public class GoQuery extends OrganismLuceneQuery {
             title="The search string"
     )
     private String search = "";
-
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Search for GO terms.";
+    }
 
     @Override
     protected String getluceneIndexName() {

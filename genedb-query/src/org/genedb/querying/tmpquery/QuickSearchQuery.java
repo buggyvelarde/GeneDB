@@ -43,10 +43,16 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @QueryParam(order = 3, title = "Include pseudogenes")
     private boolean pseudogenes;
-
+    
+    
     @Override
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
+    }
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Allows you to quickly search for genes by name (including synonyms) or function";
     }
 
     @Override
@@ -106,11 +112,6 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         return null;
     }
 
-    @Override
-    public String getQueryDescription() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @SuppressWarnings("unchecked")
     @Override

@@ -30,7 +30,11 @@ public class DateQuery extends OrganismHqlQuery {
             title="Just look at creation date"
     )
     protected boolean created;
-
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Searches for features who have been changed before or after a certain date.";
+    }
 
     @Override
     protected String getHql() {

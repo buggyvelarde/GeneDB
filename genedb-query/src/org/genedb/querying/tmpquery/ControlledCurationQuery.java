@@ -27,7 +27,12 @@ public class ControlledCurationQuery extends OrganismHqlQuery {
             title="Name of CV term"
     )
     private String cvTermName;
-
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Searches for features that have a certain controlled vocabulary term associated with them.";
+    }
+    
     @Override
     protected String getHql() {
         return "select f.uniqueName from Feature f, FeatureCvTerm fct where fct.feature=f and fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name like :cvName @ORGANISM@ order by f.organism";

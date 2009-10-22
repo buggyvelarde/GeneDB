@@ -26,6 +26,11 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
                 );
         return ret;
     }
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Generates a summary of from a feature id.";
+    }
 
     @Override
     protected void extraValidation(Errors errors) {
