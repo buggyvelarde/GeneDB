@@ -4,9 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:header title="Feature: ${dto.uniqueName}">
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
-<c:url value="/" var="base"/>
+<script language="javascript" type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
+<script language="javascript" type="text/javascript" src="<misc:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
+<misc:url value="/" var="base"/>
 </format:header>
 <format:page onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFeatureUniqueName}', ${dto.topLevelFeatureLength}, ${dto.min}, ${dto.max}, '${dto.uniqueName}');">
 <br>
@@ -21,7 +21,7 @@
     position:relative;
     behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
         this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
-        this.src = "<c:url value="/includes/images/transparentPixel.gif"/>"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
+        this.src = "<misc:url value="/includes/images/transparentPixel.gif"/>"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
         this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
         this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
     );
@@ -36,16 +36,16 @@
     cursor: pointer;
 }
 .closeButton a {
-    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) 0px 0px no-repeat;
+    background: transparent url(<misc:url value="/includes/images/chr-buttons.png"/>) 0px 0px no-repeat;
 }
 .closeButton a:hover {
-    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) 0px -16px no-repeat;
+    background: transparent url(<misc:url value="/includes/images/chr-buttons.png"/>) 0px -16px no-repeat;
 }
 .homeButton a {
-    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) -16px 0px no-repeat;
+    background: transparent url(<misc:url value="/includes/images/chr-buttons.png"/>) -16px 0px no-repeat;
 }
 .homeButton a:hover {
-    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) -16px -16px no-repeat;
+    background: transparent url(<misc:url value="/includes/images/chr-buttons.png"/>) -16px -16px no-repeat;
 }
 </style>
 
@@ -57,7 +57,7 @@
     </div>
     <div id="contextMapDiv">
         <div id="contextMapLoading">
-            <img src="<c:url value="/includes/image/loading.gif"/>" id="contextMapLoadingImage">
+            <img src="<misc:url value="/includes/image/loading.gif"/>" id="contextMapLoadingImage">
             Loading...
         </div>
         <div class="homeButton"><a href="#" title="Home" onclick="selectLoaded(); return false;"></a></div>
@@ -73,7 +73,7 @@
 </div>
 <%--
 <format:genePageSection id="geneDetailsLoading" className="greyBox">
-    <img src="<c:url value="/includes/image/loading.gif"/>">
+    <img src="<misc:url value="/includes/image/loading.gif"/>">
     Loading Gene Details...
 </format:genePageSection>
  --%>

@@ -111,10 +111,10 @@
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
 <format:addToBasket uniqueName="${dto.uniqueName}" />
-<a href="<c:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<c:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
-<a href=""><img src="<c:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
+<a href="<misc:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<misc:url value="/"/>includes/image/button-view-sequence.gif" height="46" width="144" alt="View Sequence" border="0" /></a>
+<a href=""><img src="<misc:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
 <%-- The coordinates in the line below rely on JBrowse coping with coordinates off the end of the contig --%>
-<a href="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=DNA,Genes,Exons"><img src="<c:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Show in JBrowse" border="0" /></a><br /><br />
+<a href="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=DNA,Genes,Exons"><img src="<misc:url value="/"/>includes/image/button-artemis.gif" height="46" width="144" alt="Show in JBrowse" border="0" /></a><br /><br />
 </div>
 <div class="main-blue-3-4-bot"></div>
 </div><!-- end internal column -right -->
@@ -198,16 +198,16 @@ ${dto.ims.imageMap}
 <!--[if lte IE 6]>
 <div style="position:relative; height: ${dto.ims.height}px">
 <div style="position:absolute; z-index: 1000;">
-  <img src="<c:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap">
+  <img src="<misc:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap">
 </div>
 <div style="position:static; z-index: 900;">
-  <img src="<c:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
-       style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:url value="/Image/" />${dto.ims.path}', sizingMethod='image')"/>
+  <img src="<misc:url value="/includes/image/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
+       style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<misc:url value="/Image/" />${dto.ims.path}', sizingMethod='image')"/>
 </div>
 </div>
 <![endif]-->
 <![if ! lte IE 6]>
-  <img src="<c:url value="/Image/" />${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage" border="0">
+  <img src="<misc:url value="/Image/" />${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage" border="0">
 <![endif]>
 </format:genePageSection>
 </c:if>
@@ -260,12 +260,12 @@ ${dto.ims.imageMap}
   <h2>Orthologues and Paralogues</h2>
   <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
     <c:forEach items="${dto.clusterIds}" var="clusterId">
-      <tr><td>${clusterId}</td><td><a href="<c:url value="/Orthologs/${clusterId}" />">Look up others in cluster</a></span></td></tr>
+      <tr><td>${clusterId}</td><td><a href="<misc:url value="/Orthologs/${clusterId}" />">Look up others in cluster</a></span></td></tr>
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
     <c:forEach items="${dto.orthologueNames}" var="orthologueName">
-      <a href="<c:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
+      <a href="<misc:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
     </c:forEach>
     </td></tr>
   </table>
