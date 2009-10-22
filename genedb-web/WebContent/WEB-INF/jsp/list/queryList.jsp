@@ -7,13 +7,21 @@
 <br>
 
 
-<st:flashMessage />
 
-<div id="queryList">
+
+<div id="col-2-1">
+
 <format:genePageSection>
-<table>
+
+<h2>GeneDB query list</h2>
+
+<P>The following queries are available from the GeneDB website.</P>
+
+
+
+<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 <c:forEach items="${queries}" var="query">
-<tr><td><a href="<c:url value="/Query" />?q=${query.key}">${query.key}</a></td><td>${query.value.queryDescription}</td></tr>
+<tr><th><a href="<c:url value="/Query/" />${query.key}?taxons=">${query.key}</a></th><td>${query.value.queryDescription}</td></tr>
 </c:forEach>
 </table>
 </format:genePageSection>
