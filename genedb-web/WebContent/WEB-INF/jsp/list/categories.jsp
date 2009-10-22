@@ -6,19 +6,19 @@
 <format:page>
 <br>
 
-<c:url value="/Search" var="url">
-	<c:param name="organism" value="${organism}" />
-	<c:param name="category" value="${category}" />
-</c:url>
+<misc:url value="/Search" var="url">
+	<spring:param name="organism" value="${organism}" />
+	<spring:param name="category" value="${category}" />
+</misc:url>
   <div id="col-2-1">
 	<display:table name="results" id="row" pagesize="30"
 		requestURI="/category/${category}" cellspacing="0"
 		cellpadding="4" class="search-data-table">
 		<display:column title="Category - ${category}">
-			<c:url value="${url}" var="final">
-				<c:param name="term" value="${row.name}" />
-			</c:url>
-			<a href="<c:url value="/Query/controlledCuration">"><c:param name="cvTermName" value="${row.name}" /><c:param name="taxons" value="${taxons}" /><c:param name="cv" value="${category}"/></c:url>">
+			<misc:url value="${url}" var="final">
+				<spring:param name="term" value="${row.name}" />
+			</misc:url>
+			<a href="<misc:url value="/Query/controlledCuration">"><spring:param name="cvTermName" value="${row.name}" /><spring:param name="taxons" value="${taxons}" /><spring:param name="cv" value="${category}"/></misc:url>">
 				<c:out value="${row.name}" /></a>
 		</display:column>
 		<display:column property="count" title="Count" />
