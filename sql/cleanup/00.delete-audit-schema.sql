@@ -1,1 +1,1 @@
-drop schema cascade;
+drop schema audit cascade;
