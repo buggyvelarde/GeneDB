@@ -7,10 +7,9 @@
 <br>
 
 
+<st:flashMessage />
 
-
-<div id="col-2-1">
-
+<div id="queryList">
 <format:genePageSection>
 
 <h2>GeneDB query list</h2>
@@ -21,7 +20,7 @@
 
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 <c:forEach items="${queries}" var="query">
-<tr><th><a href="<c:url value="/Query/" />${query.key}?taxons=">${query.key}</a></th><td>${query.value.queryDescription}</td></tr>
+<tr><th><a href="<misc:url value="/Query/${query.key}" />?taxons=">${query.key}</a></th><td>${query.value.queryDescription}</td></tr>
 </c:forEach>
 </table>
 </format:genePageSection>
