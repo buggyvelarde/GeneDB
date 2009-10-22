@@ -94,11 +94,10 @@ window.onload=startList;
 <h2>Go to our</h2>
 <div class="light-grey-top"></div>
 <div class="light-grey">
-&raquo; <a href="">Main search page</a><br />
-&raquo; <a href="">Complex querying page</a><br />
-&raquo; <a href="">AmiGO</a><br />
-
-&raquo; <a href="">List Download</a>
+&raquo; <a href="<c:url value="/Query" />">Query page</a><br />
+&raquo; <a href="<c:url value="/cgi-bin/amigo/go.cgi"/>">AmiGO</a><br />
+&raquo; <a href="<c:url value="/JBrowse"/>">JBrowse</a><br />
+&raquo; <a href="http://www.genedb.org/">Classic GeneDB</a><br />
 </div>
 <div class="light-grey-bot"></div>
 
@@ -120,16 +119,16 @@ Privacy Policy<br />
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
 <p>PSU Sequencing Projects<br />
-&raquo; <a href="">Prokaryotes</a><br />
+&raquo; <a href="http://www.sanger.ac.uk/Projects/Microbes/">Prokaryotes</a><br />
 
-&raquo; <a href="">Eukaryotes (Protozoa)</a><br />
-&raquo; <a href="">Eukaryotes (Fungi)</a><br />
+&raquo; <a href="http://www.sanger.ac.uk/Projects/Protozoa/">Eukaryotes (Protozoa)</a><br />
+&raquo; <a href="http://www.sanger.ac.uk/Projects/Fungi/">Eukaryotes (Fungi)</a><br />
 </p>
 <br />
 <p>
 Software<br />
-&raquo; <a href="">ACT</a><br />
-&raquo; <a href="">Artemis</a><br />
+&raquo; <a href="http://www.sanger.ac.uk/Software/ACT/">ACT</a><br />
+&raquo; <a href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</a><br />
 
 </p>
 </div>
