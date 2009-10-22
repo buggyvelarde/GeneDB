@@ -1,13 +1,14 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="db" uri="db" %>
-<format:header name="GeneDB Motif Search">
+<format:header title="GeneDB Motif Search">
 	<st:init />
 </format:header>
+<<format:page>
 <html>
   <head>
      <title>GeneDB Motif Search</title>
-     <meta name="description" content="Identify protein sequences within 
+     <meta name="description" content="Identify protein sequences within
      GeneDB which match a particular pattern">
 
 <sp:form action="MotifSearch" method="post">
@@ -18,19 +19,19 @@
 		</tr>
 		<tr>
 			<td>Pattern: </td>
-			<td><sp:input path="pattern" size="30" /></td>		  
+			<td><sp:input path="pattern" size="30" /></td>
 		</tr>
 		<tr>
 			<td>Type: </td>
-			<td><sp:radiobutton path="type" />Nucleotide    
-			<sp:radiobutton path="type" />Protein</td>  
+			<td><sp:radiobutton path="type" />Nucleotide
+			<sp:radiobutton path="type" />Protein</td>
 		</tr>
 		<tr>
 			<td><input type="submit" value="Submit"/></td>
 			<td><input type="reset" value="Reset"/></td>
 		</tr>
 	</table>
-	
+
 	<st:section name="Advanced" id="motif_advanced" collapsed="false" collapsible="true">
 
 		<table align="center" width="50%">
@@ -49,14 +50,14 @@
 				<td>C: </td>
 				<td><sp:input path="extensionC"/></td>
 			</tr>
-		</table>	
+		</table>
 
 	</st:section>
-	
-	
-	
+
+
+
 </sp:form>
-     
+
 
 <table>
 <tr>
@@ -67,7 +68,7 @@ Organism:
 <td>
 </tr>
 
-</table>	
+</table>
 
 <table width="100%">
 	<tr valign="center">
@@ -75,9 +76,9 @@ Organism:
 	    <INPUT TYPE="submit" VALUE="Start Motif Search">
 	    &nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="reset">
 	    <BR><BR>
-	  </td>		  
+	  </td>
 	</tr>
-</table>    
+</table>
 <!-- </FORM> -->
 
-<format:footer />
+</format:page>

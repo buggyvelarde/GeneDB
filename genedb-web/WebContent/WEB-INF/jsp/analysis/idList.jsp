@@ -1,9 +1,10 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="db" uri="db" %>
-<format:header name="GeneDB Motif Search">
+<format:header title="GeneDB Motif Search">
 	<st:init />
 </format:header>
+<format:page>
 <html>
   <head>
      <title>ID List Upload</title>
@@ -54,4 +55,4 @@ Organism:
 </table>
 <!-- </FORM> -->
 
-<format:footer />
+</format:page>
