@@ -5,7 +5,6 @@
 <format:page>
 <br>
 
-
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form commandName="query" action="/Query/ec" method="GET">

@@ -4,7 +4,7 @@
 
 <format:headerRound title="Browse By Category" name="Browse" bodyClass="genePage">
   <st:init />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+  <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 
 

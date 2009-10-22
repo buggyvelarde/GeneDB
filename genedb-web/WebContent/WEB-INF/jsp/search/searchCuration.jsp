@@ -3,7 +3,7 @@
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
 <script type="text/javascript" language="javascript">
 	var ilength;
-	
+
 	function doSomething() {
 		var obj = document.getElementById("start");
 		var curleft = curtop = 0;
@@ -41,13 +41,13 @@
 			if(element.checked) {
 				if (selected.value == '') {
 					selected.value =  document.getElementById("menu_" + i).textContent;
-				} else {	
+				} else {
 					selected.value = selected.value + ',' + document.getElementById("menu_" + i).textContent;
 				}
-			}	
+			}
 		}
 	}
-	
+
 	function resetall() {
 		for (var i=0; i< ilength; i++) {
 			this.checked[i] = false;
@@ -63,11 +63,11 @@
 </script>
 <format:headerRound title="Search Curation">
 	<st:init />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
-	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/extjs/ext-all.css"/>" />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
-	<script src="<c:url value="/includes/scripts/phylogeny.js"/>" type="text/javascript"></script>
+	<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
+	 <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/extjs/ext-all.css"/>" />
+	<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
+	<script src="<misc:url value="/includes/scripts/phylogeny.js"/>" type="text/javascript"></script>
 </format:headerRound>
 <table width="100%">
 <tr>

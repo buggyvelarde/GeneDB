@@ -2,14 +2,14 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<script src="<c:url value="/includes/scripts/script.aculo.us/prototype.js"/>" type="text/javascript"></script>
-<script src="<c:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
+<script src="<misc:url value="/includes/scripts/script.aculo.us/prototype.js"/>" type="text/javascript"></script>
+<script src="<misc:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
 <style type="text/css">.infoMacro { border-style: solid; border-width: 1px; border-color: #c0c0c0; background-color: #ffffff; text-align:left;}.informationMacroPadding { padding: 5px 0 0 5px; }</style>
-<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>     <!-- ENDLIBS -->
-    <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
-	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/ext-all.css"/>" />
-	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/grid.css"/>" />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/download.js"/>"></script>
+<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-base.js"/>"></script>     <!-- ENDLIBS -->
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
+	 <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/ext-all.css"/>" />
+	 <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/grid.css"/>" />
+	<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/download.js"/>"></script>
 	<style id="topic-grid-cssrules" type="text/css">
 		#topic-grid .x-grid-col-topic {
 		white-space:normal;width:489px;
@@ -17,10 +17,10 @@
 		#topic-grid .x-grid-hd-topic {
 		width:489px;}
 		#topic-grid .x-grid-td-topic {
-		
+
 		}
 		#topic-grid .x-grid-split-topic {
-		
+
 		}
 		#topic-grid .x-grid-col-1 {
 		width:99px;
@@ -39,10 +39,10 @@
 		#topic-grid .x-grid-hd-last {
 		width:149px;}
 		#topic-grid .x-grid-td-last {
-		
+
 		}
 		#topic-grid .x-grid-split-last {
-		
+
 		}
 	</style>
 <script type="text/javascript">
@@ -59,13 +59,13 @@ function showSection(sectionId) {
 //-->
 </script>
 
-<format:header name="History Download">
+<format:header title="History Download">
 	<st:init />
-	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
+	<link rel="stylesheet" href="<misc:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
 
 
-<p>Please note: not all options shown are possible depending upon which output format 
+<p>Please note: not all options shown are possible depending upon which output format
 is chosen (further below).
 
 <form:form commandName="downloadOptions" action="DownloadFeatures" method="POST">
@@ -126,7 +126,7 @@ is chosen (further below).
 <tr bgcolor="FAFAD2"><td><form:checkbox path="outputOption" value="SEQ_5P_INTERGENIC"/>Intergenic Sequence (5'&nbsp;)<font color="red">(Not implemented)</font></td>
 <td rowspan="3" align="left">
 <input type="hidden" name="includeRNA" value="false">
-&nbsp;&nbsp;&nbsp;Number of bases: 
+&nbsp;&nbsp;&nbsp;Number of bases:
 <select name="primeX" >
 <option>20</option>
 <option>50</option>
@@ -151,7 +151,7 @@ is chosen (further below).
 
 <td align="left">
 <input type="hidden" name="includeRNA" value="true">
-&nbsp;&nbsp;&nbsp;5' distance: 
+&nbsp;&nbsp;&nbsp;5' distance:
 <select name="prime5" >
 <option>0</option>
 <option>20</option>
@@ -165,7 +165,7 @@ is chosen (further below).
 <option>2000</option>
 <option value="-1">To next CDS/RNA</option>
 </select>
-&nbsp;&nbsp;&nbsp;3' distance: 
+&nbsp;&nbsp;&nbsp;3' distance:
 <select name="prime3" >
 <option>0</option>
 <option>20</option>
@@ -207,8 +207,8 @@ is chosen (further below).
 <table cellpadding='5' width='90%' cellspacing='0' class='infoMacro' border='0'>
 <tr><td>
 <h3>Select display options</h3>
-<p id="displayOptionsOpener">Sensible defaults have been chosen for this section. If you want fine-control 
-of the output separators etc, <a href="javascript:showSection('displayOptions');hideSection('displayOptionsOpener')">see options</a></p> 
+<p id="displayOptionsOpener">Sensible defaults have been chosen for this section. If you want fine-control
+of the output separators etc, <a href="javascript:showSection('displayOptions');hideSection('displayOptionsOpener')">see options</a></p>
 
 <div id="displayOptions" style="visibility: hidden; display: none">
 <p><a href="javascript:showSection('displayOptionsOpener');hideSection('displayOptions')">Hide this section</a></p>
@@ -256,7 +256,7 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 <table cellpadding='5' width='90%' cellspacing='0' class='infoMacro' border='0'>
 <tr><td>
 <h3>Output destination</h3>
-<p>Display in the browser window is the default output destination. The "Save as..." option will force your browser to save the file directly. 
+<p>Display in the browser window is the default output destination. The "Save as..." option will force your browser to save the file directly.
 
 <P>An option to have download results e-mailed directly, is included.</p>
 <table width="100%">
@@ -296,7 +296,7 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 
 <h3>Notes</h3>
 <ol>
-<li><a name="locnote">Location field:</a> For FASTA options the locations will 
+<li><a name="locnote">Location field:</a> For FASTA options the locations will
 be the genomic coordinates.</li>
 <li><a name="orth_pasteback">Orthologue pasteback:</a> This option returns the List Download form with the input IDs plus the IDs of all orthologues for those IDs.</li>
 <li><a name="orthologue">Orthologues:</a> Orthologue datasets are currently only available for some organisms in GeneDB.</li>

@@ -5,9 +5,9 @@
 <format:header title="Category List" />
 <format:page>
 <br />
-<c:url value="BrowseTerm" var="url">
-	<c:param name="category" value="${category}"/>
-</c:url>
+<misc:url value="BrowseTerm" var="url">
+	<spring:param name="category" value="${category}"/>
+</misc:url>
 
 
 <br><query:results />

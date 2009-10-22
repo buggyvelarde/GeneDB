@@ -4,7 +4,7 @@
 
 <format:headerRound title="Browse By Term" onLoad="doSomething(); DWRUtil.useLoadingMessage(); createAutoCompleter()" bodyClass="genePage">
   <st:init/>
-  <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+  <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="geneDetails">
   <format:genePageSection id="browseTerm" className="whiteBox">

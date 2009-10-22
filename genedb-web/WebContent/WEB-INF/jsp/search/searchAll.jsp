@@ -63,11 +63,11 @@
 </script>
 <format:headerRound title="Search All">
 	<st:init />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
-	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/extjs/ext-all.css"/>" />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
-	<script src="<c:url value="/includes/scripts/phylogeny.js"/>" type="text/javascript"></script>
+	<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
+	 <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/extjs/ext-all.css"/>" />
+	<script type="text/javascript" src="<misc:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
+	<script src="<misc:url value="/includes/scripts/phylogeny.js"/>" type="text/javascript"></script>
 </format:headerRound>
 <table width="100%">
 <tr>
