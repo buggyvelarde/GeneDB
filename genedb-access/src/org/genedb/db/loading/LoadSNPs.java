@@ -47,12 +47,15 @@ import java.util.Map;
  */
 public class LoadSNPs extends FileProcessor {
     private static final Logger logger = Logger.getLogger(LoadSNPs.class);
+    private static String dbSchema;
     public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException, SQLException {
         if (args.length > 0) {
             logger.warn("Ignoring command-line arguments");
         }
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.snp");
+        dbSchema=getRequiredProperty("load.dbSchema");
+        logger.debug("I="+inputDirectory+"fp="+fileNamePattern+"dbSchema="+dbSchema);
         LoadSNPs loadSNPs = new LoadSNPs();
         loadSNPs.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
@@ -66,7 +69,7 @@ public class LoadSNPs extends FileProcessor {
     @Override
     protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
         SNPFile snpFile = new SNPFile(inputFile, reader);
-        loader.load(snpFile);
+        loader.load(snpFile,dbSchema);
     }
 }
 class SNPFile {
@@ -197,9 +200,9 @@ class SNPsLoader {
 
     
   
-    public void load(SNPFile snpFile) throws DataError {
+    public void load(SNPFile snpFile,String dbSchema) throws DataError {
 
-        // Insert into variation.Analysis table
+        // Insert into dbSchema.Analysis table
         Date analysistimestamp;
         logger.info(String.format("ANALYSIS_NAME ->%s, ANALYSIS_PARAMS ->%s, ANALYSIS_TIMESTAMP ->%s, STRAIN_ID ->%s,STRAIN_SAMPLE_ID ->%s,NO OF DATA LINES  ->%d",snpFile.metaline().getAnalysisName(),snpFile.metaline().getAnalysisParams(),snpFile.metaline().getAnalysisTimestamp(),snpFile.metaline().get_Strain_ID(),snpFile.metaline().get_Strain_Sample_ID(),snpFile.numberOfDataLines()));
 
@@ -216,7 +219,7 @@ class SNPsLoader {
         throw new DataError(errorMessage);
         }
         int n=simpleJdbcTemplate.update(
-            "insert into variation.Analysis("+
+            "insert into "+dbSchema+".Analysis("+
             "program,programversion,timeexecuted"+
             ") values ("+
             "?,?,?"+
@@ -227,10 +230,10 @@ class SNPsLoader {
         }
 
         long analysisId = (Long) simpleJdbcTemplate.queryForMap(
-            "select currval('variation.analysis_analysis_id_seq'::regclass) as analysis_id")
+            "select currval('"+dbSchema+".analysis_analysis_id_seq'::regclass) as analysis_id")
             .get("analysis_id");
 
-        // Now insert into variation.AnalysisProp
+        // Now insert into dbSchema.AnalysisProp
         
         int cvId = (Integer) simpleJdbcTemplate.queryForMap(
             "select cv_id from cv where name='genedb_misc'")
@@ -246,7 +249,7 @@ class SNPsLoader {
 
 
         simpleJdbcTemplate.batchUpdate(
-            "insert into variation.AnalysisProp("+
+            "insert into "+dbSchema+".AnalysisProp("+
             " analysis_id, type_id, value"+
             ") values ("+
             "?,"+
@@ -277,7 +280,7 @@ class SNPsLoader {
             String snpFeatureUniqueName = "SNP_"+snpFile.metaline().get_Strain_ID()+"_"+snpFile.metaline().get_Strain_Sample_ID()+"_"+analysisId+"_"+line.lineNumber;
 
             n = simpleJdbcTemplate.update(
-                "insert into variation.Feature("+
+                "insert into "+dbSchema+".Feature("+
                 " organism_id,uniquename,type_id,is_analysis,is_obsolete,timeaccessioned,timelastmodified"+
                 ") values ("+
                 "?,?,(select cvterm_id as type_id from cvterm where name='SNP'),true,false,?,?"+
@@ -288,7 +291,7 @@ class SNPsLoader {
             }
 
             long featureId = (Long) simpleJdbcTemplate.queryForMap(
-            "select currval('variation.feature_feature_id_seq'::regclass) as feature_id")
+            "select currval('"+dbSchema+".feature_feature_id_seq'::regclass) as feature_id")
             .get("feature_id");
 
             // Insert in to featureloc
@@ -303,7 +306,7 @@ class SNPsLoader {
             Integer fmax = fmin+1;
 
             n = simpleJdbcTemplate.update(
-                "insert into variation.FeatureLoc("+
+                "insert into "+dbSchema+".FeatureLoc("+
                 "feature_id,srcfeature_id,fmin,is_fmin_partial,fmax,is_fmax_partial,strand,phase,locgroup,rank"+
                 ") values ("+
                 "?,(select feature_id from feature where uniquename=?),?,?,?,?,?,?,?,?"+
@@ -320,7 +323,7 @@ class SNPsLoader {
                 String headerfield=headerIterator.next();
                 dataStr+="("+headerfield+","+datafield+")";
                 n = simpleJdbcTemplate.update(
-                    "insert into variation.FeatureProp("+
+                    "insert into "+dbSchema+".FeatureProp("+
                     "feature_id,type_id,value,rank"+
                     ") values ("+
                     "?,(select cvterm_id from cvterm where name=? and cv_id=?),?,?"+
@@ -335,7 +338,7 @@ class SNPsLoader {
          // now associate this feature with the Analysis using AnalysisFeature record
 
             n = simpleJdbcTemplate.update(
-                "insert into variation.AnalysisFeature("+
+                "insert into "+dbSchema+".AnalysisFeature("+
                 "feature_id,analysis_id"+
                 ") values ("+
                 "?,?"+
