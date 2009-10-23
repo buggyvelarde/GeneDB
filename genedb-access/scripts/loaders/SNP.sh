@@ -15,7 +15,7 @@ Options:
     -t SNP
     -t Pileup
 -p file pattern:
-    eg: -p \*.SNP
+    eg: -p .*\\.SNP to load all files that end with .SNP
 
 USAGE
     standard_options
