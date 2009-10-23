@@ -90,10 +90,22 @@ doLoad() {
         echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
         set -x
     fi
-    
+
+    if [ "$dataset" == "SNP" ]; then
     java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
          -Dload.inputDirectory="$file" \
          -Dload.fileNamePattern="$filepattern" \
+         -Dload.dbSchema="$schema" \
          $properties $database_properties \
          org.genedb.db.loading.LoadSNPs
+    fi
+    if [ "$dataset" == "Pileup" ]; then
+    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
+         -Dload.inputDirectory="$file" \
+         -Dload.fileNamePattern="$filepattern" \
+         -Dload.dbSchema="$schema" \
+         $properties $database_properties \
+         org.genedb.db.loading.LoadPileups
+    fi
+
 }
