@@ -2,6 +2,7 @@
         body-content="empty" %>
 <%@ attribute name="uniqueName" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="misc" uri="misc" %>
 
 <script type="text/javascript">
 //<![CDATA[
