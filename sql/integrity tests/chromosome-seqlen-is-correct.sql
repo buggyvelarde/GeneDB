@@ -3,8 +3,9 @@
 
 
 
-select feature_id, seqlen, length(residues) as correct_seqlen
+select organism.common_name, feature_id, seqlen, length(residues) as correct_seqlen
 from feature
+join organism using (organism_id)
 where type_id in (
     select cvterm.cvterm_id
     from cvterm join cv on cvterm.cv_id = cv.cv_id

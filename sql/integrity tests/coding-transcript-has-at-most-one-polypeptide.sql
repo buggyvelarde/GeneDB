@@ -11,7 +11,7 @@ join (
        select polypeptide_transcript.object_id as transcript_id, count(*)
        from feature_relationship polypeptide_transcript
        join feature polypeptide on polypeptide_transcript.subject_id = polypeptide.feature_id
-       where polypeptide.type_id = polypeptide.type_id = (
+       where polypeptide.type_id = (
           select cvterm.cvterm_id
           from cvterm join cv on cvterm.cv_id = cv.cv_id
           where cv.name = 'sequence'
@@ -26,7 +26,7 @@ where transcript.type_id in (
           where cv.name = 'sequence'
           and cvterm.name in ('mRNA', 'pseudogenic_transcript')
 )
-and polypeptides.count <> 1
+and polypeptides.count > 1
 ;
 
 

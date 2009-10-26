@@ -1,17 +1,25 @@
-
 #A polypeptide must always belong to a transcript
 
-select polypeptide.uniquename
+select organism.common_name as organism
+       ,polypeptide.feature_id as feature_id
+       ,polypeptide.uniquename
 from feature polypeptide
-where polypeptide.type_id = 191
+join organism using (organism_id)
+where polypeptide.type_id = (
+          select cvterm.cvterm_id
+          from cvterm join cv on cvterm.cv_id = cv.cv_id
+          where cv.name = 'sequence'
+            and cvterm.name = 'polypeptide')
 and not exists (
-    select 8
+    select *
     from feature_relationship polypeptide_transcript
     join feature transcript on polypeptide_transcript.object_id = transcript.feature_id
     where polypeptide_transcript.subject_id = polypeptide.feature_id
     and transcript.type_id in (
-      321
-    , 604
-    )
+          select cvterm.cvterm_id
+          from cvterm join cv on cvterm.cv_id = cv.cv_id
+          where cv.name = 'sequence'
+            and cvterm.name in ('mRNA', 'pseudogenic_transcript'))
+
 )
 ;

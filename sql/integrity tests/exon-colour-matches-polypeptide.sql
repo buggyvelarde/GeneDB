@@ -52,5 +52,5 @@ and   (product.cv_id is null or product.cv_id = (
                   where name='genedb_products'))
 and   (exon_colour.value is null <> polypeptide_colour.value is null
         or exon_colour.value <> polypeptide_colour.value)
-orde by organism.common_name
+order by organism.common_name
 ;

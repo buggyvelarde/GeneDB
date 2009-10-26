@@ -1,4 +1,5 @@
-#Checks that there are no redundant GO terms
+#Checks that there are no redundant GO terms. Some of the results returned could be duplicate GO terms. The solution is
+#to run the delete_duplicate_GO_terms.sql script followed by delete_redundant_GO_terms.sql.
 
 select feature.uniquename
      , general.feature_cvterm_id
