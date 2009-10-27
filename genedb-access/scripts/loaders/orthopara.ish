@@ -51,7 +51,7 @@ orthoparaLoad() {
     if [ "$1" == "paralogues" ]; then
         paralogues=true
     fi
-    echo >&2 "loading $1"
+    shift
     
     OPTIND=0
     while getopts "dn:p:v:a:mx:$stdopts" option; do
