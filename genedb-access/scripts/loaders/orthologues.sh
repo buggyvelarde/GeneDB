@@ -38,5 +38,5 @@ HELP
 }
 
 doLoad() {
-    orthoparaLoad "$@"
+    orthoparaLoad "orthologues" "$@"
 }
