@@ -172,6 +172,15 @@
   </target>
 
   <target name="jspc">
+
+  	<taskdef classname="org.apache.jasper.JspC" name="jasper2">
+  	<classpath id="jspc.classpath">
+  	<fileset dir="${imported.basedir.web}/lib-compiletime">
+  	<include name="*.jar"/>
+  	</fileset>
+
+  	</classpath>
+  	</taskdef>
     <!-- Convert the JSP files into Java code -->
     <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>
 
@@ -184,14 +193,9 @@
         <fileset dir="${webapp.staging}/WEB-INF/lib">
           <include name="*.jar"/>
         </fileset>
-        <pathelement location="${catalina.home}/common/classes"/>
-        <fileset dir="${catalina.home}/lib">
-          <include name="*.jar"/>
-        </fileset>
-        <pathelement location="${catalina.home}/shared/classes"/>
-        <fileset dir="${catalina.home}/bin">
-          <include name="*.jar"/>
-        </fileset>
+      	<fileset dir="${imported.basedir.web}/lib-compiletime">
+      	<include name="*.jar"/>
+      	</fileset>
       </classpath>
 
       <include name="**"/>
@@ -498,7 +502,7 @@
         </classpath>
         <jvmarg value="-Xmx1536m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <arg line="-r /tmp/destination /nfs/pathdb/genedb/staging/bulk/DTO/output"/>
+        <arg line="-r /tmp/destination /nfs/pathdb/genedb/nightly/bulk/DTO/output"/>
       </java>
     </target>
 
