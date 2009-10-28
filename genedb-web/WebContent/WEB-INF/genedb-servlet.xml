@@ -155,7 +155,7 @@
 
 
 	<bean id="restController" 		class="org.genedb.web.mvc.controller.RestController" />
-	<bean id="servicesController" 	class="org.genedb.web.mvc.controller.services.ServicesController" />
+	
 
 
     <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
