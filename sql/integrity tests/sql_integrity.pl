@@ -10,6 +10,7 @@
 # 3) Place the html pages in the right folders 
 #######################################################################
 
+use lib "../../../lib";
 use strict;
 use Tie::File;
 use DBI;
