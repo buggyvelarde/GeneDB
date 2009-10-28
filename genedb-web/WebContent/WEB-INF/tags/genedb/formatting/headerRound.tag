@@ -6,7 +6,7 @@
 <%@ attribute name="onLoad" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="db" uri="db" %>
-
+<%@ taglib prefix="misc" uri="misc" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>

@@ -2,10 +2,9 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="misc" uri="misc" %>
-<format:headerRound title="Name/Product Search">
-    <st:init />
-    <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
+<format:header title="Date Search" />
+<format:page>
+<br>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form commandName="query" action="Query" method="GET">
@@ -31,4 +30,4 @@
         </form:form>
     </format:genePageSection>
 </div>
-<format:footer />
+</format:page>
