@@ -1,5 +1,6 @@
 package org.genedb.web.tags.db;
 
+import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class HomepageSelectTag extends AbstractHomepageTag {
             out.write("<option value=\"");
             out.write(node.getLabel());
             out.write("\">");
-            out.write(node.getLabel());
+            out.write(node.getName(TaxonNameType.FULL));
             out.write("</option>");
         }
         out.write("</select>");
