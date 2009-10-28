@@ -1,6 +1,7 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.LuceneQuery;
+import org.genedb.querying.core.QueryVisibility;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
@@ -65,5 +66,10 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
-
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PRIVATE;
+    }
 }

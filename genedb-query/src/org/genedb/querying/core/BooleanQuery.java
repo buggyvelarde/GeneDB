@@ -80,4 +80,10 @@ public class BooleanQuery implements Query {
         // Not Implemented
         return false;
     }
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PUBLIC;
+    }
 }

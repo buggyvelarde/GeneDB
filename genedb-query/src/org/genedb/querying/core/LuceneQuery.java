@@ -220,5 +220,11 @@ public abstract class LuceneQuery implements Query {
     public boolean supports(Class clazz) {
         return this.getClass().isAssignableFrom(clazz);
     }
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PUBLIC;
+    }
 
 }

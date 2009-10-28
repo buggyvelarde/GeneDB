@@ -162,5 +162,11 @@ public abstract class HqlQuery implements Query {
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PUBLIC;
+    }
 
 }

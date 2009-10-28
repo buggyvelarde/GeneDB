@@ -18,5 +18,12 @@ public interface Query extends Ordered, Validator, Serializable {
     public Map<String, Object> prepareModelData();
     
     public boolean isMaxResultsReached();
+    
+    /**
+     * Returns the visibility of this query
+     * 
+     * @return visibility
+     */
+    public QueryVisibility getVisibility();
 
 }

@@ -2,6 +2,7 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryParam;
+import org.genedb.querying.core.QueryVisibility;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -312,6 +313,12 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     public void setPseudogenes(boolean pseudogenes) {
         this.pseudogenes = pseudogenes;
+    }
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PRIVATE;
     }
 
 }

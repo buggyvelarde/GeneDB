@@ -1,5 +1,7 @@
 package org.genedb.querying.tmpquery;
 
+import org.genedb.querying.core.QueryVisibility;
+
 /**
  * Similar to DateQuery, but returns a count.
  * @author gv1
@@ -19,5 +21,10 @@ public class DateCountQuery extends DateQuery {
         String typeOfDate = created ? "timeAccessioned" : "timeLastModified";
         return String.format("select count(*) from Feature f where f.%s %s :date @ORGANISM@ ", typeOfDate, operator);
     }
-
+	
+	@Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PRIVATE;
+    }
 }

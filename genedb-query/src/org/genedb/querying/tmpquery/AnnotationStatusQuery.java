@@ -2,6 +2,7 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.genedb.querying.core.QueryVisibility;
 
 @QueryClass(
         title="Coding and pseudogenes by their annotation status",
@@ -51,6 +52,11 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
     protected void populateQueryWithParams(org.hibernate.Query query) {
         query.setBoolean("automatic", automatic);
     }
-
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PRIVATE;
+    }
 
 }
