@@ -2,7 +2,7 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="misc" uri="misc" %>
-<format:header title="Date Search" />
+<format:header title="Name Product Search" />
 <format:page>
 <br>
 <div id="geneDetails">
