@@ -12,7 +12,7 @@
 <div id="queryList">
 <format:genePageSection>
 
-<h2>GeneDB query list</h2>
+<h2>GeneDB queries</h2>
 
 <P>The following queries are available from the GeneDB website.</P>
 

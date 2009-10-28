@@ -3,6 +3,7 @@ package org.genedb.web.mvc.controller.download;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.core.QueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.util.MutableInteger;
 import org.genedb.web.mvc.controller.WebConstants;
@@ -50,7 +51,7 @@ public class QueryController extends AbstractGeneDBFormController{
             @RequestParam(value="filter", required=false) String filterName,
             Model model) {
 
-        Map<String, Query> queries = queryFactory.listQueries(filterName);
+        Map<String, Query> queries = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC);
         Map<String, Query> results = new HashMap<String, Query>();
         for (Map.Entry<String, Query> entry : queries.entrySet()) {
             String key = StringUtils.delete(entry.getKey(), "Query");

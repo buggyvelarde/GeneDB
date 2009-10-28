@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryVisibility;
 import org.springframework.validation.Errors;
 
 public class MockProteinLengthQuery implements Query {
@@ -62,5 +63,10 @@ public class MockProteinLengthQuery implements Query {
         // TODO Auto-generated method stub
         return false;
     }
-
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PUBLIC;
+    }
 }

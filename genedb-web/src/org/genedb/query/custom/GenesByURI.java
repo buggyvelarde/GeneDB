@@ -2,6 +2,7 @@ package org.genedb.query.custom;
 
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryVisibility;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;
@@ -82,22 +83,27 @@ public class GenesByURI implements Query {
         return "Fetch IDs by URL";
     }
 
-            @Override
-            public void validate(Object target, Errors errors) {
-                return;
-            }
+    @Override
+    public void validate(Object target, Errors errors) {
+        return;
+    }
 
 
-            @Override
-            public boolean supports(Class<?> clazz) {
-                return GenesByURI.class.isAssignableFrom(clazz);
-            }
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return GenesByURI.class.isAssignableFrom(clazz);
+    }
 
 
-            @Override
-            public boolean isMaxResultsReached() {
-                // Not Implemented
-                return false;
-            }
-
+    @Override
+    public boolean isMaxResultsReached() {
+        // Not Implemented
+        return false;
+    }
+    
+    @Override
+    public QueryVisibility getVisibility()
+    {
+    	return QueryVisibility.PUBLIC;
+    }
 }
