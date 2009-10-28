@@ -42,7 +42,7 @@ print SUMMARY_PAGE "</HEAD>";
 print SUMMARY_PAGE "<H1>Summary of SQL integrity tests: $day.$month.$year</H1>";
 print SUMMARY_PAGE "<BODY>";
 print SUMMARY_PAGE "<TABLE BORDER=1>";
-print SUMMARY_PAGE "<TH>Status</TH><TH>Query</TH><TH>Description</TH><TH>Results</TH>";
+print SUMMARY_PAGE "<TH>Status</TH><TH>Query</TH><TH>Results</TH><TH>Description</TH>";
 
 #Also try setting up a connection to the database. At the moment, connection & directory details are
 #hard-coded. It is possible later to grab these from the command line or from a config file
@@ -187,7 +187,7 @@ sub print_results{
 	}
 
 	print SUMMARY_PAGE "<TD><A HREF=\"http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests/$query_name\" TARGET=\"_blank\">$query_name</A></TD>";
-	print SUMMARY_PAGE "<TD>$exp_text</TD>";
+	
 	if($status eq "Passed"){
 		print SUMMARY_PAGE "<TD>N/A</TD>";
 	}else{
@@ -216,6 +216,7 @@ sub print_results{
 		
 		
 	}
+	print SUMMARY_PAGE "<TD>$exp_text</TD>";
 	print SUMMARY_PAGE "</TR>";
 	
 	
