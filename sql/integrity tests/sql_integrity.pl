@@ -30,9 +30,9 @@ my $month = $timeData[4]+1;
 my $day = $timeData[3];
 my $start_time = "$timeData[2]:$timeData[1]";
 
-my $summary_file =  "$year\_$month\_$day\_summary.html";
+my $summary_file =  "/tmp/$year\_$month\_$day\_summary.html";
 
-system("rm -f $year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_!\n";
+system("rm -f /tmp/$year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_! in tmp directory\n";
 
 open(SUMMARY_PAGE, ">>$summary_file") or die "Unable to open the necessary html file $summary_file! \n";
 print SUMMARY_PAGE "<HTML>";
@@ -88,7 +88,7 @@ system("mv /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current/*.html /nfs
 print "Removing old sql results files from the archive directory \n";
 system("rm -rf /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/archive/*.sql.html");
 print "Copying latest results into current/ \n";
-system("mv $year\_$month\_$day\_*.html /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current") and die "Could not move files starting with $year\_$month\_$day\_ to /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current!\n";
+system("mv /tmp/$year\_$month\_$day\_*.html /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current") and die "Could not move files starting with $year\_$month\_$day\_ from /tmp folder to /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current!\n";
 print "Finished. See results at http://developer.genedb.org/DBIntegrity/ \n";
 
 
@@ -163,7 +163,7 @@ sub print_results{
 	my $exp_text = shift; #Explanatory text
 	my $sth = shift;
 	my $status = "Failed";
-	my $results_file = "$year\_$month\_$day\_$query_name.html";
+	my $results_file = "/tmp/$year\_$month\_$day\_$query_name.html";
 	if($sth->rows==0){
 		$status = "Passed";
 	}else{
