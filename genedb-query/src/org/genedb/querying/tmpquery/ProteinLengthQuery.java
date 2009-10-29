@@ -44,6 +44,11 @@ public class ProteinLengthQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Searches for proteins of a given length.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Protein Length";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<Query> queries) {

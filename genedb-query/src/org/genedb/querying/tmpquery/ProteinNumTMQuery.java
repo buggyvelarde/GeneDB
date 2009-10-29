@@ -38,6 +38,11 @@ public class ProteinNumTMQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Searches for proteins that have a given number of transmembrane helices.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Transmembrane Helices";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

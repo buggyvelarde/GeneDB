@@ -13,7 +13,8 @@ public class BooleanQuery implements Query {
     private BooleanQueryMode mode;
     private Query left;
     private Query right;
-
+    private QueryVisibility visibility = QueryVisibility.PUBLIC;
+    
     public BooleanQuery(BooleanQueryMode mode, Query left, Query right) {
         this.mode = mode;
         this.left = left;
@@ -63,6 +64,10 @@ public class BooleanQuery implements Query {
     public String getQueryDescription() {
         return "Boolean Query";
     }
+    
+    public String getQueryName() {
+        return "Boolean Query";
+    }
 
     @Override
     public void validate(Object target, Errors errors) {
@@ -81,9 +86,7 @@ public class BooleanQuery implements Query {
         return false;
     }
     
-    @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PUBLIC;
-    }
+    
+    
+    
 }

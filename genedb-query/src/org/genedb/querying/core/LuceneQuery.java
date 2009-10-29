@@ -221,10 +221,6 @@ public abstract class LuceneQuery implements Query {
         return this.getClass().isAssignableFrom(clazz);
     }
     
-    @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PUBLIC;
-    }
+    
 
 }

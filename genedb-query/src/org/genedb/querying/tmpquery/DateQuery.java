@@ -35,6 +35,11 @@ public class DateQuery extends OrganismHqlQuery {
     public String getQueryDescription() {
     	return "Searches for features who have been changed before or after a certain date.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Date";
+    }
 
     @Override
     protected String getHql() {

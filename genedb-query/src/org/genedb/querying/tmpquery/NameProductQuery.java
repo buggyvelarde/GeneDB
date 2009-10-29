@@ -36,6 +36,11 @@ public class NameProductQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Searches for polypeptides of a certain function, that have a certain name.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Named Product";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

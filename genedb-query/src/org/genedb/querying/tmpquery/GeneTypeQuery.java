@@ -33,6 +33,11 @@ public class GeneTypeQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Search for genes of a certain type.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Gene Type";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

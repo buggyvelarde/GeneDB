@@ -32,6 +32,11 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
     public String getQueryDescription() {
     	return "Generates a summary of from a feature id.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Ids2Genes";
+    }
 
     @Override
     protected void extraValidation(Errors errors) {
@@ -67,9 +72,4 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
         this.ids = ids;
     }
     
-    @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PRIVATE;
-    }
 }

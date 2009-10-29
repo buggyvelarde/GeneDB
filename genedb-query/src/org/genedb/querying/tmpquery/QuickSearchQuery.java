@@ -316,9 +316,8 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     }
     
     @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PRIVATE;
+    public String getQueryName() {
+        return "Quick search";
     }
 
 }

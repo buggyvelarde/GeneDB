@@ -35,6 +35,11 @@ public class SimpleNameQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Searches for features whose name matches the input.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Simple Name";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

@@ -42,6 +42,11 @@ public class GeneLocationQuery extends OrganismHqlQuery {
     public String getQueryDescription() {
     	return "Search for a gene by specifing its location on a chromosome, contig or other top level feature.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Location";
+    }
 
     @Override
     protected String getHql() {

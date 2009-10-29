@@ -30,6 +30,11 @@ public class CurationQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Curation";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

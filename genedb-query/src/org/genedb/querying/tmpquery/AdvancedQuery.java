@@ -38,6 +38,11 @@ public class AdvancedQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Advanced";
+    }
 
 
     @Override

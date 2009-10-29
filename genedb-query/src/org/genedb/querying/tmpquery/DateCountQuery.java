@@ -22,9 +22,5 @@ public class DateCountQuery extends DateQuery {
         return String.format("select count(*) from Feature f where f.%s %s :date @ORGANISM@ ", typeOfDate, operator);
     }
 	
-	@Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PRIVATE;
-    }
+	
 }

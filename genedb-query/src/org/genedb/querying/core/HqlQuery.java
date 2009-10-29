@@ -130,9 +130,7 @@ public abstract class HqlQuery implements Query {
         this.order = order;
     }
 
-    public String getQueryDescription() {
-        return "";
-    }
+    
 
 
     //@Override
@@ -163,10 +161,6 @@ public abstract class HqlQuery implements Query {
         this.maxResults = maxResults;
     }
     
-    @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PUBLIC;
-    }
+    
 
 }

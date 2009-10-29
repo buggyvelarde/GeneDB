@@ -35,6 +35,11 @@ public class GoQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "GO";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {

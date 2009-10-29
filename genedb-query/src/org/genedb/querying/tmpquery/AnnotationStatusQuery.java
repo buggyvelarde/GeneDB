@@ -23,6 +23,11 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
     }
     
     @Override
+    public String getQueryName() {
+        return "Annotation Status";
+    }
+    
+    @Override
     protected String getHql() {
         return "select f.uniqueName from Feature f where f.annotation = :automatic order by f.organism";
     }
@@ -53,10 +58,6 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
         query.setBoolean("automatic", automatic);
     }
     
-    @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PRIVATE;
-    }
+    
 
 }

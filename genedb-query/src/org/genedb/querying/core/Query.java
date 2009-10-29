@@ -19,11 +19,6 @@ public interface Query extends Ordered, Validator, Serializable {
     
     public boolean isMaxResultsReached();
     
-    /**
-     * Returns the visibility of this query
-     * 
-     * @return visibility
-     */
-    public QueryVisibility getVisibility();
-
+    String getQueryName();
+    
 }

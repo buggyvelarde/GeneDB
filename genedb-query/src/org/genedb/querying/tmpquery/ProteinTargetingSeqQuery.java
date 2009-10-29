@@ -42,6 +42,11 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
     }
     
     @Override
+    public String getQueryName() {
+        return "Protein Targeting";
+    }
+    
+    @Override
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }

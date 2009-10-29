@@ -10,3 +10,4 @@ public enum QueryVisibility {
 	PRIVATE,
 	PUBLIC
 }
+

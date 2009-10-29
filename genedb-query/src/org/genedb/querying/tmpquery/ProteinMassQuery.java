@@ -43,6 +43,11 @@ public class ProteinMassQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Returns proteins of a certain mass.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "Molecular Mass";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<Query> queries) {

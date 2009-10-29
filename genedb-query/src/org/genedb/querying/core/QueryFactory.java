@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class QueryFactory {
@@ -14,19 +15,47 @@ public class QueryFactory {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
+    Map<QueryVisibility, List<String>> queryNameMap;
     Map<String, Query> queryMap;
-
-
-
-    public Query retrieveQuery(String queryName) {
-        String fullName = queryName + "Query";
-        if (!applicationContext.containsBean(fullName)) {
-            return null;
-        }
-        Query ret = applicationContext.getBean(fullName, Query.class);
-        return ret;
+    
+    public void setQueryNameMap(Map<QueryVisibility, List<String>> queryNameMap) throws Exception
+    {
+    	this.queryNameMap = queryNameMap;
+    	this.queryMap = new HashMap<String, Query>();
+    	for (QueryVisibility visibility : queryNameMap.keySet())
+    	{
+    		for (String queryName : queryNameMap.get(visibility))
+    		{
+    			Query query = applicationContext.getBean(queryName, Query.class);
+    			if (query == null)
+    			{
+    				String message = "Could not find query with name : " + queryName + " !";
+    				logger.error(message);
+    				throw new Exception(message);
+    			}
+    			queryMap.put(queryName, query);
+    		}
+    	}
     }
+    
+    /**
+     * Retrieves a query with of a certain name.
+     * 
+     * @param queryName
+     * @return
+     */
+    public Query retrieveQuery(String queryName) 
+    {
+    	logger.debug(queryName);
+    	String fullName = queryName + "Query";
+    	if (queryMap.containsKey(fullName))
+    	{
+    		logger.debug(queryName + " -- " + queryMap.get(fullName));
+    		return queryMap.get(fullName);
+    	}
+    	return null;
+    }
+        
     
     /**
      * Lists all available queries.
@@ -34,11 +63,9 @@ public class QueryFactory {
      * @param filterName
      * @return
      */
-    public Map<String, Query> listQueries(String filterName) {
-        for (Map.Entry<String, Query> entry : queryMap.entrySet()) {
-            logger.error(entry.getKey()+" : "+entry.getValue());
-        }
-        return queryMap;
+    public Map<String, Query> listQueries(String filterName) 
+    {
+    	return queryMap;
     }
     
     /**
@@ -54,19 +81,20 @@ public class QueryFactory {
     public Map<String, Query> listQueries(String filterName, QueryVisibility visibility) 
     {
     	Map<String, Query> filteredMap = new HashMap<String, Query>();
-    	for (String key : queryMap.keySet())
+    	
+    	for (QueryVisibility queryVisibility : queryNameMap.keySet())
     	{
-    		Query query = queryMap.get(key);    		
-    		// if this Query object's visibility is equal or greater than that of the filter
-    		// then it should be included
-    		if (query.getVisibility().compareTo(visibility) != -1)
+    		if (queryVisibility.compareTo(visibility) != -1)
     		{
-    			filteredMap.put(key, query);
+    			for (String queryName : queryNameMap.get(queryVisibility))
+    			{
+    				filteredMap.put(queryName, queryMap.get(queryName));
+    				logger.debug(queryName + " -- " + queryMap.get(queryName));
+    			}
     		}
     	}
         return filteredMap;
     }
-    
     
 
 

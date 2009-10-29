@@ -32,6 +32,11 @@ public class EcQuery extends OrganismLuceneQuery {
     public String getQueryDescription() {
     	return "Searches for EC numbers.";
     }
+    
+    @Override
+    public String getQueryName() {
+        return "EC";
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
