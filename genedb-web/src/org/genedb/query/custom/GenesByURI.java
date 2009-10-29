@@ -100,10 +100,11 @@ public class GenesByURI implements Query {
         // Not Implemented
         return false;
     }
-    
+
+
     @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PUBLIC;
+    public String getQueryName() {
+        return "Genes By URI";
     }
+    
 }

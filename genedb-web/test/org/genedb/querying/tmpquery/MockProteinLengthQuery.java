@@ -65,8 +65,8 @@ public class MockProteinLengthQuery implements Query {
     }
     
     @Override
-    public QueryVisibility getVisibility()
-    {
-    	return QueryVisibility.PUBLIC;
+    public String getQueryName() {
+        return "Mock Protein Length";
     }
+    
 }

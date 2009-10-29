@@ -239,13 +239,43 @@
     <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
     <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
     <bean name="quickSearchQuery" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
-
-
+	
 	<bean id="changedGeneFeaturesQuery" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
     	<property name="dataSource" ref="dataSource" />
     </bean>
-
-    <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
+	
+    <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" >
+    	<property name="queryNameMap">
+    		<map>
+    			<entry key="PUBLIC">
+    				<list>
+    					<value>proteinLengthQuery</value>
+    					<value>proteinMassQuery</value>
+    					<value>geneTypeQuery</value>
+    					<value>nameProductQuery</value>
+    					<value>controlledCurationQuery</value>
+    					<value>dateQuery</value>
+    					<value>geneLocationQuery</value>
+    					<value>proteinTargetingSeqQuery</value>
+    					<value>proteinNumTMQuery</value>
+    					<value>productQuery</value>
+    					<value>simpleNameQuery</value>
+    					<value>goQuery</value>
+    					<value>ecQuery</value>
+    					<value>pfamQuery</value>
+    				</list>
+    			</entry>
+    			<entry key="PRIVATE">
+    				<list>
+    					<value>idsToGeneSummaryQuery</value>
+    					<value>annotationStatusQuery</value>
+    					<value>dateCountQuery</value>
+    					<value>quickSearchQuery</value>
+    				</list>
+    			</entry>
+            </map>
+    	</property>
+    </bean>
 
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
