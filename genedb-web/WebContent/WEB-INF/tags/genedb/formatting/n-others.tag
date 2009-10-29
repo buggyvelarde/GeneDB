@@ -14,10 +14,5 @@
   <c:set var="phrase" value="Others" />
 </c:if>
 <c:if test="${others >= 1}">
-(<a href="<misc:url value="/Query/controlledCuration">
-  <spring:param name="taxons" value="${taxons}" />
-  <spring:param name="cvTermName" value="${cvTermName}" />
-  <spring:param name="cv" value="${cv}" />
-  <spring:param name="suppress" value="${suppress}" />
-</misc:url>">${others} ${phrase}</a>)
+(<a href="<misc:url value="/Query/controlledCuration"><spring:param name="taxons" value="${taxons}" /><spring:param name="cvTermName" value="${cvTermName}" /><spring:param name="cv" value="${cv}" /><spring:param name="suppress" value="${suppress}" /></misc:url>">${others} ${phrase}</a>)
 </c:if>
