@@ -59,6 +59,7 @@ my $dbh = DBI->connect($dbi_connect, $dbuser, $dbpass) or die "Can't connect to 
 #run them and print the output appropriately
 
 my $count = 0;
+my $failed_tests = 0;
 opendir(DIR, '.') or die "Couldn't open directory, $!";
 foreach (sort grep(/^.*\.sql$/,readdir(DIR))){
 	$count++;
@@ -90,6 +91,12 @@ system("rm -rf /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/archive/*.sql.h
 print "Copying latest results into current/ \n";
 system("mv /tmp/$year\_$month\_$day\_*.html /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current") and die "Could not move files starting with $year\_$month\_$day\_ from /tmp folder to /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current!\n";
 print "Finished. See results at http://developer.genedb.org/DBIntegrity/ \n";
+
+if ($failed_tests > 0){
+	exit ($failed_tests);
+}else{
+	exit (0);
+}
 
 
 
@@ -168,7 +175,7 @@ sub print_results{
 		$status = "Passed";
 	}else{
 		#Create and open an html file for the rows
-		
+		$failed_tests++;
 		open(RESULTS_PAGE, ">>$results_file") or die "Unable to open the necessary html file $results_file! \n";
 		print RESULTS_PAGE "<HTML>";
 		print RESULTS_PAGE "<HEAD>";
