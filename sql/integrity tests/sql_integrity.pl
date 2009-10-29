@@ -59,7 +59,8 @@ my $dbh = DBI->connect($dbi_connect, $dbuser, $dbpass) or die "Can't connect to 
 
 my $count = 0;
 my $failed_tests = 0;
-opendir(DIR, 'sql/integrity tests') or die "Couldn't open directory, $!";
+chdir('./sql/integrity tests');
+opendir(DIR, '.') or die "Couldn't open directory, $!";
 foreach (sort grep(/^.*\.sql$/,readdir(DIR))){
 	$count++;
 	my $file_name = $_;
