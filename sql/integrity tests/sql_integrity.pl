@@ -149,7 +149,7 @@ sub parse_sql_file{
 sub run_sql{
 	my $dbh = shift;
 	my $sql_statement = shift;
-	print "Running: $sql_statement \n";
+	#print "Running: $sql_statement \n";
 	my $sth = $dbh -> prepare($sql_statement);
 	$sth->execute();
 	return $sth;

@@ -1,4 +1,3 @@
-
 #Checks that feature relationships with organisms are in order 
 
 select *
