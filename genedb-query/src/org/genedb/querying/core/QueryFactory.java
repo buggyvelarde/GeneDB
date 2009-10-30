@@ -8,6 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A factory for returning queries, with the option of filtering them by 
+ * name or by {@link QueryVisibility}. 
+ * 
+ * @author art
+ * @author gv1
+ *
+ */
 public class QueryFactory {
 
     private static Logger logger = Logger.getLogger(QueryFactory.class);
@@ -42,7 +50,7 @@ public class QueryFactory {
      * Retrieves a query with of a certain name.
      * 
      * @param queryName
-     * @return
+     * @return a Query
      */
     public Query retrieveQuery(String queryName) 
     {
@@ -55,47 +63,93 @@ public class QueryFactory {
     	}
     	return null;
     }
-        
+    
+    /**
+     * 
+     * @return a map of all the queries
+     */
+    public Map<String, Query> listQueries()
+    {
+    	Map<String, Query> cloneMap = new HashMap<String, Query>();
+    	for (String queryName : queryMap.keySet())
+    	{
+    		cloneMap.put(queryName, queryMap.get(queryName));
+    	}
+    	return cloneMap;
+    }
     
     /**
      * Lists all available queries.
      * 
      * @param filterName
-     * @return
+     * @return a filtered map of queries
      */
     public Map<String, Query> listQueries(String filterName) 
     {
-    	return queryMap;
+    	if ((filterName == null) || (filterName.length() == 0))
+		{
+			return listQueries();    		
+		} 
+    	return filterByName(queryMap, filterName);
     }
     
     /**
      * 
-     * Lists queries that are of equal or greater than visibility than the supplied visibility. 
+     * Filters the available queries by visibility.
      * 
-     * @author gv1
-     * 
-     * @param filterName
      * @param visibility
      * @return
      */
-    public Map<String, Query> listQueries(String filterName, QueryVisibility visibility) 
+    public Map<String, Query> listQueries(QueryVisibility visibility) 
     {
     	Map<String, Query> filteredMap = new HashMap<String, Query>();
-    	
     	for (QueryVisibility queryVisibility : queryNameMap.keySet())
     	{
     		if (queryVisibility.compareTo(visibility) != -1)
     		{
     			for (String queryName : queryNameMap.get(queryVisibility))
     			{
-    				filteredMap.put(queryName, queryMap.get(queryName));
     				logger.debug(queryName + " -- " + queryMap.get(queryName));
+    				filteredMap.put(queryName, queryMap.get(queryName));
     			}
     		}
     	}
         return filteredMap;
     }
     
-
-
+    /**
+     * 
+     * Lists queries that are of equal or greater than visibility than the supplied visibility, filtered by name. 
+     * 
+     * @author gv1
+     * 
+     * @param filterName
+     * @param visibility
+     * @return a map of queries
+     */
+    public Map<String, Query> listQueries(String filterName, QueryVisibility visibility) 
+    {
+    	Map<String, Query> visibleQueries = listQueries(visibility);
+    	if ((filterName == null) || (filterName.length() == 0))
+		{
+    		return visibleQueries;
+		}
+    	return filterByName(visibleQueries, filterName);
+    }
+    
+    private Map<String, Query> filterByName(Map<String, Query> inMap, String filterName)
+    {
+    	Map<String, Query> filteredMap = new HashMap<String, Query>();
+    	for (String queryName : inMap.keySet())
+    	{
+    		if (queryName.contains(filterName))
+    		{
+    			filteredMap.put(queryName, queryMap.get(queryName));
+    		}
+    	}
+        return filteredMap;
+    }
+    
+    
+    
 }
