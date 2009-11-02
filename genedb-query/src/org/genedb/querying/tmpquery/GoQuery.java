@@ -9,7 +9,6 @@ import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class GoQuery extends OrganismLuceneQuery {
             title="The search string"
     )
     private String search = "";
-    
+
     @Override
     public String getQueryDescription() {
     	return "Search for GO terms.";
@@ -35,7 +34,7 @@ public class GoQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
-    
+
     @Override
     public String getQueryName() {
         return "GO";
@@ -45,7 +44,7 @@ public class GoQuery extends OrganismLuceneQuery {
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         String tokens[] = search.trim().split("\\s");
         BooleanQuery bq = new BooleanQuery();
-        
+
         if (tokens.length > 1) {
             PhraseQuery pq = new PhraseQuery();
             for (String token : tokens) {
@@ -53,10 +52,10 @@ public class GoQuery extends OrganismLuceneQuery {
             }
             bq.add(pq, Occur.SHOULD);
 
-        
+
         } else {
             String searchTerm = search.toLowerCase();
-            
+
             //Strip out the go
             if (searchTerm!= null && searchTerm.startsWith("go:")){
                 searchTerm = searchTerm.substring(3);

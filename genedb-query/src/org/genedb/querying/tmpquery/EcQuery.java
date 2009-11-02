@@ -4,7 +4,6 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
 import java.util.List;
@@ -27,12 +26,12 @@ public class EcQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
-    
+
     @Override
     public String getQueryDescription() {
     	return "Searches for EC numbers.";
     }
-    
+
     @Override
     public String getQueryName() {
         return "EC";
