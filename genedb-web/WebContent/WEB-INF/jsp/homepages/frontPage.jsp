@@ -8,29 +8,7 @@
 <format:page>
 <br>
 
-<script type="text/javascript"><!--//--><![CDATA[//><!--
-// startList = function() {
-//   if (document.all&&document.getElementById) {
-//        navRoot = document.getElementById("nav");
-//        for (i=0; i<navRoot.childNodes.length; i++) {
-//            node = navRoot.childNodes[i];
-//            if (node.nodeName=="LI") {
-//                node.onmouseover=function() {
-//                    this.className+=" over";
-//                }
-//                node.onmouseout=function() {
-//                    this.className=this.className.replace(" over", "");
-//               }
-//            }
-//        }
-//    }
-//}
-//window.onload=startList;
-
-//--><!]]></script>
-
-
-
+<c:url value="/Homepage/" var="base2" />
 <div id="col-1-1">
 <h1>Datasets</h1>
 <div class="main-light-grey-top"></div>
@@ -40,18 +18,18 @@
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
 <img src="<misc:url value="/includes/image/dataset-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
-<db:homepageselect top="Apicomplexa" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="Apicomplexa" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
-<db:homepageselect top="Kinetoplastida" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="Kinetoplastida" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
-<db:homepageselect top="Helminths" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="Helminths" baseUrl="${base2}"/>
 </td>
 
 </tr>
@@ -60,17 +38,17 @@
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
-<db:homepageselect top="bacteria" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="bacteria" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
-<db:homepageselect top="Root" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="Root" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
-<db:homepageselect top="Root" baseUrl="<misc:url value="/Homepage/" />"/>
+<db:homepageselect top="Root" baseUrl="${base2}"/>
 </td>
 </tr>
 </table>
