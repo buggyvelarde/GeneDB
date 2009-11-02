@@ -19,7 +19,7 @@
 			<misc:url value="${url}" var="final">
 				<spring:param name="term" value="${row.name}" />
 			</misc:url>
-			<a href="<misc:url value="/Query/controlledCuration"/>"><spring:param name="cvTermName" value="${row.name}" /><spring:param name="taxons" value="${taxons}" /><spring:param name="cv" value="${category}"/>">
+			<a href="<misc:url value="/Query/controlledCuration"><spring:param name="cvTermName" value="${row.name}" /><spring:param name="taxons" value="${taxons}" /><spring:param name="cv" value="${category}"/></misc:url>">
 				<c:out value="${row.name}" /></a>
 		</display:column>
 		<display:column property="count" title="Count" />
