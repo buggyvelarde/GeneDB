@@ -40,18 +40,18 @@
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
 <img src="<misc:url value="/includes/image/dataset-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
-<db:homepageselect top="Apicomplexa"/>
+<db:homepageselect top="Apicomplexa" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
-<db:homepageselect top="Kinetoplastida" />
+<db:homepageselect top="Kinetoplastida" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
-<db:homepageselect top="Helminths"/>
+<db:homepageselect top="Helminths" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 
 </tr>
@@ -60,17 +60,17 @@
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
-<db:homepageselect top="bacteria"/>
+<db:homepageselect top="bacteria" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
-<db:homepageselect top="Root" />
+<db:homepageselect top="Root" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
-<db:homepageselect top="Root"/>
+<db:homepageselect top="Root" baseUrl="<misc:url value="/Homepage/" />"/>
 </td>
 </tr>
 </table>
@@ -85,8 +85,7 @@
 <div class="light-grey">
 <form method="post" action="">
 <p class="block-para"><u>omniBLAST</u> (Multi-organism BLAST)</p>
-<p class="block-para"><input type="button" value=" Go to " /> &nbsp; single organism BLAST:</p>
-<p class="block-para"><select><option>Choose...</option></select></p>
+<p class="block-para">Single organism BLAST: <db:homepageselect top="Root" baseUrl="/cgi-bin/blast/submitblast/" leafOnly="true" /></p>
 
 </form>
 </div>
