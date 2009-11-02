@@ -448,9 +448,8 @@ class LoadGeneDbCv {
     </cv>
 
     <cv name="genedb_synonym_type" db="genedb_misc">
-        <term name="reserved_name"   description="A name reserved for future use eg a paper pending" />
         <term name="synonym" description="synonym" />
-        <term name="protein_name"   description="Specific name for the protein - may be different from gene symbol" />
+        <term name="product_synonym"   description="A synonym for the gene product" />
         <term name="systematic_id"   description="Unique, permanent, accession name for feature" />
         <term name="temporary_systematic_id"   description="Unique accession name for feature. Unstable - will change in future" />
     </cv>
