@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -26,20 +25,24 @@ public class QueryFactory {
     @Autowired
     private ApplicationContext applicationContext;
 
-    Map<QueryVisibility, List<String>> queryNameMap;
+    private Map<QueryVisibility, List<QueryDetails>> visibilityQueryDetails;
 
-    Map<String, Query> queryMap;
+    private Map<String, QueryVisibility> nameVisibility;
 
-    public void setQueryNameMap(Map<QueryVisibility, List<String>> queryNameMap) throws IllegalArgumentException {
-        this.queryNameMap = queryNameMap;
-        this.queryMap = Maps.newHashMapWithExpectedSize(queryNameMap.size());
-        for (List<String> names : queryNameMap.values()) {
-            for (String queryName : names) {
-                Query query = applicationContext.getBean(queryName, Query.class);
-                if (query == null) {
-                    throw new IllegalArgumentException("Could not find query with name '" + queryName + "'");
-                }
-                queryMap.put(queryName, query);
+    public void setQueryNameMap(Map<QueryVisibility, Map<String, Query>> queryNameMap) throws IllegalArgumentException {
+
+        this.visibilityQueryDetails = Maps.newHashMapWithExpectedSize(queryNameMap.size());
+        this.nameVisibility = Maps.newHashMap();
+
+        for (QueryVisibility visibility : queryNameMap.keySet()) {
+            List<QueryDetails> queryDetails = Lists.newArrayList();
+            visibilityQueryDetails.put(visibility, queryDetails);
+            for (Map.Entry<String, Query> entry : queryNameMap.get(visibility).entrySet()) {
+                String realName = entry.getKey();
+                Query q = entry.getValue();
+                QueryDetails qd = new QueryDetails(realName, q.getQueryName(), q.getQueryDescription());
+                queryDetails.add(qd);
+                nameVisibility.put(realName, visibility);
             }
         }
     }
@@ -49,37 +52,15 @@ public class QueryFactory {
      *
      * @param queryName
      * @return a Query
+     * @throws IllegalAccessException
      */
-    // FIXME Overrides prototype!
-    public Query retrieveQuery(String queryName) {
-        logger.debug(queryName);
-        String fullName = queryName + "Query";
-        if (queryMap.containsKey(fullName)) {
-            logger.debug(queryName + " -- " + queryMap.get(fullName));
-            return queryMap.get(fullName);
+    public Query retrieveQuery(String queryName, QueryVisibility visibility) {
+        QueryVisibility v = nameVisibility.get(queryName);
+        if (v.compareTo(visibility) == -1) {
+            logger.error(String.format("Can't access query '%s' as it's visibility '%s' is below required '%s'", queryName, v, visibility));
+            return null;
         }
-        return null;
-    }
-
-    /**
-     *
-     * @return a map of all the queries
-     */
-    public Map<String, Query> listQueries() {
-        return Collections.unmodifiableMap(queryMap);
-    }
-
-    /**
-     * Lists all available queries.
-     *
-     * @param filterName
-     * @return a filtered map of queries
-     */
-    public Map<String, Query> listQueries(String filterName) {
-        if (StringUtils.hasLength(filterName)) {
-            return listQueries();
-        }
-        return filterByName(queryMap, filterName);
+        return applicationContext.getBean(queryName, Query.class);
     }
 
     /**
@@ -89,17 +70,14 @@ public class QueryFactory {
      * @param visibility
      * @return
      */
-    public Map<String, Query> listQueries(QueryVisibility visibility) {
-        Map<String, Query> filteredMap = new HashMap<String, Query>();
-        for (QueryVisibility queryVisibility : queryNameMap.keySet()) {
-            if (queryVisibility.compareTo(visibility) != -1) {
-                for (String queryName : queryNameMap.get(queryVisibility)) {
-                    logger.debug(queryName + " -- " + queryMap.get(queryName));
-                    filteredMap.put(queryName, queryMap.get(queryName));
-                }
+    private List<QueryDetails> listQueries(QueryVisibility visibility) {
+        List<QueryDetails> ret = Lists.newArrayList();
+        for (Map.Entry<QueryVisibility, List<QueryDetails>> entry : visibilityQueryDetails.entrySet()) {
+            if (entry.getKey().compareTo(visibility) >= 0) {
+                ret.addAll(entry.getValue());
             }
         }
-        return filteredMap;
+        return ret;
     }
 
     /**
@@ -112,22 +90,22 @@ public class QueryFactory {
      * @param visibility
      * @return a map of queries
      */
-    public Map<String, Query> listQueries(String filterName, QueryVisibility visibility) {
-        Map<String, Query> visibleQueries = listQueries(visibility);
-        if ((filterName == null) || (filterName.length() == 0)) {
+    public List<QueryDetails> listQueries(String filterName, QueryVisibility visibility) {
+        List<QueryDetails> visibleQueries = listQueries(visibility);
+        if (!StringUtils.hasLength(filterName)) {
             return visibleQueries;
         }
         return filterByName(visibleQueries, filterName);
     }
 
-    private Map<String, Query> filterByName(Map<String, Query> inMap, String filterName) {
-        Map<String, Query> filteredMap = new HashMap<String, Query>();
-        for (String queryName : inMap.keySet()) {
-            if (queryName.contains(filterName)) {
-                filteredMap.put(queryName, queryMap.get(queryName));
+    private List<QueryDetails> filterByName(List<QueryDetails> in, String filterName) {
+        List<QueryDetails> ret = Lists.newArrayList();
+        for (QueryDetails qd : in) {
+            if (qd.getRealName().contains(filterName)) {
+                ret.add(qd);
             }
         }
-        return filteredMap;
+        return ret;
     }
 
 }
