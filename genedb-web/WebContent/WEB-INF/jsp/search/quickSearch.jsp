@@ -14,7 +14,7 @@
                 <table border=0 width="100%">
                     <tr>
                         <td width="30%">
-                          <form:form commandName="query" action="/QuickSearchQuery" method="GET">
+                          <form:form commandName="query" action="${pageContext.request.contextPath}/QuickSearchQuery" method="GET">
                             <table width="100%">
                                 <tr>
                                     <td>Organism:</td>
