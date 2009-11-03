@@ -6,6 +6,7 @@ import org.displaytag.util.ParamEncoder;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.core.QueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.web.mvc.controller.WebConstants;
@@ -169,7 +170,9 @@ public class ResultsController {
     }
 
     private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
-        IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
+        IdsToGeneSummaryQuery idsToGeneSummary =
+            (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY, QueryVisibility.PRIVATE);
+
         if (idsToGeneSummary == null) {
             throw new RuntimeException("Internal error - unable to find ids to gene summary query");
         }
