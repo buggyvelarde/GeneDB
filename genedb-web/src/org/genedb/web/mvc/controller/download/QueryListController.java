@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.controller.download;
 
 import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryDetails;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.core.QueryVisibility;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,26 +28,18 @@ public class QueryListController {
     //@Autowired
     private QueryFactory queryFactory;
 
-
-
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
-
-
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm(
             @RequestParam(value="filter", required=false) String filterName,
             Model model) {
 
-        Map<String, Query> queries = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC );
-        Map<String, Query> results = new HashMap<String, Query>();
-        for (Map.Entry<String, Query> entry : queries.entrySet()) {
-            String key = StringUtils.delete(entry.getKey(), "Query");
-            results.put(key, entry.getValue());
-        }
-        model.addAttribute("queries", results);
+        List<QueryDetails> queryDetails = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC );
+        model.addAttribute("queries", queryDetails);
         return "list/queryList";
     }
+
 }
