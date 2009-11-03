@@ -3,6 +3,7 @@ package org.genedb.web.mvc.controller.download;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.core.QueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
@@ -44,7 +45,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
-        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
+        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME, QueryVisibility.PRIVATE);
 
         if (query==null){
             return "redirect:/Query";
