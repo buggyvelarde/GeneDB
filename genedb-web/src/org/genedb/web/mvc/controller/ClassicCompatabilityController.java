@@ -1,30 +1,17 @@
 package org.genedb.web.mvc.controller;
 
-import net.sf.json.spring.web.servlet.view.JsonView;
-
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.querying.history.HistoryItem;
-import org.genedb.querying.history.HistoryManager;
-import org.genedb.web.mvc.history.commandline.HistoryParser;
-import org.genedb.web.mvc.history.commandline.ParseException;
-
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
