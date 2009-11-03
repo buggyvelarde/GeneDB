@@ -172,7 +172,9 @@ public class OrganismTree implements JograPlugin {
         for(TaxonNode child : childrenList){
 
            if(child.isLeaf()){
-               childrenVector.add(child.getLabel());
+               if(child.isPopulated()){
+                   childrenVector.add(child.getLabel());
+               }
            }else{
                childrenVector.add(getOrganismTree(child));
            }
