@@ -47,18 +47,8 @@ public class QueryController extends AbstractGeneDBFormController{
     private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
 
     @RequestMapping(method = RequestMethod.GET)
-    public String setUpForm(
-            @RequestParam(value="filter", required=false) String filterName,
-            Model model) {
-
-        Map<String, Query> queries = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC);
-        Map<String, Query> results = new HashMap<String, Query>();
-        for (Map.Entry<String, Query> entry : queries.entrySet()) {
-            String key = StringUtils.delete(entry.getKey(), "Query");
-            results.put(key, entry.getValue());
-        }
-        model.addAttribute("queries", results);
-        return "list/queryList";
+    public String setUpForm() {
+        return "redirect:/QueryList";
     }
 
     @RequestMapping(method = RequestMethod.GET , value="/{queryName}")
@@ -201,7 +191,7 @@ public class QueryController extends AbstractGeneDBFormController{
         if (!StringUtils.hasText(queryName)) {
                session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
         }
-        Query query = queryFactory.retrieveQuery(queryName);
+        Query query = queryFactory.retrieveQuery(queryName, QueryVisibility.PUBLIC);
         if (query == null) {
             session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
         }
