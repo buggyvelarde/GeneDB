@@ -1,22 +1,18 @@
 package org.genedb.web.mvc.controller.download;
 
-import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryDetails;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.core.QueryVisibility;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 @Controller
@@ -36,9 +32,22 @@ public class QueryListController {
     public String setUpForm(
             @RequestParam(value="filter", required=false) String filterName,
             Model model) {
-
-        List<QueryDetails> queryDetails = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC );
-        model.addAttribute("queries", queryDetails);
+    	logger.info("fetching query list");
+        
+        try
+        {
+        	List<QueryDetails> queryDetails = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC );
+        	model.addAttribute("queries", queryDetails);
+        } catch (Exception e)
+        {
+        	logger.error(e);
+        	logger.error(e.getMessage());
+        	e.printStackTrace();
+        }
+        
+        logger.info("done?");
+        logger.info(model.containsAttribute("queries"));
+        
         return "list/queryList";
     }
 

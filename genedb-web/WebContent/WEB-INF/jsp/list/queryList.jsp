@@ -20,7 +20,7 @@
 
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 <c:forEach items="${queries}" var="query">
-<tr><th><a href="<misc:url value="/Query/${query.key}" />?taxons=">${query.value.queryName}</a></th><td>${query.value.queryDescription}</td></tr>
+<tr><th><a href="<misc:url value="/Query/${query.realName}" />?taxons=">${query.queryName}</a></th><td>${query.queryDescription}</td></tr>
 </c:forEach>
 </table>
 </format:genePageSection>

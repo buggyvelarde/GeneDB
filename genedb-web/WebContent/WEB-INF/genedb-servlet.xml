@@ -156,6 +156,10 @@
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
     <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
   </bean>
+  
+  <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >
+  	<property name="queryFactory" ref="queryFactory" />
+  </bean>
 
   <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
 
