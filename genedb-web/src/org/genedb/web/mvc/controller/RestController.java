@@ -91,7 +91,7 @@ public class RestController {
     @RequestMapping(method=RequestMethod.GET, value={"/genomes/changes", "/genomes/changes.*"})
     public ModelAndView getGenomesStatus(@RequestParam("since") String since)
     {
-        DateCountQuery dateCountQuery = (DateCountQuery) applicationContext.getBean("dateCountQuery", DateCountQuery.class);
+        DateCountQuery dateCountQuery = (DateCountQuery) applicationContext.getBean("dateCount", DateCountQuery.class);
 
         Date sinceDate = Calendar.getInstance().getTime();
         try {
@@ -176,7 +176,7 @@ public class RestController {
 
         Organism o = organismDao.getOrganismByCommonName(taxons[0].getLabel());
 
-        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeaturesQuery", ChangedGeneFeaturesQuery.class);
+        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
         changedGeneFeaturesQuery.setDate(sinceDate);
         changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
 

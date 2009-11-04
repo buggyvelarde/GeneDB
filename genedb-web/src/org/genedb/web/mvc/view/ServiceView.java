@@ -1,15 +1,20 @@
 package org.genedb.web.mvc.view;
 
 import org.apache.log4j.Logger;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.servlet.View;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
@@ -35,7 +40,9 @@ public class ServiceView implements View {
     @Override
     public void render(Map<String, ?> map, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String extension = getExtension(request);
-
+        
+        logger.debug("using " + extension);
+        
         XStream xstream = null;
         if (extension.equals("json")) {
             contentType = "application/json";
@@ -45,15 +52,23 @@ public class ServiceView implements View {
             contentType = "application/xml";
             xstream = new XStream();
         }
-
-        logger.debug("using " + extension);
-
+        
         xstream.autodetectAnnotations(true);
-
-        Object root = map.get(SERVICE_ROOT);
+        
+        ResponseContainer responseContainer = new ResponseContainer();
+        
+        for (String key : map.keySet())	 
+        {	 
+        	Object value = map.get(key);	 
+        	if (value instanceof BeanPropertyBindingResult)	 
+        		continue;
+        	responseContainer.addResult(value);
+        }
+        
         PrintWriter writer = response.getWriter();
-        String json = xstream.toXML(root);
+        String json = xstream.toXML(responseContainer);
         writer.write(json);
+        
     }
 
     /**
@@ -73,3 +88,17 @@ public class ServiceView implements View {
     }
 
 }
+
+@XStreamAlias("response")	 
+class ResponseContainer	 
+{	 
+	@XStreamImplicit()	 
+	private List<Object> results = new ArrayList<Object>();	 
+	 
+	public void addResult(Object result)	 
+	{	 
+		results.add(result);	 
+	}	 
+	
+}
+
