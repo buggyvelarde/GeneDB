@@ -4,7 +4,7 @@
     &nbsp;Gene ${index} of ${resultsLength} Search Results.&nbsp;
     <c:choose>
         <c:when test="${index != '1'}">
-            <a href="ResultsNavigator?index=1&key=${key}">First</a>
+            <a href="ResultsNavigator/${key}?index=1">First</a>
         </c:when>
         <c:otherwise>
             First
@@ -14,7 +14,7 @@
 
     <c:choose>
         <c:when test="${index != '1'}">
-            <a href="ResultsNavigator?index=${index - 1}&key=${key}">Previous</a>
+            <a href="ResultsNavigator/${key}?index=${index - 1}">Previous</a>
         </c:when>
         <c:otherwise>
             Previous
@@ -24,7 +24,7 @@
 
     <c:choose>
         <c:when test="${index != resultsLength}">
-            <a href="ResultsNavigator?index=${index+1}&key=${key}">Next</a>
+            <a href="ResultsNavigator/${key}?index=${index+1}">Next</a>
         </c:when>
         <c:otherwise>
             Next
@@ -34,7 +34,7 @@
 
     <c:choose>
         <c:when test="${index != resultsLength}">
-            <a href="ResultsNavigator?index=${resultsLength}&key=${key}">Last</a>
+            <a href="ResultsNavigator/${key}?index=${resultsLength}">Last</a>
         </c:when>
         <c:otherwise>
             Last
@@ -42,7 +42,7 @@
     </c:choose>
     &nbsp;|&nbsp;
 
-    <a href="ResultsNavigator?index=-256&key=${key}">Back to Search Results</a>
+    <a href="ResultsNavigator/${key}?index=-256">Back to Search Results</a>
     <br>
 </c:if>
 
