@@ -51,8 +51,7 @@ public class ResultsNavigatorController {
         }
 
         if (index == -256) {
-            ret.addObject("key", key);
-            ret.setViewName("redirect:/Results");
+            ret.setViewName("redirect:/Results/"+key);
             return ret;
         }
 
