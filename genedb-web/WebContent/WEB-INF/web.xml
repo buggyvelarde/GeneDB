@@ -91,11 +91,10 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
-
-    <!-- <servlet-mapping>
+     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping> -->
+        <url-pattern>/ArtemisLaunch</url-pattern>
+     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Basket/*</url-pattern>
@@ -182,13 +181,14 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/JBrowse</url-pattern>
+    </servlet-mapping>
+    <!--
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/JBrowse</url-pattern>
-    </servlet-mapping>
-    <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/GoFeature</url-pattern>
     </servlet-mapping>
@@ -246,23 +246,11 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/ArtemisLaunch</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
         <url-pattern>/JograLaunch</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ProductSearch</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/Query/*</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/QueryList</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,12 +18,12 @@ public class ArtemisLaunchController {
 
     private int offset = DEFAULT_OFFSET;
 
-    @RequestMapping(method=RequestMethod.GET, params={"organism", "chromosome", "start", "end"})
+    @RequestMapping(method=RequestMethod.GET, value="/{organism}/{chromosome}/{start}/{end}")
     public ModelAndView launchMainArtemis(
-            @RequestParam("organism") String organism,
-            @RequestParam("chromosome") String chromosome,
-            @RequestParam("start") int start,
-            @RequestParam("end") int end) {
+            @PathVariable("organism") String organism,
+            @PathVariable("chromosome") String chromosome,
+            @PathVariable("start") int start,
+            @PathVariable("end") int end) {
 
         int realStart = start - offset;
         int realEnd = end + offset;
@@ -40,9 +41,9 @@ public class ArtemisLaunchController {
     }
 
 
-    @RequestMapping(method=RequestMethod.GET, params={"systematicId"})
+    @RequestMapping(method=RequestMethod.GET, value="/{systematicId}")
     public ModelAndView launchArtemisGeneBuilder(
-            @RequestParam("systematicId") String systematicId) {
+            @PathVariable("systematicId") String systematicId) {
 
         // TODO Check systematic id works
 

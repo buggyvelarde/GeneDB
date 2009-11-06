@@ -108,9 +108,9 @@
 <div class="baby-blue-nopad">
 <format:addToBasket uniqueName="${dto.uniqueName}" />
 <a href="<misc:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<misc:url value="/includes/image/button-view-sequence.gif"/>" height="46" width="144" alt="View Sequence" border="0" /></a>
-<a href=""><img src="<misc:url value="/includes/image/button-artemis.gif"/>" height="46" width="144" alt="Launch Artemis" border="0" /></a><br /><br />
+<a href="<misc:url value="/ArtemisLaunch/${organism}/${dto.topLevelFeatureUniqueName}/${dto.min}/${dto.max}"/></a><img src="<c:url value="/" />includes/images/launchArtemis.gif">"><img src="<misc:url value="/includes/image/button-artemis.gif"/>" height="46" width="144" alt="Launch Artemis" border="0" /></a>
 <%-- The coordinates in the line below rely on JBrowse coping with coordinates off the end of the contig --%>
-<a href="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=DNA,Genes,Exons"><img src="<misc:url value="/includes/image/button-jbrowse.gif"/>" height="46" width="144" alt="Show in JBrowse" border="0" /></a><br /><br />
+<a href="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=DNA,Genes,Exons"><img src="<misc:url value="/includes/image/button-jbrowse.gif"/>" height="46" width="144" alt="Show in JBrowse" border="0" /></a>
 </div>
 <div class="main-blue-3-4-bot"></div>
 </div><!-- end internal column -right -->
