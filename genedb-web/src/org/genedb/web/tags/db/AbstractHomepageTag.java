@@ -14,7 +14,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public abstract class AbstractHomepageTag extends SimpleTagSupport {
 
-    private String DEFAULT_TOP = "Root";
+    private static final String DEFAULT_TOP = "Root";
     private String top = DEFAULT_TOP;
 
 
@@ -29,8 +29,7 @@ public abstract class AbstractHomepageTag extends SimpleTagSupport {
             throw new JspException("Homepage Tag: Can't identify taxonNode for '"+top+"'");
         }
 
-        JspWriter out = getJspContext().getOut();
-        display(topNode, out);
+        display(topNode, getJspContext().getOut());
     }
 
     abstract protected void display(TaxonNode node, JspWriter out) throws IOException;
