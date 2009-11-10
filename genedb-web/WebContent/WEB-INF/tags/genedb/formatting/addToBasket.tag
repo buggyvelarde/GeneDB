@@ -8,7 +8,7 @@
 //<![CDATA[
 function addToBasket(geneid){
   $.get("/Basket/"+geneid, {}, function(content){
-    $("#basketbutton").get(0).src = "/includes/images/alreadyInBasket.gif";
+    $("#basketbutton").get(0).src = "/includes/image/button-added-to-basket.gif";
     $("#basketbutton").get(0).onclick = null;
     $("#basketbutton").get(0).style.cursor="default";
   });
