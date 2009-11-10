@@ -430,7 +430,7 @@ public class CvDao extends BaseDao {
     }
 
     public List<CountedName> getCountedNamesByCvNamePatternAndOrganism(String cvNamePattern,
-            Collection<String> orgs) {
+            Collection<String> orgs, boolean justPolypeptides) {
         StringBuilder orgNames = new StringBuilder();
         boolean first = true;
         for (String orgName : orgs) {
@@ -446,13 +446,19 @@ public class CvDao extends BaseDao {
             orgQuery = " fct.feature.organism.commonName in (" + orgNames + ") and";
         }
 
+        String typeQuery= "";
+        if (justPolypeptides) {
+            typeQuery = " fct.feature.type.name = 'polypeptide'";
+        }
+
         @SuppressWarnings("unchecked")
         List<CountedName> countedNames = getSession().createQuery(
             "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"
                     + " from FeatureCvTerm fct" + " join fct.cvTerm cvt"
                     + " where"
                     + orgQuery
-                    + " cvt.cv.name like :cvNamePattern" + " group by cvt.name"
+                    + typeQuery
+                    + " and cvt.cv.name like :cvNamePattern" + " group by cvt.name"
                     + " order by cvt.name")
                 .setString("cvNamePattern", cvNamePattern)
                 .list();
