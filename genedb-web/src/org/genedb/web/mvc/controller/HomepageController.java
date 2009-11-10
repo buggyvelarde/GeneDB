@@ -3,6 +3,7 @@ package org.genedb.web.mvc.controller;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,11 @@ public class HomepageController extends BaseController {
         }
 
         if (node.isLeaf()) {
-            return new ModelAndView(DEFAULT_SINGLE, map);
+        	ModelAndView mav = new ModelAndView(DEFAULT_SINGLE, map);
+        	mav.addObject("node", node);
+        	mav.addObject("label", node.getName(TaxonNameType.LABEL));
+        	mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
+            return mav;
         }
 
         return new ModelAndView(DEFAULT_GROUP, map);
