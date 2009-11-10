@@ -7,8 +7,7 @@
 <br>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="/Query" method="GET">
-        <input type="hidden" name="q" value="simpleName" />
+        <form:form commandName="query" action="/Query/simpleName" method="GET">
             <table>
                 <tr>
                     <td width=180>
