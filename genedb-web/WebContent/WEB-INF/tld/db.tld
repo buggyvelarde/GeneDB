@@ -187,6 +187,11 @@
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
+     <attribute>
+       <name>title</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
  </tag>
 
  <tag>
