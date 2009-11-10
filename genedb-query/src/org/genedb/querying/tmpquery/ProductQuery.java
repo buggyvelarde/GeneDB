@@ -34,12 +34,12 @@ public class ProductQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
-    
+
     @Override
     public String getQueryDescription() {
     	return "Searches for polypeptides of a certain function.";
     }
-    
+
     @Override
     public String getQueryName() {
         return "Product";
@@ -49,28 +49,25 @@ public class ProductQuery extends OrganismLuceneQuery {
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 
         BooleanQuery bq = new BooleanQuery();
-        if(StringUtils.containsWhitespace(search)) {
-            for(String term : search.split(" ")) {
+        if (StringUtils.containsWhitespace(search)) {
+            for (String term : search.split(" ")) {
                 bq.add(new TermQuery(new Term("product",term.toLowerCase()
                     )), Occur.SHOULD);
             }
         } else {
             if (search.indexOf('*') == -1) {
-                    bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
+                bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
             } else {
-                    bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
+                bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
             }
         }
-        
+
         queries.add(bq);
-        
+
         if (pseudogenes) {
             queries.add(productiveTranscriptQuery);
-        }else{
-            BooleanQuery nonPsedogenicTranscript = new BooleanQuery();
-            nonPsedogenicTranscript.add(new MatchAllDocsQuery(), Occur.MUST);
-            nonPsedogenicTranscript.add(pseudogenicTranscriptQuery, Occur.MUST_NOT);
-            queries.add(nonPsedogenicTranscript);
+        } else {
+            queries.add(mRNAQuery);
         }
     }
 
