@@ -125,7 +125,7 @@ public class BrowseCategoryController extends BaseController {
                 orgNames.addAll(tn.getAllChildrenNames());
             }
         }
-        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames);
+        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames, true);
 
         if (results.isEmpty()) {
             logger.info("result is null");
