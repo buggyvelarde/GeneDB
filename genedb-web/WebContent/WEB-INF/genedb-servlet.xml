@@ -189,10 +189,10 @@
     -->
   </bean>
 
-  <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-    <!-- FIXME STS complains where is superclass -->
+  <!-- <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    
     <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
-  </bean>
+  </bean> -->
 
 
   <!--
@@ -320,14 +320,7 @@
     <property name="cvTerm" value="gene" />
   </bean>
 
-  <!--
-    - This bean provides explicit View mappings in a resource bundle instead of the - default
-    InternalResourceViewResolver. It fetches the view mappings from - localized "views_xx" classpath files, i.e.
-    "/WEB-INF/classes/views.properties" - or "/WEB-INF/classes/views_de.properties". - - Symbolic view names returned by
-    Controllers will be resolved by this bean - using the respective properties file, which defines arbitrary mappings
-    between - view names and resources.
-  -->
-
+ 
   <!--
     - This bean resolves specific types of exception to corresponding error views. - The default behaviour of
     DispatcherServlet is to propagate all exceptions to the - servlet container: This will happen here with all other
