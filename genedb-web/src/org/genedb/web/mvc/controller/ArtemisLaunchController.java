@@ -3,10 +3,12 @@ package org.genedb.web.mvc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -17,12 +19,12 @@ public class ArtemisLaunchController {
 
     private int offset = DEFAULT_OFFSET;
 
-    @RequestMapping(method=RequestMethod.GET, value="/{organism}/{chromosome}/{start}/{end}")
+    @RequestMapping(method=RequestMethod.GET, value="/{organism}/{chromosome}.jnlp", params={"start", "end"})
     public ModelAndView launchMainArtemis(
             @PathVariable("organism") String organism,
             @PathVariable("chromosome") String chromosome,
-            @PathVariable("start") int start,
-            @PathVariable("end") int end) {
+            @RequestParam("start") int start,
+            @RequestParam("end") int end) {
 
         int realStart = start - offset;
         int realEnd = end + offset;
@@ -35,9 +37,7 @@ public class ArtemisLaunchController {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("argument", argument);
         model.put("offset", start);
-        
-        
-        
+
         return new ModelAndView("jsp:artemis/artemis", model);
     }
 
@@ -50,8 +50,7 @@ public class ArtemisLaunchController {
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("systematicId", systematicId);
-
-        return new ModelAndView("jsp:artemis/artemisGeneBuilder.ftl", model);
+        return new ModelAndView("jsp:artemis/artemisGeneBuilder", model);
     }
 
 }
