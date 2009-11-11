@@ -82,25 +82,14 @@
 <h2>Information</h2>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-<a href="<misc:url value="/Page/guide"/>">Guide to GeneDB</a>
-<p>What is GeneDB, and what's in it?<br />
-Navigating/Searching GeneDB<br />
-Contacting Us/Feedback<br />
-Privacy Policy<br />
+
+<p>Data <br />
+&raquo; <a href="<misc:url value="/Page/releases"/>">Data Release Policy</a><br />
 </p>
 <br />
-<p><a href="<misc:url value="/Page/releases"/>">Data Release Policy</a></p>
-</div>
-<div class="baby-blue-bot"></div>
-
-<h2>Links</h2>
-<div class="baby-blue-top"></div>
-<div class="baby-blue">
-<p>PSU Sequencing Projects<br />
+<p>PSU Sequencing Projects <br />
 &raquo; <a href="http://www.sanger.ac.uk/Projects/Microbes/">Prokaryotes</a><br />
-
 &raquo; <a href="http://www.sanger.ac.uk/Projects/Protozoa/">Eukaryotes (Protozoa)</a><br />
-&raquo; <a href="http://www.sanger.ac.uk/Projects/Fungi/">Eukaryotes (Fungi)</a><br />
 </p>
 <br />
 <p>
