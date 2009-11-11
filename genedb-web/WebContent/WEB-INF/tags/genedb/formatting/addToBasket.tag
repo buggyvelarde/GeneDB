@@ -7,10 +7,11 @@
 <script type="text/javascript">
 //<![CDATA[
 function addToBasket(geneid){
-  $.get("/Basket/"+geneid, {}, function(content){
-    $("#basketbutton").get(0).src = "/includes/image/button-added-to-basket.gif";
-    $("#basketbutton").get(0).onclick = null;
-    $("#basketbutton").get(0).style.cursor="default";
+  $.get("<misc:url value="/Basket/"/>"+geneid, {}, function(content){
+    $("#basketbutton")
+        .attr('src', "<misc:url value="/includes/image/button-added-to-basket.gif" />")
+        .unbind('click')
+        .css({'cursor': 'default'});
   });
 }
 //]]>
