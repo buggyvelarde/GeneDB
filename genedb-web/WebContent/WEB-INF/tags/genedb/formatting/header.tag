@@ -31,7 +31,6 @@
           var logo_index = 0;
           $("#logo").click(function() {
             logo_index = (logo_index + 1) % logos.length;
-            console.log("Logo index is now %d", logo_index);
             $(this).attr('src', logos[logo_index]);
             return false;
           });
