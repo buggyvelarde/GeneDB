@@ -13,7 +13,7 @@
   <tr>
   <th><c:if test="${status.first}">${title}</c:if></th>
   <td><a href="/cgi-bin/amigo/term-details.cgi?term=GO%3A${fctDTO.typeAccession}&speciesdb=GeneDB_${dto.organismCommonName}">${fctDTO.typeName}</a></td>
-  <td">
+  <td>
     <c:forEach items="${fctDTO.props.qualifier}" var="qualifier" varStatus="st">
       <c:if test="${!st.first}"> | </c:if>
       ${qualifier}
