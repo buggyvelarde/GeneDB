@@ -4,7 +4,7 @@
 <format:header title="GeneDB Motif Search">
 	<st:init />
 </format:header>
-<<format:page>
+<format:page>
 <html>
   <head>
      <title>GeneDB Motif Search</title>
