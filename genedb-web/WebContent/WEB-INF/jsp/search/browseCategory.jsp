@@ -1,13 +1,8 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="db" uri="db" %>
-
-<format:headerRound title="Browse By Category" name="Browse" bodyClass="genePage">
-  <st:init />
-  <link rel="stylesheet" type="text/css" href="<misc:url value="/includes/style/genedb/genePage.css"/>" />
-</format:headerRound>
-
-
+<format:header title="Browse By Category" />
+<format:page>
 
 <div id="geneDetails">
   <format:genePageSection id="browseCategory" className="whiteBox">
@@ -44,6 +39,4 @@
     </format:genePageSection>
 </div>
 
-
-
-<format:footer />
+</format:page>
