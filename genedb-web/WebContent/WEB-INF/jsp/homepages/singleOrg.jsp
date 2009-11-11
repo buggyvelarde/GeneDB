@@ -39,15 +39,14 @@
 <div id="col-1-2">
 	
 	
-	<h2>Links</h2>
+	<h2>About GeneDB</h2>
 	<div class="baby-blue-top"></div>
 		<div class="baby-blue">
-			
-	  		<p>Link 1</p>
+			<P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
 		</div>
 	<div class="baby-blue-bot"></div>
 	<br><br><br>
-	<P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
+	
 </div>
 
 
