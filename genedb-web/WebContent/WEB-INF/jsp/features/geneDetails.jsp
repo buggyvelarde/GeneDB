@@ -74,7 +74,7 @@
 
 <c:if test="${!empty dto.dbXRefDTOs}">
   <tr>
-    <th>See Also</td>
+    <th>See Also</th>
     <td>
     <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
       <c:if test="${!empty dbxref.urlPrefix}">
@@ -256,7 +256,7 @@ ${dto.ims.imageMap}
   <h2>Orthologues and Paralogues</h2>
   <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
     <c:forEach items="${dto.clusterIds}" var="clusterId">
-      <tr><td>${clusterId}</td><td><a href="<misc:url value="/Orthologs/${clusterId}" />">Look up others in cluster</a></span></td></tr>
+      <tr><td>${clusterId}</td><td><a href="<misc:url value="/Orthologs/${clusterId}" />">Look up others in cluster</a></td></tr>
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
