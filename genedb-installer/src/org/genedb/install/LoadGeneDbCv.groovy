@@ -478,7 +478,7 @@ class LoadGeneDbCv {
         <term name="1.6.1" description="Adaptations, atypical conditions"/>
         <term name="1.6.2" description="Osmotic adaptation"/>
         <term name="1.6.3" description="Fe storage"/>
-        <term name="1.6.4"  description="Nodulation related"/>
+        <term name="1.6.4" description="Nodulation related"/>
         <term name="1.7.1" description="Cell division"/>
         <term name="1.8.1" description="Sporulation, differentiation and germination"/>
         <term name="2.0.0" description="Macromolecule metabolism"/>
