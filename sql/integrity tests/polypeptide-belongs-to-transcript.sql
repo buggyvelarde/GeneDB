@@ -19,7 +19,7 @@ and not exists (
           select cvterm.cvterm_id
           from cvterm join cv on cvterm.cv_id = cv.cv_id
           where cv.name = 'sequence'
-            and cvterm.name in ('mRNA', 'pseudogenic_transcript'))
+            and cvterm.name in ('transcript', 'mRNA', 'pseudogenic_transcript'))
 
 )
 ;
