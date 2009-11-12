@@ -3,7 +3,7 @@ begin;
 create temporary table newprops (
     name character varying,
     value character varying
-);
+) on commit drop;
 
 insert into organism (
     abbreviation, common_name, genus, species
@@ -30,7 +30,5 @@ insert into organismprop (
     join cv using (cv_id)
     where cv.name = 'genedb_misc'
 );
-
-drop table newprops;
 
 commit;
