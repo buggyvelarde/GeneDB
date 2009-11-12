@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 ######################################################################
 # author nds
 # team 81
@@ -32,17 +32,18 @@ my $day          = $timeData[3];
 my $start_time   = "$timeData[2]:$timeData[1]";
 
 #Some directories. These need to be reset if the files are to be put in different locations
-my $tmpdirectory          = "tmp/";
-my $githubdirectory       = "http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests/";
-my $dbintegritydirectory  = "/nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/";
-my $dbintegrityurl        = "http://developer.genedb.org/DBIntegrity/";
+my $tmpdirectory          = "tmp";
+my $githubdirectory       = "http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests";
+my $dbintegritydirectory  = "/nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity";
+my $dbintegrityurl        = "http://developer.genedb.org/DBIntegrity";
 
 #Delete any files with the identical name in tmp/ (to be on the safe side)
-system("rm -f $tmpdirectory$year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_! in tmp directory\n";
+system("rm -f $tmpdirectory/$year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_! in tmp directory\n";
 
-my $summary_file =  "$tmpdirectory"."$year\_$month\_$day\_summary.html";
+my $summary_file =  "$tmpdirectory/$year\_$month\_$day\_summary.html";
 open(SUMMARY_PAGE, ">>$summary_file") or die "Unable to open the html file: $summary_file! \n";
-print SUMMARY_PAGE << "END";
+
+print SUMMARY_PAGE <<"END";
     <HTML>
 	     <HEAD>
 	           <TITLE>Summary of SQL integrity test:$day.$month.$year</TITLE>
@@ -51,7 +52,8 @@ print SUMMARY_PAGE << "END";
 	           <H1>Summary of SQL integrity tests: $day.$month.$year</H1>
 	           <TABLE BORDER=1>
 	                  <TH>Status</TH><TH>Query</TH><TH>Results</TH><TH>Description</TH>
-	                  END
+END
+
 
 
 #Also try setting up a connection to the database. At the moment, connection details are
@@ -76,8 +78,17 @@ print "I am working in $pwd \n";
 
 chdir('./sql/integrity tests');
 $pwd = `pwd`;
-print "I am now working in $pwd \n";
+print "After the chdir, I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
+
+if($pwd !~ /.*integrity.*/){
+	exit(1);
+	
+	
+}
+
+print "SQL files picked up: \n";
+
 foreach (sort grep(/^.*\.sql$/,readdir(DIR))){
 	$count++;
 	my $file_name = $_;
@@ -94,25 +105,26 @@ my $end_time = "$timeData[2]:$timeData[1]";
 
 $dbh->disconnect;
 
-print SUMMARY_PAGE << "END";
+print SUMMARY_PAGE <<"END";
        </TABLE>
        <HR />
-       <P>Ran $count tests. Started: $start_time Ended: $end_time</P>
+       <P>Ran $count tests. $failed_tests tests failed. Started: $start_time Ended: $end_time</P>
     </HTML>
+END
 
 close SUMMARY_PAGE;
 
 #First move whatever is in current/ to archive/, and then copy over the new results to current/
 
-system("mv $dbintegritydirectory"."current/*.html $dbintegritydirectory"."/archive/"); #Copying previous results into the archive
-system("rm -rf $dbintegritydirectory"."/archive/*.sql.html"); #Removing SQL results files from the archive (we only hang on to the summaries)
+system("mv $dbintegritydirectory/current/*.html $dbintegritydirectory/archive/"); #Copying previous results into the archive
+system("rm -rf $dbintegritydirectory/archive/*.sql.html"); #Removing SQL results files from the archive (we only hang on to the summaries)
 #Copying latest results into current directory
-system("mv $tmpdirectory"."$year\_$month\_$day\_*.html $dbintegritydirectory"."current") and die "Could not move files starting with $year\_$month\_$day\_ from $tmpdirectory folder to $dbintegritydirectory/current!\n";
-print << "END"; 
-       Finished running $count data integrity checks. (Started: $start_time Ended: $end_time) \n 
-       $failed_tests tests failed. \n
-       See results at http://developer.genedb.org/DBIntegrity/ \n
-       END
+system("mv $tmpdirectory/$year\_$month\_$day\_*.html $dbintegritydirectory/current") and die "Could not move files starting with $year\_$month\_$day\_ from $tmpdirectory folder to $dbintegritydirectory/current!\n";
+print <<"END"; 
+       Finished running $count data integrity check(s). (Started: $start_time Ended: $end_time) 
+       $failed_tests test(s) failed.
+       See results at $dbintegrityurl/current/$year\_$month\_$day\_summary.html
+END
 
 if ($failed_tests > 0){
 	exit ($failed_tests);
@@ -192,21 +204,21 @@ sub print_results{
 	my $exp_text = shift; #Explanatory text
 	my $sth = shift; #Rows returned from SQL query
 	my $status = "Failed"; #Default
-	my $results_file = "$tmpdirectory$year\_$month\_$day\_$query_name.html";
+	my $results_file = "$tmpdirectory/$year\_$month\_$day\_$query_name.html";
 	
 	if($sth->rows==0){
 		$status = "Passed";
 	}else{
 		$failed_tests++;
 		open(RESULTS_PAGE, ">>$results_file") or die "Unable to open the necessary html file $results_file! \n";
-		print RESULTS_PAGE << "END";
+		print RESULTS_PAGE <<"END";
 		    <HTML>
 		        <HEAD>
 		             <TITLE>Results of $query_name: $day.$month.$year</TITLE>
 		        </HEAD>
 		        <BODY>
 		             <H1>Results of '$query_name': $day.$month.$year</H1>
-		             END
+END
 		             
 		             		
 		#Print the rows in the results page
@@ -239,12 +251,12 @@ sub print_results{
 		print SUMMARY_PAGE "<TD><IMG SRC=\"../images/failed.png\" /></TD>";
 	}
 
-	print SUMMARY_PAGE "<TD><A HREF=\"$githubdirectory"."$query_name\" TARGET=\"_blank\">$query_name</A></TD>"; #URL to query on GitHub
+	print SUMMARY_PAGE "<TD><A HREF=\"$githubdirectory/$query_name\" TARGET=\"_blank\">$query_name</A></TD>"; #URL to query on GitHub
 	
 	if($status eq "Passed"){
 		print SUMMARY_PAGE "<TD>N/A</TD>";
 	}else{
-		print SUMMARY_PAGE "<TD><A HREF=\"$dbintegrityurl"."current/$results_file\" TARGET=\"_blank\">".$sth->rows." rows</A></TD>";
+		print SUMMARY_PAGE "<TD><A HREF=\"$dbintegrityurl/current/$year\_$month\_$day\_$query_name.html\" TARGET=\"_blank\">".$sth->rows." rows</A></TD>";
 	}
 	print SUMMARY_PAGE "<TD>$exp_text</TD>";
 	print SUMMARY_PAGE "</TR>";
