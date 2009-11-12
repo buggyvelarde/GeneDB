@@ -32,7 +32,7 @@ my $day          = $timeData[3];
 my $start_time   = "$timeData[2]:$timeData[1]";
 
 #Some directories. These need to be reset if the files are to be put in different locations
-my $tmpdirectory          = "tmp";
+my $tmpdirectory          = "/tmp";
 my $githubdirectory       = "http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests";
 my $dbintegritydirectory  = "/nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity";
 my $dbintegrityurl        = "http://developer.genedb.org/DBIntegrity";
@@ -74,13 +74,11 @@ my $dbh = DBI->connect($dbi_connect, $dbuser, $dbpass) or die "Can't connect to 
 my $count = 0;
 my $failed_tests = 0;
 my $pwd = `pwd`;
-print STDERR "I am working in $pwd \n";
+print "I am working in $pwd \n";
 
 chdir('./sql/integrity tests');
-mkdir 'tmp';
-
 $pwd = `pwd`;
-print STDERR "After the chdir, I am now working in $pwd \n";
+print "After the chdir, I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
 
 
