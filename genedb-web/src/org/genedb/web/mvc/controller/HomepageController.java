@@ -55,9 +55,9 @@ public class HomepageController extends BaseController {
         Map<String, String> map = Maps.newHashMap();
 
         for (Map.Entry<String, String> entry : node.getAppDetails().entrySet()) {
-        	if (entry.getKey().startsWith(APP_PREFIX)) {
-        		map.put(entry.getKey().substring(APP_PREFIX.length()), entry.getValue());
-        	}
+            if (entry.getKey().startsWith(APP_PREFIX)) {
+                map.put(entry.getKey().substring(APP_PREFIX.length()), entry.getValue());
+            }
         }
 
         if (node.isRoot()) {
@@ -65,10 +65,10 @@ public class HomepageController extends BaseController {
         }
 
         if (node.isLeaf()) {
-        	ModelAndView mav = new ModelAndView(DEFAULT_SINGLE, map);
-        	mav.addObject("node", node);
-        	mav.addObject("label", node.getName(TaxonNameType.LABEL));
-        	mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
+            ModelAndView mav = new ModelAndView(DEFAULT_SINGLE, map);
+            mav.addObject("node", node);
+            mav.addObject("label", node.getName(TaxonNameType.LABEL));
+            mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
             return mav;
         }
 
