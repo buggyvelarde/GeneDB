@@ -74,11 +74,11 @@ my $dbh = DBI->connect($dbi_connect, $dbuser, $dbpass) or die "Can't connect to 
 my $count = 0;
 my $failed_tests = 0;
 my $pwd = `pwd`;
-print "I am working in $pwd \n";
+print STDERR "I am working in $pwd \n";
 
 chdir('./sql/integrity tests');
 $pwd = `pwd`;
-print "After the chdir, I am now working in $pwd \n";
+print STDERR "After the chdir, I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
 
 if($pwd !~ /.*integrity.*/){
