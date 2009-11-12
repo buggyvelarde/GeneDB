@@ -482,13 +482,18 @@ public class TranscriptDTOFactory {
 
 
     /**
-     * Create lists of synonyms, where each list grouped by the synonym type
+     * Create lists of synonyms, grouped by the synonym type.
+     * (Only current synonyms are included in the lists.)
+     *
      * @param synonyms
-     * @return
+     * @return a map from the type to a list of synonyms
      */
     private Map<String, List<String>> findFromSynonymsByType(Collection<FeatureSynonym> synonymCollection) {
         HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
         for (FeatureSynonym featSynonym : synonymCollection) {
+            if (!featSynonym.isCurrent()) {
+                continue;
+            }
             Synonym synonym = featSynonym.getSynonym();
             String typeName = formatSynonymTypeName(synonym.getType().getName());
             List<String> filtered = synonymsByType.get(typeName);
