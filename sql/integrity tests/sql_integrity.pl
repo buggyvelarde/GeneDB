@@ -1,11 +1,11 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 ######################################################################
 # author nds
 # team 81
 # started 5.10.2009
 
 # This script should:
-# 1) Locate each of the sql files that need to be run
+# 1) Locate each of the sql integrity tests that need to be run
 # 2) Run them and, for each, write out the results in html format
 # 3) Place the html pages in the right folders 
 #######################################################################
@@ -17,34 +17,46 @@ use DBI;
 #First we start off an html file to contain the summary of the results. 
 #All html files created in this script will be labelled with today's
 #date so that it is possible to organise them in an archive and search/delete
-#as necessary. As a sanity check, we delete any files in the current folder 
-#that have the same name. This step should probably be changed later as there
-#is a chance that we may delete something irrelevant to this script 
-#accidentally.  
+#as necessary. We create these files in a tmp directory first and move everything
+#over to the right folder at the end. That way, the existing web pages will be
+#'viewable' until the new test results replace them.As a sanity check, we delete 
+#any files in the current folder that have the same name. This step should probably 
+#be changed later as there is a chance that we may delete something irrelevant to 
+#this script accidentally.  
+
+#Time
+my @timeData     = localtime(time);
+my $year         = $timeData[5]+1900;
+my $month        = $timeData[4]+1;
+my $day          = $timeData[3];
+my $start_time   = "$timeData[2]:$timeData[1]";
+
+#Some directories. These need to be reset if the files are to be put in different locations
+my $tmpdirectory          = "tmp/";
+my $githubdirectory       = "http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests/";
+my $dbintegritydirectory  = "/nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/";
+my $dbintegrityurl        = "http://developer.genedb.org/DBIntegrity/";
+
+#Delete any files with the identical name in tmp/ (to be on the safe side)
+system("rm -f $tmpdirectory$year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_! in tmp directory\n";
+
+my $summary_file =  "$tmpdirectory"."$year\_$month\_$day\_summary.html";
+open(SUMMARY_PAGE, ">>$summary_file") or die "Unable to open the html file: $summary_file! \n";
+print SUMMARY_PAGE << "END";
+    <HTML>
+	     <HEAD>
+	           <TITLE>Summary of SQL integrity test:$day.$month.$year</TITLE>
+	     </HEAD>
+	     <BODY>
+	           <H1>Summary of SQL integrity tests: $day.$month.$year</H1>
+	           <TABLE BORDER=1>
+	                  <TH>Status</TH><TH>Query</TH><TH>Results</TH><TH>Description</TH>
+	                  END
 
 
-my @timeData = localtime(time);
-my $year = $timeData[5]+1900;
-my $month = $timeData[4]+1;
-my $day = $timeData[3];
-my $start_time = "$timeData[2]:$timeData[1]";
-
-my $summary_file =  "/tmp/$year\_$month\_$day\_summary.html";
-
-system("rm -f /tmp/$year\_$month\_$day\_*") and die "Could not delete existing files starting with name $year\_$month\_$day\_! in tmp directory\n";
-
-open(SUMMARY_PAGE, ">>$summary_file") or die "Unable to open the necessary html file $summary_file! \n";
-print SUMMARY_PAGE "<HTML>";
-print SUMMARY_PAGE "<HEAD>";
-print SUMMARY_PAGE "<TITLE>Summary of SQL integrity tests: $day.$month.$year</TITLE>";
-print SUMMARY_PAGE "</HEAD>";
-print SUMMARY_PAGE "<H1>Summary of SQL integrity tests: $day.$month.$year</H1>";
-print SUMMARY_PAGE "<BODY>";
-print SUMMARY_PAGE "<TABLE BORDER=1>";
-print SUMMARY_PAGE "<TH>Status</TH><TH>Query</TH><TH>Results</TH><TH>Description</TH>";
-
-#Also try setting up a connection to the database. At the moment, connection & directory details are
+#Also try setting up a connection to the database. At the moment, connection details are
 #hard-coded. It is possible later to grab these from the command line or from a config file
+#User 'genedb' only has read access.
 
 my $dbname = 'pathogens';
 my $dbhost = 'pgsrv1';
@@ -59,7 +71,12 @@ my $dbh = DBI->connect($dbi_connect, $dbuser, $dbpass) or die "Can't connect to 
 
 my $count = 0;
 my $failed_tests = 0;
+my $pwd = `pwd`;
+print "I am working in $pwd \n";
+
 chdir('./sql/integrity tests');
+$pwd = `pwd`;
+print "I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
 foreach (sort grep(/^.*\.sql$/,readdir(DIR))){
 	$count++;
@@ -77,20 +94,25 @@ my $end_time = "$timeData[2]:$timeData[1]";
 
 $dbh->disconnect;
 
-print SUMMARY_PAGE "</TABLE>";
-print SUMMARY_PAGE "<HR /><P>Ran $count tests. Started: $start_time Ended: $end_time</P>";
-print SUMMARY_PAGE "</BODY>";
-print SUMMARY_PAGE "</HTML>";
+print SUMMARY_PAGE << "END";
+       </TABLE>
+       <HR />
+       <P>Ran $count tests. Started: $start_time Ended: $end_time</P>
+    </HTML>
+
 close SUMMARY_PAGE;
 
 #First move whatever is in current/ to archive/, and then copy over the new results to current/
-print "Moving old html files from current/ archive/ \n";
-system("mv /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current/*.html /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/archive/");
-print "Removing old sql results files from the archive directory \n";
-system("rm -rf /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/archive/*.sql.html");
-print "Copying latest results into current/ \n";
-system("mv /tmp/$year\_$month\_$day\_*.html /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current") and die "Could not move files starting with $year\_$month\_$day\_ from /tmp folder to /nfs/pathdata/jira/httpd-2.2.9/htdocs/DBIntegrity/current!\n";
-print "Finished. See results at http://developer.genedb.org/DBIntegrity/ \n";
+
+system("mv $dbintegritydirectory"."current/*.html $dbintegritydirectory"."/archive/"); #Copying previous results into the archive
+system("rm -rf $dbintegritydirectory"."/archive/*.sql.html"); #Removing SQL results files from the archive (we only hang on to the summaries)
+#Copying latest results into current directory
+system("mv $tmpdirectory"."$year\_$month\_$day\_*.html $dbintegritydirectory"."current") and die "Could not move files starting with $year\_$month\_$day\_ from $tmpdirectory folder to $dbintegritydirectory/current!\n";
+print << "END"; 
+       Finished running $count data integrity checks. (Started: $start_time Ended: $end_time) \n 
+       $failed_tests tests failed. \n
+       See results at http://developer.genedb.org/DBIntegrity/ \n
+       END
 
 if ($failed_tests > 0){
 	exit ($failed_tests);
@@ -168,38 +190,25 @@ sub run_sql{
 sub print_results{
 	my $query_name = shift;
 	my $exp_text = shift; #Explanatory text
-	my $sth = shift;
-	my $status = "Failed";
-	my $results_file = "/tmp/$year\_$month\_$day\_$query_name.html";
+	my $sth = shift; #Rows returned from SQL query
+	my $status = "Failed"; #Default
+	my $results_file = "$tmpdirectory$year\_$month\_$day\_$query_name.html";
+	
 	if($sth->rows==0){
 		$status = "Passed";
 	}else{
-		#Create and open an html file for the rows
 		$failed_tests++;
 		open(RESULTS_PAGE, ">>$results_file") or die "Unable to open the necessary html file $results_file! \n";
-		print RESULTS_PAGE "<HTML>";
-		print RESULTS_PAGE "<HEAD>";
-		print RESULTS_PAGE "<TITLE>Results of $query_name: $day.$month.$year</TITLE>";
-		print RESULTS_PAGE "</HEAD>";
-		print RESULTS_PAGE "<H1>Results of '$query_name': $day.$month.$year</H1>";
-		print RESULTS_PAGE "<BODY>";
-
-	}
-	
-	print SUMMARY_PAGE "<TR>";
-	if($status eq "Passed"){
-		print SUMMARY_PAGE "<TD><IMG SRC=\"../images/passed.png\" /></TD>";
-	}else{
-		print SUMMARY_PAGE "<TD><IMG SRC=\"../images/failed.png\" /></TD>";
-	}
-
-	print SUMMARY_PAGE "<TD><A HREF=\"http://github.com/sanger-pathogens/GeneDB/blob/master/sql/integrity%20tests/$query_name\" TARGET=\"_blank\">$query_name</A></TD>";
-	
-	if($status eq "Passed"){
-		print SUMMARY_PAGE "<TD>N/A</TD>";
-	}else{
-		print SUMMARY_PAGE "<TD><A HREF=\"http://developer.genedb.org/DBIntegrity/current/$results_file\" TARGET=\"_blank\">".$sth->rows." rows</A></TD>";
-		
+		print RESULTS_PAGE << "END";
+		    <HTML>
+		        <HEAD>
+		             <TITLE>Results of $query_name: $day.$month.$year</TITLE>
+		        </HEAD>
+		        <BODY>
+		             <H1>Results of '$query_name': $day.$month.$year</H1>
+		             END
+		             
+		             		
 		#Print the rows in the results page
 		print RESULTS_PAGE "<P>$query_name</P>";
 		print RESULTS_PAGE "<TABLE BORDER=1>";
@@ -220,8 +229,22 @@ sub print_results{
         print RESULTS_PAGE "</BODY>";
         print RESULTS_PAGE "</HTML>";
         close RESULTS_PAGE;
-		
-		
+	}
+	
+	#Print appropriate row in Summary page
+	print SUMMARY_PAGE "<TR>";
+	if($status eq "Passed"){
+		print SUMMARY_PAGE "<TD><IMG SRC=\"../images/passed.png\" /></TD>";
+	}else{
+		print SUMMARY_PAGE "<TD><IMG SRC=\"../images/failed.png\" /></TD>";
+	}
+
+	print SUMMARY_PAGE "<TD><A HREF=\"$githubdirectory"."$query_name\" TARGET=\"_blank\">$query_name</A></TD>"; #URL to query on GitHub
+	
+	if($status eq "Passed"){
+		print SUMMARY_PAGE "<TD>N/A</TD>";
+	}else{
+		print SUMMARY_PAGE "<TD><A HREF=\"$dbintegrityurl"."current/$results_file\" TARGET=\"_blank\">".$sth->rows." rows</A></TD>";
 	}
 	print SUMMARY_PAGE "<TD>$exp_text</TD>";
 	print SUMMARY_PAGE "</TR>";
