@@ -77,9 +77,12 @@ my $pwd = `pwd`;
 print STDERR "I am working in $pwd \n";
 
 chdir('./sql/integrity tests');
+mkdir 'tmp';
+
 $pwd = `pwd`;
 print STDERR "After the chdir, I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
+
 
 if($pwd !~ /.*integrity.*/){
 	exit(1);
