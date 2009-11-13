@@ -20,6 +20,7 @@
   <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
 
   <!-- Paths -->
+  <!--
   <path id="web-deploy-classpath">
       <pathelement location="${in-lib-dir}/artemis.jar" />
 
@@ -34,10 +35,14 @@
       <pathelement location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar"/>
       <pathelement location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar"/>
   </path>
+  -->
 
   <path id="web-classpath">
-    <path refid="web-deploy-classpath"/>
-    <fileset dir="${imported.basedir.libs}/lib/web">
+    <!-- <path refid="web-deploy-classpath"/> -->
+    <fileset dir="${imported.basedir.web}/WebContent/WEB-INF/lib/">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${imported.basedir.web}/lib-compiletime/">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -108,10 +113,12 @@
       <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
     </copy>
     <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
-    <echo message="Copying libraries"/>
+    <!--
+  	<echo message="Copying libraries"/>
     <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
       <path refid="web-deploy-classpath" />
     </copy>
+    -->
   </target>
 
   <target name="application-deploy" />
@@ -181,7 +188,7 @@
   	</classpath>
   	</taskdef>
     <!-- Convert the JSP files into Java code -->
-    <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>
+    <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xmlf" outputDir="${jsp-src.dir}"/>
 
     <!-- Compile the JSP-generated java files -->
     <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
@@ -207,7 +214,7 @@
     <!--
        This creates a web.xml from a template and the generated fragments
       -->
-    <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
+    <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xmlf"/>
     <filter token="generated_web.xml" value="${generated}"/>
     <loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
     <filter token="webServlets_web.xml" value="${webServlets}"/>
@@ -416,31 +423,48 @@
     <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
     <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
 
-    <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
-    <copy todir="${imported.basedir.web}/lib">
+    <copy todir="${imported.basedir.web}/WebContent/WEB-INF/lib">
         <fileset dir="${imported.basedir.libs}/lib/biojava">
             <include name="biojava-1.6.jar"/>
             <include name="bytecode-0.91.jar"/>
         </fileset>
+        <fileset dir="${lib-dir}/misc">
+            <include name="displaytag-1.2.jar"/>
+            <include name="jewelcli-0.53.jar"/>
+        </fileset>
+        <fileset dir="${lib-dir}/db">
+            <include name="je-3.3.75.jar"/>
+        </fileset>
+        <fileset dir="${lib-dir}/json">
+            <include name="ezmorph-1.0.4.jar"/>
+            <include name="json-lib-2.2.1-jdk15.jar"/>
+            <include name="json-lib-ext-spring-1.0.1.jar"/>
+        </fileset>
     </copy>
+
+    <move todir="${imported.basedir.web}/WebContent/WEB-INF/lib">
+	<fileset dir="${imported.basedir.web}/lib">
+		<include name="*.jar" />
+  	</fileset>
+    </move>
   </target>
 
     <target name="web-populate-util" depends="util-fulljar">
-      <copy file="${genedb-util.jar}" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-util.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
     </target>
 
 
     <target name="web-populate-query" depends="query-fulljar">
-      <copy file="${genedb-query.jar}" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-query.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
     </target>
 
 
     <target name="web-populate-db" depends="db-fulljar">
-      <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
     </target>
 
     <target name="web-populate-domain" depends="domain-fulljar">
-      <copy file="${genedb-domain.jar}" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-domain.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
     </target>
 
     <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
