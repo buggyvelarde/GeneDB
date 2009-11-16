@@ -11,6 +11,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,11 +22,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
 /**
  * The DomainFile class represents a an output file from a polypeptide domain prediction algorithm, such as pfam_scan or Prosite,
  * as a collection of @{link DomainRow}s.
- * The DomainRow class is an interface implemented by specific classes such as PfamRow and PrositeRow which each represent a row of
+ * The DomainRow class is an abstract class extended by specific classes such as PfamRow and PrositeRow which each represent a row of
  * the input file.
  *
  * @author art
@@ -31,20 +33,56 @@ import java.util.regex.Pattern;
  * @author te3
  *
  */
-interface DomainRow {
+abstract class DomainRow {
 
-	public String db();
-	public DomainAcc acc();
-	public String key();
-	public String nativeAcc();
-	public String nativeDesc();
-	public String nativeProg();
-	public int lineNumber();
-	public int fmin();
-	public int fmax();
-	public String score();
-	public String evalue();
-	public Boolean comment();
+    protected int lineNumber;
+    protected DomainAcc acc = DomainAcc.NULL;
+    protected Boolean comment;
+    protected String key, nativeProg, db, nativeAcc, nativeDesc, score, evalue;
+    protected int fmin, fmax;
+    protected ISOFormatDate date;
+
+    public String db() {
+        return db;
+    }
+    public DomainAcc acc() {
+        return acc;
+    }
+    public String key() {
+        return key;
+    }
+    public String nativeAcc() {
+        return nativeAcc;
+    }
+    public String nativeDesc() {
+        return nativeDesc;
+    }
+    public String nativeProg() {
+        return nativeProg;
+    }
+    public int lineNumber() {
+        return lineNumber;
+    }
+    public int fmin() {
+        return fmin;
+    }
+    public int fmax() {
+        return fmax;
+    }
+    public String score() {
+        return score;
+    }
+    public String evalue() {
+        return evalue;
+    }
+    public Boolean comment() {
+        return comment;
+    }
+    public String getDate() {
+        return date.withDashes();
+    }
+    public abstract Set<GoInstance> getGoTerms();
+    public abstract String getGoTermComment();
 }
 
 
@@ -53,17 +91,12 @@ interface DomainRow {
  *
  * @author art
  * @author rh11
+ * @author te3
  */
 
-class InterProRow implements DomainRow {
+class InterProRow extends DomainRow {
     private static final Logger logger = Logger.getLogger(InterProRow.class);
 
-    int lineNumber;
-    Boolean comment;
-    String key, nativeProg, db, nativeAcc, nativeDesc, score;
-    DomainAcc acc = DomainAcc.NULL;
-    int fmin, fmax;
-    private ISOFormatDate date;
     Set<GoInstance> goTerms = new HashSet<GoInstance>();
 
     // The columns we're interested in:
@@ -144,6 +177,7 @@ class InterProRow implements DomainRow {
     }
     private static final Pattern goTermPattern
         = Pattern.compile("\\G(Cellular Component|Biological Process|Molecular Function): (.*?) \\(GO:(\\d{7})\\)(?:, |\\z)");
+
     private void parseGoString(int lineNumber, String goString) {
         Matcher matcher = goTermPattern.matcher(goString);
         while (matcher.find()) {
@@ -178,46 +212,17 @@ class InterProRow implements DomainRow {
             logger.error(String.format("Failed to completely parse GO terms '%s' on line %d", goString, lineNumber));
     }
 
-    public String db() {
-        return db;
+
+    public Set<GoInstance> getGoTerms() {
+        return this.goTerms;
     }
-	public DomainAcc acc() {
-		return acc;
-	}
-	public String key() {
-		return key;
-	}
-	public String nativeAcc() {
-		return nativeAcc;
-	}
-	public String nativeDesc() {
-		return nativeDesc;
-	}
-	public String nativeProg() {
-		return nativeProg;
-	}
-	public int lineNumber() {
-		return lineNumber;
-	}
-	public int fmin() {
-		return fmin;
-	}
-	public int fmax() {
-		return fmax;
-	}
-	public String score() {
-		return score;
-	}
-	public String evalue() {
-		return null;
-	}
-    public Boolean comment() {
-        return comment;
-    }
-    public String getDate() {
-        return date.withDashes();
+    public String evalue() {
+        return null;
     }
 
+    public String getGoTermComment() {
+        return("From iprscan");
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -231,14 +236,16 @@ class InterProRow implements DomainRow {
 }
 
 
-class PfamRow implements DomainRow {
+class PfamRow extends DomainRow {
+
+    Pfam2GoFile pfam2GoFile;
+    private static String today;
+    static {
+        DateFormat dFormat = new SimpleDateFormat("yyyyMMdd");
+        today = dFormat.format(new Date());
+    }
 
     private static final Logger logger = Logger.getLogger(PfamRow.class);
-    int lineNumber;
-    Boolean comment;
-    String key, nativeProg, db, nativeAcc, nativeDesc, score, evalue, version;
-    DomainAcc acc = DomainAcc.NULL;
-    int fmin, fmax;
 
     // The columns we're interested in:
     private static final int COL_KEY         = 0;
@@ -256,10 +263,11 @@ class PfamRow implements DomainRow {
      * @param lineNumber the line number of this line in the input file.
      *          Used to produce more helpful diagnostics if there's a
      *          problem decoding the line.
+     * @param pfam2GoFile
      * @param rowFields a line of the input file
      */
-    public PfamRow(int lineNumber, String row) {
-        this(lineNumber, row.split("\\s+"));
+    public PfamRow(int lineNumber, String row, Pfam2GoFile pfam2GoFile) {
+        this(lineNumber, row.split("\\s+"), pfam2GoFile);
     }
 
     /**
@@ -270,8 +278,9 @@ class PfamRow implements DomainRow {
      *          problem decoding the line.
      * @param rowFields an array containing the fields in the file.
      *  In the actual file, fields are separated by multiple space characters.
+     * @param pfam2GoFile
      */
-    public PfamRow(int lineNumber, String[] rowFields) {
+    public PfamRow(int lineNumber, String[] rowFields, Pfam2GoFile pfam2GoFile) {
 
         this.comment = false;
         if (rowFields.length == 1 || rowFields[COL_KEY].substring(0, 1).equals("#")) { //blank line or comment
@@ -295,44 +304,38 @@ class PfamRow implements DomainRow {
     		if (rowFields.length > COL_NATIVE_DESC && !rowFields[COL_NATIVE_ACC].equals("NULL")) {
     			this.acc = new DomainAcc(rowFields[COL_NATIVE_ACC], rowFields[COL_NATIVE_DESC]);
     		}
+            this.pfam2GoFile = pfam2GoFile;
     	}
     }
 
-    public String db() {
-        return db;
+    public Set<GoInstance> getGoTerms() {
+
+        Set<GoInstance> goTerms = new HashSet<GoInstance>();
+        String pfamAccession = this.nativeAcc;
+        Pfam2GoFile pfam2GoFile = this.pfam2GoFile;
+        if (pfam2GoFile.getGoByPfam(pfamAccession) == null) {
+            logger.debug(String.format("The domain '%s' has no mapped GO terms", pfamAccession));
+            return null;
+        }
+
+        for (String goAccession: pfam2GoFile.getGoByPfam(pfamAccession)) {
+
+            try {
+                GoInstance goInstance = new GoInstance();
+                goInstance.setId(goAccession);
+                goInstance.setDate(today);
+                GoEvidenceCode evidenceCode = GoEvidenceCode.parse("IEA");
+                goInstance.setEvidence(evidenceCode);
+                goTerms.add(goInstance);
+            } catch (ParsingException e) {
+                logger.error(e);
+            }
+        }
+        return goTerms;
     }
-	public DomainAcc acc() {
-		return acc;
-	}
-	public String key() {
-		return key;
-	}
-	public String nativeAcc() {
-		return nativeAcc;
-	}
-	public String nativeDesc() {
-		return nativeDesc;
-	}
-	public String nativeProg() {
-		return nativeProg;
-	}
-	public int lineNumber() {
-		return lineNumber;
-	}
-	public int fmin() {
-		return fmin;
-	}
-	public int fmax() {
-		return fmax;
-	}
-	public String score() {
-		return score;
-	}
-	public String evalue() {
-		return evalue;
-	}
-    public Boolean comment() {
-        return comment;
+
+    public String getGoTermComment() {
+        return("From Pfam2GO mapping");
     }
 
     @Override
@@ -344,13 +347,9 @@ class PfamRow implements DomainRow {
     }
 }
 
-class PrositeRow implements DomainRow {
+class PrositeRow extends DomainRow {
 
-    int lineNumber;
-    Boolean comment;
-    String key, nativeProg, db, nativeAcc, nativeDesc, nativeName, version;
-    DomainAcc acc = DomainAcc.NULL;
-    int fmin, fmax;
+    String nativeName;
 
     // The columns we're interested in:
     private static final int COL_KEY         = 0;
@@ -406,46 +405,18 @@ class PrositeRow implements DomainRow {
     	}
     }
 
-    public String db() {
-        return db;
-    }
-	public DomainAcc acc() {
-		return acc;
-	}
-	public String key() {
-		return key;
-	}
-	public String nativeAcc() {
-		return nativeAcc;
-	}
-	public String nativeDesc() {
-		return nativeDesc;
-	}
-	public String nativeProg() {
-		return nativeProg;
-	}
-	public int lineNumber() {
-		return lineNumber;
-	}
-	public int fmin() {
-		return fmin;
-	}
-	public int fmax() {
-		return fmax;
-	}
-	public String name() {
-		return nativeName;
-	}
 	public String score() {
 		return null;
 	}
 	public String evalue() {
 		return null;
 	}
-    public Boolean comment() {
-        return comment;
+    public Set<GoInstance> getGoTerms() {
+        return null; //Prosite currently has no GO mapping
     }
-
+    public String getGoTermComment() {
+        return null;//Prosite currently has no GO mapping
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -526,6 +497,7 @@ class DomainFile {
 
     private TwoKeyMap<String,DomainAcc,Set<DomainRow>> rowsByKeyAndAcc
         = new TwoKeyMap<String, DomainAcc, Set<DomainRow>>();
+    Pfam2GoFile pfam2GoFile;
 
     public DomainFile(String analysisProgram, InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader( inputStream ) );
@@ -538,7 +510,12 @@ class DomainFile {
 
             DomainRow row;
             if (analysisProgram.equals("pfam_scan")) {
-            	row = new PfamRow(lineNumber, line);
+                //parse the pfam2go file if not already done
+                if (pfam2GoFile == null) {
+                    logger.info(String.format("Creating pfam2go mapping"));
+                    pfam2GoFile = new Pfam2GoFile();
+                }
+            	row = new PfamRow(lineNumber, line, pfam2GoFile);
             }
             else if (analysisProgram.equals("prosite")) {
             	row = new PrositeRow(lineNumber, line);
@@ -645,5 +622,62 @@ class ISOFormatDate {
        return String.format("%s%s%s", year, month, day);
    }
 }
+
+
+/*
+ * Stores the pfam2go mappings in a Map<String, Set<String>>
+ */
+class Pfam2GoFile {
+
+    Map<String, Set<String>> pfam2go;
+    private static final Logger logger = Logger.getLogger(Pfam2GoFile.class);
+
+    public Pfam2GoFile() throws IOException {
+
+        InputStream inputStream = getClass().getResourceAsStream("/pfam2go");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        pfam2go = new HashMap<String, Set<String>>();
+        while (null != (line = reader.readLine())) { //While not end of file
+            if(0 < line.length()){
+                StringBuilder sb = new StringBuilder(line);
+                sb.append('\n');
+                //logger.info(sb);
+
+                Pfam2GoLine pfam2GoLine = new Pfam2GoLine(line);
+                if (!pfam2go.containsKey(pfam2GoLine.pfamAccession)) {
+                    pfam2go.put(pfam2GoLine.pfamAccession, new HashSet<String>());
+                }
+                pfam2go.get(pfam2GoLine.pfamAccession).add(pfam2GoLine.goAccession);
+                logger.debug(String.format("adding pfam %s for go %s", pfam2GoLine.pfamAccession, pfam2GoLine.goAccession));
+            }
+        }
+    }
+
+    public Set<String> getGoByPfam(String pfamAccession) {
+        return(pfam2go.get(pfamAccession));
+    }
+
+}
+/*
+ * Parses a single line of the pfam2go mapping file
+ */
+class Pfam2GoLine {
+
+    String pfamAccession, goAccession;
+
+    public Pfam2GoLine(String line) {
+         //Sample line
+        //Pfam:PF00001 7tm_1 > GO:G-protein coupled receptor protein signaling pathway ; GO:0007186
+        final Pattern LINE_PATTERN = Pattern.compile("Pfam:(\\S+)\\s+(.+>.+)\\s+;\\s+GO:(\\d+)");
+        Matcher matcher = LINE_PATTERN.matcher(line);
+
+        if (matcher.matches()) {
+            this.pfamAccession = matcher.group(1);
+            this.goAccession = matcher.group(3);
+        }
+    }
+}
+
 
 
