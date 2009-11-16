@@ -73,7 +73,7 @@ public class ClearDomains extends Clear {
         +" join feature on feature_cvterm.feature_id = feature.feature_id"
         +" join organism on feature.organism_id = organism.organism_id"
         +" where prop_type.name = 'autocomment'"
-        +" and feature_cvtermprop.value = 'From Interpro file'"
+        +" and feature_cvtermprop.value = 'From iprscan'"
         +" and organism.common_name = ?)";
 
     @Override
