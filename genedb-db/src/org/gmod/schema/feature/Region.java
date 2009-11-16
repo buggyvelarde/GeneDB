@@ -56,7 +56,10 @@ public class Region extends Feature implements Comparable<Region> {
         fmin = featureLoc.getFmin();
         fmax = featureLoc.getFmax();
         strand = featureLoc.getStrand();
-        srcFeatureId = featureLoc.getSourceFeature().getFeatureId();
+        Feature feature = featureLoc.getSourceFeature();
+        if (feature != null) {
+            srcFeatureId = feature.getFeatureId();
+        }
     }
 
     public int compareTo(Region other) {
