@@ -47,7 +47,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,6 +72,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -85,8 +85,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.google.common.collect.Maps;
-
-
 
 /********************************************************************************************************
  * The TermRationalier is a tool that enables curators to correct product names and controlled curation
@@ -101,7 +99,7 @@ public class TermRationaliser implements JograPlugin {
 
     /* Constants */
     private static final String WINDOW_TITLE = "Term Rationaliser";
-    private static final String A_LONG_STRING = "This is the maximum product width we show";
+    //private static final String A_LONG_STRING = "This is the maximum product width we show";
     private String explicitURL = "http://developer.genedb.org/Jogra/resources/";
   
     /* Variables for rationaliser functionality */   
@@ -286,7 +284,6 @@ public class TermRationaliser implements JograPlugin {
               
         /* FROM list */
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected 
-        fromList.setPrototypeCellValue(A_LONG_STRING);
         fromList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -317,7 +314,6 @@ public class TermRationaliser implements JograPlugin {
        
         /* TO list */
         toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
-        toList.setPrototypeCellValue(A_LONG_STRING);
         toList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -363,7 +359,7 @@ public class TermRationaliser implements JograPlugin {
        ret.setJMenuBar(menuBar);
 
        /* TO and FROM lists */
-       ClassLoader classLoader = this.getClass().getClassLoader();
+       ClassLoader classLoader = this.getClass().getClassLoader(); //Needed to access the images later on
        
        Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
        center.add(Box.createHorizontalStrut(5)); //Invisible fixed-width component
@@ -377,6 +373,7 @@ public class TermRationaliser implements JograPlugin {
    
        leftPane.add(fromSearchField); 
        JScrollPane fromScrollPane = new JScrollPane(fromList);
+       fromScrollPane.setHorizontalScrollBar(new JScrollBar());
 
        fromScrollPane.setPreferredSize(new Dimension(500,400));
        leftPane.add(fromScrollPane);
@@ -438,8 +435,10 @@ public class TermRationaliser implements JograPlugin {
        toList.installJTextField(toSearchField);
  
        rightPane.add(toSearchField);
-       JScrollPane toScrollPane = new JScrollPane(toList);
+       JScrollPane toScrollPane = new JScrollPane(/*toList*/);
+       toScrollPane.setViewportView(toList);
        toScrollPane.setPreferredSize(new Dimension(500,400));
+       //toScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
        rightPane.add(toScrollPane);
        
        //Systematic ID box for to list
@@ -559,6 +558,45 @@ public class TermRationaliser implements JograPlugin {
         JFrame lookup = getMainPanel(); //Always getting a new frame since it has to pick up variable organism (improve efficiency later: NDS)
         return lookup;
     }
+    
+    
+    /* Create a Box to hold the left and right panels which are nearly identical 
+     * except that the right panel has a textbox to edit the term name */
+//    private Box createPane(String label){
+//
+//        Box pane = Box.createVerticalBox();
+//        pane.add(new JLabel(label));
+//   
+//        JTextField searchField = new JTextField(20);
+//        toList.installJTextField(searchField);
+//  
+//        pane.add(searchField);
+//        JScrollPane scrollPane = new JScrollPane();
+//        scrollPane.setViewportView(toList);
+//        toScrollPane.setPreferredSize(new Dimension(500,400));
+//        //toScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+//        rightPane.add(toScrollPane);
+//        
+//        //Systematic ID box for to list
+//        Box toSysIDBox = Box.createVerticalBox();
+//        toSysIDBox.add(idField2);
+//        toSysIDBox.setBorder(sysIDBorder);
+//        rightPane.add(toSysIDBox);
+//        
+//        /* Add a box to edit the name of a product */
+//        Box newTerm = Box.createVerticalBox();
+//        newTerm.add(textField);
+//        TitledBorder editBorder = BorderFactory.createTitledBorder("Edit term name");
+//        editBorder.setTitleColor(Color.DARK_GRAY);
+//        newTerm.setBorder(editBorder);
+//        rightPane.add(newTerm);
+//        
+//        
+//        
+//        
+//        
+//    }
+    
 
 
     
