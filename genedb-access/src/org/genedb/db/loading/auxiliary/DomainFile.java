@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -315,7 +316,7 @@ class PfamRow extends DomainRow {
         Pfam2GoFile pfam2GoFile = this.pfam2GoFile;
         if (pfam2GoFile.getGoByPfam(pfamAccession) == null) {
             logger.debug(String.format("The domain '%s' has no mapped GO terms", pfamAccession));
-            return null;
+            return Collections.emptySet();
         }
 
         for (String goAccession: pfam2GoFile.getGoByPfam(pfamAccession)) {
@@ -412,7 +413,7 @@ class PrositeRow extends DomainRow {
 		return null;
 	}
     public Set<GoInstance> getGoTerms() {
-        return null; //Prosite currently has no GO mapping
+        return Collections.emptySet(); //Prosite currently has no GO mapping
     }
     public String getGoTermComment() {
         return null;//Prosite currently has no GO mapping
