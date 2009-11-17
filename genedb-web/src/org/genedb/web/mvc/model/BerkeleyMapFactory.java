@@ -144,31 +144,31 @@ public class BerkeleyMapFactory {
         try {
             dtoDb.close();
         } catch (DatabaseException exp) {
-            throw new RuntimeException("Unable to close DTO Berkeley DB", exp);
+            System.err.println("Unable to close DTO Berkeley DB");
         }
 
        try {
             contextMapDb.close();
        } catch (DatabaseException exp) {
-           throw new RuntimeException("Unable to close context map Berkeley DB", exp);
+           System.err.println("Unable to close context map Berkeley DB");
        }
 
        try {
             imageDb.close();
        } catch (DatabaseException exp) {
-           throw new RuntimeException("Unable to close image Berkeley DB", exp);
+           System.err.println("Unable to close image Berkeley DB");
        }
 
        try {
            javaCatalog.close();
        } catch (DatabaseException exp) {
-           throw new RuntimeException("Unable to close stored class catalog", exp);
+           System.err.println("Unable to close stored class catalog");
        }
 
        try {
            env.close();
        } catch (DatabaseException exp) {
-           throw new RuntimeException("Unable to close environment", exp);
+           System.err.println("Unable to close environment");
        }
 
         databaseIsOpen = false;
