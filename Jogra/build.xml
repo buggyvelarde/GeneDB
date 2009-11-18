@@ -135,7 +135,7 @@
 	
 	
 		
-	<!-- Putting all the jars Jogra depends on into one jar file -->
+	<!-- Putting all the jars Jogra depends on into one jar file. This somehow did not work (i.e., Web start did not work) -->
 	<target name="combine-jars">
 		<jar destfile="resources.jar" >
 		    <zipgroupfileset dir="${imported.basedir.Jogra}/lib" includes="**/*.jar,${genedb-db.jar},${java.home}/lib/javaws.jar" excludes="package.html,LICENSE.*,LICENCE, META-INF,MANIFEST.*" />
