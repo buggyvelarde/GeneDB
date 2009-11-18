@@ -1,6 +1,8 @@
 /**
  * The Java below was obtained from http://java.sun.com/developer/JDCTechTips/2005/tt1214.html
- * We have added a method called addAll to it to enable a list of objects to be added to the JList
+ * I have added a method called addAll to it to enable a list of objects to be added to the JList
+ * September, 2009
+ * @author nds
  */
 
 package org.genedb.jogra.services;

@@ -73,9 +73,10 @@ public class SqlTermService implements TermService {
         };
         
         List<Term> terms = new ArrayList<Term>();
-        List<String> taxonNames = getTaxonNamesList(selectedTaxons);
+        //List<String> taxonNames = getTaxonNamesList(selectedTaxons);
+        String commaSeparatedNames = this.getTaxonNamesInSQLFormat(selectedTaxons);
 
-        for(String s: taxonNames){
+       /* for(String s: taxonNames){
                 String SQL_TO_GET_TERMS =  "select distinct cvterm.name, cvterm.cvterm_id " +
                                            "from cvterm " +
                                            "join cv on cvterm.cv_id=cv.cv_id " +
@@ -83,9 +84,25 @@ public class SqlTermService implements TermService {
                                            "join feature on feature.feature_id=feature_cvterm.feature_id " +
                                            "join organism on organism.organism_id=feature.organism_id " +
                                            "where cv.name= ? and organism.common_name= ?;";
+                
+                logger.info(SQL_TO_GET_TERMS);
                         
                 terms.addAll(jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvType), new String(s)}, mapper));
-        }      
+        }   */
+        
+        
+        String SQL_TO_GET_TERMS =  "select distinct cvterm.name, cvterm.cvterm_id " +
+        "from cvterm " +
+        "join cv on cvterm.cv_id=cv.cv_id " +
+        "join feature_cvterm on feature_cvterm.cvterm_id=cvterm.cvterm_id " +
+        "join feature on feature.feature_id=feature_cvterm.feature_id " +
+        "join organism on organism.organism_id=feature.organism_id " +
+        "where cv.name= ? and organism.common_name IN (" + commaSeparatedNames + ");";
+        
+        logger.info(SQL_TO_GET_TERMS);
+        
+        terms = jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvType) /*, new String(commaSeparatedNames) */}, mapper);
+        
         return terms;
     }
     

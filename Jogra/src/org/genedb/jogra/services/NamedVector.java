@@ -1,7 +1,7 @@
 
 /**
  * Slightly modified helper class from Swing book to store the 'name' of the 'root' along with the children values (elements in vector)
- * 
+ * May 2009,nds
  */
 
 package org.genedb.jogra.services;

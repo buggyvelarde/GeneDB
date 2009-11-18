@@ -36,6 +36,7 @@ import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import com.google.common.collect.Maps;
@@ -49,6 +50,7 @@ public class DatabaseLogin {
     private JComboBox databaseNames;
     private LinkedHashMap<String, String> instances = Maps.newLinkedHashMap();
     private Vector<String> dbnames = new Vector<String>();
+  
 
 
     public void validateUser() throws SQLException, AbortException {
@@ -60,7 +62,7 @@ public class DatabaseLogin {
         databaseNames = new JComboBox(dbnames);
         databaseNames.setSelectedIndex(0);
                     
-        Object[] array = { "Username", userField, "Password", passwordField, "Database", databaseNames };
+        Object[] array = {"Username", userField, "Password", passwordField, "Database", databaseNames };
 
         while (true) {
             int value = JOptionPane.showOptionDialog(null, array, "Database login",
