@@ -64,27 +64,33 @@ public class OrthologsController extends BaseCachingController {
 
         String viewName = listResultsView;
 
-        Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, ProteinMatch.class);
-
         List<String> orthologs = Lists.newArrayList();
 
-        Collection<FeatureRelationship> relations = cluster.getFeatureRelationshipsForObjectId();
-        for (FeatureRelationship featureRel : relations) {
-            Feature f = featureRel.getSubjectFeature();
+        Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, ProteinMatch.class);
+        if (cluster == null) {
+            logger.error(String.format("Unable to find cluster '%s' of type ProteinMatch", clusterName));
+        } else {
 
-            if (! (f instanceof Polypeptide)) {
-                logger.error(String.format("Didn't get a polypeptide when I expected one - got '%s'", f.getClass().toString()));
-                continue;
+            Collection<FeatureRelationship> relations = cluster.getFeatureRelationshipsForObjectId();
+            for (FeatureRelationship featureRel : relations) {
+                Feature f = featureRel.getSubjectFeature();
+
+                if (! (f instanceof Polypeptide)) {
+                    logger.error(String.format("Didn't get a polypeptide when I expected one - got '%s'", f.getClass().toString()));
+                    continue;
+                }
+
+                Polypeptide protein = (Polypeptide) f;
+                orthologs.add(protein.getTranscript().getUniqueName());
             }
-
-            Polypeptide protein = (Polypeptide) f;
-            orthologs.add(protein.getTranscript().getUniqueName());
         }
 
 
         switch (orthologs.size()) {
         case 0:
-            // TODO return to an error page displaying proper message
+            // TODO return a proper error message
+            viewName = "redirect:/Homepage";
+            break;
         case 1:
             String gene = orthologs.get(0);
             model.addAttribute("name", gene);
