@@ -40,12 +40,12 @@ public class JograProgressBar extends JPanel  {
     }
   
 
-    
+    /* Constructor */
     public JograProgressBar(String title){
         this(title,Position.CENTRE); //Default is centre
     }
 
-   
+   /* Position and start the progress bar */
     public JograProgressBar(String title, Position pos ) {
         
         progressBar = new JProgressBar();
@@ -67,31 +67,14 @@ public class JograProgressBar extends JPanel  {
  
     }
     
-//    private Point getPosition(Position pos){
-//        Toolkit tk = Toolkit.getDefaultToolkit();
-//        Dimension size = tk.getScreenSize();
-//        int x=0,y=0;
-//        if(pos==Position.CENTRE){
-//           
-//            x = (int)size.getWidth()/2;
-//            y = (int)size.getHeight()/2; //roughly the centre 
-//            
-//        }else if(pos==Position.TOP_LEFT){
-//            x = (int)size.getWidth()/5;
-//            y = (int)size.getHeight()/5;
-//        }
-//        return new Point(x,y);
-//        
-//    }
-    
-  
+    /* Stop the progressbar */
     public void stop(){
         progressBar.setIndeterminate(false);
         frame.setVisible(false);
         frame.dispose();
     }
   
-
+    /* Test */
     public static void main(String[] args) {
         JograProgressBar jpb = new JograProgressBar("Testing Progress Bar", Position.TOP_LEFT);
 
