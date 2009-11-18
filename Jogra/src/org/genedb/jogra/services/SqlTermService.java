@@ -190,6 +190,7 @@ public class SqlTermService implements TermService {
                 if(changeAllOrganisms || selectedTaxons.containsAll(getTermScope(old))){
                     jdbcTemplate.execute("delete from cvterm where cvterm_id=" + old.getId()); 
                     jdbcTemplate.update("delete from dbxref where accession=?", new Object[]{old.getName()} );
+                    termsDeleted.add(new Term(old.getId(), old.getName(), type));
                     logger.info(String.format("Deleted old cvterm '%s' and dbxref.", old.getName()));
                     message = message.concat(String.format("Deleted old cvterm '%s' \n", old.getName()));                    
                 }
