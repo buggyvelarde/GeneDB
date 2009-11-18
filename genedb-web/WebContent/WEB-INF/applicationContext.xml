@@ -113,10 +113,12 @@
                 <value>org.gmod.schema.feature</value>
             </list>
         </property>
-<!--         <property name="defaultFilters">
-            <list><value>excludeObsoleteFeatures</value></list>
-        </property> -->
     </bean>
+
+    <bean name="organismHeirachy" class="org.gmod.schema.cfg.OrganismHeirachy" init-method="afterPropertiesSet">
+      <property name="beanName" value="sessionFactory" />
+    </bean>
+
 
     <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
         <property name="luceneIndexList">
