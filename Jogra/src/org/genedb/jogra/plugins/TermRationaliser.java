@@ -72,7 +72,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -99,8 +98,6 @@ public class TermRationaliser implements JograPlugin {
 
     /* Constants */
     private static final String WINDOW_TITLE = "Term Rationaliser";
-    //private static final String A_LONG_STRING = "This is the maximum product width we show";
-    private String explicitURL = "http://developer.genedb.org/Jogra/resources/";
   
     /* Variables for rationaliser functionality */   
     private TermService termService;                                            //Is the interface to the SQLTermService
@@ -372,11 +369,11 @@ public class TermRationaliser implements JograPlugin {
        fromList.installJTextField(fromSearchField);
    
        leftPane.add(fromSearchField); 
-       JScrollPane fromScrollPane = new JScrollPane(fromList);
-       fromScrollPane.setHorizontalScrollBar(new JScrollBar());
-
+       JScrollPane fromScrollPane = new JScrollPane();
+       fromScrollPane.setViewportView(fromList);
        fromScrollPane.setPreferredSize(new Dimension(500,400));
        leftPane.add(fromScrollPane);
+
        
        //Systematic ID box for from list
        TitledBorder sysIDBorder = BorderFactory.createTitledBorder("Systematic IDs");
@@ -804,7 +801,7 @@ public class TermRationaliser implements JograPlugin {
                     int userDecision = JOptionPane.showConfirmDialog
                             (null, 
                             new String("There is already a term with the name '" + text + "' but perhaps with different capitalisation.\n" +      
-                            "Do you want to delete the exiting term and make this change across *ALL* the organisms? "), 
+                            "Do you want to delete the old term and make this change across *ALL* the organisms? "), 
                             "Term with similar name already exists",
                             JOptionPane.OK_CANCEL_OPTION, 
                             JOptionPane.WARNING_MESSAGE);
@@ -816,10 +813,10 @@ public class TermRationaliser implements JograPlugin {
                         writeMessage("Request to rationalise cancelled.");
                         return;
                     }
-                }else{
+             }else{
               
                     logger.info("Brand new cv term needs to be created");
-                }
+             }
             
             
             /* 
@@ -849,7 +846,7 @@ public class TermRationaliser implements JograPlugin {
                 fromList.repaint();
                 
             }catch (Exception se){ //Any other unexpected errors
-                writeMessage("There was an error while trying to rationalise. Try again or contact the informatics team.");
+                writeMessage("There was an error while trying to rationalise. Try again or contact the Pathogens informatics team with details of what you tried to do.");
                 writeMessage(se.toString());
                 logger.debug(se.toString());      
             }

@@ -161,7 +161,7 @@ public class OrganismTree implements JograPlugin {
     }
 
     /**
-     * A recursive helper method to print indented organism hierarchy (for testing purposes) and return a vector
+     * A recursive helper method to return the organism hierarchy in vector form
      *
      * @return Vector containing organism hierarchy
      */
@@ -172,9 +172,9 @@ public class OrganismTree implements JograPlugin {
         for(TaxonNode child : childrenList){
 
            if(child.isLeaf()){
-               if(child.isPopulated()){
+               //if(child.isPopulated()){
                    childrenVector.add(child.getLabel());
-               }
+               //}
            }else{
                childrenVector.add(getOrganismTree(child));
            }
