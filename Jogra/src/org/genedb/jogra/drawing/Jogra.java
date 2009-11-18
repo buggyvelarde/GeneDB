@@ -1,6 +1,6 @@
 /*
- * JOGRA is an overarching application that has several plugins 'attached' to it.
- * Jogra initialises the application context, and obtains and publishes the username and password to other plugins that may need it.
+ * JOGRA is an overarching application that has several plugins 'attached' to it. Jogra initialises the application context, 
+ * and obtains and publishes the username and password to other plugins that may need it.
  * 14.5.2009
  */
 
@@ -20,6 +20,7 @@ import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -64,7 +65,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private JograBusiness jograBusiness;
     private Timer timer = new Timer();
     private MessageService messageService;
-    private List<String> selectedOrganismNames; /* Used by other plugins as a way of storing the user's organism selection. Will be changed to Eventbus.publish etc. */
+    private List<String> selectedOrganismNames; /* Picked up via Organism-Tree  */
     private List<TaxonNode> selectedTaxons;
     private static String username;
     private static String password;
@@ -77,10 +78,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         });
 
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //N/A on macs for now
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //Not available on macs for now
            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (final Exception exp) {
-            logger.info("Unable to set Nimbus L&F");
             logger.debug("Unable to set Nimbus L&F", exp);
         }
 
@@ -105,8 +105,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 //        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
 
         EventBus.subscribeStrongly("selection", new EventTopicSubscriber<List<String>>() {
-            public void onEvent(String topic, List<String> selection) {
-            
+            public void onEvent(String topic, List<String> selection) { 
+                logger.info("What is Jogra getting? " + StringUtils.collectionToCommaDelimitedString(selection));
                 setSelectedOrganismNames(selection);
                 logger.info("JOGRA: Picked up " + selection.toString());
             }
@@ -342,6 +342,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public void setSelectedOrganismNames(List<String> user_selection) {
+       /* if(this.selectedOrganismNames!=null && this.selectedOrganismNames.size()>0){
+            this.selectedOrganismNames.clear();
+        } */
         this.selectedOrganismNames = user_selection;
     }
     
@@ -378,8 +381,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         
         dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
         dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
-        dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens"); 
-        //dblogin.addInstance("Nishadi local (localhost:5432)", "jdbc:postgresql://localhost:5432/nds");
+        dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens");
+        dblogin.addInstance("Port forwarding pathogens (localhost:54321)", "jdbc:postgresql://localhost:54321/pathogens"); 
         
         try {
             dblogin.validateUser();
