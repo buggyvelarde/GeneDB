@@ -12,9 +12,10 @@
 <body onLoad="${onLoad}">
 <% } %>
 
+<c:url value="/" var="base" scope="page"/>
 <div id="container">
 <div id="header">
-<a href="<misc:url value="/"/>Homepage"><img src="<misc:url value="/includes/image/GeneDB-logo.png"/>" border="0" alt="GeneDB" class="float-left-and-offset" id="logo" /></a>
+<a href="<misc:url value="/Homepage"/>"><img src="<misc:url value="/includes/image/GeneDB-logo.png"/>" border="0" alt="GeneDB" class="float-left-and-offset" id="logo" /></a>
 
 <div class="float-right" >
 <div class="baby-blue-top"></div>
@@ -26,7 +27,7 @@
 <input type="hidden" name="pseudogenes" value="true" />
 <input type="hidden" name="product" value="true" />
 <input type="hidden" name="allNames" value="true" />
-<input type="text" name="searchText" class="search-box" /></td><td align="right"><input type="image" src="<misc:url value="/includes/image/button-search.gif"/>" /></td>
+<input type="text" name="searchText" class="search-box" /></td><td align="right"><input type="image" src="<misc:url value="/includes/image/button-search.gif" />" /></td>
 </tr>
 <tr>
 <td colspan="2">
@@ -59,34 +60,42 @@
 <li><a href="<misc:url value="/Page/aboutUs"/>">About us</a></li>
 <li class="has-sub"><a href="">Searches</a>
 <ul class="sub-menu">
-<li><a href="<misc:url value="/Query/geneType?taxons=${taxonNodeName}"/>">By Gene Type</a></li>
-<li><a href="<misc:url value="/Query/geneLocation?taxons=${taxonNodeName}"/>">By Location</a></li>
-<li><a href="<misc:url value="/Query/proteinLength?taxons=${taxonNodeName}"/>">By Protein Length</a></li>
-<li><a href="<misc:url value="/Query/proteinMass?taxons=${taxonNodeName}"/>">By Molecular Mass</a></li>
-<li><a href="<misc:url value="/Query/proteinNumTM?taxons=${taxonNodeName}"/>">By No. TM domains</a></li>
-<li><a href="<misc:url value="/Query/proteinTargetingSeq?taxons=${taxonNodeName}"/>">By Targeting Seqs.</a></li>
-<li><a href="<misc:url value="/Query/simpleName?taxons=${taxonNodeName}"/>">Gene names</a></li>
-<li><a href="<misc:url value="/Query/product?taxons=${taxonNodeName}"/>">Product</a></li>
-<!-- <li><a href="<misc:url value="/Query/curation?taxons=${taxonNodeName}"/>">Curated annotations [comments & notes]</a></li> -->
-<li><a href="<misc:url value="/Query/go?taxons=${taxonNodeName}"/>">GO term/id</a></li>
-<li><a href="<misc:url value="/Query/ec?taxons=${taxonNodeName}"/>">EC number</a></li>
-<li><a href="<misc:url value="/Query/pfam?taxons=${taxonNodeName}"/>">Pfam ID or keyword</a></li>
+<li><a href="<misc:url value="/Query/geneType"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>" >By Gene Type</a></li>
+<li><a href="<misc:url value="/Query/geneLocation"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>" >By Location</a></li>
+<li><a href="<misc:url value="/Query/proteinLength"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>" >By Protein Length</a></li>
+<li><a href="<misc:url value="/Query/proteinMass"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By Molecular Mass</a></li>
+<li><a href="<misc:url value="/Query/proteinNumTM"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By No. TM domains</a></li>
+<li><a href="<misc:url value="/Query/proteinTargetingSeq"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By Targeting Seqs.</a></li>
+<li><a href="<misc:url value="/Query/simpleName"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Gene names</a></li>
+<li><a href="<misc:url value="/Query/product"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Product</a></li>
+<%-- <li><a href="<misc:url value="/Query/curation"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Curated annotations [comments & notes]</a></li> --%>
+<li><a href="<misc:url value="/Query/go"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">GO term/id</a></li>
+<li><a href="<misc:url value="/Query/ec"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">EC number</a></li>
+<li><a href="<misc:url value="/Query/pfam"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Pfam ID or keyword</a></li>
 </ul>
 <!-- end sub menu -->
 </li>
 <li class="has-sub"><a href="">Browse</a>
 <ul class="sub-menu">
-<li><a href="<misc:url value="/category/genedb_products?taxons=${taxonNodeName}"/>">Products</a></li>
-<li><a href="<misc:url value="/category/ControlledCuration?taxons=${taxonNodeName}"/>">Controlled Curation</a></li>
-<li><a href="<misc:url value="/category/biological_process?taxons=${taxonNodeName}"/>">Biological Process</a></li>
-<li><a href="<misc:url value="/category/cellular_component?taxons=${taxonNodeName}"/>">Cellular Component</a></li>
-<li><a href="<misc:url value="/category/molecular_function?taxons=${taxonNodeName}"/>">Molecular Function</a></li>
+<li><a href="<misc:url value="/category/genedb_products"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Products</a></li>
+<li><a href="<misc:url value="/category/ControlledCuration"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Controlled Curation</a></li>
+<li><a href="<misc:url value="/category/biological_process"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Biological Process</a></li>
+<li><a href="<misc:url value="/category/cellular_component"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Cellular Component</a></li>
+<li><a href="<misc:url value="/category/molecular_function"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Molecular Function</a></li>
 </ul>
 </li>
 <li><a href="<misc:url value="/History"/>">History</a></li>
 <!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
+
+
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+$(document).ready(function(){
+  $("#nav > li").mouseover(function(){this.className+=" over";}).mouseout(function(){this.className=this.className.replace(" over", "");})
+});
+//--><!]]></script>
+
 
 <jsp:doBody />
 
