@@ -5,6 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="misc" uri="misc" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <% if (onLoad == null) { %>
 <body>
