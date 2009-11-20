@@ -12,6 +12,11 @@ if [ -z "$JAVA_HOME" ]; then
     JAVA_HOME="/software/pathogen/external/applications/java/java6"
 fi
 
+# Also to help with testing, the BIN_FOLDER can be explicitly set to a different subfolder (gv1)
+if [ -z "$BIN_FOLDER" ]; then
+    BIN_FOLDER="bin"
+fi
+
 export CLASSPATH=''
 for jar in "$GENEDB_HOME/lib"/*.jar; do
     if [ -n "$CLASSPATH" ]; then
@@ -31,7 +36,7 @@ readdir() {
     eval "${array}=(\"\${files[@]}\")"
 }
 
-readdir loaders "$GENEDB_HOME/bin/loaders" sh
+readdir loaders "$GENEDB_HOME/$BIN_FOLDER/loaders" sh
 
 print_help() {
     echo >&2
@@ -43,7 +48,7 @@ print_help() {
     echo >&2 "The available loaders are:"
     for loading_script in "${loaders[@]}"; do
         echo >&2 -ne "\t${loading_script%.sh} - "
-        source "$GENEDB_HOME/bin/loaders/$loading_script"
+        source "$GENEDB_HOME/$BIN_FOLDER/loaders/$loading_script"
         >&2 summary
     done
     echo >&2
@@ -56,11 +61,11 @@ fi
 
 
 loader="$1"; shift
-if [ ! -e "$GENEDB_HOME/bin/loaders/$loader.sh" ]; then
+if [ ! -e "$GENEDB_HOME/$BIN_FOLDER/loaders/$loader.sh" ]; then
     echo >&2 "`basename $0`: No such loader '$loader'"
     exit 2
 fi
-source "$GENEDB_HOME/bin/loaders/$loader.sh"
+source "$GENEDB_HOME/$BIN_FOLDER/loaders/$loader.sh"
 
 dbhost=pgsrv1.internal.sanger.ac.uk
 dbport=5432
