@@ -113,7 +113,7 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/DbLinkRedirect</url-pattern>
+        <url-pattern>/DbLinkRedirect/*</url-pattern>
      </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
