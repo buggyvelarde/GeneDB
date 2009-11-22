@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 public class TranscriptDTO implements Serializable {
 
     private static final transient Logger logger = Logger.getLogger(TranscriptDTO.class);
@@ -186,7 +188,14 @@ public class TranscriptDTO implements Serializable {
     }
 
     public Map<String, List<String>> getSynonymsByTypes() {
-        return geneSynonymsByTypes;
+        Map<String, List<String>> ret = Maps.newHashMap();
+        if (geneSynonymsByTypes != null) {
+            ret.putAll(geneSynonymsByTypes);
+        }
+        if (transcriptSynonymsByTypes != null) {
+            ret.putAll(transcriptSynonymsByTypes);
+        }
+        return ret;
     }
 
     public List<String> getTranscriptSynonyms() {
