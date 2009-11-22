@@ -14,6 +14,7 @@
 <% } %>
 
 <c:url value="/" var="base" scope="page"/>
+<c:url value="/" var="baseUrl" scope="request"/>
 <div id="container">
 <div id="header">
 <a href="<misc:url value="/Homepage"/>"><img src="<misc:url value="/includes/image/GeneDB-logo.png"/>" border="0" alt="GeneDB" class="float-left-and-offset" id="logo" /></a>
@@ -112,10 +113,11 @@ $(document).ready(function(){
 </td>
 
 <td valign="top" align="right">
-<p>Comments/Questions:
+<p>Comments/Questions: <a href="mailto:webmaster@genedb.org">Email us</a>
+<%--
 <a href="<misc:url value="/Feedback" />">Curator/Data</a> or
 <a href="<misc:url value="/Feedback" />">website</a> | Version 4.98</p>
-</td>
+--%></td>
 </tr>
 </table>
 </div>
