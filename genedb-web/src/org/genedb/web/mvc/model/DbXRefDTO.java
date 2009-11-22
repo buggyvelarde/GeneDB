@@ -5,9 +5,9 @@ import org.gmod.schema.mapped.DbXRef;
 import java.io.Serializable;
 
 public class DbXRefDTO implements Serializable {
-    private String dbName;
-    private String accession;
-    private String urlPrefix;
+    String dbName;
+    String accession;
+    String urlPrefix;
 
     public DbXRefDTO(String dbName, String accession, String urlPrefix) {
         this.dbName = dbName;
