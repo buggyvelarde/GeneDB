@@ -371,7 +371,7 @@ public class TranscriptDTOFactory {
         for (FeatureProp featureProp : polypeptide.getFeaturePropsFilteredByCvNameAndTermName("genedb_misc", "EC_number")) {
             dbXRefDTOs.add(new DbXRefDTO("EC",
                     featureProp.getValue(),
-                    "/DbLinkRedirect?db=EC&acc="));
+                    "/DbLinkRedirect/EC/"));
         }
 
 
