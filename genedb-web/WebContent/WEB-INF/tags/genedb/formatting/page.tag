@@ -60,7 +60,7 @@
 </li>
 --%>
 <li><a href="<misc:url value="/Page/aboutUs"/>">About us</a></li>
-<li class="has-sub"><a href="">Searches</a>
+<li class="has-sub"><a href="<misc:url value="/Query" />">Searches</a>
 <ul class="sub-menu">
 <li><a href="<misc:url value="/Query/geneType"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>" >By Gene Type</a></li>
 <li><a href="<misc:url value="/Query/geneLocation"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>" >By Location</a></li>
