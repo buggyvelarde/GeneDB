@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="db" uri="db" %>
 
-<h2> Predicted Peptide Data</h2>
+<h2>&nbsp;&nbsp;Predicted Peptide Data</h2>
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
   <c:if test="${pepProps.isoelectricPoint != null}">
   <tr>
