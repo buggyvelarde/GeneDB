@@ -4,9 +4,11 @@
 <format:header title="Gene Type Search" />
 <format:page>
 <br>
+${baseUrl}
+<br>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="/Query/geneType" method="GET">
+        <form:form commandName="query" action="${baseUrl}Query/geneType" method="GET">
             <table>
                 <tr>
                     <td colspan="4">
