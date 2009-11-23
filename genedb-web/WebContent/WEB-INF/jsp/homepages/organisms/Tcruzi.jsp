@@ -65,18 +65,6 @@
  </p>
  <p>
   <b>
-   Downloads
-  </b>
- </p>
- <p>
-  As soon as they are produced, the most up to date
-  <i>
-   T. cruzi
-  </i>
-  annotations are always available at GeneDB.However, we recommend TriTrypDB as the portal for sequence download, where the date are periodically released with version numbers for consistent cross-referencing in publications.
- </p>
- <p>
-  <b>
    Data Release
   </b>
  </p>
@@ -97,5 +85,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5678-0!1!0!!en!2 and timestamp 20091123112936 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5678-0!1!0!!en!2 and timestamp 20091123133353 -->
 </div>

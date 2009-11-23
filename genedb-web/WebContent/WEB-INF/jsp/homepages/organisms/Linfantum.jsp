@@ -12,19 +12,6 @@
   parasite is an intracellular pathogen of the immune system targeting macrophages and dendritic cells. The disease Leishmaniasis affects the populations of 88 counties worldwide with symptoms ranging from disfiguring cutaneous and muco-cutaneous lesions that can cause widespread destruction of mucous membranes to visceral disease affecting the haemopoetic organs.
  </p>
  <p>
-  Severe and life-threatening visceral leishmaniasis is caused by
-  <i>
-   L. donovani
-  </i>
-  species. It is endemic in 62 countries with a total of 200 million cases people at risk, an estimated 0.5 million new cases worldwide each year and 41,000 recorded deaths in 2000. More than 90% of cases occur in Bangladesh, Brazil, India and Sudan. However the number of human cases in Southern Europe has also risen dramatically in recent years due to Leishmania/HIV coinfection. The WHO(TDR) recently carried out an analysis on the burden of disease caused by the 10 most neglected tropical diseases, ones that represent major public health problems in developing countries (see
-  <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=12377584&amp;dopt=Abstract" class="external text" title="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=12377584&amp;dopt=Abstract" rel="nofollow">
-   <span class="s1">
-    review
-   </span>
-  </a>
-  ).
- </p>
- <p>
   The species of the
   <i>
    L. donovani
@@ -45,7 +32,7 @@
   <i>
    L. infantum
   </i>
-  has been chosen as the next
+  was chosen as the second
   <i>
    Leishmania
   </i>
@@ -57,7 +44,11 @@
   <i>
    L. donovani
   </i>
-  complex and is an adaptable species for experimentation.
+  complex and is an adaptable species for experimentation. For more information on visceral Leishmaniasis we recommend the WHO website (
+  <a href="http://www.who.int/leishmaniasis/disease_epidemiology/en/index.html" class="external autonumber" title="http://www.who.int/leishmaniasis/disease_epidemiology/en/index.html" rel="nofollow">
+   [1]
+  </a>
+  ).
  </p>
  <p>
   <b>
@@ -91,18 +82,6 @@
    </b>
   </a>
   where they can be integrated with other datasets and queried using customized queries.
- </p>
- <p>
-  <b>
-   Downloads
-  </b>
- </p>
- <p>
-  As soon as they are produced, the most up to date
-  <i>
-   L. infantum
-  </i>
-  annotations are always available at GeneDB. However, we recommend TriTrypDB as the portal for sequence download, where the date are periodically released with version numbers for consistent cross-referencing in publications.
  </p>
  <p>
   <b>
@@ -141,9 +120,9 @@
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 3/1000000
+Preprocessor node count: 2/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5674-0!1!0!!en!2 and timestamp 20091123112817 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5674-0!1!0!!en!2 and timestamp 20091123132950 -->
 </div>

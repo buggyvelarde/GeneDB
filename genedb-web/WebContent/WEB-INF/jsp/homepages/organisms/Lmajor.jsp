@@ -50,12 +50,6 @@
  </p>
  <p>
   <b>
-   Project status:
-  </b>
-  sequencing complete, 2 small gaps remain.
- </p>
- <p>
-  <b>
    The Database
   </b>
  </p>
@@ -73,18 +67,6 @@
  </p>
  <p>
   <b>
-   Downloads
-  </b>
- </p>
- <p>
-  As soon as they are produced, the most up to date
-  <i>
-   L. major
-  </i>
-  annotations are always available at GeneDB. However, we recommend TriTrypDB as the portal for sequence download, where the date are periodically released with version numbers for consistent cross-referencing in publications.
- </p>
- <p>
-  <b>
    Data Release
   </b>
  </p>
@@ -97,11 +79,6 @@
   </b>
  </p>
  <p>
-  <b>
-   Sequencing enquiries
-  </b>
- </p>
- <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
  <!-- 
@@ -110,5 +87,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5675-0!1!0!!en!2 and timestamp 20091123112827 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5675-0!1!0!!en!2 and timestamp 20091123133100 -->
 </div>
