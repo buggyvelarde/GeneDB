@@ -12,14 +12,11 @@
   parasite is an intracellular pathogen of the immune system targeting macrophages and dendritic cells. The disease Leishmaniasis affects the populations of 88 counties worldwide with symptoms ranging from disfiguring cutaneous and muco-cutaneous lesions that can cause widespread destruction of mucous membranes to visceral disease affecting the haemopoetic organs.
  </p>
  <p>
+  Unlike previous species sequenced,
   <i>
    Leishmania braziliensis
   </i>
-  is the third
-  <i>
-   Leishmania
-  </i>
-  species to be sequenced at the Wellcome Trust Sanger Institute. Unlike previous species sequenced, it is a New World pathogen that is endemic throughout South America and currently the only
+  is a New World pathogen and currently the only
   <i>
    Leishmania
   </i>
@@ -27,15 +24,11 @@
   <i>
    Leishmania braziliensis
   </i>
-  can also result in a more destructive, progressive infection in mucosal tissue in a proportion of patients. This can lead to chronic destruction of the nasel septum and soft palate. Karyotyping of
-  <i>
-   Leishmania braziliensis
-  </i>
-  has shown that it has 35 chromosomes compared to the 36 present in old world species. The difference in chromosome number is due to the fusion of chromosomes 20 and 34 to make a single chromosome in
-  <i>
-   Leishmania braziliensis
-  </i>
-  .
+  can also result in a more destructive, progressive infection in mucosal tissue in a proportion of patients. For more information on this disease we recommend the WHO website [(
+  <a href="http://www.who.int/leishmaniasis/disease_epidemiology/en/index.html" class="external free" title="http://www.who.int/leishmaniasis/disease_epidemiology/en/index.html" rel="nofollow">
+   http://www.who.int/leishmaniasis/disease_epidemiology/en/index.html
+  </a>
+  )].
  </p>
  <p>
   <b>
@@ -76,18 +69,6 @@
  </p>
  <p>
   <b>
-   Downloads
-  </b>
- </p>
- <p>
-  As soon as they are produced, the most up to date
-  <i>
-   L. braziliensis
-  </i>
-  annotations are always available at GeneDB. However, we recommend TriTrypDB as the portal for sequence download, where the date are periodically released with version numbers for consistent cross-referencing in publications.
- </p>
- <p>
-  <b>
    Data Release
   </b>
  </p>
@@ -119,5 +100,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5673-0!1!0!!en!2 and timestamp 20091111124418 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5673-0!1!0!!en!2 and timestamp 20091123113804 -->
 </div>
