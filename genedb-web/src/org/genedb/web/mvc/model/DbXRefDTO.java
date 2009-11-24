@@ -8,11 +8,6 @@ public class DbXRefDTO implements Serializable {
     private String dbName;
     private String accession;
     private String urlPrefix;
-    private String test = "Am I picked up?";
-
-    public String getTest() {
-        return test;
-    }
 
     public DbXRefDTO(String dbName, String accession, String urlPrefix) {
         this.dbName = dbName;
