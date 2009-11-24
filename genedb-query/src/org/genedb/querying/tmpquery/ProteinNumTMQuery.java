@@ -47,10 +47,10 @@ public class ProteinNumTMQuery extends OrganismLuceneQuery {
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 
-        Term lowerTerm = new Term("numberTMDomains", Integer.toString(min));
-        Term upperTerm = new Term("numberTMDomains", Integer.toString(max));
+        Term lowerTerm = new Term("numberTMDomains", String.format("%06d",  min));
+        Term upperTerm = new Term("numberTMDomains", String.format("%06d",  max));
         RangeQuery rq = new RangeQuery(lowerTerm, upperTerm, true);
-
+        
         queries.add(rq);
         //queries.add(geneOrPseudogeneQuery);
     }
