@@ -1,6 +1,5 @@
 
-#Checks if all transcripts have one gene. In some cases (e.g. some transcripts in PFalciparum)
-#it is considered acceptable for transcripts to have no associated genes.
+#Checks if all transcripts have one gene.
 
 select organism.common_name, feature_id, uniquename
 from feature transcript
