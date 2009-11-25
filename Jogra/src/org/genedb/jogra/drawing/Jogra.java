@@ -1,13 +1,25 @@
 /*
- * JOGRA is an overarching application that has several plugins 'attached' to it. Jogra initialises the application context, 
- * and obtains and publishes the username and password to other plugins that may need it.
- * 14.5.2009
+ * Copyright (c) 2009 Genome Research Limited.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Library General Public License as published by the Free
+ * Software Foundation; either version 2 of the License or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB. If not, write to the Free
+ * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
+ * USA
  */
 
 
 package org.genedb.jogra.drawing;
 
-import org.genedb.db.taxon.TaxonNode;
 import org.genedb.jogra.domain.GeneDBMessage;
 import org.genedb.jogra.drawing.JograProgressBar.Position;
 import org.genedb.jogra.services.DatabaseLogin;
@@ -36,7 +48,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Timer;
 
 import javax.jnlp.ServiceManager;
 import javax.jnlp.SingleInstanceListener;
@@ -54,6 +65,12 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
+/*
+ * JOGRA is an overarching application that has several plugins 'attached' to it. Jogra initialises the application context, 
+ * and obtains and publishes the username and password to other plugins that may need it.
+ * 14.5.2009
+ */
+
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
 
     public static int TIMER_DELAY = 10*1000;
@@ -63,10 +80,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private final JFrame mainFrame = new JFrame();
     private JMenu windowMenu;
     private JograBusiness jograBusiness;
-    private Timer timer = new Timer();
-    private MessageService messageService;
     private List<String> selectedOrganismNames; /* Picked up via Organism-Tree  */
-    private List<TaxonNode> selectedTaxons;
     private static String username;
     private static String password;
  
@@ -315,9 +329,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
     }
 
-    public void setMessageService(MessageService messageService) {
-        this.messageService = messageService;
-    }
+
 
     public void newActivation(String[] args) {
         if (args.length==0) {
@@ -378,11 +390,12 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     public static void main(final String[] args) throws Exception {
    
         DatabaseLogin dblogin = new DatabaseLogin();
-        
-        dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
-        dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
-        dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens");
-        dblogin.addInstance("Port forwarding pathogens (localhost:54321)", "jdbc:postgresql://localhost:54321/pathogens"); 
+//        
+//        dblogin.addInstance("Pathogens", "jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens");
+//        dblogin.addInstance("Pathogens-test (Pathdev)", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
+//        dblogin.addInstance("Port forwarding pathogens (localhost:5432)", "jdbc:postgresql://localhost:5432/pathogens");
+//        dblogin.addInstance("Port forwarding pathogens (localhost:54321)", "jdbc:postgresql://localhost:54321/pathogens"); 
+//        dblogin.addInstance("Nishadi test database", "jdbc:postgresql://localhost:54321/nds"); 
         
         try {
             dblogin.validateUser();
