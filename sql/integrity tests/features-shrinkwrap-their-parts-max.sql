@@ -1,5 +1,4 @@
 #Checks if the fmax values of any features are within the fmax value
-
 #of the feature it is contained in. In principle there could be legitimate cases where this fails.
 #If any such arise, they should be systematically excluded, e.g. by type.
 
