@@ -1,28 +1,23 @@
-package org.genedb.jogra.services;
-
-/* Helper service for Jogra (and other applications) to get a username & password, and validate them for a given database. It does so by trying to create a
- * JDBC db connection and catching any errors. Sample usage:
-
-        DatabaseLogin dblogin = new DatabaseLogin();
-        dblogin.addInstance("pathogens", "jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot");
-        dblogin.addInstance("pathogens-test", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
-      
-        try {
-            dblogin.validateUser();
-        } catch (SQLException exp) {
-            exp.printStackTrace();
-            System.exit(65);
-        } catch (AbortException exp) {
-            System.exit(65);
-        }
-
-        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword());
- 
+/*
+ * Copyright (c) 2009 Genome Research Limited.
  *
- * NDS + ART
- * May-2009
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Library General Public License as published by the Free
+ * Software Foundation; either version 2 of the License or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB. If not, write to the Free
+ * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
+ * USA
  */
-import org.genedb.jogra.drawing.Jogra;
+
+package org.genedb.jogra.services;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
@@ -36,73 +31,101 @@ import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import com.google.common.collect.Maps;
+
+/* Helper service for Jogra (and other applications) to get a username & password, and validate them for a given database. It does so by trying to create a
+ * JDBC db connection and catching any errors. Sample usage:
+
+        DatabaseLogin dblogin = new DatabaseLogin();
+
+        try {
+            dblogin.validateUser();
+        } catch (SQLException exp) {
+            exp.printStackTrace();
+            System.exit(65);
+        } catch (AbortException exp) {
+            System.exit(65);
+        }
+
+        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword());
+ 
+ *
+ * NDS + ART
+ * 2009
+ */
 
 public class DatabaseLogin {
 
     private static final Logger logger = Logger.getLogger(DatabaseLogin.class);
 
-    private JTextField userField;
-    private JPasswordField passwordField;
-    private JComboBox databaseNames;
-    private LinkedHashMap<String, String> instances = Maps.newLinkedHashMap();
-    private Vector<String> dbnames = new Vector<String>();
-  
+    private JTextField hostname = new JTextField(20);
+    private JTextField port = new JTextField(20);
+    private JTextField dbname = new JTextField(20);
+    private JTextField username = new JTextField(20);
+    private JPasswordField password = new JPasswordField(20);
 
-
+    
     public void validateUser() throws SQLException, AbortException {
+        
+        //Set default values (for internal Sanger users)
+        hostname.setText("pgsrv1.internal.sanger.ac.uk");
+        port.setText("5432");
+        dbname.setText("pathogens");
+        username.setText(System.getenv("USER")+"@sanger.ac.uk");
 
-        userField = new JTextField(10);
-        String defaultUsername = System.getenv("USER")+"@sanger.ac.uk"; 
-        userField.setText(defaultUsername);
-        passwordField = new JPasswordField(10);
-        databaseNames = new JComboBox(dbnames);
-        databaseNames.setSelectedIndex(0);
-                    
-        Object[] array = {"Username", userField, "Password", passwordField, "Database", databaseNames };
+        Object[] array = {"Host", hostname, "Port", port, "Database", dbname, "Username", username, "Password", password };
 
         while (true) {
+            
+            password.setText("");
+            
             int value = JOptionPane.showOptionDialog(null, array, "Database login",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                    null, null);
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                        null, null);
 
-            logger.debug(String.format("Entered username '%s', password '%s'", userField.getText(), passwordField.getPassword()));
+            logger.debug(String.format("Entered host '%s', port '%s', dbname '%s', username '%s'", 
+                                        hostname.getText(), port.getText(), dbname.getText(), username.getText()));
 
             if (value != JOptionPane.OK_OPTION) {
                 throw new AbortException();
+                
             } else {
-                if (!StringUtils.hasText(userField.getText())
-                        || !StringUtils.hasText(new String(passwordField.getPassword()))) {
+                if (   !StringUtils.hasText(username.getText())
+                    || !StringUtils.hasText(new String(password.getPassword()))
+                    || !StringUtils.hasText(hostname.getText())
+                    || !StringUtils.hasText(port.getText())
+                    || !StringUtils.hasText(dbname.getText())){
 
                     JOptionPane.showMessageDialog(null,
-                            "Sorry, username and password cannot be empty.",
+                            "Sorry, the fields cannot be left empty.",
                             "Try again", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    if (checkLogin()) {
+                    if (checkLogin(hostname.getText(), port.getText(), dbname.getText(), username.getText(), new String(password.getPassword())  )) {
                         return;
                     }
                     JOptionPane.showMessageDialog(
                             null,
-                            "Sorry, that username and password does not exist.",
+                            "Sorry, a connection could not be established. Check the details and try again.",
                             "Try again", JOptionPane.ERROR_MESSAGE);
-                    passwordField.setText("");
+     
                 }
             }
         }
     }
 
+    
     /*
      * Method to attempt to create a database connection using the parameters
-     * given. Connection closed after test.
+     * given. Connection closed after test as it will later be created via 
+     * Spring.
      */
-    private boolean checkLogin() throws SQLException {
+    private boolean checkLogin(String host, String port, String dbname, String username, String password) throws SQLException {
         try {
-            String dbName = instances.get(databaseNames.getSelectedItem());
-            Connection c = DriverManager.getConnection(dbName, userField.getText(),
-                    new String(passwordField.getPassword()));
+            
+            String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbname;
+            Connection c = DriverManager.getConnection(url, username, password);
             c.close();
             return true;
         } catch (SQLException exp) {
@@ -114,24 +137,20 @@ public class DatabaseLogin {
         }
     }
 
-    public void addInstance(String name, String jdbcConnection) {
-        instances.put(name, jdbcConnection);
-        dbnames.add(name);
-    }
-
 
     /* Getter methods */
     public String getUsername() {
-        return userField.getText();
+        return username.getText();
     }
 
     public char[] getPassword() {
-        return passwordField.getPassword();
+        return password.getPassword();
     }
     
     public String getDBUrl(){
-        return instances.get(databaseNames.getSelectedItem());
+        return "jdbc:postgresql://" + hostname.getText() + ":" + port.getText() + "/" + dbname.getText();
     }
+
 
 
     public class AbortException extends Exception {
