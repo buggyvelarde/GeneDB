@@ -22,7 +22,7 @@ where transcript.type_id in (
                                                  'snoRNA',
                                                  'ncRNA',
                                                  'transcript'))
-and transcript.organism_id != (select organism_id from organism where common_name='Lmexicana') /* Ignoring Mexicana for now */
+and transcript.organism_id != (select organism_id from organism where common_name='Lmexicana') 
 and not exists (
                 select *
                 from feature_relationship exon_transcript
