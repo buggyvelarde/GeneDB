@@ -39,6 +39,12 @@
      <property name="termService" ref="termService" />
      <property name="taxonNodeManager" ref="taxonNodeManager" />
      <property name="jogra" ref="application" /> <!--  remove after fixing event bus publish method 26.5.09 NDS -->
+     <property name="cvnames">
+        <list>
+             <value>genedb_products, Products</value>
+             <value>CC_genedb_controlledcuration, Controlled Curation Terms </value>
+        </list>
+     </property>
   </bean>
 
   <bean name="termService" class="org.genedb.jogra.services.SqlTermService"> <!--init-method="afterPropertiesSet"--> 
@@ -89,6 +95,11 @@
      <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
          <property name="sessionFactory" ref="sessionFactory" />
      </bean>
+     
+       <!-- this should be added for transaction support -->
+  <!--  bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+     <property name="dataSource" ref="dataSource"/>
+  </bean -->
 
 
     
