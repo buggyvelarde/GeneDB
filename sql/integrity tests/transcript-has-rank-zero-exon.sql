@@ -22,8 +22,6 @@ where transcript.type_id in (
                                                  'snoRNA',
                                                  'ncRNA',
                                                  'transcript'))
-and transcript.uniquename not like 'RNAzID%' /* These transcripts in Falciparun are not expected to have exons */
-and transcript.uniquename not like 'PF%' /* These transcripts in Falciparun are not expected to have exons */
 and transcript.organism_id != (select organism_id from organism where common_name='Lmexicana') /* Ignoring Mexicana for now */
 and not exists (
                 select *
