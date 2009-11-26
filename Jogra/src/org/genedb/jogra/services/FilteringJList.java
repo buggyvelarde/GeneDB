@@ -1,18 +1,20 @@
 /**
  * The Java below was obtained from http://java.sun.com/developer/JDCTechTips/2005/tt1214.html
- * I have added a method called addAll to it to enable a list of objects to be added to the JList
- * September, 2009
- * @author nds
  */
 
 package org.genedb.jogra.services;
 
-import org.genedb.jogra.domain.Term;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import java.util.*;
+import javax.swing.AbstractListModel;
+import javax.swing.JList;
+import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 public class FilteringJList extends JList {
   private JTextField input;
@@ -67,31 +69,17 @@ public void addElement(Object element) {
   ((FilteringModel)getModel()).addElement(element);
 }
 
-/**
- * Added by nds 16.09.2009: Clears the list and adds all the items in the list
- */
-public void addAll(List<Term> terms){
-    ((FilteringModel)getModel()).clear();
-    for(Term t: terms){
-        addElement(t);
-    }
-    
-}
 
 /**
  * Manages filtering of list model
  */
 
-private class FilteringModel extends AbstractListModel
+public class FilteringModel extends AbstractListModel
     implements DocumentListener {
   List<Object> list;
   List<Object> filteredList;
   String lastFilter = "";
   
-  //Added by nds on 16.9.2009
-  public void clear(){
-      list.clear();
-  }
 
   public FilteringModel() {
     list = new ArrayList<Object>();
@@ -105,6 +93,10 @@ private class FilteringModel extends AbstractListModel
 
   public int getSize() {
     return filteredList.size();
+  }
+  
+  public List<Object> getList(){
+      return list;
   }
 
   public Object getElementAt(int index) {
