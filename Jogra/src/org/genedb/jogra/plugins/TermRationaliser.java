@@ -173,7 +173,7 @@ public class TermRationaliser implements JograPlugin {
      */
     private void initModels() {
         
-        JograProgressBar jpb = new JograProgressBar("Loading terms..."); //Progress bar added for better user information    
+        JograProgressBar jpb = new JograProgressBar("Loading terms from database..."); //Progress bar added for better user information    
         this.setSelectedTaxonsAndScopeLabel(jogra.getSelectedOrganismNames());
 
         SwingWorker worker = new SwingWorker<List<Term>, Void>() { //Loading can take a while; so in a worker thread
@@ -222,11 +222,37 @@ public class TermRationaliser implements JograPlugin {
         
         /* MENU */
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Help");
-        JMenuItem menuItem1 = new JMenuItem("About");
-        menu.add(menuItem1);
-        menuBar.add(menu);
-        frame.setJMenuBar(menuBar);
+        
+        JMenu actions_menu = new JMenu("Actions");
+        JMenuItem actions_mitem_1 = new JMenuItem("Refresh lists");
+        actions_mitem_1.addActionListener(
+                new ActionListener(){
+                    public void actionPerformed(ActionEvent actionEvent){
+                       initModels();
+                    }
+                });
+        actions_menu.add(actions_mitem_1);
+        
+        JMenu about_menu = new JMenu("About");
+        JMenuItem about_mitem_1 = new JMenuItem("About");
+        about_mitem_1.addActionListener(
+                new ActionListener(){
+                    public void actionPerformed(ActionEvent actionEvent){
+                        JOptionPane.showMessageDialog( 
+                          null, 
+                          "Term Rationaliser \n" +
+                          "Wellcome Trust Sanger Institute, UK \n" +
+                          "2009",                          
+                          "Term Rationaliser",
+                          JOptionPane.PLAIN_MESSAGE
+                        );
+                    }
+                });
+        about_menu.add(about_mitem_1);
+
+        menuBar.add(about_menu);
+        menuBar.add(actions_menu);
+        frame.add(menuBar, BorderLayout.NORTH);
         
         /* MAIN BOX */
         Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
