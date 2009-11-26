@@ -27,7 +27,7 @@ import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.JograProgressBar;
 import org.genedb.jogra.drawing.OpenWindowEvent;
-import org.genedb.jogra.services.FilteringJList;
+import org.genedb.jogra.services.RationaliserJList;
 import org.genedb.jogra.services.RationaliserResult;
 import org.genedb.jogra.services.TermService;
 
@@ -37,7 +37,6 @@ import org.springframework.util.StringUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -46,7 +45,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -59,7 +57,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -86,11 +83,10 @@ import javax.swing.event.ListSelectionListener;
 import com.google.common.collect.Maps;
 
 /********************************************************************************************************
- * The TermRationalier is a tool that enables curators to correct product names and controlled curation
- * terms. It is most useful for curators wanting to work on a specific organism or a set of organisms as
- * these can be selected via the Organism tree in Jogra and they will be passed on to the rationaliser 
- * which will then only display the relevant terms. This implements the JograPlugin interface and, as 
- * expected, is one of the Jogra plugins.
+ * The TermRationalier is a tool that allows curators to correct (rationalise) terms from a chosen 
+ * controlled vocabulary. It is most useful for curators wanting to work on a specific organism or a set 
+ * of organisms as these can be selected via the Organism tree in Jogra and they will be passed on to the  
+ * rationaliser which will then only display the relevant terms. 
  ********************************************************************************************************/
 public class TermRationaliser implements JograPlugin {
     
@@ -100,53 +96,47 @@ public class TermRationaliser implements JograPlugin {
     private static final String WINDOW_TITLE = "Term Rationaliser";
   
     /* Variables for rationaliser functionality */   
-    private TermService termService;                                            //Is the interface to the SQLTermService
+    private TermService termService;                                            //Interface to the SQLTermService
     private TaxonNodeManager taxonNodeManager;                                  //TaxonNodeManager to get the organism phylotree
     private List<TaxonNode> selectedTaxons = new ArrayList<TaxonNode>();        //Taxons corresponding to the selected organism names
     private Jogra jogra;                                                        //Instance of Jogra
     private boolean showEVC;                                                    //Show Evidence codes?
-    private boolean showSysID;                                                  //Show systematic IDs?
-    private String termType;                                                    //Products or Controlled Curation terms
+    private String termType;                                                    //One of the CVs set in the Spring application context
     private List<Term> terms = new ArrayList<Term>();                           //All terms (for JList)
     private LinkedHashMap<String, String> instances = Maps.newLinkedHashMap();  //To hold the types of cvterms
+    private String[] cvnames;                                                   //Holds the cv names passed in through Spring
 
     /*Variables related to the user interface */
-    private FilteringJList fromList = new FilteringJList();
-    private FilteringJList toList = new FilteringJList();
+    private JFrame frame = new JFrame(); 
+    private RationaliserJList fromList = new RationaliserJList();
+    private RationaliserJList toList = new RationaliserJList();
     private JTextField textField;
-    private JTextField idField1;
-    private JTextField idField2;
-    private JLabel productCountLabel;
-    private JLabel scopeLabel = new JLabel("Organism(s): All organisms");       //Label showing user's selection. Default: All organisms
+    private JLabel productCountLabel = new JLabel();
+    private JLabel scopeLabel = new JLabel();       //Label showing user's selection. Default: All organisms
     private JTextArea information = new JTextArea(10,10);   
     
     
     /**
-     * This method supplies the JPanel which is displayed in the main Jogra window.
-     * It has options for the user to select: type of term and whether or not 
-     * the rationaliser should display evidence codes and systematic IDs
+     * Supplies the JPanel which is displayed in the main Jogra window.
      */
     public JPanel getMainWindowPlugin() {
-        
-        this.populateTermTypes();
-        
+
         final JPanel ret = new JPanel();
         final JButton loadButton = new JButton("Load Term Rationaliser");
         final JLabel chooseType = new JLabel("Select term: ");
         final JComboBox termTypeBox = new JComboBox(instances.keySet().toArray());
         final JCheckBox showEVCFilter = new JCheckBox("Highlight terms with evidence codes", false);
-        final JCheckBox showSysIDFilter = new JCheckBox("Retrieve systematic IDs for terms", false);
         
         loadButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent ae) {
-                System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "' 1");
+
                 new SwingWorker<JFrame, Void>() {
                     @Override
                     protected JFrame doInBackground() throws Exception {
                         ret.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         setTermType(instances.get((String)termTypeBox.getSelectedItem()));
+                        logger.debug("I have set the term type to: " + instances.get((String)termTypeBox.getSelectedItem()));
                         setShowEVC(showEVCFilter.isSelected());
-                        setShowSysID(showSysIDFilter.isSelected());
                         return makeWindow();
                     }
 
@@ -172,39 +162,24 @@ public class TermRationaliser implements JograPlugin {
         verticalBox.add(horizontalBox);
         verticalBox.add(loadButton);
         verticalBox.add(showEVCFilter);
-        verticalBox.add(showSysIDFilter);   
         ret.add(verticalBox);
         return ret;
     }
     
+    
+    
     /**
-     * Fetches the terms from the database and sets that as the model for both the Jlists: toList and fromList
-     * The getTerms() method can be quite a time-consuming task depending on the number of terms. So, we push 
-     * this into a Worker thread.
+     * Populates the JLists with data from the database (initialise models)
      */
     private void initModels() {
-        JograProgressBar jpb = new JograProgressBar("Loading terms..."); //Progress bar added for better user information
-        List<String> selectedOrganismNames = jogra.getSelectedOrganismNames();  //Names of organisms selected by the user passed here by Jogra
-        logger.info("TR has asked JOgra for selection and got: " + StringUtils.collectionToCommaDelimitedString(selectedOrganismNames));
-        if(selectedOrganismNames!=null && selectedOrganismNames.size()!=0 && !selectedOrganismNames.contains("root")){ // 'root' with a simple r causes problems
-           scopeLabel.setText("Organism(s): " + StringUtils.collectionToCommaDelimitedString(selectedOrganismNames)); //Else, label will continue to have 'Scope: All organisms'
-           if(selectedTaxons!=null && selectedTaxons.size()>0){
-               selectedTaxons.clear();
-           }
-           for(String s: selectedOrganismNames){
-               selectedTaxons.add(taxonNodeManager.getTaxonNodeForLabel(s));
-           }
-        }else{ //If there are no selections, get all terms
-            selectedTaxons.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
-        }
         
-        /*Loading the terms can sometimes take a while (e.g., to load ALL the terms). 
-         * Hence we do it inside a worker thread
-         */
-        SwingWorker worker = new SwingWorker<List<Term>, Void>() {
+        JograProgressBar jpb = new JograProgressBar("Loading terms..."); //Progress bar added for better user information    
+        this.setSelectedTaxonsAndScopeLabel(jogra.getSelectedOrganismNames());
+
+        SwingWorker worker = new SwingWorker<List<Term>, Void>() { //Loading can take a while; so in a worker thread
             @Override
             public List<Term> doInBackground() { 
-                terms = termService.getTerms(selectedTaxons, getTermType());
+                terms = termService.getTerms(getSelectedTaxons(), getTermType());
                 Collections.sort(terms);
                 return terms;
             }
@@ -215,271 +190,160 @@ public class TermRationaliser implements JograPlugin {
  
         fromList.addAll(terms);
         toList.addAll(terms);
-
-        /* Fetch systematic IDs and evidence codes if the user has selected these options. At the moment, we fetch all of them but this may
-         * be optimised by doing this 'on-the-fly' so that this information is fetched for the terms that the user is interested in 
-         * (i.e. clicks on) */
-        for (Term term : terms) {
-            if(isShowSysID()){ 
-               term.setSystematicIds(termService.getSystematicIDs(term, selectedTaxons));    
-            }
-            if(isShowEVC()){ 
+        
+        for (Term term : terms) { 
+            if(isShowEVC()){ //Fetch the evidence codes for the terms if the user wants them
                 term.setEvidenceCodes(termService.getEvidenceCodes(term));    
             }
         }
 
-        //'Re-set' the other textboxes in the interface
-        productCountLabel.setText(String.format("Number of terms: %d terms found (%s)", terms.size(), this.getTermType()));
-
-        if(isShowSysID()){
-            idField1.setText("");
-            idField2.setText("");
-        }else{
-            idField1.setText("(not enabled)");
-            idField1.setEnabled(false);
-            
-            idField2.setText("(not enabled)");
-            idField2.setEnabled(false);
-        }
-        textField.setText("");      
+        productCountLabel.setText(String.format("Number of terms: %d terms found (%s)", terms.size(), getTermType()));
+        textField.setText(""); //Re-set the editable text box   
+        fromList.clearSelection(); //Clear any previous selections
+        toList.clearSelection(); 
+        fromList.repaint();
+        toList.repaint();
         
         jpb.stop();
     }
  
+    
+    
 
     /**
-     * Return a new, initialised JFrame which is the main interface to the rationaliser.
+     * Return a new JFrame which is the main interface to the Rationaliser.
      */
     public JFrame getMainPanel() {
         
-        fromList.clearSelection(); //Clear any previous selections (if any)
-        toList.clearSelection(); 
-
-        if(isShowEVC()){ //If user has requested to view evidence codes, then use different renderer so that items with evidence codes are displayed in different colour
-            ColorRenderer cr = new ColorRenderer();
-            fromList.setCellRenderer(cr);
-            toList.setCellRenderer(cr);
-        }
-    
-        /* Label to display number of products */
-        productCountLabel = new JLabel("Number of terms");
+        /* JFRAME */  
+        frame.setTitle(WINDOW_TITLE);
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
         
-        /* Textfield displaying the name of the term to be edited*/
-        textField = new JTextField(20);
-        textField.setForeground(Color.BLUE);
+        /* MENU */
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Help");
+        JMenuItem menuItem1 = new JMenuItem("About");
+        menu.add(menuItem1);
+        menuBar.add(menu);
+        frame.setJMenuBar(menuBar);
         
-        /* Systematic ID fields */
-        idField1 = new JTextField(20);
-        idField1.setEditable(false);
-        idField1.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        idField1.setForeground(Color.DARK_GRAY);
+        /* MAIN BOX */
+        Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
+        center.add(Box.createHorizontalStrut(5)); //Invisible fixed-width component
         
-        idField2 = new JTextField(20);
-        idField2.setEditable(false);
-        idField2.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        idField2.setForeground(Color.DARK_GRAY);
-              
-        /* FROM list */
+        /* FROM LIST AND PANEL */
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected 
-        fromList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Term highlightedTerm = (Term)fromList.getSelectedValue();  
-                if(highlightedTerm!=null){
-                    if(isShowSysID()){ //Show systematic ID of term in the from list
-                        idField1.setText(StringUtils.collectionToCommaDelimitedString(highlightedTerm.getSystematicIds()));
-                    }
-                }
-            }
-        });
-
         fromList.addKeyListener(new KeyListener(){    
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if(arg0.getKeyCode()==KeyEvent.VK_RIGHT){
-                     synchroniseLists(fromList, toList);
+                     synchroniseLists(fromList, toList); //synchronise from right to left
                 }
             }
-            
             @Override
             public void keyReleased(KeyEvent arg0) {}
- 
             @Override
             public void keyTyped(KeyEvent arg0) {}
         });
+        
+        Box fromPanel = this.createRationaliserPanel("From", fromList); //Box on left hand side
+        fromPanel.add(Box.createVerticalStrut(55)); //Add some space
+        center.add(fromPanel); //Add to main box
+        center.add(Box.createHorizontalStrut(3)); //Add some space
+        
+        
+        /* MIDDLE PANE */
+        Box middlePane = Box.createVerticalBox();
+   
+        ClassLoader classLoader = this.getClass().getClassLoader(); //Needed to access the images later on
+        ImageIcon leftButtonIcon = new ImageIcon(classLoader.getResource("left_arrow.gif"));
+        ImageIcon rightButtonIcon = new ImageIcon(classLoader.getResource("right_arrow.gif"));
+ 
+        leftButtonIcon = new ImageIcon(leftButtonIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)); //TODO: Investigate simpler way to resize an icon!
+        rightButtonIcon = new ImageIcon(rightButtonIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)); //TODO: Investigate simpler way to resize an icon!
 
-       
-        /* TO list */
-        toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
-        toList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Term highlightedTerm = (Term)toList.getSelectedValue();  
-                if(highlightedTerm!=null){
-                    textField.setText(highlightedTerm.getName()); //Allow the user to edit the spelling of the term in the to list
-                    if(isShowSysID()){ //Show systematic ID of the term in the to list
-                        idField2.setText(StringUtils.collectionToCommaDelimitedString(highlightedTerm.getSystematicIds()));
-                    }
-                }
+        JButton rightSynch = new JButton(rightButtonIcon);
+        rightSynch.setToolTipText("Synchronise TO list. \n Shortcut: Right-arrow key");
+        
+        rightSynch.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent){
+                synchroniseLists(fromList, toList);
             }
         });
+           
+        JButton leftSynch = new JButton(leftButtonIcon);
+        leftSynch.setToolTipText("Synchronise FROM list. \n Shortcut: Left-arrow key");
         
+        leftSynch.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent){
+                synchroniseLists(toList, fromList);
+            }
+        });
+
+        middlePane.add(rightSynch);
+        middlePane.add(leftSynch);
+        
+        center.add(middlePane); //Add middle pane to main box
+        center.add(Box.createHorizontalStrut(3));
+   
+        /* TO LIST AND PANEL */
+        toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
         toList.addKeyListener(new KeyListener(){    
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if(arg0.getKeyCode()==KeyEvent.VK_LEFT){
-                     synchroniseLists(toList, fromList);
+                     synchroniseLists(toList, fromList); //synchronise from right to left
                 }
             }
             @Override
             public void keyReleased(KeyEvent arg0) {}
- 
             @Override
             public void keyTyped(KeyEvent arg0) {}
         });
-     
-       initModels();
         
-       final JFrame ret = new JFrame();   
-       ret.setTitle(WINDOW_TITLE);
-       ret.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-       ret.setLayout(new BorderLayout());
-
-       /* MENU */
-       JMenuBar menuBar = new JMenuBar();
-       JMenu menu = new JMenu("Help");
-       menu.setMnemonic(KeyEvent.VK_H);
-       JMenuItem menuItem1 = new JMenuItem("About");
-       menuItem1.setMnemonic(KeyEvent.VK_A);
-       menu.add(menuItem1);
-       menuBar.add(menu);
-       ret.setJMenuBar(menuBar);
-
-       /* TO and FROM lists */
-       ClassLoader classLoader = this.getClass().getClassLoader(); //Needed to access the images later on
+        Box toPanel = this.createRationaliserPanel("To", toList);
+        
+        Box newTerm = Box.createVerticalBox();
+        textField = new JTextField(20); //textfield to let the user edit the name of an existing term
+        textField.setForeground(Color.BLUE);
+        newTerm.add(textField);
+        TitledBorder editBorder = BorderFactory.createTitledBorder("Edit term name");
+        editBorder.setTitleColor(Color.DARK_GRAY);
+        newTerm.setBorder(editBorder);
+        toPanel.add(newTerm); //add textfield to panel
        
-       Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
-       center.add(Box.createHorizontalStrut(5)); //Invisible fixed-width component
-  
-       /*FROM LIST - Left hand side */
-       Box leftPane = Box.createVerticalBox();
-       leftPane.add(new JLabel("From"));
-
-       JTextField fromSearchField = new JTextField(20);
-       fromList.installJTextField(fromSearchField);
-   
-       leftPane.add(fromSearchField); 
-       JScrollPane fromScrollPane = new JScrollPane();
-       fromScrollPane.setViewportView(fromList);
-       fromScrollPane.setPreferredSize(new Dimension(500,400));
-       leftPane.add(fromScrollPane);
-
-       
-       //Systematic ID box for from list
-       TitledBorder sysIDBorder = BorderFactory.createTitledBorder("Systematic IDs");
-       sysIDBorder.setTitleColor(Color.DARK_GRAY);
-       Box fromSysIDBox = Box.createVerticalBox();
-       fromSysIDBox.add(idField1);
-       fromSysIDBox.setBorder(sysIDBorder);
+        center.add(toPanel); //add panel to main box
+        center.add(Box.createHorizontalStrut(5));
+        
+        frame.add(center); //add the main panel to the frame
      
-       leftPane.add(fromSysIDBox);
-       leftPane.add(Box.createVerticalStrut(55));
-       
-       center.add(leftPane);
-       center.add(Box.createHorizontalStrut(3));
-       
-       /* Middle pane with synchronise buttons */
-       Box middlePane = Box.createVerticalBox();
-    
-       
-       ImageIcon leftButtonIcon = new ImageIcon(classLoader.getResource("left_arrow.gif"));
-       ImageIcon rightButtonIcon = new ImageIcon(classLoader.getResource("right_arrow.gif"));
+        initModels(); //load the lists with data
 
-       
-       leftButtonIcon = new ImageIcon(leftButtonIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)); //TODO: Investigate simpler way to resize an icon!
-       rightButtonIcon = new ImageIcon(rightButtonIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)); //TODO: Investigate simpler way to resize an icon!
-
-       JButton rightSynch = new JButton(rightButtonIcon);
-       rightSynch.setToolTipText("Synchronise TO list. \n Shortcut: Right-arrow key");
-       
-       rightSynch.addActionListener(new ActionListener(){
-           public void actionPerformed(ActionEvent actionEvent){
-               synchroniseLists(fromList, toList);
-           }
-       });
-      
-       
-       JButton leftSynch = new JButton(leftButtonIcon);
-       leftSynch.setToolTipText("Synchronise FROM list. \n Shortcut: Left-arrow key");
-       
-       leftSynch.addActionListener(new ActionListener(){
-           public void actionPerformed(ActionEvent actionEvent){
-               synchroniseLists(toList, fromList);
-           }
-       });
-
-       middlePane.add(rightSynch);
-       middlePane.add(leftSynch);
-       
-       center.add(middlePane);
-       center.add(Box.createHorizontalStrut(3));
-       
-       /* TO LIST - Right hand side */
-       Box rightPane = Box.createVerticalBox();
-       rightPane.add(new JLabel("To"));
-  
-       JTextField toSearchField = new JTextField(20);
-       toList.installJTextField(toSearchField);
- 
-       rightPane.add(toSearchField);
-       JScrollPane toScrollPane = new JScrollPane(/*toList*/);
-       toScrollPane.setViewportView(toList);
-       toScrollPane.setPreferredSize(new Dimension(500,400));
-       //toScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-       rightPane.add(toScrollPane);
-       
-       //Systematic ID box for to list
-       Box toSysIDBox = Box.createVerticalBox();
-       toSysIDBox.add(idField2);
-       toSysIDBox.setBorder(sysIDBorder);
-       rightPane.add(toSysIDBox);
-       
-       /* Add a box to edit the name of a product */
-       Box newTerm = Box.createVerticalBox();
-       newTerm.add(textField);
-       TitledBorder editBorder = BorderFactory.createTitledBorder("Edit term name");
-       editBorder.setTitleColor(Color.DARK_GRAY);
-       newTerm.setBorder(editBorder);
-       rightPane.add(newTerm);
-      
-       center.add(rightPane);
-       center.add(Box.createHorizontalStrut(5));
-
-       ret.add(center);
-
-       /*Buttons and information boxes */
+        
+       /* BOTTOM HALF OF FRAME */
        Box main = Box.createVerticalBox();
        TitledBorder border = BorderFactory.createTitledBorder("Information");
        border.setTitleColor(Color.DARK_GRAY);
 
-       /* Information box */
+       /* INFORMATION BOX */
        Box info = Box.createVerticalBox();
        
        Box scope = Box.createHorizontalBox();
        scope.add(Box.createHorizontalStrut(5));
-       scope.add(scopeLabel);
+       scope.add(scopeLabel); //label showing the scope of the terms
        scope.add(Box.createHorizontalGlue());
 
-       Box productCount = Box.createHorizontalBox();
-       productCount.add(Box.createHorizontalStrut(5));
-       productCount.add(productCountLabel);
+       Box productCount = Box.createHorizontalBox(); 
+       productCount.add(Box.createHorizontalStrut(5));  
+       productCount.add(productCountLabel); //display the label showing the number of terms
        productCount.add(Box.createHorizontalGlue());
 
        info.add(scope);
        info.add(productCount);
        info.setBorder(border);
 
-       /* Action buttons */
+       /* ACTION BUTTONS */
        Box actionButtons = Box.createHorizontalBox();
        actionButtons.add(Box.createHorizontalGlue());
        actionButtons.add(Box.createHorizontalStrut(10));
@@ -493,7 +357,7 @@ public class TermRationaliser implements JograPlugin {
        actionButtons.add(go);
        actionButtons.add(Box.createHorizontalGlue());
 
-       /* Show more information toggle */
+       /* MORE INFORMATION TOGGLE */
        Box buttonBox = Box.createHorizontalBox();
        final JButton toggle = new JButton("Hide information <<");
 
@@ -504,7 +368,7 @@ public class TermRationaliser implements JograPlugin {
        Box textBox = Box.createHorizontalBox();
 
        final JScrollPane scrollPane = new JScrollPane(information);
-       scrollPane.setPreferredSize(new Dimension(ret.getWidth(),100));
+       scrollPane.setPreferredSize(new Dimension(frame.getWidth(),100));
        scrollPane.setVisible(true);
        textBox.add(Box.createHorizontalStrut(5));
        textBox.add(scrollPane); 
@@ -514,13 +378,13 @@ public class TermRationaliser implements JograPlugin {
                if(toggle.getText().equals("Show information >>")){
                    scrollPane.setVisible(true);
                    toggle.setText("Hide information <<");
-                   ret.setPreferredSize(new Dimension(ret.getWidth(),ret.getHeight()+100));
-                   ret.pack();
+                   frame.setPreferredSize(new Dimension(frame.getWidth(),frame.getHeight()+100));
+                   frame.pack();
                }else if(toggle.getText().equals("Hide information <<")){
                    scrollPane.setVisible(false);
                    toggle.setText("Show information >>");
-                   ret.setPreferredSize(new Dimension(ret.getWidth(),ret.getHeight()-100));
-                   ret.pack();
+                   frame.setPreferredSize(new Dimension(frame.getWidth(),frame.getHeight()-100));
+                   frame.pack();
                }
            }
        };
@@ -529,19 +393,19 @@ public class TermRationaliser implements JograPlugin {
        main.add(Box.createVerticalStrut(5));
        main.add(info);
        main.add(Box.createVerticalStrut(5));
-      // main.add(newTerm);
        main.add(Box.createVerticalStrut(5));
        main.add(actionButtons);
        main.add(Box.createVerticalStrut(10));
        main.add(buttonBox);
        main.add(textBox);
 
-       ret.add(main, BorderLayout.SOUTH);
-      // ret.setPreferredSize(new Dimension(800,800));
-       ret.pack();
+       frame.add(main, BorderLayout.SOUTH);
+       frame.pack();
 
-       return ret;
+       return frame;
     }
+    
+    
     
 
     /* */
@@ -556,73 +420,102 @@ public class TermRationaliser implements JograPlugin {
         return lookup;
     }
     
-    
-    /* Create a Box to hold the left and right panels which are nearly identical 
-     * except that the right panel has a textbox to edit the term name */
-//    private Box createPane(String label){
-//
-//        Box pane = Box.createVerticalBox();
-//        pane.add(new JLabel(label));
-//   
-//        JTextField searchField = new JTextField(20);
-//        toList.installJTextField(searchField);
-//  
-//        pane.add(searchField);
-//        JScrollPane scrollPane = new JScrollPane();
-//        scrollPane.setViewportView(toList);
-//        toScrollPane.setPreferredSize(new Dimension(500,400));
-//        //toScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//        rightPane.add(toScrollPane);
-//        
-//        //Systematic ID box for to list
-//        Box toSysIDBox = Box.createVerticalBox();
-//        toSysIDBox.add(idField2);
-//        toSysIDBox.setBorder(sysIDBorder);
-//        rightPane.add(toSysIDBox);
-//        
-//        /* Add a box to edit the name of a product */
-//        Box newTerm = Box.createVerticalBox();
-//        newTerm.add(textField);
-//        TitledBorder editBorder = BorderFactory.createTitledBorder("Edit term name");
-//        editBorder.setTitleColor(Color.DARK_GRAY);
-//        newTerm.setBorder(editBorder);
-//        rightPane.add(newTerm);
-//        
-//        
-//        
-//        
-//        
-//    }
-    
+
 
 
     
     /**
      * PRIVATE HELPER METHODS
      */
-    private void synchroniseLists(JList sourceList, JList targetList){
+    
+  
+   private void synchroniseLists(JList sourceList, JList targetList){
         Term term = (Term)sourceList.getSelectedValue();
         targetList.setSelectedValue(term, true);
         targetList.ensureIndexIsVisible(targetList.getSelectedIndex());
-    }
-    
-    
-    private void populateTermTypes(){
-        instances.put("Products", "genedb_products");
-        instances.put("Controlled Curation Terms", "CC_genedb_controlledcuration");
-        //Add here for more
-    }
-    
-    private void writeMessage(String m){
+   }
+
+   
+   private void writeMessage(String m){
         this.information.setText(information.getText().concat(m).concat("\n"));
-    }
-    
+   }
+   
+   
+   private void setSelectedTaxonsAndScopeLabel(List<String> organismNames){
+       if(this.selectedTaxons!=null && this.selectedTaxons.size()>0){
+           this.selectedTaxons.clear(); //clear anything that already is in the list
+       }
+      
+       if(organismNames!=null && organismNames.size()!=0 && !organismNames.contains("root")){ // 'root' with a simple r causes problems 
+           scopeLabel.setText("Organism(s): " + StringUtils.collectionToCommaDelimitedString(organismNames)); 
+           for(String s: organismNames){
+               this.selectedTaxons.add(taxonNodeManager.getTaxonNodeForLabel(s));
+           }
+        }else{ //If there are no selections, get all terms
+            scopeLabel.setText("Organism(s): All organisms");
+            this.selectedTaxons.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
+        }
+   }
+   
+
+
+   private Box createRationaliserPanel(final String name, final RationaliserJList rjlist){
+       /* Since both the TO and FROM panels are so similar, we put all the common
+        * drawing tasks inside the following method.  */
+       
+       int preferredHeight = 500; //change accordingly
+       int preferredWidth  = 400; 
+
+       Box box = Box.createVerticalBox();
+       box.add(new JLabel(name));
+
+       JTextField searchField = new JTextField(20); //Search field on top
+       rjlist.installJTextField(searchField);
+       box.add(searchField);
+
+       JScrollPane scrollPane = new JScrollPane(); //scroll pane
+       scrollPane.setViewportView(rjlist);
+       scrollPane.setPreferredSize(new Dimension(preferredHeight,preferredWidth));
+       box.add(scrollPane);
+
+       TitledBorder sysidBorder = BorderFactory.createTitledBorder("Systematic IDs"); //systematic ID box
+       sysidBorder.setTitleColor(Color.DARK_GRAY);
+       final JTextField idField = new JTextField(20);
+       idField.setEditable(false);
+       idField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+       idField.setForeground(Color.DARK_GRAY);
+       Box sysidBox = Box.createVerticalBox();
+       sysidBox.add(idField);
+       sysidBox.setBorder(sysidBorder);
+       box.add(sysidBox);
+
+       rjlist.addListSelectionListener(new ListSelectionListener() {
+           @Override
+           public void valueChanged(ListSelectionEvent e) {
+               Term highlightedTerm = (Term) rjlist.getSelectedValue();  
+               if(highlightedTerm!=null){
+                   //Set the sys id box to show the sys id
+                   idField.setText(StringUtils.collectionToCommaDelimitedString(termService.getSystematicIDs(highlightedTerm, selectedTaxons)));
+                   if(name.equalsIgnoreCase("To")){
+                       textField.setText(highlightedTerm.getName()); //Allow the user to edit the spelling of the term in the to list
+                   }
+               }
+           }
+       });
+
+       return box;
+
+   }
+
+   
+   
     /**
      *  SETTER/GETTER METHODS
      */  
-    public void setSelectedTaxons(List<TaxonNode> selectedTaxons){
-        this.selectedTaxons = selectedTaxons;
-    }
+    
+   public JFrame getFrame(){
+       return frame;
+   }
     
     public List<TaxonNode> getSelectedTaxons(){
         return this.selectedTaxons;
@@ -633,9 +526,11 @@ public class TermRationaliser implements JograPlugin {
         this.taxonNodeManager = taxonNodeManager;
     }
     
+    
     public void setTermType(String type){
         this.termType = type;
     }
+    
     
     public String getTermType(){
         return termType;
@@ -653,13 +548,6 @@ public class TermRationaliser implements JograPlugin {
         return showEVC;
     }
     
-    public void setShowSysID(boolean value){
-        showSysID = value;
-    }
-    
-    public boolean isShowSysID(){
-        return showSysID;
-    }
 
     public boolean isSingletonByDefault() {
         return true;
@@ -709,7 +597,7 @@ public class TermRationaliser implements JograPlugin {
         }
 
         int findClosestMatch(String in, int fromIndex, ListModel list) {
-            //System.err.println("Looking for match for '"+in+"'");
+            
             int current = -1;
             int distance = Integer.MAX_VALUE;
             for (int i = 0; i < list.getSize(); i++) {
@@ -718,16 +606,13 @@ public class TermRationaliser implements JograPlugin {
                 }
                 String element = ((Term)list.getElementAt(i)).getName();
                 if (in.equalsIgnoreCase(element)) {
-                    System.err.println("Found identical except case at '"+i+"'");
                     return i;
                 }
                 int d = org.apache.commons.lang.StringUtils.getLevenshteinDistance(in, element);
                 if (d==1) {
-                    //System.err.println("Found 1 away at '"+i+"'");
                     return i;
                 }
                 if ( d < distance) {
-                    //System.err.println("Found distance '"+d+"' at '"+i+"'");
                     distance = d;
                     current = i;
                 }
@@ -751,8 +636,7 @@ public class TermRationaliser implements JograPlugin {
 
 
     /********************************************************************************************
-     * Action which wraps the actual rationalise action in the TermService. It
-     * passes the selected values in both columns and then refreshes the JLists.
+     * Action which wraps the rationalise action in the TermService.
      ********************************************************************************************/
     class RationaliserAction extends AbstractAction implements ListSelectionListener {
 
@@ -771,66 +655,114 @@ public class TermRationaliser implements JograPlugin {
         @Override
         public void actionPerformed(ActionEvent e) {
             
-            List<Term> from = new ArrayList<Term>(); //Terms to be changed (from list)
-            
+            List<Term> from = new ArrayList<Term>(); 
             Object[] temp = fromList.getSelectedValues();
-            for (Object o: temp){
+            for (Object o: temp){ //TODO:is there an easier way to convert an array to a list of typed objects?
                 from.add((Term)o);
-            }
-         
-            Term to = (Term) toList.getSelectedValue(); //Term (to list) to be rationalised into
-            String text = textField.getText(); //Corrected name (if provided)
+            }            
+           
+            Term to = (Term) toList.getSelectedValue(); //Term selected on the right
+            String text = textField.getText(); //Corrected name (if provided) in the text box
      
             /* 
-             * Doing a little bit of input validation before sending the values to be rationalised.
-             * In particular, we check here if the new text entered by the user already exists (but perhaps with
-             * letters in different cases). In this case, the user is prompted with a box to choose if she
-             * wants to force these changes across all the organisms (and thereby delete the old term) or cancel
-             * her request to rationalise into this new term name. In a situation where the product names differ only
-             * in the capitalisation, it's an 'all or nothing' approach.
+             * Doing a bit of input validation before sending the values to be rationalised.
              */
             
             boolean changeAllOrganisms = false;
-        
-            Term tempTerm = new Term(-1, text); //Temporary term to hold the text that the user entered in the textfield
- 
-            if(!text.equals(to.getName()) && terms.contains(tempTerm)){
-                    
-                    writeMessage("Term with similar name as the one entered already exists. Awaiting user input.");
+            
+            if(to.getName().equals(text)){
+                //Go ahead, rationalise
+                int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
+                                                                StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
+                                                                "to a new term: \n" +
+                                                                text + "\n\n" +
+                                                                "Do you want to continue? ", 
+                                                                "Confirm");
+     
 
-                    int userDecision = JOptionPane.showConfirmDialog
-                            (null, 
-                            new String("There is already a term with the name '" + text + "' but perhaps with different capitalisation.\n" +      
-                            "Do you want to delete the old term and make this change across *ALL* the organisms? "), 
-                            "Term with similar name already exists",
-                            JOptionPane.OK_CANCEL_OPTION, 
-                            JOptionPane.WARNING_MESSAGE);
+                if (userDecision==JOptionPane.CANCEL_OPTION){
+                    writeMessage("Request to rationalise cancelled.");
+                    return;
+                }
 
-                    if(userDecision==JOptionPane.OK_OPTION){
-                        changeAllOrganisms = true;
-                        writeMessage("Making requested change across all organisms....");
-                    }else if (userDecision==JOptionPane.CANCEL_OPTION){
+            
+            }else  { //so, user has decided to enter a 'new' term name (or what appears to be a new term name)
+                
+                Term t = termService.getTerm(text, getTermType(), false); //is it in the cvterm table?
+                
+                if(t!=null){ //Yes it is
+                    //Confirm with the user first before rationalising
+                    int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
+                                                                    StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
+                                                                    "to a term that already exists in the database: \n" +
+                                                                    text + "\n\n" +
+                                                                    "Do you want to continue? ", 
+                                                                    "Confirm");
+                    if (userDecision==JOptionPane.CANCEL_OPTION){
                         writeMessage("Request to rationalise cancelled.");
                         return;
                     }
-             }else{
-              
-                    logger.info("Brand new cv term needs to be created");
-             }
-            
+                    
+                }else{ //No it does not
+                    Term tignorecase = termService.getTerm(text, getTermType(), true); //ok, is it in the cvterm table in a different case?
+                    
+                    if(tignorecase!=null){ //yes it does
+                        //confirm with user. change all or nothing
+                        int userDecision = this.show_OK_Cancel_Dialogue ("There is already a term with the name '" + text + 
+                                                                         "' differing just in case.\n" +      
+                                                                         "Do you want to delete the old term and make this " +
+                                                                         "change across *ALL* the organisms? ",
+                                                                         "Term with similar name already exists");
+
+                        if(userDecision==JOptionPane.OK_OPTION){
+                            changeAllOrganisms = true;
+                            writeMessage("Making requested change across all organisms....");
+                        }else if (userDecision==JOptionPane.CANCEL_OPTION){
+                            writeMessage("Request to rationalise cancelled.");
+                            return;
+                        }
+
+                    }else{ //no it does not
+                        //new term is truly new and has to be created. confirm first
+                        int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
+                                                                         StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
+                                                                         "to a new term: \n" +
+                                                                         text + "\n\n" +
+                                                                         "Do you want to continue? ", 
+                                                                         "Confirm");
+
+                        if (userDecision==JOptionPane.CANCEL_OPTION){
+                            writeMessage("Request to rationalise cancelled.");
+                            return;
+                        }
+
+                        
+                    }
+                }
+         
+            }
+        
+                
+   
             
             /* 
              * Having validated the input, the rationaliseTerm method can be called. The result of this process is then used
-             * to update the JLists. The changes in the terms are made in the jlists rather than fetching all the
+             * to update the JLists. The changes in the terms are made in the jlists rather than fetching *all* the
              * terms again from the database as this was too slow.
              */
           
             try{    
-              
+                
+                getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                
+                writeMessage("Rationalising...");
+                
                 RationaliserResult result = termService.rationaliseTerm(from, text, changeAllOrganisms, selectedTaxons);
 
                 Set<Term> add = new HashSet<Term>(result.getTermsAdded()); //Terms that have been added (if any)
                 Set<Term> remove = new HashSet<Term>(result.getTermsDeleted()); //Terms that have been deleted (if any)
+                logger.info("Items in remove: " + StringUtils.collectionToCommaDelimitedString(remove));
+                logger.info("Items in add: " + StringUtils.collectionToCommaDelimitedString(add));
                 terms.removeAll(remove); //Always do a remove first so that duplicates are dealt with
                 terms.addAll(add);  
                 Collections.sort(terms);
@@ -846,10 +778,12 @@ public class TermRationaliser implements JograPlugin {
                 fromList.repaint();
                 
             }catch (Exception se){ //Any other unexpected errors
-                writeMessage("There was an error while trying to rationalise. Try again or contact the Pathogens informatics team with details of what you tried to do.");
+                writeMessage("There was an error while trying to rationalise. Try again or contact the WTSI Pathogens Informatics team with details of what you tried to do.");
                 writeMessage(se.toString());
                 logger.debug(se.toString());      
             }
+            
+            getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
 
         @Override
@@ -863,48 +797,21 @@ public class TermRationaliser implements JograPlugin {
                 this.setEnabled(selection);
             }
         }
+        
+        private int show_OK_Cancel_Dialogue(String message, String title){
+            return 
+            JOptionPane.showConfirmDialog
+            ( null, 
+              message, 
+              title,
+              JOptionPane.OK_CANCEL_OPTION, 
+              JOptionPane.WARNING_MESSAGE
+            );
+            
+        }
 
     }
     
-    
-    /**
-     * Class to generate the term names in the JList in a different colour if they have evidence codes
-     * It also sets the ToolTipText to have the evidence codes
-     * Added by NDS on 22.5.2009
-     */
-    class ColorRenderer extends DefaultListCellRenderer {
-        Term current;
-        
-        /* Creates a new instance of ColorRenderer */
-        public ColorRenderer() { }
-          
-        /* Sets the colour of the text to blue if the term has an evidence code **/
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-          super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-          if(value instanceof Term){
-              current = (Term)value;
-              List<String> tempevc = current.getEvidenceCodes();
-              if(tempevc!=null && !tempevc.isEmpty()){
-                  setForeground(Color.BLUE);
-              }
-          }
-          return this;
-        }
-        
-        /* When mouse hovers over the list item, the user will be able to see the evidence codes related to that product (via a ToolTip)*/
-        public String getToolTipText(MouseEvent event){
-            if(current!=null && (current.toString()).equals(super.getText())){ //Checking if we have a term and that it is the right one
-                List<String> tempevc = current.getEvidenceCodes();
-                if(tempevc!=null && !tempevc.isEmpty()){
-                    String results = StringUtils.collectionToDelimitedString(tempevc, "/n");
-                    return results;
-                }
-            }
-            return new String();
-        }
-    }
-          
-
 
 
     public void process(List<String> newArgs) {
@@ -917,5 +824,23 @@ public class TermRationaliser implements JograPlugin {
         this.jogra = jogra;
     }
 
+    public String[] getCvnames() {
+        return cvnames;
+    }
 
-}
+    public void setCvnames(String[] cvnames) {
+        this.cvnames = cvnames;
+        for(String c: cvnames){
+            String[] splitparts = StringUtils.split(c, ",");
+            instances.put(splitparts[1], splitparts[0]);
+         }
+    }
+    
+   
+    
+   
+    
+    }
+    
+
+
