@@ -54,6 +54,7 @@ public class Term implements Serializable, Comparable<Term> {
         return result;
     }
 
+    /* equals method used by contains method in list */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -88,6 +89,12 @@ public class Term implements Serializable, Comparable<Term> {
     public int compareTo(Term other){
         return this.name.compareTo(other.name);
         
+    }
+    
+    /* Colour-code the term according to evidence codes */
+    public void assignColour(){
+        //Look at evidence codes and look at the grouping
+        //Assign colour
     }
 
     public int getId() {
