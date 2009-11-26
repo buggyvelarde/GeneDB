@@ -19,5 +19,8 @@ public interface TermService {
     
     /* Method to retrieve evidence codes for a given term */
     List<String> getEvidenceCodes(Term term);
+    
+    /* Given a name, get the corresponding Term */
+    Term getTerm(String name, String type, boolean ignoreCase);
  
 }
