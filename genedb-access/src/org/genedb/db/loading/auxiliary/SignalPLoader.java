@@ -29,20 +29,20 @@ public class SignalPLoader extends Loader {
     String analysisProgramVersion;
     private Analysis analysis;
 
-   @Override
+    @Override
     protected Set<String> getOptionNames() {
-	Set<String> options = new HashSet<String>();
-	Collections.addAll(options, "signalp-version");
+        Set<String> options = new HashSet<String>();
+        Collections.addAll(options, "signalp-version");
         return options;
     }
 
     @Override
     protected boolean processOption(String optionName, String optionValue) {
 
-	if (optionName.equals("signalp-version")) {
-	    analysisProgramVersion = optionValue;
-	    return true;
-	}
+        if (optionName.equals("signalp-version")) {
+            analysisProgramVersion = optionValue;
+            return true;
+        }
         return false;
     }
 
@@ -51,15 +51,15 @@ public class SignalPLoader extends Loader {
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         loadTerms();
 
-	if (analysisProgramVersion == null) {
-	    throw new IllegalArgumentException("Property load.analysis.programVersion is required");
-	}
+        if (analysisProgramVersion == null) {
+            throw new IllegalArgumentException("Property load.analysis.programVersion is required");
+        }
 
-	// Add analysis 
-	analysis = new Analysis();
-	analysis.setProgram("signalp");
-	analysis.setProgramVersion(analysisProgramVersion);
-	sequenceDao.persist(analysis);
+        // Add analysis
+        analysis = new Analysis();
+        analysis.setProgram("signalp");
+        analysis.setProgramVersion(analysisProgramVersion);
+        sequenceDao.persist(analysis);
 
         SignalPFile file = new SignalPFile(inputStream);
 
@@ -101,7 +101,7 @@ public class SignalPLoader extends Loader {
         if (hit.getType().equals("Signal peptide")) {
 
             SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(),
-                hit.getCleavageSiteProbability(), analysis);
+                    hit.getCleavageSiteProbability(), analysis);
             sequenceDao.persist(signalPeptide);
         }
     }
@@ -142,11 +142,11 @@ class SignalPFile {
     }
 
     private static final Pattern SUMMARY_PATTERN = Pattern.compile(
-        ">(.*)\n"+
-        "Prediction: (Non-secretory protein|Signal peptide|Signal anchor)\n"+
-        "Signal peptide probability: (\\d\\.\\d{3})\n"+
-        "(?:Signal anchor probability: (\\d\\.\\d{3})\n)?"+
-        "Max cleavage site probability: (\\d\\.\\d{3}) between pos\\. (-1|\\d+) and  ?(\\d+)\n"
+            ">(.*)\n"+
+            "Prediction: (Non-secretory protein|Signal peptide|Signal anchor)\n"+
+            "Signal peptide probability: (\\d\\.\\d{3})\n"+
+            "(?:Signal anchor probability: (\\d\\.\\d{3})\n)?"+
+            "Max cleavage site probability: (\\d\\.\\d{3}) between pos\\. (-1|\\d+) and  ?(\\d+)\n"
     );
     private void parseSummary(CharSequence summary) {
         Matcher matcher = SUMMARY_PATTERN.matcher(summary);
@@ -163,7 +163,7 @@ class SignalPFile {
             int cleavageSiteAfter = Integer.parseInt(matcher.group(7));
 
             hits.add(new SignalPHit(key, type, peptideProbability, anchorProbability, cleavageSiteProbability,
-                cleavageSiteAfter));
+                    cleavageSiteAfter));
         }
         else {
             logger.error("Failed to parse summary:\n" + summary);
