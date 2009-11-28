@@ -21,7 +21,6 @@
         </fileset>
         <pathelement location="${genedb-db.jar}" />
         <pathelement location="${java.home}/lib/javaws.jar" />
-       
     </path>
 	
 	<!-- Need to make the util jar file known as cvDao is being used -->
@@ -90,7 +89,6 @@
 	                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
 	                <attribute name="Class-Path" value="${classpath-for-manifest}" />        <!-- "resources.jar" --> 
 	            </manifest>
-            
 	        </jar-target>
 	    </target>
      
