@@ -1,9 +1,9 @@
 <ivy-module version="2.0">
     <info organisation="org.genedb" module="Jogra"/>
     <dependencies>
-      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M3" />
-      <dependency org="org.springframework" name="org.springframework.transaction" rev="3.0.0.M3" />
-      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M3" />
+      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.RC2" />
+      <dependency org="org.springframework" name="org.springframework.transaction" rev="3.0.0.RC2" />
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RC2" />
       <dependency org="org.bushe.eventbus" name="eventbus" rev="1.3-SNAPSHOT" />
       <dependency org="org.swinglabs" name="swingx" rev="0.9.7" />
       <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1" />
@@ -14,17 +14,12 @@
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
       <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
 
-
       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
       <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
 
-
-
-
       <!--
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" /> -->
-
 
     </dependencies>
 </ivy-module>
