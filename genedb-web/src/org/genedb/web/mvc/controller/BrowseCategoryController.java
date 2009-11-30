@@ -130,7 +130,8 @@ public class BrowseCategoryController extends BaseController {
         if (results.isEmpty()) {
             logger.info("result is null");
             model.addAttribute("noResultFound", true);
-            return new ModelAndView(formView, "browseCategory", bean);
+
+            return new ModelAndView("jsp:search/browseCategory", "browseCategory", bean);
         }
         logger.debug(results.get(0));
 
