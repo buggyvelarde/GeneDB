@@ -767,7 +767,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
      * @return
      */
     @Transient
-    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.YES)
+    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
     @Analyzer(impl = AllNamesAnalyzer.class)
     String getAllNames() {
         StringBuilder allNames = new StringBuilder();
