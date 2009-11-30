@@ -21,13 +21,16 @@ public class HomepageSelectTag extends AbstractHomepageTag {
     protected void display(TaxonNode root, JspWriter out) throws IOException {
         List<TaxonNode> nodes = new ArrayList<TaxonNode>();
         getAllChildren(root, nodes);
-
-        out.write(String.format("<select name=\"organism\" onChange=\"document.location.href='%s'+this.value\">", baseUrl));
+        
+        
+        
+        out.write(String.format("<select name=\"organism\" onChange=\"if (this.selectedIndex != 0) { document.location.href='%s'+this.value ;}\">", baseUrl));
         if (this.title != null) {
             //out.write(String.format("<option value=\"%s\" disabled=\"disabled\">%s</option>", "none", title));
             out.write(String.format("<option value=\"%s\">%s</option>", "none", title));
         }
         for (TaxonNode node : nodes) {
+        	
             out.write(String.format("<option value=\"%s\">%s</option>", node.getLabel(), node.getName(TaxonNameType.FULL)));
         }
         out.write("</select>");
