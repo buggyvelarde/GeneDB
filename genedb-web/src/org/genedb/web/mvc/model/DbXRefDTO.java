@@ -4,6 +4,9 @@ import org.gmod.schema.mapped.DbXRef;
 
 import java.io.Serializable;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("dbxref")
 public class DbXRefDTO implements Serializable {
     private String dbName;
     private String accession;

@@ -13,7 +13,9 @@ import java.util.Map;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+@XStreamAlias("ontology_term")
 public class FeatureCvTermDTO implements Serializable {
 
     private static final long serialVersionUID = -2231825983085114418L;
