@@ -9,7 +9,6 @@
 
             <div id="geneDetails">
                 <format:genePageSection id="nameSearch" className="whiteBox">
-                <!-- Select <a href="${pageContext.request.contextPath}/Query?q=allNameProduct&taxons=${param.taxons}&search=${param.searchText}&pseudogenes=true&_pseudogenes=on&allNames=true&_allNames=on&product=true&_product=on">Refine</a> to modify search options.-->
                 <st:flashMessage />
                 <table border=0 width="100%">
                     <tr>
@@ -56,7 +55,7 @@
 
                                <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
                                     <td>
-                                        Select <a href="${pageContext.request.contextPath}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
+                                        Select <a href="${baseUrl}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
                                     </td>
                                </c:if>
 
@@ -76,8 +75,8 @@
 
                                         </td>
                               </c:if>
-                                   <td aligh=left>
-                                    <db:quicksearchmessage/>
+                                   <td align="left">
+                                    <db:quicksearchmessage />
                                  </td>
 
                             </tr>
