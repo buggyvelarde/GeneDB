@@ -43,12 +43,12 @@
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
 <img src="<misc:url value="/includes/image/dataset-parasite-vectors.jpg"/>" height="163" width="136" alt="Parasite Vectors" />
-<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${base2}Pages/Parasite Vectors">Parasite Vectors</option></select>
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Pages/Parasite Vectors">Parasite Vectors</option></select>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
 <img src="<misc:url value="/includes/image/dataset-viruses.jpg"/>" height="163" width="136" alt="Viruses" />
-<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${base2}Pages/Viruses">Viruses</option></select>
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Pages/Viruses">Viruses</option></select>
 
 </td>
 </tr>
