@@ -12,5 +12,7 @@
 
 <br><query:results />
 
+<format:test-for-no-results />
+
 <format:footer />
 </format:page>

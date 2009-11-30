@@ -1,9 +1,12 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <format:header title="EC Search" />
 <format:page>
 <br>
+
+
 
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
@@ -37,6 +40,10 @@
 
         </form:form>
     </format:genePageSection>
+    
+    <format:test-for-no-results />
+    
+    
 </div>
 
 <br><query:results />
