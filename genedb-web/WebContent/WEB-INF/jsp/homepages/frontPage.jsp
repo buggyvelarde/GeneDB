@@ -38,7 +38,7 @@
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
-<db:homepageselect top="bacteria" baseUrl="${base2}"/>
+<db:homepageselect top="Bacteria" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
