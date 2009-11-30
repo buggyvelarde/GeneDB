@@ -2,7 +2,7 @@
 <!-- JNLP File for Jogra -->
 
 <jnlp spec="1.0+"
-      codebase="http://developer.genedb.org/Jogra/beta" 
+      codebase="http://developer.genedb.org/Jogra/jar" 
       href="Jogra.jnlp">
    <information>
       <title>Jogra</title>
