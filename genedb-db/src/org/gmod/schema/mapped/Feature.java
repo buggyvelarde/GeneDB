@@ -782,7 +782,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         }
         allNames.append(' ');
         allNames.append(getSynonymsAsTabSeparatedString());
-        return allNames.toString();
+        return allNames.toString().toLowerCase();
     }
 
     @Transient
