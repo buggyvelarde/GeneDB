@@ -1,80 +1,4 @@
 <div id="homepage-text">
- <table id="toc" class="toc" summary="Contents">
-  <tr>
-   <td>
-    <div id="toctitle">
-     <h2>
-      Contents
-     </h2>
-    </div>
-    <ul>
-     <li class="toclevel-1">
-      <a href="#The_Schistosoma_mansoni_Genome">
-       <span class="tocnumber">
-        1
-       </span>
-       <span class="toctext">
-        The Schistosoma mansoni Genome
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#The_disease">
-       <span class="tocnumber">
-        2
-       </span>
-       <span class="toctext">
-        The disease
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#The_genome">
-       <span class="tocnumber">
-        3
-       </span>
-       <span class="toctext">
-        The genome
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#Links">
-       <span class="tocnumber">
-        4
-       </span>
-       <span class="toctext">
-        Links
-       </span>
-      </a>
-     </li>
-    </ul>
-   </td>
-  </tr>
- </table>
- <a name="The_Schistosoma_mansoni_Genome">
- </a>
- <h2>
-  <span class="mw-headline">
-   The
-   <i>
-    Schistosoma mansoni
-   </i>
-   Genome
-  </span>
- </h2>
- <p>
-  GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.
-The most recent sequence updates and annotations for the
-  <i>
-   S. mansoni
-  </i>
-  genome can be found in
-  <a href="http://www.genedb.org/genedb/smansoni/" class="external text" title="http://www.genedb.org/genedb/smansoni/" rel="nofollow">
-   GeneDB
-  </a>
-  .
- </p>
  <a name="The_disease">
  </a>
  <h2>
@@ -138,44 +62,54 @@ Further information can be found on the
    Links
   </span>
  </h2>
- <p>
-  <a href="http://www.sanger.ac.uk/Projects/S_mansoni/" class="external text" title="http://www.sanger.ac.uk/Projects/S_mansoni/" rel="nofollow">
-   Sanger
-   <i>
-    S. mansoni
-   </i>
-   genome project
-  </a>
-  <a href="mailto:ploverde@sfbr.org" class="external text" title="mailto:ploverde@sfbr.org" rel="nofollow">
-   Phil LoVerde research group
-  </a>
-  <a href="http://www.york.ac.uk/res/schisto/" class="external text" title="http://www.york.ac.uk/res/schisto/" rel="nofollow">
-   York University
-   <i>
-    S. mansoni
-   </i>
-   research
-  </a>
-  <a href="http://verjo18.iq.usp.br/schisto/" class="external text" title="http://verjo18.iq.usp.br/schisto/" rel="nofollow">
-   Brazil
-   <i>
-    S. mansoni
-   </i>
-   EST project
-  </a>
-  <a href="http://en.wikipedia.org/wiki/Schistosomiasis" class="external text" title="http://en.wikipedia.org/wiki/Schistosomiasis" rel="nofollow">
-   Wikipedia
-   <i>
-    S. mansoni
-   </i>
-   page
-  </a>
- </p>
+ <ul>
+  <li>
+   <a href="http://www.sanger.ac.uk/Projects/S_mansoni/" class="external text" title="http://www.sanger.ac.uk/Projects/S_mansoni/" rel="nofollow">
+    Sanger
+    <i>
+     S. mansoni
+    </i>
+    genome project
+   </a>
+  </li>
+  <li>
+   <a href="mailto:ploverde@sfbr.org" class="external text" title="mailto:ploverde@sfbr.org" rel="nofollow">
+    Phil LoVerde research group
+   </a>
+  </li>
+  <li>
+   <a href="http://www.york.ac.uk/res/schisto/" class="external text" title="http://www.york.ac.uk/res/schisto/" rel="nofollow">
+    York University
+    <i>
+     S. mansoni
+    </i>
+    research
+   </a>
+  </li>
+  <li>
+   <a href="http://verjo18.iq.usp.br/schisto/" class="external text" title="http://verjo18.iq.usp.br/schisto/" rel="nofollow">
+    Brazil
+    <i>
+     S. mansoni
+    </i>
+    EST project
+   </a>
+  </li>
+  <li>
+   <a href="http://en.wikipedia.org/wiki/Schistosoma_mansoni" class="external text" title="http://en.wikipedia.org/wiki/Schistosoma_mansoni" rel="nofollow">
+    Wikipedia
+    <i>
+     S. mansoni
+    </i>
+    page
+   </a>
+  </li>
+ </ul>
  <!-- 
 NewPP limit report
-Preprocessor node count: 5/1000000
+Preprocessor node count: 4/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5680-0!1!0!!en!2 and timestamp 20091123120842 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5680-0!1!0!!en!2 and timestamp 20091130204414 -->
 </div>

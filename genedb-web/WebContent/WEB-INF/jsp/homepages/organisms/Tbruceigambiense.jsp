@@ -1,9 +1,11 @@
 <div id="homepage-text">
- <p>
-  <b>
+ <a name="The_Disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The Disease
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The Wellcome Trust Sanger Institute Pathogen Sequencing Unit (PSU) is partially shotgun sequencing the nuclear genome of the human-infective
   <i>
@@ -67,46 +69,47 @@
   </i>
   partial shotgun project is being carried out in collaboration with Wendy Gibson (University of Bristol, UK).
  </p>
- <p>
-  <b>
+ <a name="The_Database">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The Database
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
-  GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community.
-  <b>
-  </b>
-  New annotations are constantly being added to keep up with published manuscripts and feedback from the Trypanosomatid research community. In collaboration with GeneDB, the EuPathDB genomic sequence data and annotations are regularly deposited on
+  GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community. New annotations are constantly being added to keep up with published manuscripts and feedback from the Trypanosomatid research community. In collaboration with GeneDB, the EuPathDB genomic sequence data and annotations are regularly deposited on
   <a href="http://tritrypdb.org/tritrypdb/" class="external text" title="http://tritrypdb.org/tritrypdb/" rel="nofollow">
    <b>
     TriTrypDB
    </b>
   </a>
   where they can be integrated with other datasets and queried using customized queries.
-  <span class="Apple-converted-space">
-  </span>
  </p>
- <p>
-  <b>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Data Release
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   This sequencing centre plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale. For further information see our data release policy(linkout).
  </p>
- <p>
-  <b>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Sequencing Enquiries
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 2/1000000
+Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5677-0!1!0!!en!2 and timestamp 20091123133308 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5677-0!1!0!!en!2 and timestamp 20091130204156 -->
 </div>

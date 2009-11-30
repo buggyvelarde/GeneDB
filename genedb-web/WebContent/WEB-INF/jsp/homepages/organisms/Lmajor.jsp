@@ -1,9 +1,11 @@
 <div id="homepage-text">
- <p>
-  <b>
+ <a name="The_disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The disease
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The
   <i>
@@ -18,11 +20,13 @@
   </a>
   .
  </p>
- <p>
-  <b>
+ <a name="The_genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The genome
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The
   <i>
@@ -48,11 +52,13 @@
   </a>
   . The sequence data were obtained by adopting several parallel approaches, including complete cosmid sequencing, whole chromosome shotguns and/or BAC sequencing/skimming.
  </p>
- <p>
-  <b>
+ <a name="The_Database">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The Database
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community.
   <b>
@@ -65,27 +71,31 @@
   </a>
   where they can be integrated with other datasets and queried using customized queries.
  </p>
- <p>
-  <b>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Data Release
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   This annotated genome sequence has been published in Ivens et al., Science 309(5733):436-442 and is available for use without restriction. However, the annotation is pro-actively updated and curated. If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
  </p>
- <p>
-  <b>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Sequencing Enquiries
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 1/1000000
+Preprocessor node count: 6/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5675-0!1!0!!en!2 and timestamp 20091123133100 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5675-0!1!0!!en!2 and timestamp 20091130203553 -->
 </div>

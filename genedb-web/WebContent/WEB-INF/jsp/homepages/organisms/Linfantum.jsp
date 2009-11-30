@@ -1,9 +1,11 @@
 <div id="homepage-text">
- <p>
-  <b>
+ <a name="The_disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The disease
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The
   <i>
@@ -50,11 +52,13 @@
   </a>
   ).
  </p>
- <p>
-  <b>
+ <a name="The_genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The genome
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   We have generated a whole genome shotgun, to ~5x coverage, of L. infantum clone JPCM5 (MCAN/ES/98/LLM-877). This was completed in October 2003. This project is a collaboration with
   <a href="mailto:dfs501@york.ac.uk" class="external text" title="mailto:dfs501@york.ac.uk" rel="nofollow">
@@ -66,11 +70,13 @@
   </a>
   (University of Glasgow).
  </p>
- <p>
-  <b>
+ <a name="The_Database">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The Database
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community.
   <b>
@@ -83,11 +89,13 @@
   </a>
   where they can be integrated with other datasets and queried using customized queries.
  </p>
- <p>
-  <b>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Data Release
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The genome is now published as part of a comparative genome analysis with
   <i>
@@ -110,19 +118,21 @@
   </span>
   However, the annotation is pro-actively updated and curated. If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
  </p>
- <p>
-  <b>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Sequencing Enquiries
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 2/1000000
+Preprocessor node count: 7/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5674-0!1!0!!en!2 and timestamp 20091123132950 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5674-0!1!0!!en!2 and timestamp 20091130203502 -->
 </div>

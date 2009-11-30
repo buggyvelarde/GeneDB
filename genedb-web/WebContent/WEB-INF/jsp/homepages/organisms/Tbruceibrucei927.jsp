@@ -1,9 +1,11 @@
 <div id="homepage-text">
- <p>
-  <b>
+ <a name="The_disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The disease
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   Protozoan parasites within the species
   <i>
@@ -22,11 +24,13 @@
   </a>
   .
  </p>
- <p>
-  <b>
+ <a name="The_genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The genome
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   <i>
    T. brucei
@@ -41,30 +45,29 @@
   </a>
   of pulse field separated chromosomes).
  </p>
- <p>
-  <b>
+ <a name="The_Database">
+ </a>
+ <h2>
+  <span class="mw-headline">
    The Database
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
-  GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community.
-  <b>
-  </b>
-  New annotations are constantly being added to keep up with published manuscripts and feedback from the Trypanosomatid research community. In collaboration with GeneDB, the EuPathDB genomic sequence data and annotations are regularly deposited on
+  GeneDB has been funded by Wellcome Trust to provide full curation support for kinetoplastida genomes to meet the needs of the community. New annotations are constantly being added to keep up with published manuscripts and feedback from the Trypanosomatid research community. In collaboration with GeneDB, the EuPathDB genomic sequence data and annotations are regularly deposited on
   <a href="http://tritrypdb.org/tritrypdb/" class="external text" title="http://tritrypdb.org/tritrypdb/" rel="nofollow">
    <b>
     TriTrypDB
    </b>
   </a>
   where they can be integrated with other datasets and queried using customized queries.
-  <span class="Apple-converted-space">
-  </span>
  </p>
- <p>
-  <b>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Data Release
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   The genome of the
   <i>
@@ -73,10 +76,7 @@
   TREU
   <i>
   </i>
-  927 has been published in Berriman et al. 2005, Science 309(5733):416-422 and is available for use without restriction. However, the annotation is pro-actively updated and curated.
-  <span class="Apple-converted-space">
-  </span>
-  If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
+  927 has been published in Berriman et al. 2005, Science 309(5733):416-422 and is available for use without restriction. However, the annotation is pro-actively updated and curated. If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
  </p>
  <p>
   Berriman et al. Science. 2005 Jul 15;309(5733):416-22.
@@ -84,19 +84,21 @@
  <p>
   PMID: 16020726
  </p>
- <p>
-  <b>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
    Sequencing Enquiries
-  </b>
- </p>
+  </span>
+ </h2>
  <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 3/1000000
+Preprocessor node count: 6/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5676-0!1!0!!en!2 and timestamp 20091123133211 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5676-0!1!0!!en!2 and timestamp 20091130204000 -->
 </div>
