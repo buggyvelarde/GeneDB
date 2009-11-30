@@ -22,13 +22,13 @@
 
 	<div class="readableText">
 	
-		<h2>${full} Genome Project</h2>
+		<h1>${full} Genome Project</h1>
 	
 		<c:catch var="e">
 			<jsp:include page="organisms/${label}.jsp" />
 		</c:catch>
 		<c:if test="${e!=null}">
-		  ${full} genome has been loaded into GeneDB. At this moment, we have not yet 
+		  The ${full} genome has been loaded into GeneDB. At this moment, we have not yet 
 		  entered the details of this sequencing project. If you are one of the contributors
 		  to this project and you would like to help with this page, 
 		  then please get <a href="mailto:webmaster@genedb.org">email us</a> with some copy, which
