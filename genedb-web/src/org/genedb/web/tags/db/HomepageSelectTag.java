@@ -11,7 +11,7 @@ import javax.servlet.jsp.JspWriter;
 
 public class HomepageSelectTag extends AbstractHomepageTag {
 
-    private static final String DEFAULT_TITLE = null; //"Select an organism";
+    private static final String DEFAULT_TITLE = "Select an organism";
 
     private String baseUrl;
     private boolean leafOnly = false;
@@ -24,7 +24,8 @@ public class HomepageSelectTag extends AbstractHomepageTag {
 
         out.write(String.format("<select name=\"organism\" onChange=\"document.location.href='%s'+this.value\">", baseUrl));
         if (this.title != null) {
-            out.write(String.format("<option value=\"%s\" disabled=\"disabled\">%s</option>", "none", title));
+            //out.write(String.format("<option value=\"%s\" disabled=\"disabled\">%s</option>", "none", title));
+            out.write(String.format("<option value=\"%s\">%s</option>", "none", title));
         }
         for (TaxonNode node : nodes) {
             out.write(String.format("<option value=\"%s\">%s</option>", node.getLabel(), node.getName(TaxonNameType.FULL)));
