@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+@XStreamAlias("transcript")
 public class TranscriptDTO implements Serializable {
 
     private static final transient Logger logger = Logger.getLogger(TranscriptDTO.class);
@@ -26,13 +29,13 @@ public class TranscriptDTO implements Serializable {
     private List<String> clusterIds;
     private List<String> comments;
     private List<FeatureCvTermDTO> controlledCurations;
-    private List<DbXRefDTO> dbXRefDTOs;
+    @XStreamAlias("dbxrefs") private List<DbXRefDTO> dbXRefDTOs;
     private List<PolypeptideRegionGroup> domainInformation;
     private String geneName;
     private List<FeatureCvTermDTO> goBiologicalProcesses;
     private List<FeatureCvTermDTO> goCellularComponents;
     private List<FeatureCvTermDTO> goMolecularFunctions;
-    private ImageMapSummary ims;
+    @XStreamOmitField private ImageMapSummary ims;
     private long lastModified = Long.MIN_VALUE;
     private int max;
     private int min;
@@ -58,7 +61,6 @@ public class TranscriptDTO implements Serializable {
     private String topLevelFeatureUniqueName;
     private String typeDescription;
     private String uniqueName;
-
 
     public boolean isProperGeneName() {
         //<c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
