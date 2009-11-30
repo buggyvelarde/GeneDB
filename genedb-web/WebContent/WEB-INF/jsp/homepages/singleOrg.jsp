@@ -28,7 +28,11 @@
 			<jsp:include page="organisms/${label}.jsp" />
 		</c:catch>
 		<c:if test="${e!=null}">
-			No content has been written for this organism.
+		  ${full} genome has been loaded into GeneDB. At this moment, we have not yet 
+		  entered the details of this sequencing project. If you are one of the contributors
+		  to this project and you would like to help with this page, 
+		  then please get <a href="mailto:webmaster@genedb.org">email us</a> with some copy, which
+		  we can then edit to make more consistent with the rest of the site.  
 		</c:if>
 	
 	</div>
