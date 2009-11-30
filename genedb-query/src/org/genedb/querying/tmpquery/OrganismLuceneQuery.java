@@ -5,6 +5,8 @@ import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.QueryParam;
 
+import org.gmod.schema.cfg.OrganismHeirachy;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
@@ -23,21 +25,20 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     private static final long serialVersionUID = -1581819678507010911L;
 
     protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
+
     protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
     protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
     protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
-
-    protected static final TermQuery mRNAQuery = new TermQuery(new Term("type.name", "mRNA"));
-    protected static final TermQuery pseudogenicTranscriptQuery = new TermQuery(new Term("type.name","pseudogenic_transcript"));
-    protected static final BooleanQuery productiveTranscriptQuery = new BooleanQuery();
-
     static {
         geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
         geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
-
-        productiveTranscriptQuery.add(mRNAQuery, Occur.SHOULD);
-        productiveTranscriptQuery.add(pseudogenicTranscriptQuery, Occur.SHOULD);
     }
+
+    protected static final TermQuery mRNAQuery = new TermQuery(new Term("type.name", "mRNA"));
+    protected static final TermQuery pseudogenicTranscriptQuery = new TermQuery(new Term("type.name","pseudogenic_transcript"));
+    protected BooleanQuery productiveTranscriptQuery = new BooleanQuery();
+
+    private transient OrganismHeirachy organismHeirachy;
 
     @Autowired
     protected transient TaxonNodeManager taxonNodeManager;
@@ -47,6 +48,14 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
             title="Organism restriction"
     )
     protected TaxonNode[] taxons;
+
+    @Autowired
+    public void setOrganismHeirachy(OrganismHeirachy organismHeirachy) {
+        this.organismHeirachy = organismHeirachy;
+        for (Integer id : organismHeirachy.getIds()) {
+            productiveTranscriptQuery.add(new TermQuery(new Term("type.cvTermId", "" + id)), Occur.SHOULD);
+        }
+    }
 
 
     /* (non-Javadoc)
@@ -120,5 +129,6 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
         }
         return searchText;
     }
+
 
 }
