@@ -777,10 +777,11 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         }
         String sysId = getUniqueName();
         allNames.append(sysId);
+        allNames.append(' ');
         if (sysId.indexOf(':') != -1) {
             allNames.append(sysId.substring(0, sysId.lastIndexOf(':')));
+            allNames.append(' ');
         }
-        allNames.append(' ');
         allNames.append(getSynonymsAsTabSeparatedString());
         return allNames.toString().toLowerCase();
     }
