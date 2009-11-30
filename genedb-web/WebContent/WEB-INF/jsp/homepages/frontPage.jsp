@@ -17,18 +17,18 @@
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Apicomplexan Protozoa" />
+<img src="<misc:url value="/includes/image/dataset-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
 <db:homepageselect top="Apicomplexa" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-kinetoplastid-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
+<img src="<misc:url value="/"/>includes/image/dataset-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
 <db:homepageselect top="Kinetoplastida" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
+<img src="<misc:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
 <db:homepageselect top="Helminths" baseUrl="${base2}"/>
 </td>
 
@@ -37,18 +37,19 @@
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
+<img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
 <db:homepageselect top="bacteria" baseUrl="${base2}"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-parasite-vectors.jpg" height="163" width="136" alt="Parasite Vectors" />
-<db:homepageselect top="Root" baseUrl="${base2}"/>
+<img src="<misc:url value="/includes/image/dataset-parasite-vectors.jpg"/>" height="163" width="136" alt="Parasite Vectors" />
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${base2}Pages/Parasite Vectors">Parasite Vectors</option></select>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
-<img src="<misc:url value='/'/>includes/image/dataset-viruses.jpg" height="163" width="136" alt="Viruses" />
-<db:homepageselect top="Root" baseUrl="${base2}"/>
+<img src="<misc:url value="/includes/image/dataset-viruses.jpg"/>" height="163" width="136" alt="Viruses" />
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${base2}Pages/Viruses">Viruses</option></select>
+
 </td>
 </tr>
 </table>
