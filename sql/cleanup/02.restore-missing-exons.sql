@@ -4,13 +4,8 @@ create temporary table missing_exons as
 select organism_id
      , transcript.feature_id as transcript_feature_id
      , transcript.uniquename as transcript_uniquename
-     , featureloc.fmin
-     , featureloc.fmax
-     , featureloc.strand
-     , featureloc.srcfeature_id
      , nextval('feature_feature_id_seq'::regclass) as exon_feature_id
 from feature transcript
-join featureloc using (feature_id)
 where transcript.type_id in (
       321 /*mRNA*/
     , 339 /*rRNA*/
@@ -39,9 +34,10 @@ insert into feature_relationship
 ;
 
 insert into featureloc
-    (feature_id, srcfeature_id, fmin, fmax, strand)
-    (select exon_feature_id, srcfeature_id, fmin, fmax, strand
-        from missing_exons)
+    (feature_id, srcfeature_id, fmin, fmax, strand, locgroup, rank)
+    (select exon_feature_id, srcfeature_id, fmin, fmax, strand, locgroup, rank
+        from missing_exons
+        join featureloc on missing_exons.transcript_feature_id = featureloc.feature_id)
 ;
 
-commit;
+rollback;
