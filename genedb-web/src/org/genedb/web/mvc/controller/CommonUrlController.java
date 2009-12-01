@@ -1,30 +1,23 @@
 package org.genedb.web.mvc.controller;
 
-import net.sf.json.spring.web.servlet.view.JsonView;
-
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.querying.history.HistoryItem;
-import org.genedb.querying.history.HistoryManager;
-import org.genedb.web.mvc.history.commandline.HistoryParser;
-import org.genedb.web.mvc.history.commandline.ParseException;
-
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
+import com.sun.tools.doclets.internal.toolkit.util.DocFinder.Output;
 
 /**
  *
@@ -73,5 +66,31 @@ public class CommonUrlController {
 
         return new ModelAndView("history/list", model);
     }
+
+    @RequestMapping(method=RequestMethod.GET, value="/wibble/organism/embl/{featureName}")
+    public ModelAndView dumpEmbl(HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable("featureName") String featureName) {
+
+        try {
+            OutputStream out = response.getOutputStream();
+            response.setContentType("text/plain");
+
+            Process p = Runtime.getRuntime().exec(new String[]{"/bin/ls", "/tmp"});
+            InputStream in = p.getInputStream();
+            int i;
+            while ((i = in.read()) != -1) {
+                out.write((char)i);
+            }
+        }
+        catch (IOException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        }
+
+
+        return null;
+    }
+
 
 }
