@@ -13,6 +13,14 @@
 	font-size: 1.2em;
 	line-height:1.5em;
 	text-align:justify;
+	margin-left:1em;
+}
+.readableText a
+{
+    color:#4381a7;
+}
+ul {
+    padding-left:1em;
 }
 </style>
 
@@ -49,7 +57,6 @@
 			<P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
 		</div>
 	<div class="baby-blue-bot"></div>
-	<br><br><br>
 	
 </div>
 

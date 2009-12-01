@@ -72,7 +72,9 @@ public class HomepageController extends BaseController {
             return mav;
         }
 
-        return new ModelAndView(DEFAULT_GROUP, map);
+        ModelAndView mav = new ModelAndView(DEFAULT_GROUP, map);
+        mav.addObject("label", node.getLabel());
+        return mav;
     }
 
 }

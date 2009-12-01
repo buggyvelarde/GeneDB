@@ -167,6 +167,26 @@
    <body-content>empty</body-content>
  </tag>
 
+<tag>
+    <name>phylonodehomepagelisttag</name>
+    <tag-class>org.genedb.web.tags.db.PhylonodeHomePageListTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+       <name>top</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>baseUrl</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>leafOnly</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+</tag>
 
  <tag>
    <name>homepageselect</name>
