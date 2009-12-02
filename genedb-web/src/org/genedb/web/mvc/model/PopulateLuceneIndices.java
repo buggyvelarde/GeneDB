@@ -336,8 +336,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 try {
                     logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(), feature.getClass()));
                     session.index(feature);
+                    batchCount++;
+                    logger.info(String.format("Indexed '%d' ('%d' of '%d') of type '%s'", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), featureClass));
                 } catch (Exception exp) {
-                    System.err.println(exp);
+                    //System.err.println(exp);
                     logger.error("Batch failed", exp);
                     failed = true;
                 }
@@ -346,15 +348,17 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 }
              }
 
-            batchCount++;
-            logger.info(String.format("Indexed '%d' ('%d' of '%d') of type '%s'", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), featureClass));
-
             if (failed) {
+                logger.error("Adding failed to batch");
                 failedToLoad.addAll(thisBatch);
             } else {
+                logger.error("About to flush to indices");
                 session.flushToIndexes();
+                logger.error("Just flushed to indices");
             }
+            logger.error("About to clear session");
             session.clear();
+            logger.error("Just cleared session");
 
             start = end;
             end = start + batchSize;
@@ -519,8 +523,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
                         feature.getClass()));
                 session.index(feature);
-            } catch (Exception e) {
-                logger.error("Batch failed", e);
+            } catch (Exception exp) {
+                logger.error("Batch failed", exp);
                 failed = true;
             }
 
