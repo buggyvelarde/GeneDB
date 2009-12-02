@@ -360,7 +360,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 failedToLoad.addAll(thisBatch);
             } else {
                 logger.error("About to flush to indices");
-                session.flushToIndexes();
+                try {
+                    session.flushToIndexes();
+                }
+                catch (Exception exp) {
+                    exp.printStackTrace(System.err);
+                    System.exit(1);
+                }
                 logger.error("Just flushed to indices");
             }
             logger.error("About to clear session");
