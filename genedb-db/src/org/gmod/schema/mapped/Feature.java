@@ -790,7 +790,11 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     @Field(name = "start", store = Store.YES)
     @FieldBridge(impl = LocationBridge.class)
     public int getStart() {
-        return getRankZeroFeatureLoc().getFmin();
+        FeatureLoc loc = getRankZeroFeatureLoc();
+        if (loc == null) {
+            return 0;
+        }
+        return loc.getFmin();
     }
 
     @Transient
