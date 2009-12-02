@@ -25,6 +25,27 @@
 <format:genePageSection>
 
 <div id="homepage-text">
+ <a name="Our_commitment">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Our commitment
+  </span>
+ </h2>
+ <p>
+  The Wellcome Trust Sanger Institute is committed to data sharing wherever possible. This maximises the value and scientific impact of the data, and ensures transparency and equity in exploitation of the opportunities created.
+ </p>
+ <p>
+  The GeneDB data release policy is in line with the Institute's
+  <a href="http://www.sanger.ac.uk/notices/datasharingpolicy.shtml" class="external text" title="http://www.sanger.ac.uk/notices/datasharingpolicy.shtml" rel="nofollow">
+   data sharing policy
+  </a>
+  . If you wish to use data made available on GeneDB, please also refer to the Institute's
+  <a href="http://www.sanger.ac.uk/notices/use-policy.shtml" class="external text" title="http://www.sanger.ac.uk/notices/use-policy.shtml" rel="nofollow">
+   data use policy
+  </a>
+  .
+ </p>
  <a name="Types_of_genome">
  </a>
  <h2>
@@ -225,11 +246,11 @@
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 5/1000000
+Preprocessor node count: 7/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5736-0!1!0!!en!2 and timestamp 20091201163504 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5736-0!1!0!!en!2 and timestamp 20091202114736 -->
 </div>
 
 </format:genePageSection>
