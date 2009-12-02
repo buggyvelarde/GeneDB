@@ -1,4 +1,4 @@
-#This checks if all the transcripts have featurelocs. Can enhance this test later by checking that the gene is featurelocd on the right type
+#This checks if all the gaps have featurelocs. Can enhance this test later by checking that the gene is featurelocd on the right type
 #of feature (contig, supercontig or chromosome)
 
 select organism.common_name as organism
@@ -10,14 +10,7 @@ where type_id in (
                  select cvterm.cvterm_id
                  from cvterm join cv on cvterm.cv_id = cv.cv_id
                  where cv.name = 'sequence'
-                 and cvterm.name in ('mRNA',
-                                     'rRNA',
-                                     'tRNA',
-                                     'snRNA',
-                                     'snoRNA',
-                                     'ncRNA',
-                                     'transcript',
-                                     'pseuodegenic_transcript'))
+                 and cvterm.name in ('gap'))
 and not exists (
                   select *
                   from featureloc
