@@ -230,6 +230,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
             boolean failed = false;
             int i=0;
+
             for (AbstractGene gene : genes) {
                 i++;
                 try {
@@ -265,7 +266,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
             if (failed) {
                 failedToLoad.addAll(thisBatch);
             } else {
-                session.flushToIndexes();
+                try {
+                    session.flushToIndexes();
+                }
+                catch (Exception exp) {
+                    System.err.println(exp);
+                    System.exit(1);
+                }
             }
             session.clear();
 
