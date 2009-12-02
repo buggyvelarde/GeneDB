@@ -270,7 +270,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     session.flushToIndexes();
                 }
                 catch (Exception exp) {
-                    System.err.println(exp);
+                    exp.printStackTrace(System.err);
                     System.exit(1);
                 }
             }
