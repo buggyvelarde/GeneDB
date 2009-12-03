@@ -811,7 +811,11 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         if (loc == null) {
             return 0;
         }
-        return loc.getStrand();
+        Short strand = loc.getStrand();
+        if (strand != null) {
+            return strand;
+        }
+        return 0;
     }
 
     @Transient
