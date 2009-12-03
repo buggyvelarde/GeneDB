@@ -17,7 +17,7 @@ where type_id in (
                                      'snoRNA',
                                      'ncRNA',
                                      'transcript',
-                                     'pseuodegenic_transcript'))
+                                     'pseudogenic_transcript'))
 and not exists (
                   select *
                   from featureloc
