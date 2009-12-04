@@ -13,7 +13,6 @@ select organism.common_name
 from feature
 join organism using (organism_id)
 join cvterm on feature.type_id=cvterm.cvterm_id
-where feature.residues is not null and length(feature.residues) > 0
 and feature.type_id not in (
                              select cvterm.cvterm_id
                              from cvterm join cv on cvterm.cv_id = cv.cv_id
