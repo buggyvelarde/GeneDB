@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ImageCreationException;
 import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.gmod.schema.feature.AbstractGene;
@@ -70,13 +71,17 @@ public class CacheDBHelper {
         RenderedContextMap renderedContextMap = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
+
 
         try {
+            List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
             contextMapMap.put(feature.getFeatureId(), metadata);
             logger.info("Stored contextMap for "+feature.getFeatureId()+" '"+feature.getUniqueName()+"' as '"+metadata+"'");
         } catch (IOException exp) {
+            logger.error(exp);
+        }
+        catch (ImageCreationException exp) {
             logger.error(exp);
         }
     }
@@ -89,9 +94,10 @@ public class CacheDBHelper {
      * @param diagramCache
      * @return
      * @throws IOException
+     * @throws ImageCreationException
      */
     private static String contextMapMetadata(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
-            List<RenderedContextMap.Tile> tiles, DiagramCache diagramCache) throws IOException {
+            List<RenderedContextMap.Tile> tiles, DiagramCache diagramCache) throws IOException, ImageCreationException {
         String chromosomeThumbnailKey = diagramCache.fileForContextMap(chromosomeThumbnail);
 
         ContextMapDiagram diagram = contextMap.getDiagram();

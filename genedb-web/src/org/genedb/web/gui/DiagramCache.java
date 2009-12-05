@@ -15,11 +15,12 @@ public interface DiagramCache {
      * @param servletContext
      * @return
      * @throws IOException
+     * @throws ImageCreationException
      */
     public abstract String fileForContextMap(
-            RenderedContextMap renderedContextMap) throws IOException;
+            RenderedContextMap renderedContextMap) throws IOException, ImageCreationException;
 
     public abstract String fileForProteinMap(
-            RenderedProteinMap renderedProteinMap) throws IOException;
+            RenderedProteinMap renderedProteinMap) throws IOException, ImageCreationException;
 
 }

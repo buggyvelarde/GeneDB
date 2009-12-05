@@ -1,7 +1,5 @@
 package org.genedb.web.gui;
 
-import net.sf.json.JSONString;
-
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.LocatedFeature;
@@ -11,10 +9,11 @@ import org.gmod.schema.feature.Region;
 
 import org.apache.log4j.Logger;
 
+import net.sf.json.JSONString;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
@@ -23,19 +22,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
@@ -43,6 +36,8 @@ import javax.imageio.ImageIO;
 
 public abstract class RenderedDiagram {
     private static final Logger logger = Logger.getLogger(RenderedDiagram.class);
+
+    private static final int MAX_HEIGHT=5000;
 
     protected static final String FILE_FORMAT = "png";
     protected static final String FILE_EXT = "png";
@@ -478,7 +473,7 @@ public abstract class RenderedDiagram {
 
     abstract public String getKeyForTile(int index, int start, int width);
 
-    public List<RenderedContextMap.Tile> renderTiles(int tileWidth) {
+    public List<RenderedContextMap.Tile> renderTiles(int tileWidth) throws ImageCreationException {
 
         beforeRender();
         drawScaleTrack();
@@ -548,8 +543,13 @@ public abstract class RenderedDiagram {
      */
     protected abstract IndexColorModel byteIndexedColorModel();
 
-    protected void beforeRender() {
+    protected void beforeRender() throws ImageCreationException {
         calculateContigs();
+        if (getHeight() > MAX_HEIGHT) {
+            // Abort
+            image = null;
+            throw new ImageCreationException(String.format("Height requested '%d' is unreasonable", getHeight()));
+        }
         switch (colorModel) {
         case DIRECT:
             image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
@@ -578,7 +578,7 @@ public abstract class RenderedDiagram {
         graf = null;
     }
 
-    public void writeTo(OutputStream out) throws IOException {
+    public void writeTo(OutputStream out) throws ImageCreationException, IOException {
 
         logger.debug(String.format("Drawing diagram (%s) with dimensions %dx%d", getClass(), getWidth(), getHeight()));
 

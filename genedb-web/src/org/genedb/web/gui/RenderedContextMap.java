@@ -304,7 +304,7 @@ public class RenderedContextMap extends RenderedDiagram {
     }
 
     @Override
-    protected void beforeRender() {
+    protected void beforeRender() throws ImageCreationException {
         super.beforeRender();
 
         renderedFeatures = new ArrayList<RenderedFeature>();

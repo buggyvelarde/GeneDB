@@ -6,6 +6,7 @@ import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.db.domain.objects.SimpleRegionGroup;
 import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ImageCreationException;
 import org.genedb.web.gui.ImageMapSummary;
 import org.genedb.web.gui.ProteinMapDiagram;
 import org.genedb.web.gui.RenderedDiagramFactory;
@@ -263,6 +264,9 @@ public class TranscriptDTOFactory {
                                     diagramCache.fileForProteinMap(renderedProteinMap),
                                     renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap")));
                         } catch (IOException exp) {
+                            logger.error("Failed to create an imageMapSummary", exp);
+                        }
+                        catch (ImageCreationException exp) {
                             logger.error("Failed to create an imageMapSummary", exp);
                         }
             }

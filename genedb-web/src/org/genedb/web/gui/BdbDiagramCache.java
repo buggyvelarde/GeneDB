@@ -16,7 +16,7 @@ public class BdbDiagramCache implements DiagramCache {
 
     @Override
     public String fileForContextMap(RenderedContextMap renderedContextMap)
-            throws IOException {
+            throws IOException, ImageCreationException {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         renderedContextMap.writeTo(out);
@@ -28,7 +28,7 @@ public class BdbDiagramCache implements DiagramCache {
 
     @Override
     public String fileForProteinMap(RenderedProteinMap renderedProteinMap)
-            throws IOException {
+            throws IOException, ImageCreationException {
         // TODO Auto-generated method stub
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         renderedProteinMap.writeTo(out);
