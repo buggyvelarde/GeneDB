@@ -556,6 +556,7 @@ public abstract class RenderedDiagram {
             labelBuffer = null;
             break;
         case INDEXED:
+            logger.error(String.format("About to try and create a BufferedImage of '%i' x '%i'", getWidth(), getHeight()));
             image = new BufferedImage(getWidth(), getHeight(),
                 BufferedImage.TYPE_BYTE_INDEXED, byteIndexedColorModel());
             break;
