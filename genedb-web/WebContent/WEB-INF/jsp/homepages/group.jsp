@@ -32,10 +32,11 @@ ul {
     <div class="readableText">
         <h1>${label} genome projects</h1>
         <c:catch var="e">
-            <jsp:include page="organisms/${label}.jsp" />
+            <jsp:include page="organisms/Group_${label}.jsp" />
         </c:catch>
         <c:if test="${e!=null}">
             Here is a list of ${label} genomes maintained in the database.
+            <div style="display:none">${e}</div>
         </c:if>
     </div>
 </div>

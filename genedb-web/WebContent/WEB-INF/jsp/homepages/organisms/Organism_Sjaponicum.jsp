@@ -70,11 +70,4 @@ Further information can be found on the
    </a>
   </li>
  </ul>
- <!-- 
-NewPP limit report
-Preprocessor node count: 4/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5723-0!1!0!!en!2 and timestamp 20091130204451 -->
 </div>

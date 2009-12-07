@@ -33,7 +33,7 @@ ul {
 		<h1>${full} Genome Project</h1>
 	
 		<c:catch var="e">
-			<jsp:include page="organisms/${label}.jsp" />
+			<jsp:include page="organisms/Organism_${label}.jsp" />
 		</c:catch>
 		<c:if test="${e!=null}">
 		  The ${full} genome has been loaded into GeneDB. At this moment, we have not yet 
