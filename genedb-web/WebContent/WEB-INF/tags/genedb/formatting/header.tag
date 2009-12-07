@@ -20,20 +20,6 @@
           $("#nav > li")
             .mouseover(function(){$(this).addClass("over");})
             .mouseout (function(){$(this).removeClass("over");});
-        
-          var logos = [
-            '<misc:url value="/includes/image/GeneDB-logo.png"/>',
-            '<misc:url value="/includes/image/GeneDB-logo-mirrored.png"/>',
-            '<misc:url value="/includes/image/GeneDB-logo-alt1.png"/>',
-            '<misc:url value="/includes/image/GeneDB-logo-alt2.png"/>',
-            '<misc:url value="/includes/image/GeneDB-logo-alt3.png"/>'
-          ];
-          var logo_index = 0;
-          $("#logo").click(function() {
-            logo_index = (logo_index + 1) % logos.length;
-            $(this).attr('src', logos[logo_index]);
-            return false;
-          });
         });
     </script>
 
