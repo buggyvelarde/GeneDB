@@ -91,14 +91,6 @@
 </ul>
 </div><!-- end navigation block -->
 
-
-<script type="text/javascript"><!--//--><![CDATA[//><!--
-$(document).ready(function(){
-  $("#nav > li").mouseover(function(){this.className+=" over";}).mouseout(function(){this.className=this.className.replace(" over", "");})
-});
-//--><!]]></script>
-
-
 <jsp:doBody />
 
 <br class="clear" />
