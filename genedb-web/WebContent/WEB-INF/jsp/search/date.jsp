@@ -18,7 +18,7 @@
                 <tr>
                   <td>Date:</td>
                   <td>
-                    <form:input id="date" path="date"/>
+                    <form:input id="date" path="date"/> (YYYY/MM/DD)
                   </td>
                 </tr>
                 <tr>
