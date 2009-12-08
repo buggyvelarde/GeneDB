@@ -9,7 +9,25 @@
 <div id="col-2-1">
 
 <br />
-<format:genePageSection>
+
+<style>
+.readableText
+{
+	font-size: 1.2em;
+	line-height:1.5em;
+	text-align:justify;
+	margin-left:1em;
+}
+.readableText a
+{
+    color:#4381a7;
+}
+ul {
+    padding-left:1em;
+}
+</style>
+
+<div id="readableText">
 <h2>About GeneDB</h2>
 <p>The GeneDB project is a core part of the Sanger Institute Pathogen Informatics activities.
  Its primary goals are:</p>
@@ -19,10 +37,9 @@ organisms sequenced by the Pathogen group.</li>
 <li>to develop the website and other tools to aid the community in accessing and obtaining
 the maximum value from this data.</li>
 </ul>
-<p>GeneDB currently provides access to ?? genomes, from various stages of the sequencing curation
+<p>GeneDB currently provides access to 37 genomes, from various stages of the sequencing curation
 pipeline, from early access to partial genomes with automatic annotation through to complete
 genomes with extensive manual curation.</p>
-</format:genePageSection>
 
 </div>
 </format:page>
