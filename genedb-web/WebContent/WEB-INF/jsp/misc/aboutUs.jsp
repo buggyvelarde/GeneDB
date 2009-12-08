@@ -29,16 +29,16 @@ ul {
 
 <div id="readableText">
 <h2>About GeneDB</h2>
-<p>The GeneDB project is a core part of the Sanger Institute Pathogen Informatics activities.
+<p>The GeneDB project is a core part of the Sanger Institute's Pathogen Genomics activities.
  Its primary goals are:</p>
 <ul>
-<li>to provide reliable access to the latest sequence data and annotation/curation for the whole range of
-organisms sequenced by the Pathogen group.</li>
+<li>to provide reliable access to the latest sequence data and annotation/curation for the
+whole range oforganisms sequenced by the Pathogen group.</li>
 <li>to develop the website and other tools to aid the community in accessing and obtaining
-the maximum value from this data.</li>
+the maximum value from these data.</li>
 </ul>
-<p>GeneDB currently provides access to 37 genomes, from various stages of the sequencing curation
-pipeline, from early access to partial genomes with automatic annotation through to complete
+<p>GeneDB currently provides access to 37 genomes, at various stages of completion,
+ from early access to partial genomes with automatic annotation through to complete
 genomes with extensive manual curation.</p>
 
 </div>
