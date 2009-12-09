@@ -44,7 +44,9 @@
 
 		</form:form>
 	</format:genePageSection>
-	
+
 	<format:test-for-no-results />
 </div>
+
+<br><query:results />
 </format:page>
