@@ -1,7 +1,6 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.LuceneQuery;
-import org.genedb.querying.core.QueryVisibility;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
