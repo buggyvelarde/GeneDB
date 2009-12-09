@@ -20,5 +20,6 @@ and superloc.locgroup = subloc.locgroup
 and superloc.srcfeature_id = subloc.srcfeature_id
 group by organism.common_name, super.uniquename, super.type_id, superloc.fmin
 having superloc.fmin <> min(subloc.fmin)
+order by organism.common_name
 ;
 
