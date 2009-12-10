@@ -71,7 +71,6 @@ for (org in orgs) {
 	}
 }
 
-boolean worked = true
 
 if (worked) {
     System.exit(0)
