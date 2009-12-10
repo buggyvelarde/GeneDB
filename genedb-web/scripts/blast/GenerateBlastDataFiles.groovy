@@ -32,22 +32,46 @@ for (org in orgs) {
 	File serr = new File("/tmp/stderr."+org + ".txt")
 	serr.delete()
 
-    print "${org} "
+    print "${org} proteins : "
     Process p = ["ssh", "pcs4j", "chado_dump_proteins --nostop ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
     p.waitFor()
+	sout.close()
+	serr.close()
     //println "Output: ${sout}"
     //println "Error: ${serr}"
-	if (serr.length() > 0) {
+	if (serr.length() > 70) {
+		// Hack as script outputs a progress msg
 		println("Looks like we got a problem")
 	} else {
 	    println("OK")
 	}
 
-//    Process p = ["ssh", "pcs4j", "chado_dump_transcripts ${org}"].execute()
-//    def sout = new StringBuffer()
+	String scriptName = "/tmp/" + org + ".spliced.txt"
+	File script = new File(scriptName)
+	script.delete()
+
+	File serr = new File("/tmp/stderr.spliced."+org + ".txt")
+	serr.delete()
+
+	print "${org} proteins : "
+    p = ["ssh", "pcs4j", "chado_dump_transcripts ${org}"].execute()
+	sout = new FileOutputStream(script)
+	serros = new FileOutputStream(serr)
+	p.consumeProcessOutput(sout, serros)
+	p.waitFor()
+	sout.close()
+	serr.close()
+	//println "Output: ${sout}"
+	//println "Error: ${serr}"
+	if (serr.length() > 0) {
+		// Hack as script outputs a progress msg
+		println("Looks like we got a problem")
+	} else {
+		println("OK")
+	}
 //    def serr = new StringBuffer()
 //    p.consumeProcessOutput(sout, serr)
 //    p.waitFor()
