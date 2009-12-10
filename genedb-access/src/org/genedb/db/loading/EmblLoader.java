@@ -169,7 +169,7 @@ class EmblLoader {
     public OverwriteExisting getOverwriteExisting() {
         return this.overwriteExisting;
     }
-    
+
     /**
      * Whether to deal with controlled_curation qualifiers that don't have the expected
      * format. The default, if this method is not called, is <code>false</code>.
@@ -1535,7 +1535,7 @@ class EmblLoader {
             checkForPreviousSystematicIdEqualToSystematicId();
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
-            addTranscriptSynonymsFromQualifier("previous_systematic_id", "previous_systematic_id", false);
+            addTranscriptSynonymsFromQualifier("previous_systematic_id", "previous_systematic_id", true);
 
             int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
@@ -1807,7 +1807,7 @@ class EmblLoader {
                 addTranscriptSynonymsFromQualifier("gene",    "synonym", true);
                 addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             }
-            
+
             for (String dbxrefs: feature.getQualifierValues("db_xref")) {
                 addDbXRefs(dbxrefs);
             }
