@@ -1,62 +1,100 @@
 <div id="homepage-text">
+ <a name="The_Disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Disease
+  </span>
+ </h2>
  <p>
-  The Sanger Institute has been funded to sequence the genome of Burkholderia pseudomallei in collaboration with
-  <a href="mailto:rtitball@dera.gov.uk" class="external text" title="mailto:rtitball@dera.gov.uk" rel="nofollow">
-   Dr. Rick Titball
-  </a>
-  of the
-  <a href="http://www.dera.gov.uk/" class="external text" title="http://www.dera.gov.uk/" rel="nofollow">
-   Defence Evaluation Research Agency
-  </a>
-  ,
-  <a href="http://www.dra.hmg.gb/html/who_are/history/porton.htm" class="external text" title="http://www.dra.hmg.gb/html/who_are/history/porton.htm" rel="nofollow">
-   Porton Down
-  </a>
-  , and
-  <a href="mailto:http://www.phls.co.uk/" class="external text" title="mailto:http://www.phls.co.uk/" rel="nofollow">
-   Dr. Ty Pitt
-  </a>
-  of the
-  <a href="http://www.phls.co.uk/" class="external text" title="http://www.phls.co.uk/" rel="nofollow">
-   Central Public Health Laboratory
-  </a>
-  . We will sequence strain K96243, a clinical isolate from Thailand, supplied by Dr. S. Songsivilai of
+  <i>
+   Burkholderia pseudomallei
+  </i>
+  (previously called
+  <i>
+   Pseudomonas pseudomallei
+  </i>
+  ) is the causative agent of melioidosis, a serious disease of man and animals that occurs primarily in S.E. Asia, N. Australia and other tropical areas.
+  <i>
+   B. pseudomallei
+  </i>
+  is an environmental Gram-negative saprophyte present in wet soil and rice paddies in endemic areas. The highest documented infection rate is in northeastern Thailand, where melioidosis accounts for 20% of all community-acquired septicaemias. Disease occurs after bacterial contamination of breaks in the skin or by inhalation after contact with water or soil. There is no licensed vaccine against meliodosis, and the bacterium is resistant to many antibiotics.
+  <i>
+   B. pseudomallei
+  </i>
+  strain K96243 is a clinical isolate from Thailand, supplied by Dr. S. Songsivilai of
   <a href="http://www.mahidol.ac.th/" class="external text" title="http://www.mahidol.ac.th/" rel="nofollow">
    Mahidol University
   </a>
   .
  </p>
+ <a name="The_Genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Genome
+  </span>
+ </h2>
  <p>
-  Burkholderia pseudomallei (previously called Pseudomonas pseudomallei) is the causative agent of melioidosis, a serious disease of man and animals that occurs primarily in S.E. Asia, N. Australia and other tropical areas. There is no licensed vaccine against meliodosis, and the bacterium is resistant to many antibiotics.
- </p>
- <p>
-  The sequence is now finished, and is available for download from our
-  <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/bps/" class="external text" title="ftp://ftp.sanger.ac.uk/pub/pathogens/bps/" rel="nofollow">
-   FTP site
-  </a>
-  .
- </p>
- <p>
-  The genome is 7,247,547 bp in size with a G+C content of 68.06% consisting of two chromosomes of 4,074,542 bp and 3,173,005 bp.
- </p>
- <p>
-  Reference:
-  <b>
-   Genomic plasticity of the causative agent of melioidosis, Burkholderia pseudomallei
-  </b>
-  <a href="http://www.pnas.org/cgi/content/abstract/0403302101v1" class="external text" title="http://www.pnas.org/cgi/content/abstract/0403302101v1" rel="nofollow">
-   Proc. Natl. Acad. Sci. USA 101 14240-14245 (doi/10.1073/pnas.0403302101)
-  </a>
-  .
- </p>
- <p>
-  M.T.G. Holden, R.W. Titball, S.J. Peacock, A.M. Cerde??o-T??rraga, T. Atkins, L.C. Crossman, T. Pitt, C. Churcher, K. Mungall, S.D. Bentley, M. Sebaihia, N.R. Thomson, N. Bason, I.R. Beacham, K. Brooks, K.A. Brown, N.F. Brown, G.L. Challis, I. Cherevach, T. Chillingworth, A. Cronin, B. Crossett, P. Davis, D. DeShazer, T. Feltwell, A. Fraser, Z. Hance, H. Hauser, S. Holroyd, K. Jagels, K. E. Keith, M. Maddison, S. Moule, C. Price, M.A. Quail, E. Rabbinowitsch, K. Rutherford, M. Sanders, M. Simmonds, S. Songsivilai, K. Stevens, S. Tumapa, M. Vesaratchavest, S. Whitehead, C. Yeats, B. G. Barrell, P.C.F. Oyston and J. Parkhill
- </p>
- <p>
-  See the
-  <a href="http://www.sanger.ac.uk/Projects/B_pseudomallei/" class="external text" title="http://www.sanger.ac.uk/Projects/B_pseudomallei/" rel="nofollow">
+  The
+  <i>
    B. pseudomallei
+  </i>
+  strain K96243 is composed of two circular chromosome of 4,074,542 bp and 3,173,005 bp, and was sequenced in collaboration with Dr. Rick Titball of the
+  <a href="http://www.dstl.gov.uk/" class="external text" title="http://www.dstl.gov.uk/" rel="nofollow">
+   Defence Science and Technology Laboratory
   </a>
-  project pages for more information.
+  , Porton Down, and Dr. Ty Pitt of the
+  <a href="http://www.hpa.org.uk/HPA/" class="external text" title="http://www.hpa.org.uk/HPA/" rel="nofollow">
+   The Health Protection Agency
+  </a>
+  .
  </p>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Data Release
+  </span>
+ </h2>
+ <p>
+  A manuscript describing the K96243 genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15377794" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/15377794" rel="nofollow">
+   Holden
+   <i>
+    et. al.
+   </i>
+   (2004) Genomic plasticity of the causative agent of melioidosis,
+   <i>
+    Burkholderia pseudomallei
+   </i>
+   .
+   <i>
+    Proc. Natl. Acad. Sci. USA
+   </i>
+   101:14240-14245
+  </a>
+  .
+ </p>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Sequencing Enquiries
+  </span>
+ </h2>
+ <p>
+  Please address all sequencing and annotation enquiries to
+  <a href="mailto:mh3@sanger.ac.uk" class="external text" title="mailto:mh3@sanger.ac.uk" rel="nofollow">
+   Dr. Matthew Holden
+  </a>
+  .
+ </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5755-0!1!0!!en!2 and timestamp 20091210173247 -->
 </div>

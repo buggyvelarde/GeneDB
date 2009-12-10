@@ -1,40 +1,103 @@
 <div id="homepage-text">
+ <a name="The_Disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Disease
+  </span>
+ </h2>
  <p>
-  This page provides access to the annotation and sequence of one strain of Staphylococcus aureus in collaboration with
-  <a href="http://www.tcd.ie/Microbiology/page223.html" class="external text" title="http://www.tcd.ie/Microbiology/page223.html" rel="nofollow">
-   Prof. Tim Foster
-  </a>
-  of the
-  <a href="http://www.tcd.ie/Microbiology/" class="external text" title="http://www.tcd.ie/Microbiology/" rel="nofollow">
+  <i>
+   Staphylococcus aureus
+  </i>
+  is an important nosocomial and community-acquired pathogen.
+  <i>
+   S. aureus
+  </i>
+  is the most common cause of hospital acquired infection, causing clinical disease in 2% of all patient admissions in the UK. Not only does it cause enormous numbers of infections, but
+  <i>
+   S. aureus
+  </i>
+  in hospitals are becoming increasingly resistant to antibiotics. In several industrialised nations including parts of Europe, the US and Japan, 40-60&nbsp;% of all hospital
+  <i>
+   S. aureus
+  </i>
+  are now resistant to methicillin (methicillin-resistant
+  <i>
+   Staphylococcus aureus
+  </i>
+  , MRSA).
+ </p>
+ <p>
+  MSSA476 is methicillin-sensitive strain, and was isolated from a patient in the community who developed severe invasive disease. MSSA476 belongs to a major global lineage associated with community-acquired disease. The strain has been typed as sequence type (ST)1 by MLST.
+ </p>
+ <a name="The_Genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Genome
+  </span>
+ </h2>
+ <p>
+  The
+  <i>
+   Staphylococcus aureus
+  </i>
+  strain MSSA476 genome is composed of a single circular chromosome of  2,799,802 bp, and a plasmid (pSAS) of 20,652 bp, and was sequenced in collaboration with Prof. Tim Foster of the
+  <a href="http://www.tcd.ie/Microbiology" class="external text" title="http://www.tcd.ie/Microbiology" rel="nofollow">
    Department of Microbiology
   </a>
-  ,
-  <a href="http://www.tcd.ie/" class="external text" title="http://www.tcd.ie/" rel="nofollow">
-   Trinity College
+  , Trinity College, Dublin, Prof. Brian Spratt of the
+  <a href="http://www1.imperial.ac.uk/medicine/about/divisions/pcphs/ide/default.html" class="external text" title="http://www1.imperial.ac.uk/medicine/about/divisions/pcphs/ide/default.html" rel="nofollow">
+   Department of Infectious Disease Epidemiology
   </a>
-  , Dublin, Prof. Brian Spratt of the Department of Infectious Disease Epidemiology,
-  <a href="http://www1.imperial.ac.uk/medicine/default.html" class="external text" title="http://www1.imperial.ac.uk/medicine/default.html" rel="nofollow">
-   Imperial College School of Medicine
-  </a>
-  ,
-  <a href="http://www.bath.ac.uk/Departments/BiolBioch/enright.html" class="external text" title="http://www.bath.ac.uk/Departments/BiolBioch/enright.html" rel="nofollow">
-   Mark Enright
-  </a>
-  of the
-  <a href="http://www.bath.ac.uk/Departments/BiolBioch/" class="external text" title="http://www.bath.ac.uk/Departments/BiolBioch/" rel="nofollow">
+  , Imperial College School of Medicine, Dr. Mark Enright of the
+  <a href="http://www.bath.ac.uk/Departments/BiolBioch" class="external text" title="http://www.bath.ac.uk/Departments/BiolBioch" rel="nofollow">
    Department of Biology and Biochemistry
   </a>
-  ,
-  <a href="http://www.bath.ac.uk/" class="external text" title="http://www.bath.ac.uk/" rel="nofollow">
-   University of Bath
+  , University of Bath, and Dr. Nicholas Day and Dr. Sharon Peacock of the John Radcliffe Hospital, Oxford.
+ </p>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Data Release
+  </span>
+ </h2>
+ <p>
+  A manuscript describing the MSSA476 genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15213324" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/15213324" rel="nofollow">
+   Holden
+   <i>
+    et al.
+   </i>
+   (2004) Complete genomes of two clinical
+   <i>
+    Staphylococcus aureus
+   </i>
+   strains: Evidence for the rapid evolution of virulence and drug resistance. " Proc. Natl. Acad. Sci. USA 101: 9786-9791
   </a>
-  , and Dr. Nicholas Day and Dr. Sharon Peacock of the John Radcliffe Hospital, Oxford.
+  .
+ </p>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Sequencing Enquiries
+  </span>
+ </h2>
+ <p>
+  Please address all sequencing and annotation enquiries to
+  <a href="mailto:mh3@sanger.ac.uk" class="external text" title="mailto:mh3@sanger.ac.uk" rel="nofollow">
+   Dr. Matthew Holden
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 1/1000000
+Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5785-0!1!0!!en!2 and timestamp 20091207143645 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5785-0!1!0!!en!2 and timestamp 20091210155215 -->
 </div>

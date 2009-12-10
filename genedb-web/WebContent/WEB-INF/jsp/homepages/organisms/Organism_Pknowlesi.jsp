@@ -55,4 +55,11 @@ This genome is not being curated.
  <p>
   Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5725-0!1!0!!en!2 and timestamp 20091210143532 -->
 </div>

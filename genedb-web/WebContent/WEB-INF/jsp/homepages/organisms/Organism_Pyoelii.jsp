@@ -24,11 +24,11 @@
   </i>
   . The parasite is readily grown in laboratory mice and rats, where it shows a preference for immature red blood cells or reticulocytes.
  </p>
- <a name="The_genome">
+ <a name="The_Genome">
  </a>
  <h2>
   <span class="mw-headline">
-   The genome
+   The Genome
   </span>
  </h2>
  <p>
@@ -54,4 +54,11 @@ Annotation of the
   This genome has been published in Carlton et al., Nature 419 (6906):512-519.     PMID: 15637271
 The genome is not curated.
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091210165325 -->
 </div>

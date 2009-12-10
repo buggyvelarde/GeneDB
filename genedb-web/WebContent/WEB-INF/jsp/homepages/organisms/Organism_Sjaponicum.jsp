@@ -38,36 +38,24 @@ Further information can be found on the
   <i>
    S. japonicum
   </i>
-  genome was sequenced and published in 2009 (see
+  genome was sequenced by the
+  <i>
+   Schistosoma japonicum
+  </i>
+  Genome Sequencing and Functional Analysis Consortium, and published in 2009 (see
   <a href="http://www.ncbi.nlm.nih.gov/pubmed/19606140" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/19606140" rel="nofollow">
-   The Schistosoma japonicum Genome Sequencing and Functional Analysis Consortium
+   <i>
+    Nature
+   </i>
+   460(7253):345-51
   </a>
   ).
  </p>
- <a name="Links">
- </a>
- <h2>
-  <span class="mw-headline">
-   Links
-  </span>
- </h2>
- <ul>
-  <li>
-   <a href="http://www.chgc.sh.cn/japonicum" class="external text" title="http://www.chgc.sh.cn/japonicum" rel="nofollow">
-    <i>
-     S. japonicum
-    </i>
-    at the Chinese National Human Genome Center at Shanghai website
-   </a>
-  </li>
-  <li>
-   <a href="http://en.wikipedia.org/wiki/Schistosoma_japonicum" class="external text" title="http://en.wikipedia.org/wiki/Schistosoma_japonicum" rel="nofollow">
-    Wikipedia
-    <i>
-     S. japonicum
-    </i>
-    page
-   </a>
-  </li>
- </ul>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 3/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5723-0!1!0!!en!2 and timestamp 20091210133353 -->
 </div>

@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -16,11 +16,11 @@
   </i>
   species that cause human malaria. Malaria has a massive impact on human health; it is the worlds second biggest killer after tuberculosis. Around 300 million clinical cases occur each year resulting in between 1.5 - 2.7 million deaths annually, the majority in sub-saharan Africa. It is estimated that 3,000 children under the age of five years fall victim to malaria each day. Around 40% of the worlds population are at risk.
  </p>
- <a name="The_genome">
+ <a name="The_Genome">
  </a>
  <h2>
   <span class="mw-headline">
-   The genome
+   The Genome
   </span>
  </h2>
  <p>
@@ -84,4 +84,11 @@ The
  <p>
   Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5724-0!1!0!!en!2 and timestamp 20091210121250 -->
 </div>
