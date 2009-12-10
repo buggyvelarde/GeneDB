@@ -49,11 +49,11 @@ for (org in orgs) {
 	    println("OK")
 	}
 
-	String scriptName = "/tmp/" + org + ".spliced.txt"
-	File script = new File(scriptName)
+	scriptName = "/tmp/" + org + ".spliced.txt"
+	script = new File(scriptName)
 	script.delete()
 
-	File serr = new File("/tmp/stderr.spliced."+org + ".txt")
+	serr = new File("/tmp/stderr.spliced."+org + ".txt")
 	serr.delete()
 
 	print "${org} proteins : "
