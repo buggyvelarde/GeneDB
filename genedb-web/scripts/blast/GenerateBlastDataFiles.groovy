@@ -1,8 +1,7 @@
 import groovy.sql.Sql
 
-//String baseDir = "/nfs/pathdb/genedb/nightly/bulk/${args[0]}"
-//new File("${baseDir}/scripts").mkdirs()
-//new File("${baseDir}/output").mkdir()
+String HOST = "pcs4j"
+String PATH = "/data/blastdb/website/genedb/"
 
 List<String> orgs = new ArrayList<String>()
 
@@ -21,19 +20,18 @@ if (args.length >= 1) {
     sql.close()
 }
 
+boolean worked = true
 for (org in orgs) {
 
-    //new File("${baseDir}/output/${org}").mkdir()
-
-    String scriptName = "/tmp/" + org + ".prot.txt"
+    String scriptName = PATH + "GeneDB_" + org + "_Proteins"
     File script = new File(scriptName)
 	script.delete()
 
 	File serr = new File("/tmp/stderr."+org + ".txt")
 	serr.delete()
 
-    print "${org} proteins : "
-    Process p = ["ssh", "pcs4j", "chado_dump_proteins --nostop ${org}"].execute()
+    print "${scriptName} : "
+    Process p = ["ssh", HOST, "chado_dump_proteins --nostop ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -44,44 +42,36 @@ for (org in orgs) {
 	if (serr.length() > 70) {
 		// Hack as script outputs a progress msg
 		println("Looks like we got a problem")
+		worked = false
 	} else {
 	    println("OK")
 	}
 
-	scriptName = "/tmp/" + org + ".spliced.txt"
+	scriptName = PATH + "GeneDB_" + org + "_Genes"
 	script = new File(scriptName)
 	script.delete()
 
 	serr = new File("/tmp/stderr.spliced."+org + ".txt")
 	serr.delete()
 
-	print "${org} proteins : "
-    p = ["ssh", "pcs4j", "chado_dump_transcripts ${org}"].execute()
+	print "${scriptName} : "
+    p = ["ssh", HOST, "chado_dump_transcripts ${org}"].execute()
 	sout = new FileOutputStream(script)
 	serros = new FileOutputStream(serr)
 	p.consumeProcessOutput(sout, serros)
 	p.waitFor()
 	sout.close()
 	serros.close()
-	//println "Output: ${sout}"
-	//println "Error: ${serr}"
 	if (serr.length() > 0) {
 		// Hack as script outputs a progress msg
 		println("Looks like we got a problem")
+		worked = false
 	} else {
 		println("OK")
 	}
-//    def serr = new StringBuffer()
-//    p.consumeProcessOutput(sout, serr)
-//    p.waitFor()
-//    println "Output: ${sout}"
-//    println "Error: ${serr}"
 }
 
-println "All jobs submitted - waiting for them to finish"
-
 boolean worked = true
-
 
 if (worked) {
     System.exit(0)
