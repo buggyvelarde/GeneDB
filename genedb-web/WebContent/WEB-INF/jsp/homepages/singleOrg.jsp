@@ -51,12 +51,32 @@ ul {
 <div id="col-1-2">
 	
 	
-	<h2>About GeneDB</h2>
+	 <h2>About GeneDB</h2>  
+    <div class="light-grey-top"></div>
+    <div class="light-grey">
+        <P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
+    </div>
+    <div class="light-grey-bot"></div>
+    
+	
+	<h2>Links</h2>
+	
 	<div class="baby-blue-top"></div>
 		<div class="baby-blue">
-			<P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
+			<c:catch var="e2">
+	        <jsp:include page="organisms/OrganismLinks_${label}.jsp" />
+	        </c:catch>
+	        <c:if test="${e2!=null}">
+	           <p>Ftp <br />
+	           &raquo; <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/">sequence data</a>
+	           </p>
+	        </c:if>
 		</div>
 	<div class="baby-blue-bot"></div>
+	
+	
+	
+	
 	
 </div>
 
