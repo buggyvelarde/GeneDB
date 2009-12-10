@@ -39,9 +39,8 @@ for (org in orgs) {
     p.consumeProcessOutput(sout, serros)
     p.waitFor()
 	sout.close()
-	serr.close()
-    //println "Output: ${sout}"
-    //println "Error: ${serr}"
+	serros.close()
+
 	if (serr.length() > 70) {
 		// Hack as script outputs a progress msg
 		println("Looks like we got a problem")
@@ -63,7 +62,7 @@ for (org in orgs) {
 	p.consumeProcessOutput(sout, serros)
 	p.waitFor()
 	sout.close()
-	serr.close()
+	serros.close()
 	//println "Output: ${sout}"
 	//println "Error: ${serr}"
 	if (serr.length() > 0) {
