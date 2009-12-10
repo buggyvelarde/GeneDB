@@ -27,8 +27,9 @@ for (org in orgs) {
 
     String scriptName = "/tmp/" + org + ".prot.txt"
     File script = new File(scriptName)
+	script.delete()
 
-	File serr = new File("/tmp/stderr")
+	File serr = new File("/tmp/stderr."+org + ".txt")
 	serr.delete()
 
     print "${org} "
@@ -41,6 +42,8 @@ for (org in orgs) {
     //println "Error: ${serr}"
 	if (serr.length() > 0) {
 		println("Looks like we got a problem")
+	} else {
+	    println("OK")
 	}
 
 //    Process p = ["ssh", "pcs4j", "chado_dump_transcripts ${org}"].execute()
