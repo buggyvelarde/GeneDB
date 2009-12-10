@@ -33,8 +33,8 @@ for (org in orgs) {
 
     print "${org} "
     Process p = ["ssh", "pcs4j", "chado_dump_proteins --nostop ${org}"].execute()
-    def sout = new FileOutputStream(new File(script))
-    def serros = new FileOutputStream(new File(errorOutput))
+    def sout = new FileOutputStream(script)
+    def serros = new FileOutputStream(errorOutput)
     p.consumeProcessOutput(sout, serros)
     p.waitFor()
     //println "Output: ${sout}"
