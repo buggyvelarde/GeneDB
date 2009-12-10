@@ -39,7 +39,7 @@ for (org in orgs) {
     p.waitFor()
     //println "Output: ${sout}"
     //println "Error: ${serr}"
-	if (serr.size > 0) {
+	if (serr.length > 0) {
 		println("Looks like we got a problem")
 	}
 
