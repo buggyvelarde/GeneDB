@@ -138,6 +138,10 @@
             </syspropertyset>
             <jvmarg line="-Xmx1G"/>
         </java>
+    	
+        <antcall target="fix-residues-on-load">
+            <param name="organism" value="${organism}"/>
+        </antcall>
     </target>
 
     <target name="load-fasta" depends="access-fulljar">
@@ -512,7 +516,11 @@
         </java>
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
-
+    
+    <target name="fix-residues-on-load" unless="load.noFixResidues">
+        <antcall target="fix-residues"/>
+    </target>
+    
     <target name="fix-residues-mansoni" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
