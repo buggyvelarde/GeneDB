@@ -10,14 +10,15 @@ public class SequenceUtils {
      * @return the reverse-complement of the sequence
      */
     public static String reverseComplement(String sequence) {
-        StringBuilder sb = transliterate(sequence, COMPLEMENT_FROM, COMPLEMENT_TO);
+        StringBuilder sb = transliterate(sequence.toLowerCase(), COMPLEMENT_FROM, COMPLEMENT_TO);
         sb.reverse();
         return sb.toString();
     }
 
     private static StringBuilder transliterate(String string, char[] from, char[] to) {
-        if (from.length != to.length)
+        if (from.length != to.length) {
             throw new IllegalArgumentException("Source and destination alphabets have different lengths");
+        }
         StringBuilder result = new StringBuilder();
         for (char c: string.toCharArray()) {
             boolean foundChar = false;
