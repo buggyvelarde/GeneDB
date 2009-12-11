@@ -714,3 +714,24 @@ div#errorMessage {
     padding-right: 1em;
 }
 
+
+/* gv1: used for homepages and (can be used for misc pages if needed) */
+.readableText
+{
+    font-size: 1.2em;
+    line-height:1.5em;
+    text-align:justify;
+    margin-left:1em;
+}
+.readableText a
+{
+    color:#4381a7;
+}
+.readableText ul {
+    padding-left:1em;
+}
+
+.readableText div.arrowList {
+	padding-left:1em;
+	margin-left:1em;
+}

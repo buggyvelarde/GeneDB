@@ -9,22 +9,7 @@
 <format:page>
 <br>
 
-<style>
-.readableText
-{
-    font-size: 1.2em;
-    line-height:1.5em;
-    text-align:justify;
-    margin-left:1em;
-}
-.readableText a
-{
-    color:#4381a7;
-}
-ul {
-    padding-left:1em;
-}
-</style>
+
 
 
   
