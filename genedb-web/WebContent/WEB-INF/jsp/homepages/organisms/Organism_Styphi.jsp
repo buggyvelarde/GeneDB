@@ -37,11 +37,4 @@
   J. Parkhill, G. Dougan, K.D. James, N.R. Thomson, D. Pickard, J. Wain, C. Churcher, K. Mungall, S.D. Bentley, M.T.G. Holden, M. Sebaihia, S. Baker, D. Basham, K. Brooks, T. Chillingworth, P. Connerton, A. Cronin, P. Davis, R.M. Davies, L. Dowd, N. White, J. Farrar, T. Feltwell, N. Hamlin, A. Haque, T.T. Hien, S. Holroyd, K. Jagels, A. Krogh, T.S. Larsen, S. Leather, S. Moule, P. O'Gaora, C. Parry, M. Quail, K. Rutherford, M. Simmonds, J. Skelton, K. Stevens, S. Whitehead, and B.G. Barrell
 Please address all enquiries to Julian Parkhill (parkhill@sanger.ac.uk).
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 1/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5788-0!1!0!!en!2 and timestamp 20091210112313 -->
 </div>
