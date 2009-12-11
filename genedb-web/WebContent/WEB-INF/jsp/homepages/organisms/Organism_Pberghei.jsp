@@ -10,7 +10,7 @@
   <i>
    P. berghei
   </i>
-  is one of the four malaria species that infect murine rodents from Central Africa that are infectious to laboratory rodents and easily maintained and transmitted by Anopheles stephensi in the laboratory. It serves as a good model for the human parasites with which it shares high homology in most essential aspects of structure, biochemistry and life cycle. Genome organisation is conserved between rodent and human parasites and the two share detailed synteny.
+  is one of the four malaria species that infect murine rodents from Central Africa that are infectious to laboratory rodents and easily maintained and transmitted by "Anopheles stephensi" in the laboratory. It serves as a good model for the human parasites with which it shares high homology in most essential aspects of structure, biochemistry and life cycle. Genome organisation is conserved between rodent and human parasites and the two share detailed synteny.
  </p>
  <a name="The_Genome">
  </a>
@@ -37,7 +37,7 @@
   </span>
  </h2>
  <p>
-  This genome has been published in Hall et al., Science 307 (5706):82-86.       PMID: 15637271
+  This genome has been published in Hall et al., Science 307 (5706):82-86.       (PMID:1563727).
 Whole genome shotgun sequencing has continued to 8x coverage with a mixture of capillary and illumina sequencing platform. The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences of
   <i>
    P. berghei
@@ -60,5 +60,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5735-0!1!0!!en!2 and timestamp 20091210162458 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5735-0!1!0!!en!2 and timestamp 20091211151412 -->
 </div>

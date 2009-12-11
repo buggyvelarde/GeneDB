@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -20,11 +20,11 @@
   </i>
   , the second most important species of human malaria parasite.
  </p>
- <a name="The_genome">
+ <a name="The_Genome">
  </a>
  <h2>
   <span class="mw-headline">
-   The genome
+   The Genome
   </span>
  </h2>
  <p>
@@ -45,11 +45,11 @@
   This genome has been published in Pain et al., Nature 455 (7214):799-803.   PMID: 18843368
 This genome is not being curated.
  </p>
- <a name="Sequencing_enquiries">
+ <a name="Sequencing_Enquiries">
  </a>
  <h2>
   <span class="mw-headline">
-   Sequencing enquiries
+   Sequencing Enquiries
   </span>
  </h2>
  <p>
@@ -61,5 +61,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5725-0!1!0!!en!2 and timestamp 20091210143532 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5725-0!1!0!!en!2 and timestamp 20091211125846 -->
 </div>

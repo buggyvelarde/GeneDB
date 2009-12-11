@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -54,7 +54,14 @@
   </span>
  </h2>
  <p>
-  This genome has been published in Carlton et al., Nature 455 (7214):757-63. PMID: 12368864
+  This genome has been published in Carlton et al., Nature 455 (7214):757-63. PMID: 12368864.
 This genome is not curated.
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5726-0!1!0!!en!2 and timestamp 20091211141313 -->
 </div>

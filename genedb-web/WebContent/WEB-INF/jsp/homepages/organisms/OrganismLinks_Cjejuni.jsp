@@ -1,17 +1,18 @@
 <div id="homepage-text">
  <p>
-  <b>
-   Ftp
-  </b>
+  Ftp
+ </p>
+ <p>
   &raquo;
   <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/" class="external text" title="ftp://ftp.sanger.ac.uk/pub/pathogens/" rel="nofollow">
    Sequence data
   </a>
  </p>
  <p>
-  <b>
-   Article
-  </b>
+  <br />
+  Article
+ </p>
+ <p>
   &raquo;
   <a href="http://www.ncbi.nlm.nih.gov/pubmed/10688204" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/10688204" rel="nofollow">
    Parkhill
@@ -26,18 +27,18 @@
   </a>
  </p>
  <p>
-  <b>
-   Gene
-  </b>
+  <br />
+  Gene
+ </p>
+ <p>
   &raquo;
   <a href="http://www.genedb.org/feature/Cj1001:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Cj1001:mRNA" rel="nofollow">
    Cj1001
   </a>
  </p>
  <p>
-  <b>
-   Information
-  </b>
+  <br />
+  Information
  </p>
  <p>
   &raquo;
@@ -66,9 +67,10 @@
   </a>
  </p>
  <p>
-  <b>
-   Contact
-  </b>
+  <br />
+  Contact
+ </p>
+ <p>
   &raquo;
   <a href="mailto:parkhill@sanger.ac.uk" class="external text" title="mailto:parkhill@sanger.ac.uk" rel="nofollow">
    Dr. Julian Parkhill
@@ -80,5 +82,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5825-0!1!0!!en!2 and timestamp 20091210181847 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5825-0!1!0!!en!2 and timestamp 20091211135032 -->
 </div>

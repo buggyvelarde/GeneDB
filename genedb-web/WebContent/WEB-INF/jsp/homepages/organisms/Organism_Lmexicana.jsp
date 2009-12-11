@@ -1,67 +1,4 @@
 <div id="homepage-text">
- <table id="toc" class="toc" summary="Contents">
-  <tr>
-   <td>
-    <div id="toctitle">
-     <h2>
-      Contents
-     </h2>
-    </div>
-    <ul>
-     <li class="toclevel-1">
-      <a href="#The_disease">
-       <span class="tocnumber">
-        1
-       </span>
-       <span class="toctext">
-        The disease
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#The_genome">
-       <span class="tocnumber">
-        2
-       </span>
-       <span class="toctext">
-        The genome
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#The_Database">
-       <span class="tocnumber">
-        3
-       </span>
-       <span class="toctext">
-        The Database
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#Data_Release">
-       <span class="tocnumber">
-        4
-       </span>
-       <span class="toctext">
-        Data Release
-       </span>
-      </a>
-     </li>
-     <li class="toclevel-1">
-      <a href="#Sequencing_Enquiries">
-       <span class="tocnumber">
-        5
-       </span>
-       <span class="toctext">
-        Sequencing Enquiries
-       </span>
-      </a>
-     </li>
-    </ul>
-   </td>
-  </tr>
- </table>
  <a name="The_disease">
  </a>
  <h2>
@@ -154,11 +91,4 @@
  <p>
   Please address all sequencing enquiries to Dr. Matthew Rogers (email: mr7@sanger.ac.uk).
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 6/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5796-0!1!0!!en!2 and timestamp 20091210135431 -->
 </div>
