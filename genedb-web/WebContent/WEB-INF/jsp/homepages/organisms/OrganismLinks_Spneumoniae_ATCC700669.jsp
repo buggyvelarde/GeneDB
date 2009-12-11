@@ -32,7 +32,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/SPN23F19110:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SPN23F19110:mRNA" rel="nofollow">
+  <a href="${baseUrl}feature/SPN23F19110:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SPN23F19110:mRNA" rel="nofollow">
    SPN23F19110
   </a>
  </p>

@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/SpyM50753:mRNA?" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SpyM50753:mRNA?" rel="nofollow">
+  <a href="${baseUrl}feature/SpyM50753:mRNA?" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SpyM50753:mRNA?" rel="nofollow">
    SpyM50753
   </a>
  </p>

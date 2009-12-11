@@ -43,7 +43,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/PF14_0641:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PF14_0641:mRNA" rel="nofollow">
+  <a href="${baseUrl}feature/PF14_0641:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PF14_0641:mRNA" rel="nofollow">
    PF14_0641
   </a>
  </p>

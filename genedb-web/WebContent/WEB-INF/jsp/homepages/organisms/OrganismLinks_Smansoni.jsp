@@ -45,7 +45,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/Smp_124450:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Smp_124450:mRNA" rel="nofollow">
+  <a href="${baseUrl}feature/Smp_124450:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Smp_124450:mRNA" rel="nofollow">
    Smp_124450
   </a>
  </p>

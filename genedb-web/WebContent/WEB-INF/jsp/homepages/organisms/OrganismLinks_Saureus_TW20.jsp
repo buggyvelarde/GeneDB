@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/SATW20_22240:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SATW20_22240:mRNA" rel="nofollow">
+  <a href="${baseUrl}feature/SATW20_22240:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SATW20_22240:mRNA" rel="nofollow">
    SATW20_22240
   </a>
  </p>

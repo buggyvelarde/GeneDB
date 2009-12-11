@@ -14,7 +14,7 @@
  </p>
  <p>
   &raquo;
-  <a href="http://www.genedb.org/feature/Tbg972.1.140:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Tbg972.1.140:mRNA" rel="nofollow">
+  <a href="${baseUrl}feature/Tbg972.1.140:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Tbg972.1.140:mRNA" rel="nofollow">
    Tbg972.1.140
   </a>
  </p>
