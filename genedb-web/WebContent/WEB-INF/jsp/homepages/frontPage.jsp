@@ -17,7 +17,7 @@
 <tr>
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
-<img src="<misc:url value="/includes/image/dataset-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
+<img src="<misc:url value="/includes/image/dataset-apicomplexan-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
 <db:homepageselect top="Apicomplexa" baseUrl="${base2}"  />
 </td>
 <td align="center" valign="top" width="33%">
