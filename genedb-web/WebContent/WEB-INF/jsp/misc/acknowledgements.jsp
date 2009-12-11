@@ -17,7 +17,7 @@
 			&raquo; Apicomplexan Protozoa Photo - Chris Newbold <br />
 			&raquo; Kinetoplastid Protozoa - Catarina ? <br />
 			&raquo; Parasitic Helminths - Gary Dillon <br />
-			&raquo; Bacteria - ? <br />
+			&raquo; Bacteria - Sharon Peacock <br />
 			&raquo; Parasite Vectors - Ray Wilson <br />
 			&raquo; Viruses - R. Dourmashkin, Wellcome Images (B0005752) <br />
         </div>
