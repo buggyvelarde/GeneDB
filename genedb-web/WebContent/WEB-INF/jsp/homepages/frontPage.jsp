@@ -18,18 +18,18 @@
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
 <img src="<misc:url value="/includes/image/dataset-apicomplexan-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
-<db:homepageselect top="Apicomplexa" baseUrl="${base2}"  />
+<db:homepageselect top="Apicomplexa" baseUrl="${base2}" leafOnly="true" />
 </td>
 <td align="center" valign="top" width="33%">
 
 <h3>Kinetoplastid Protozoa</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-kinetoplastid-protozoa.jpg" height="163" width="136" alt="Kinetoplastid Protozoa" />
-<db:homepageselect top="Kinetoplastida" baseUrl="${base2}" />
+<db:homepageselect top="Kinetoplastida" baseUrl="${base2}" leafOnly="true" />
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasitic Helminths</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-parasitic-helminths.jpg" height="163" width="136" alt="Parasitic Helminths" />
-<db:homepageselect top="Helminths" baseUrl="${base2}" />
+<db:homepageselect top="Helminths" baseUrl="${base2}" leafOnly="true" />
 </td>
 
 </tr>
@@ -38,7 +38,7 @@
 <td align="center" valign="top" width="33%">
 <h3>Bacteria</h3>
 <img src="<misc:url value="/"/>includes/image/dataset-bacteria.jpg" height="163" width="136" alt="Bacteria" />
-<db:homepageselect top="Bacteria" baseUrl="${base2}"/>
+<db:homepageselect top="Bacteria" baseUrl="${base2}" leafOnly="true"/>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
@@ -114,6 +114,13 @@ Software<br />
 &raquo; <a href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</a><br />
 
 </p>
+<br />
+<p>
+Contributor<br />
+&raquo; <a href="<misc:url value="/Page/acknowledgements" />">Acknowledgements</a><br />
+</p>
+
+
 </div>
 <div class="baby-blue-bot"></div>
 </div><!-- end sidebar content columb -right -->
