@@ -45,5 +45,6 @@ doLoad() {
     done
     shift $[ $OPTIND - 1 ]
 
+    read_password
     python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties $options
 }
