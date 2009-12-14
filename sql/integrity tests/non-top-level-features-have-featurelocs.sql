@@ -3,6 +3,8 @@
 # - have a sequence 
 # - not a BAC_end
 # - not an EST
+# - not a nucleotide_match or protein_match
+# - not an ORTHOMCL match region
 # have a sourcefeature.
 
 
@@ -17,7 +19,7 @@ and feature.type_id not in (
                              select cvterm.cvterm_id
                              from cvterm join cv on cvterm.cv_id = cv.cv_id
                              where cv.name = 'sequence'
-                             and cvterm.name in ('BAC_end', 'EST'))
+                             and cvterm.name in ('BAC_end', 'EST', 'protein_match', 'nucleotide_match'))                          
 and not exists (
     select *
     from featureloc
@@ -32,5 +34,7 @@ and not exists (
     and cv.name = 'genedb_misc'
     and cvterm.name = 'top_level_seq'
 )
+and feature.uniquename not ilike '%uniprot%'
+and feature.uniquename not ilike '%ORTHO%'
 order by organism.common_name
 ;
