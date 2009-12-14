@@ -18,6 +18,7 @@ value       the value of the property
 NOTE : this loader depends on having the path to the psu/genlib/python/ libraries in you PYTHONPATH. Contact Giles for info.
 
 USAGE
+    standard_options
 }
 
 loaderHelp() {
@@ -30,6 +31,11 @@ HELP
 }
 
 doLoad() {
-    
-    python -c "from loaders.organismprop_loader import doLoad; doLoad();" "$@"
+    OPTIND=0
+    while getopts "$stdopts" option; do
+        process_standard_options "$option"
+    done
+    shift $[ $OPTIND - 1 ]
+
+    python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties "$@"
 }
