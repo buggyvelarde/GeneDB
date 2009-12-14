@@ -35,7 +35,6 @@
    </i>
    419:498-511
   </a>
-  .
  </p>
  <p>
   <br />
@@ -56,7 +55,7 @@
  <p>
   &raquo;
   <a href="mailto:ucb@sanger.ac.uk" class="external text" title="mailto:ucb@sanger.ac.uk" rel="nofollow">
-   Dr. Ulrike Böhme
+   Dr. Ulrike B&#246;hme
   </a>
  </p>
  <!-- 
@@ -65,5 +64,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5827-0!1!0!!en!2 and timestamp 20091211132926 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5827-0!1!0!!en!2 and timestamp 20091214101135 -->
 </div>

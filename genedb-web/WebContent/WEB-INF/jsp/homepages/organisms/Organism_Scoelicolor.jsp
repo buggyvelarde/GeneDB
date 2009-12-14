@@ -1,38 +1,80 @@
 <div id="homepage-text">
+ <a name="The_Organism">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Organism
+  </span>
+ </h2>
  <p>
-  The Sanger Institute has completed the sequencing of the Streptomyces coelicolor A3(2) genome in collaboration with
-  <a href="http://www.jic.bbsrc.ac.uk/hosting/microbes/seniors/hopwood.html" class="external text" title="http://www.jic.bbsrc.ac.uk/hosting/microbes/seniors/hopwood.html" rel="nofollow">
-   Prof. David Hopwood
-  </a>
-  of the
+  <i>
+   Streptomyces coelicolor
+  </i>
+  A3(2) is the model representative of a group of soil-dwelling organism with a complex lifecycle involving mycelial growth and spore formation. These microbes are notable for their production of pharmaceutically useful compound including anti-tumour agents, immunosupressants and over two-thirds of all natural antibiotics currently available.
+ </p>
+ <a name="The_Genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Genome
+  </span>
+ </h2>
+ <p>
+  The
+  <i>
+   S. coelicolor
+  </i>
+  strain A3(2) genome is composed of a single linear chromosome of 8,667,507 bp, and was sequenced in collaboration with Prof. David Hopwood] of the
   <a href="http://www.jic.bbsrc.ac.uk/" class="external text" title="http://www.jic.bbsrc.ac.uk/" rel="nofollow">
    John Innes Centre
   </a>
   .
  </p>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Data Release
+  </span>
+ </h2>
  <p>
-  The chromosome is 8,667,507bp long with a G+C content of 72.1% and is predicted to contain 7825 protein encoding genes.
- </p>
- <p>
-  <i>
-   <b>
-    Streptomyces coelicolor A3(2)
-   </b>
-  </i>
-  is the model representative of a group of soil-dwelling organism with a complex lifecycle involving mycelial growth and spore formation. These microbes are notable for their production of pharmaceutically useful compound including anti-tumour agents, immunosupressants and over two-thirds of all natural antibiotics currently available. The sequence was generated using a clone-by-clone approach, initially using cosmids generated and mapped by David Hopwood's group at the John Innes Centre, and latterly using a BAC library to fill gaps and confirm the map.
- </p>
- <p>
-  This data described in: S. D. Bentley et al    Complete genome sequence of the model actinomycete Streptomyces coelicolor A3(2) ,Nature 417, 141 - 147 (09 May 2002) (
-  <a href="http://www.nature.com/cgi-taf/DynaPage.taf?file=/nature/journal/v417/n6885/abs/417141a_fs.html" class="external text" title="http://www.nature.com/cgi-taf/DynaPage.taf?file=/nature/journal/v417/n6885/abs/417141a_fs.html" rel="nofollow">
-   Online version of this article at Nature
+  A manuscript describing the A3(3) genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/12000953" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/12000953" rel="nofollow">
+   Bentley
+   <i>
+    et al.
+   </i>
+   (2002) Complete genome sequence of the model actinomycete
+   <i>
+    Streptomyces coelicolor
+   </i>
+   A3(2).
+   <i>
+    Nature
+   </i>
+   417:141-7
   </a>
-  )
+  .
+ </p>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Sequencing Enquiries
+  </span>
+ </h2>
+ <p>
+  Please address all sequencing and annotation enquiries to
+  <a href="mailto:sdb@sanger.ac.uk" class="external text" title="mailto:sdb@sanger.ac.uk" rel="nofollow">
+   Dr. Stephen Bentley
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 1/1000000
+Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5786-0!1!0!!en!2 and timestamp 20091210173435 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5786-0!1!0!!en!2 and timestamp 20091214112140 -->
 </div>

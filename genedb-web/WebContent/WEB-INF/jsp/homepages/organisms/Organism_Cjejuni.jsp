@@ -10,7 +10,7 @@
   <i>
    Campylobacter jejuni
   </i>
-  is from the delta-epsilon group of proteobacteria, is a microaerophilic, Gram-negative, flagellate, spiral bacterium—properties it shares with the related gastric pathogen
+  is from the delta-epsilon group of proteobacteria, is a microaerophilic, Gram-negative, flagellate, spiral bacterium&#8212;properties it shares with the related gastric pathogen
   <i>
    Helicobacter pylori
   </i>
@@ -18,7 +18,7 @@
   <i>
    C. jejuni
   </i>
-  is the most frequent antecedent to a form of neuromuscular paralysis known as Guillain–Barré syndrome.
+  is the most frequent antecedent to a form of neuromuscular paralysis known as Guillain&#8211;Barr&#233; syndrome.
  </p>
  <a name="The_Genome">
  </a>
@@ -96,5 +96,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5780-0!1!0!!en!2 and timestamp 20091210181625 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5780-0!1!0!!en!2 and timestamp 20091214123211 -->
 </div>

@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -52,11 +52,11 @@
   </a>
   ).
  </p>
- <a name="The_genome">
+ <a name="The_Genome">
  </a>
  <h2>
   <span class="mw-headline">
-   The genome
+   The Genome
   </span>
  </h2>
  <p>

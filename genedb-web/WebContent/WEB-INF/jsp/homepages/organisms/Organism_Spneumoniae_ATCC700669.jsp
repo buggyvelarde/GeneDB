@@ -34,7 +34,7 @@
   <i>
    S. pneumoniae
   </i>
-  strain ATCC 700669 strain is composed of a single circular chromosome of 2,221,315 bp, and was sequenced in collaboration with Prof. Tim Mitchell of the
+  strain ATCC 700669 strain genome is composed of a single circular chromosome of 2,221,315 bp, and was sequenced in collaboration with Prof. Tim Mitchell of the
   <a href="http://www.gla.ac.uk/ibls/II/index.html" class="external text" title="http://www.gla.ac.uk/ibls/II/index.html" rel="nofollow">
    Division of Infection and Immunity
   </a>
@@ -62,7 +62,11 @@
    <i>
     Streptococcus pneumoniae
    </i>
-   Spain23F ST81. Journal of Bacteriology 191, 1480-9
+   Spain23F ST81.
+   <i>
+    Journal of Bacteriology
+   </i>
+   191, 1480-9
   </a>
   .
  </p>
@@ -86,5 +90,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5819-0!1!0!!en!2 and timestamp 20091210182522 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5819-0!1!0!!en!2 and timestamp 20091214112353 -->
 </div>

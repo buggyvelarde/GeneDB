@@ -37,7 +37,7 @@
   <i>
    B. cenocepacia
   </i>
-  strain J2315 consists of three circular chromosomes of 3,870,082 bp, 3,217,062 bp, and 875,977 bp and a plasmid of 92,661 bp, and was sequenced in collaboration with Dr. Eshwar Mahenthiralingham of the
+  strain J2315 genome consists of three circular chromosomes of 3,870,082 bp, 3,217,062 bp, and 875,977 bp and a plasmid of 92,661 bp, and was sequenced in collaboration with Dr. Eshwar Mahenthiralingham of the
   <a href="http://www.cardiff.ac.uk/biosi/" class="external text" title="http://www.cardiff.ac.uk/biosi/" rel="nofollow">
    School of Biosciences
   </a>
@@ -101,5 +101,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5821-0!1!0!!en!2 and timestamp 20091210170914 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5821-0!1!0!!en!2 and timestamp 20091214112436 -->
 </div>

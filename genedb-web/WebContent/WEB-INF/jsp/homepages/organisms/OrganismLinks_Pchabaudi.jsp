@@ -10,6 +10,16 @@
  </p>
  <p>
   <br />
+  Ftp
+ </p>
+ <p>
+  &raquo;
+  <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/P_chabaudi/September_2009_assembly/" class="external text" title="ftp://ftp.sanger.ac.uk/pub/pathogens/P_chabaudi/September_2009_assembly/" rel="nofollow">
+   Sequence data
+  </a>
+ </p>
+ <p>
+  <br />
   Article
  </p>
  <p>
@@ -25,7 +35,6 @@
    </i>
    307:82-86
   </a>
-  .
  </p>
  <p>
   <br />
@@ -39,8 +48,6 @@
  </p>
  <p>
   <br />
- </p>
- <p>
   Contact
  </p>
  <p>
@@ -55,5 +62,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5835-0!1!0!!en!2 and timestamp 20091211144435 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5835-0!1!0!!en!2 and timestamp 20091214153841 -->
 </div>

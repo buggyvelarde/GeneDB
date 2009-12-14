@@ -14,8 +14,8 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/Tbg972.1.140:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/Tbg972.1.140:mRNA" rel="nofollow">
-   Tbg972.1.140
+  <a href="${baseUrl}feature/TvY486_0102140:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/TvY486_0102140:mRNA" rel="nofollow">
+   TvY486_0102140
   </a>
  </p>
  <p>
@@ -28,4 +28,11 @@
    Dr. Matt Rogers
   </a>
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 1/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5840-0!1!0!!en!2 and timestamp 20091214171719 -->
 </div>

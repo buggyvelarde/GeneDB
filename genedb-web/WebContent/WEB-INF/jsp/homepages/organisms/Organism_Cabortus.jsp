@@ -1,14 +1,34 @@
 <div id="homepage-text">
+ <a name="The_Disease">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Disease
+  </span>
+ </h2>
  <p>
-  The Sanger Institute has been funded by
-  <a href="http://www.scotland.gov.uk/The" class="external text" title="http://www.scotland.gov.uk/The" rel="nofollow">
-   Scottish Office
-  </a>
-  (
-  <a href="http://www.scotland.gov.uk/abrg/" class="external text" title="http://www.scotland.gov.uk/abrg/" rel="nofollow">
-   SEERAD
-  </a>
-  ) to sequence the genome of Chlamydophila abortus strain S26/3, in collaboration with Dr. Ian Toth of the
+  <i>
+   Chlamydophila abortus
+  </i>
+  (formerly the abortion subtype of Chlamydia psittaci) is an obligate intracellular pathogen and is an important cause of late gestation abortions in ruminants. In the United Kingdom, and countries of Northern Europe, it is the most common cause of abortion in sheep and goats.
+  <i>
+   C. abortus
+  </i>
+  also represents a threat to human health because it can cause zoonotic infections; pregnant women who are exposed to infected animals are also at risk of abortion and life-threatening illness
+ </p>
+ <a name="The_Genome">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   The Genome
+  </span>
+ </h2>
+ <p>
+  The
+  <i>
+   C. abortus
+  </i>
+  strain S26/3 genome is composed of a single circular chromosome of 1,144,377 bp, and was sequenced in collaboration with Dr. Ian Toth of the
   <a href="http://www.scri.sari.ac.uk/" class="external text" title="http://www.scri.sari.ac.uk/" rel="nofollow">
    Scottish Crop Research Institute
   </a>
@@ -18,24 +38,51 @@
   </a>
   .
  </p>
+ <a name="Data_Release">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Data Release
+  </span>
+ </h2>
  <p>
-  Chlamydophila abortus is an obligate intracellular pathogen, causing chlamydial abortion of sheep, and representing a significant zoonotic threat to pregnant women.
- </p>
- <p>
-  The genome is 1,144,377 bp with a G+C content of 39.9%.
- </p>
- <p>
-  Please address all enquiries to Nicholas Thomson (
-  <a href="mailto:nrt@sanger.ac.uk" class="external text" title="mailto:nrt@sanger.ac.uk" rel="nofollow">
-   nrt@sanger.ac.uk
+  A manuscript describing the S26/3 has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15837807" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/15837807" rel="nofollow">
+   Thomson
+   <i>
+    et al.
+   </i>
+   (2005) The
+   <i>
+    Chlamydophila abortus
+   </i>
+   genome sequence reveals an array of variable proteins that contribute to interspecies variation.
+   <i>
+    Genome Res
+   </i>
+   15:629-40
   </a>
-  ).
+  .
+ </p>
+ <a name="Sequencing_Enquiries">
+ </a>
+ <h2>
+  <span class="mw-headline">
+   Sequencing Enquiries
+  </span>
+ </h2>
+ <p>
+  Please address all sequencing and annotation enquiries to
+  <a href="mailto:nrt@sanger.ac.uk" class="external text" title="mailto:nrt@sanger.ac.uk" rel="nofollow">
+   Dr. Nicholas Thomson
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
-Preprocessor node count: 1/1000000
+Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5779-0!1!0!!en!2 and timestamp 20091210173431 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5779-0!1!0!!en!2 and timestamp 20091214112228 -->
 </div>

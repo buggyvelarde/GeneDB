@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -94,11 +94,4 @@
   </i>
   and is available for use without restriction. However, the annotation is pro-actively updated and curated. If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 5/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5673-0!1!0!!en!2 and timestamp 20091210162832 -->
 </div>

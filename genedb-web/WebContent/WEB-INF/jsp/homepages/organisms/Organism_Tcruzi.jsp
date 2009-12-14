@@ -1,9 +1,9 @@
 <div id="homepage-text">
- <a name="The_disease">
+ <a name="The_Disease">
  </a>
  <h2>
   <span class="mw-headline">
-   The disease
+   The Disease
   </span>
  </h2>
  <p>
@@ -20,11 +20,11 @@
   </a>
   .
  </p>
- <a name="The_genome">
+ <a name="The_Genome">
  </a>
  <h2>
   <span class="mw-headline">
-   The genome
+   The Genome
   </span>
  </h2>
  <p>
@@ -85,5 +85,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5678-0!1!0!!en!2 and timestamp 20091211150319 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5678-0!1!0!!en!2 and timestamp 20091214171726 -->
 </div>

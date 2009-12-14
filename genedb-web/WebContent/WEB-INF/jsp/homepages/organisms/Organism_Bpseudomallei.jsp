@@ -40,7 +40,7 @@
   <i>
    B. pseudomallei
   </i>
-  strain K96243 is composed of two circular chromosome of 4,074,542 bp and 3,173,005 bp, and was sequenced in collaboration with Dr. Rick Titball of the
+  strain K96243 genome is composed of two circular chromosome of 4,074,542 bp and 3,173,005 bp, and was sequenced in collaboration with Dr. Rick Titball of the
   <a href="http://www.dstl.gov.uk/" class="external text" title="http://www.dstl.gov.uk/" rel="nofollow">
    Defence Science and Technology Laboratory
   </a>
@@ -96,5 +96,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5755-0!1!0!!en!2 and timestamp 20091210173247 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5755-0!1!0!!en!2 and timestamp 20091214112457 -->
 </div>
