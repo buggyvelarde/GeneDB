@@ -9,7 +9,7 @@ loaderUsage() {
 
     -genus genius -species exceptional human -cv genedb_misc -cvterm htmlFullName -value new value
 
-genus       the orgnanim's genus field
+genus       the orgnanism's genus field
 species     the organism's species field
 cv          the name of the controlled vocabulary to type the property
 cvterm      the cvterm used to type the property
@@ -31,11 +31,19 @@ HELP
 }
 
 doLoad() {
+    options=""
     OPTIND=0
-    while getopts "$stdopts" option; do
-        process_standard_options "$option"
+    while getopts "g:s:c:t:v:p:$stdopts" option; do
+        case "$option" in
+            [gsctv])
+                options="$options $option $OPTARG"
+                ;;
+            *)
+                process_standard_options "$option"
+                ;;
+        esac
     done
     shift $[ $OPTIND - 1 ]
 
-    python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties "$@"
+    python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties $options
 }
