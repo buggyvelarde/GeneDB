@@ -36,7 +36,7 @@ doLoad() {
     while getopts "g:s:c:t:v:p:$stdopts" option; do
         case "$option" in
             [gsctv])
-                options="$options $option $OPTARG"
+                options="$options -$option $OPTARG"
                 ;;
             *)
                 process_standard_options "$option"
