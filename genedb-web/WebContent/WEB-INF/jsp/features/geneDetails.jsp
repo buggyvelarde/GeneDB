@@ -5,10 +5,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <c:if test='${dto.organismCommonName == "Pchabaudi"}'>
+<br />
 <P>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated 
 annotation) of <em>P.chabaudi</em> AS in a peer reviewed journal as soon as possible. Permission of the principal investigator
 should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</P>
+<br />
 </c:if>
+
+<div style="hidden">${dto.organismCommonName}</div>
 
 <div id="col-4-1">
 <div class="main-grey-3-4-top"></div>
