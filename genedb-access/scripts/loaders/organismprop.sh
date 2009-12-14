@@ -31,12 +31,12 @@ HELP
 }
 
 doLoad() {
-    options=""
+    declare -a options
     OPTIND=0
     while getopts "g:s:c:t:v:p:$stdopts" option; do
         case "$option" in
             [gsctv])
-                options="$options -$option $OPTARG"
+                options=("${options[@]}" "-$option" "$OPTARG")
                 ;;
             *)
                 process_standard_options "$option"
@@ -46,5 +46,5 @@ doLoad() {
     shift $[ $OPTIND - 1 ]
 
     read_password
-    python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties $options
+    python -c "from loaders.organismprop_loader import doLoad; doLoad();" $database_properties "${options[@]}"
 }
