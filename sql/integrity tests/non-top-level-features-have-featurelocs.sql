@@ -5,6 +5,7 @@
 # - not an EST
 # - not a nucleotide_match or protein_match
 # - not an ORTHOMCL match region
+# - not a unassembled PKnowlesi contig (review this decision later)
 # have a sourcefeature.
 
 
@@ -34,6 +35,7 @@ and not exists (
     and cv.name = 'genedb_misc'
     and cvterm.name = 'top_level_seq'
 )
+and not (organism.common_name='Pknowlesi' and feature.type_id=236)
 and feature.uniquename not ilike '%uniprot%'
 and feature.uniquename not ilike '%ORTHO%'
 order by organism.common_name
