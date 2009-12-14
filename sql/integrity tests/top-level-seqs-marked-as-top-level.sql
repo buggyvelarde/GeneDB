@@ -5,6 +5,7 @@
 #  - are a source feature
 #  - do not have a source feature
 #  - are not marked as top_level_seq
+# Note: It is acceptable for the residues of a feature to be null but for seqlen to be non-zero. 
 
 
 
@@ -16,7 +17,8 @@ select organism.common_name
 from feature
 join organism using (organism_id)
 join cvterm on feature.type_id=cvterm.cvterm_id
-where feature.residues is not null and length(feature.residues) > 0
+where ((feature.residues is not null and length(feature.residues) > 0)
+or feature.seqlen > 0)
 and feature.type_id not in (
                              select cvterm.cvterm_id
                              from cvterm join cv on cvterm.cv_id = cv.cv_id
