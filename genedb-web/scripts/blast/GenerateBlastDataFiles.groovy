@@ -25,10 +25,10 @@ for (org in orgs) {
 
     String scriptName = PATH + "GeneDB_" + org + "_Proteins"
     File script = new File(scriptName)
-	script.delete()
+    script.delete()
 
-	File serr = new File("/tmp/stderr."+org + ".txt")
-	serr.delete()
+    File serr = new File("/tmp/stderr."+org + ".txt")
+    serr.delete()
 
     print "${scriptName} : "
     Process p = ["ssh", HOST, "chado_dump_proteins --nostop ${org}"].execute()
@@ -36,39 +36,39 @@ for (org in orgs) {
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
     p.waitFor()
-	sout.close()
-	serros.close()
+    sout.close()
+    serros.close()
 
-	if (serr.length() > 70) {
-		// Hack as script outputs a progress msg
-		println("Looks like we got a problem")
-		worked = false
-	} else {
-	    println("OK")
-	}
+    if (serr.length() > 70) {
+        // Hack as script outputs a progress msg
+        println("Looks like we got a problem")
+        worked = false
+    } else {
+        println("OK")
+    }
 
-	scriptName = PATH + "GeneDB_" + org + "_Genes"
-	script = new File(scriptName)
-	script.delete()
+    scriptName = PATH + "GeneDB_" + org + "_Genes"
+    script = new File(scriptName)
+    script.delete()
 
-	serr = new File("/tmp/stderr.spliced."+org + ".txt")
-	serr.delete()
+    serr = new File("/tmp/stderr.spliced."+org + ".txt")
+    serr.delete()
 
-	print "${scriptName} : "
+    print "${scriptName} : "
     p = ["ssh", HOST, "chado_dump_transcripts ${org}"].execute()
-	sout = new FileOutputStream(script)
-	serros = new FileOutputStream(serr)
-	p.consumeProcessOutput(sout, serros)
-	p.waitFor()
-	sout.close()
-	serros.close()
-	if (serr.length() > 0) {
-		// Hack as script outputs a progress msg
-		println("Looks like we got a problem")
-		worked = false
-	} else {
-		println("OK")
-	}
+    sout = new FileOutputStream(script)
+    serros = new FileOutputStream(serr)
+    p.consumeProcessOutput(sout, serros)
+    p.waitFor()
+    sout.close()
+    serros.close()
+    if (serr.length() > 0) {
+        // Hack as script outputs a progress msg
+        println("Looks like we got a problem")
+        worked = false
+    } else {
+        println("OK")
+    }
 }
 
 
