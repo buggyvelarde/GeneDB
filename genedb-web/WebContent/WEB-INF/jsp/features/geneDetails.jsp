@@ -271,7 +271,7 @@ ${dto.ims.imageMap}
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
     <c:forEach items="${dto.orthologueNames}" var="orthologueName">
-      <a href="<misc:url value="/feature/"/>${orthologueName}">${orthologueName}</a>
+      <a href="<misc:url value="/gene/"/>${orthologueName}">${orthologueName}</a>
     </c:forEach>
     </td></tr>
   </table>
