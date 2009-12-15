@@ -21,55 +21,12 @@
     =============================
   -->
 
-  <!--
-    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"> <property name="order" value="2"
-    /> <property name="mediaTypes"> <map> <entry key="xml" value="application/xml"/> <entry key="json"
-    value="application/json"/> </map> </property> <property name="defaultViews"> <list> <bean
-    class="org.springframework.web.servlet.view.xml.MarshallingView"> <property name="marshaller"> <bean
-    class="org.springframework.oxm.xstream.XStreamMarshaller"> <property name="autodetectAnnotations" value="true" />
-  -->
-  <!--
-    GV1 possible way to rename BeanPropertyBindingResult to resultset, currently not needed because using
-    supportedClasses property (below)
-  -->
-  <!--
-    <property name="aliases"> <map> <entry key="resultset"
-    value="org.springframework.validation.BeanPropertyBindingResult" /> </map> </property>
-  -->
-
-  <!--
-    GV1 this filters off all the BeanPropertyBindingResult and its standard properties... is there a better way to do
-    this?
-  -->
-  <!--
-    <property name="supportedClasses"> <list>
-  -->
-  <!--
-    see org.genedb.web.mvc.controller.RestController and org.genedb.web.mvc.controller.GmodRestControllerV1
-  -->
-  <!--
-    <value>org.genedb.web.mvc.controller.BaseResult</value> <value>org.genedb.web.mvc.controller.ErrorModel</value>
-    <value>org.genedb.web.mvc.controller.FeatureStatus</value>
-    <value>org.genedb.web.mvc.controller.OrganismSetResult</value>
-    <value>org.genedb.web.mvc.controller.OrganismStatus</value>
-    <value>org.genedb.web.mvc.controller.OrganismStatusList</value>
-    <value>org.genedb.web.mvc.controller.ResultSet</value>
-  -->
-  <!--
-    <value>org.genedb.web.mvc.controller.OrganismResultSet</value>
-    <value>org.genedb.web.mvc.controller.BaseResultSet</value> <value>org.genedb.web.mvc.controller.Organism</value>
-  -->
-
-  <!--
-    </list> </property> </bean> </property> </bean> <bean
-    class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" /> </list> </property> </bean>
-  -->
-
   <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
     <property name="order" value="1" />
     <property name="viewResolverMap">
       <map>
-        <entry key="jsp" value-ref="checkingViewResolver" />
+        <entry key="jsp" value-ref="jspCheckingViewResolver" />
+        <entry key="ftl" value-ref="ftlViewResolver" />
       </map>
     </property>
     <property name="viewMap">
@@ -77,6 +34,7 @@
         <entry key="xml">
           <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
             <property name="contentType" value="application/xml" />
+            <property name="modelKey" value="resultset" />
             <property name="marshaller">
               <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
                 <property name="autodetectAnnotations" value="true" />
@@ -85,7 +43,18 @@
           </bean>
         </entry>
         <entry key="json">
-          <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+            <property name="contentType" value="application/json" />
+            <property name="modelKey" value="resultset" />
+            <property name="marshaller">
+              <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                <property name="autodetectAnnotations" value="true" />
+                <property name="streamDriver">
+                  <bean class="com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver" />
+                </property>
+              </bean>
+            </property>
+          </bean>
         </entry>
         <entry key="service-xml">
           <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
@@ -116,7 +85,7 @@
     </property>
   </bean>
 
-  <bean id="checkingViewResolver" class="org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver"
+  <bean id="jspCheckingViewResolver" class="org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver"
     init-method="postConstruction">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     <property name="prefix" value="/WEB-INF/jsp/" />
@@ -124,8 +93,20 @@
     <property name="order" value="2" />
   </bean>
 
+  <bean id="ftlViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <property name="cache" value="true"/>
+    <property name="prefix" value=""/>
+    <property name="suffix" value=".ftl"/>
+  </bean>
+
+
+  <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <!-- FIXME STS complains where is superclass -->
+    <property name="templateLoaderPath" value="/WEB-INF/freemarker" />
+  </bean>
+
   <bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
-    <property name="order" value="3" />
+    <property name="order" value="4" />
     <property name="serviceView">
       <bean class="org.genedb.web.mvc.view.ServiceView" />
     </property>
@@ -143,9 +124,12 @@
 
   <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
-    <!--  -->
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+    <property name="sequenceDao" ref="sequenceDao" />
   </bean>
 
+  <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
   <bean id="restController" class="org.genedb.web.mvc.controller.RestController" />
 
@@ -156,7 +140,7 @@
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
     <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
   </bean>
-  
+
   <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >
   	<property name="queryFactory" ref="queryFactory" />
   </bean>
@@ -189,11 +173,6 @@
     -->
   </bean>
 
-  <!-- <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-    
-    <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
-  </bean> -->
-
 
   <!--
     - Message source for this context, loaded from localized "messages_xx" files. - Could also reside in the root
@@ -208,9 +187,7 @@
     </property>
   </bean>
 
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="classpath:project.properties" />
-  </bean>
+  <context:property-placeholder location="classpath:project.properties"/>
 
   <!--
     ========================= QUERY CONFIGURATION
@@ -235,16 +212,23 @@
   <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
   <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
-  
+  <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
     <property name="dataSource" ref="dataSource" />
   </bean>
 
+  <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+    <bean id="org.genedb.querying.core.NumericQueryVisibility.PRIVATE"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+
   <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
     <property name="queryNameMap">
       <map>
-        <entry key="PUBLIC">
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC">
+
           <map>
             <entry key="proteinLength" value-ref="proteinLength" />
             <entry key="proteinMass" value-ref="proteinMass" />
@@ -262,12 +246,13 @@
             <entry key="pfam" value-ref="pfam" />
           </map>
         </entry>
-        <entry key="PRIVATE">
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
           <map>
             <entry key="annotationStatus" value-ref="annotationStatus" />
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
             <entry key="quickSearch" value-ref="quickSearch" />
             <entry key="dateCount" value-ref="dateCount" />
+            <entry key="geneByDb" value-ref="geneByDb" />
           </map>
         </entry>
       </map>
@@ -320,7 +305,7 @@
     <property name="cvTerm" value="gene" />
   </bean>
 
- 
+
   <!--
     - This bean resolves specific types of exception to corresponding error views. - The default behaviour of
     DispatcherServlet is to propagate all exceptions to the - servlet container: This will happen here with all other
@@ -450,7 +435,7 @@
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
   </bean>
 
-  <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
+  <bean id="TranscriptFeatureController" class="org.genedb.web.mvc.controller.TranscriptFeatureController">
     <property name="sequenceDao" ref="sequenceDao" />
     <property name="modelBuilder" ref="modelBuilder" />
     <property name="formView" value="search/nameLookup" />
