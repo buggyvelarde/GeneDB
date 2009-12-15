@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class JdbcDataFetcher implements DataFetcher {
+public class JdbcDataFetcher implements DataFetcher<String> {
 
     private Logger logger = Logger.getLogger(JdbcDataFetcher.class);
 

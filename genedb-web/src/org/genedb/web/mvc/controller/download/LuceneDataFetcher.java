@@ -42,7 +42,7 @@ import java.util.List;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class LuceneDataFetcher implements DataFetcher {
+public class LuceneDataFetcher implements DataFetcher<String> {
 
     private LuceneIndex luceneIndex;
 
