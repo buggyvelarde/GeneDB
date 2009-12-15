@@ -27,7 +27,7 @@ ul {
 <h2>Viruses</h2>
 </div>
 
-<img src="<misc:url value="/includes/image/B0005752_flu_infecting_trachea_cells.jpg" />" width="785" height="576" alt="Flu infecting trachea cells" />
+<img align="center" href="<misc:url value="/includes/image/B0005752_flu_infecting_trachea_cells.jpg" />" width="785" height="576" alt="Flu infecting trachea cells" />
 <p>flu infecting trachea cells,   R. Dourmashkin, (B0005752) Wellcome Images</p>
 
 <p>Influenza viruses infecting cells of the trachea. Influenza viruses
@@ -43,6 +43,7 @@ electron micrograph 2004. Collection: Wellcome Images
 
 <div class="readableText">
 
+<p>&nbsp;</p>
 <p>Virus infections are one of the major causes of disease. Viruses that have
 been controlled in some countries through vaccination still cause devastating disease in
 other parts of the world. New virus diseases continue to emerge such as Human
