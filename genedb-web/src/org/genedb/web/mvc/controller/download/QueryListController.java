@@ -3,7 +3,7 @@ package org.genedb.web.mvc.controller.download;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryDetails;
 import org.genedb.querying.core.QueryFactory;
-import org.genedb.querying.core.QueryVisibility;
+import org.genedb.querying.core.NumericQueryVisibility;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class QueryListController {
             @RequestParam(value="filter", required=false) String filterName,
             Model model) {
 
-        List<QueryDetails> queryDetails = queryFactory.listQueries(filterName, QueryVisibility.PUBLIC );
+        List<QueryDetails> queryDetails = queryFactory.listQueries(filterName, NumericQueryVisibility.PUBLIC );
         model.addAttribute("queries", queryDetails);
         return "list/queryList";
     }
