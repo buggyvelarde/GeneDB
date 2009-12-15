@@ -12,29 +12,29 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A factory for returning queries, with the option of filtering them by name or by {@link QueryVisibility}.
+ * A factory for returning queries, with the option of filtering them by name or by {@link NumericQueryVisibility}.
  *
  * @author art
  * @author gv1
  *
  */
-public class QueryFactory {
+public class QueryFactory<T extends QueryVisibility> {
 
     private static Logger logger = Logger.getLogger(QueryFactory.class);
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    private Map<QueryVisibility, List<QueryDetails>> visibilityQueryDetails;
+    private Map<T, List<QueryDetails>> visibilityQueryDetails;
 
-    private Map<String, QueryVisibility> nameVisibility;
+    private Map<String, T> nameVisibility;
 
-    public void setQueryNameMap(Map<QueryVisibility, Map<String, Query>> queryNameMap) throws IllegalArgumentException {
+    public void setQueryNameMap(Map<T, Map<String, Query>> queryNameMap) {
 
         this.visibilityQueryDetails = Maps.newHashMapWithExpectedSize(queryNameMap.size());
         this.nameVisibility = Maps.newHashMap();
 
-        for (QueryVisibility visibility : queryNameMap.keySet()) {
+        for (T visibility : queryNameMap.keySet()) {
             List<QueryDetails> queryDetails = Lists.newArrayList();
             visibilityQueryDetails.put(visibility, queryDetails);
             for (Map.Entry<String, Query> entry : queryNameMap.get(visibility).entrySet()) {
@@ -54,9 +54,9 @@ public class QueryFactory {
      * @return a Query
      * @throws IllegalAccessException
      */
-    public Query retrieveQuery(String queryName, QueryVisibility visibility) {
-        QueryVisibility v = nameVisibility.get(queryName);
-        if (v.compareTo(visibility) == -1) {
+    public Query retrieveQuery(String queryName, T visibility) {
+        T v = nameVisibility.get(queryName);
+        if (v == null || !v.includesVisibility(visibility)) {
             logger.error(String.format("Can't access query '%s' as it's visibility '%s' is below required '%s'", queryName, v, visibility));
             return null;
         }
@@ -70,10 +70,10 @@ public class QueryFactory {
      * @param visibility
      * @return
      */
-    private List<QueryDetails> listQueries(QueryVisibility visibility) {
+    private List<QueryDetails> listQueries(T visibility) {
         List<QueryDetails> ret = Lists.newArrayList();
-        for (Map.Entry<QueryVisibility, List<QueryDetails>> entry : visibilityQueryDetails.entrySet()) {
-            if (entry.getKey().compareTo(visibility) >= 0) {
+        for (Map.Entry<T, List<QueryDetails>> entry : visibilityQueryDetails.entrySet()) {
+            if (entry.getKey().includesVisibility(visibility)) {
                 ret.addAll(entry.getValue());
             }
         }
@@ -90,7 +90,7 @@ public class QueryFactory {
      * @param visibility
      * @return a map of queries
      */
-    public List<QueryDetails> listQueries(String filterName, QueryVisibility visibility) {
+    public List<QueryDetails> listQueries(String filterName, T visibility) {
         List<QueryDetails> visibleQueries = listQueries(visibility);
         if (!StringUtils.hasLength(filterName)) {
             return visibleQueries;
