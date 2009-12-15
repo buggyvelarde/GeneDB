@@ -6,7 +6,7 @@
         $("#organismSelection").change(function() {
             if ($(this).val() != "Select organism")
             {
-                window.location.href = "/jbrowse/" + $(this).val();
+                window.location.href = "/jbrowse/" + $(this).val() + "/?tracks=Complex%20Gene%20Models";
             }
         });
     });
