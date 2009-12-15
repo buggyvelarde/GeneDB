@@ -1,7 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-//import net.sf.json.JSONArray;
-import net.sf.json.spring.web.servlet.view.JsonView;
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
@@ -21,12 +19,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.google.common.collect.Lists;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
@@ -43,7 +45,6 @@ public class HistoryController {
     private FileCheckingInternalResourceViewResolver viewChecker;
     private HistoryManagerFactory historyManagerFactory;
     private String historyView;
-    private JsonView jsonView;
     private String downloadView;
     private String editView;
     private static final String TIME_FORMAT = "HH:mm:ss";
@@ -74,6 +75,45 @@ public class HistoryController {
         return new ModelAndView("history/editHistoryItem",model);
     }
 
+    @RequestMapping(method=RequestMethod.POST, value="/{historyItem}")
+    public ModelAndView deleteHistoryItems(HttpServletRequest request,HttpServletResponse response,
+            @PathVariable("historyItem") int historyItem,
+            @RequestParam("historyVersion") int historyVersion) {
+
+        HttpSession session = request.getSession(false);
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+
+        Map<String,Object> model = new HashMap<String,Object>();
+        model.put("history", historyItem);
+        HistoryItem item = historyManager.getHistoryItems().get(historyItem-1);
+        //String internalName = item.getInternalName();
+
+        List<Integer> hits = Lists.newArrayList();
+        Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            if (name.startsWith("item")) {
+                name = name.substring(4);
+                logger.error("About to add '"+name+"' to hits");
+                hits.add(Integer.parseInt(name)-1);
+            }
+        }
+
+        for (Integer i : hits) {
+            item.removeNum(i);
+        }
+
+        if (item.getNumberItems() < 1) {
+            historyManager.removeItem(historyItem, historyVersion);
+            return new ModelAndView("/History");
+        }
+
+        model.put("items", item.getIds());
+        model.put("historyName", item.getName());
+
+        return new ModelAndView("history/editHistoryItem",model);
+    }
+
 
     @RequestMapping(method=RequestMethod.DELETE, params="historyItem")
     public ModelAndView deleteHistoryItem(HttpServletRequest request,HttpServletResponse response,
@@ -90,12 +130,7 @@ public class HistoryController {
     @RequestMapping(method=RequestMethod.GET)
     public ModelAndView listHistory(HttpServletRequest request,
             HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            // No session
-            response.setStatus(SESSION_FAILED_ERROR_CODE);
-            return null;
-        }
+        HttpSession session = request.getSession(true);
 
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
 
@@ -409,14 +444,6 @@ public class HistoryController {
 
     public void setHistoryView(String historyView) {
         this.historyView = historyView;
-    }
-
-    public JsonView getJsonView() {
-        return jsonView;
-    }
-
-    public void setJsonView(JsonView jsonView) {
-        this.jsonView = jsonView;
     }
 
     public String getDownloadView() {
