@@ -27,7 +27,7 @@ ul {
 <h2>Viruses</h2>
 </div>
 
-<img align="center" href="<misc:url value="/includes/image/B0005752_flu_infecting_trachea_cells.jpg" />" width="785" height="576" alt="Flu infecting trachea cells" />
+<img style="margin:auto" src="<misc:url value="/includes/image/B0005752_flu_infecting_trachea_cells.jpg" />" width="785" height="576" alt="Flu infecting trachea cells" />
 <p>flu infecting trachea cells,   R. Dourmashkin, (B0005752) Wellcome Images</p>
 
 <p>Influenza viruses infecting cells of the trachea. Influenza viruses
