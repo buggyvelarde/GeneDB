@@ -21,16 +21,22 @@
   </span>
  </h2>
  <p>
-  As part of a large scale survey of the
-  <i>
-   Plasmodium
-  </i>
-  lifecyle an initial survey of the
-  <i>
-   P. chabaudi
-  </i>
-  genome has been published based on analysis of a ~3x partial genome shotgun.
-Whole genome shotgun sequencing has continued to 8x coverage. The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences of
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15637271" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/15637271" rel="nofollow">
+   Hall
+   <i>
+    et al.
+   </i>
+   (2005) A comprehensive survey of the Plasmodium life cycle by genomic, transcriptomic, and proteomic analyses.
+   <i>
+    Science
+   </i>
+   307:82-86
+  </a>
+  .
+ </p>
+ <p>
+  Whole genome shotgun sequencing has continued to 8x coverage. The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences of
   <i>
    P. chabaudi
   </i>
@@ -44,7 +50,11 @@ Whole genome shotgun sequencing has continued to 8x coverage. The Wellcome Trust
   </span>
  </h2>
  <p>
-  Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
+  Please address all sequencing enquiries to
+  <a href="mailto:ap2@sanger.ac.uk" class="external text" title="mailto:ap2@sanger.ac.uk" rel="nofollow">
+   Dr. Arnab Pain
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
@@ -52,5 +62,5 @@ Preprocessor node count: 4/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5727-0!1!0!!en!2 and timestamp 20091215123409 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5727-0!1!0!!en!2 and timestamp 20091215152313 -->
 </div>

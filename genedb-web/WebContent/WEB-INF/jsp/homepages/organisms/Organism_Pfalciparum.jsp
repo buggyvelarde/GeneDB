@@ -33,7 +33,7 @@ The
   <i>
    P. falciparum
   </i>
-  genome is undergoing reannotation. This process started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Intistute and the EuPathDB team. Ongoing curation and sequence checking is being carried out by the Pathogen Genomics group.
+  genome is undergoing re-annotation. This process started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Intistute and the EuPathDB team. Ongoing curation and sequence checking is being carried out by the Pathogen Genomics group.
  </p>
  <a name="The_Database">
  </a>
@@ -72,16 +72,43 @@ The
   </span>
  </h2>
  <p>
-  This genome has been published in Gardner et al., Nature 419 (6906):498-511. PMID: 12368864
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368864" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/12368864" rel="nofollow">
+   Gardner
+   <i>
+    et al.
+   </i>
+   (2002) Genome sequence of the human malaria parasite
+   <i>
+    Plasmodium falciparum
+   </i>
+   .
+   <i>
+    Nature
+   </i>
+   419:498-511
+  </a>
+  .
  </p>
- <a name="Sequencing_enquiries">
+ <a name="Sequencing_Enquiries">
  </a>
  <h2>
   <span class="mw-headline">
-   Sequencing enquiries
+   Sequencing Enquiries
   </span>
  </h2>
  <p>
-  Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
+  Please address all sequencing enquiries to
+  <a href="mailto:ap2@sanger.ac.uk" class="external text" title="mailto:ap2@sanger.ac.uk" rel="nofollow">
+   Dr. Arnab Pain
+  </a>
+  .
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5724-0!1!0!!en!2 and timestamp 20091215152945 -->
 </div>

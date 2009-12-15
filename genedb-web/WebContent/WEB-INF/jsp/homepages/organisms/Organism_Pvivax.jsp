@@ -54,8 +54,23 @@
   </span>
  </h2>
  <p>
-  This genome has been published in Carlton et al., Nature 455 (7214):757-63. PMID: 12368864.
-This genome is not curated.
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/18843361" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/18843361" rel="nofollow">
+   Carlton
+   <i>
+    et al.
+   </i>
+   (2008) Comparative genomics of the neglected human malaria parasite
+   <i>
+    Plasmodium vivax
+   </i>
+   .
+   <i>
+    Nature
+   </i>
+   455:757-763
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
@@ -63,5 +78,5 @@ Preprocessor node count: 4/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5726-0!1!0!!en!2 and timestamp 20091214171759 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5726-0!1!0!!en!2 and timestamp 20091215151317 -->
 </div>

@@ -23,7 +23,7 @@
   <i>
    P. berghei
   </i>
-  has an estimated genome size of 18-20 Mb, with 14 chromosomes in the size range of 0.6 Mb to 3.8 Mb. The chromosomes are numbered in ascending order of size, based on the size of chromosomes of the reference clones 8417 and cl15cy1 of the ANKA strain. DNA for this sequencing project was obtained from asynchronous bloodstages of clone 15cy1 of the ANKA strain of
+  has an estimated genome size of 18-20 Mb, with 14 chromosomes in the size range of 0.6 Mb to 3.8 Mb. DNA for this sequencing project was obtained from asynchronous bloodstages of clone 15cy1 of the ANKA strain of
   <i>
    P. berghei
   </i>
@@ -37,21 +37,46 @@
   </span>
  </h2>
  <p>
-  This genome has been published in Hall et al., Science 307 (5706):82-86.       (PMID:1563727).
-Whole genome shotgun sequencing has continued to 8x coverage with a mixture of capillary and illumina sequencing platform. The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences of
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15637271" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/15637271" rel="nofollow">
+   Hall
+   <i>
+    et al.
+   </i>
+   (2005) A comprehensive survey of the Plasmodium life cycle by genomic, transcriptomic, and proteomic analyses.
+   <i>
+    Science
+   </i>
+   307:82-86
+  </a>
+  .
+ </p>
+ <p>
+  Whole genome shotgun sequencing has continued to 8x coverage with a mixture of capillary and illumina sequencing platform. The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences of
   <i>
    P. berghei
   </i>
   ANKA in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale. The annotated 8x version of the genome is expected to be available in January 2010.
  </p>
- <a name="Sequencing_enquiries">
+ <a name="Sequencing_Enquiries">
  </a>
  <h2>
   <span class="mw-headline">
-   Sequencing enquiries
+   Sequencing Enquiries
   </span>
  </h2>
  <p>
-  Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
+  Please address all sequencing enquiries to
+  <a href="mailto:ap2@sanger.ac.uk" class="external text" title="mailto:ap2@sanger.ac.uk" rel="nofollow">
+   Dr. Arnab Pain
+  </a>
+  .
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5735-0!1!0!!en!2 and timestamp 20091215153045 -->
 </div>

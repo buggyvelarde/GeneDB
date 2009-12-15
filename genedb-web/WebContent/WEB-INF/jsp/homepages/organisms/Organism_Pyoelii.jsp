@@ -51,8 +51,23 @@ Annotation of the
   </span>
  </h2>
  <p>
-  This genome has been published in Carlton et al., Nature 419 (6906):512-519.     PMID: 15637271.
-The genome is not curated.
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368865" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/12368865" rel="nofollow">
+   Carlton
+   <i>
+    et al.
+   </i>
+   (2002) Genome sequence and comparative analysis of the model rodent malaria parasite
+   <i>
+    Plasmodium yoelii yoelii
+   </i>
+   .
+   <i>
+    Nature
+   </i>
+   419:512-519
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
@@ -60,5 +75,5 @@ Preprocessor node count: 4/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091215123515 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091215152721 -->
 </div>

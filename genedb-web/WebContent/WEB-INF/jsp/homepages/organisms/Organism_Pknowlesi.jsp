@@ -42,8 +42,23 @@
   </span>
  </h2>
  <p>
-  This genome has been published in Pain et al., Nature 455 (7214):799-803.   PMID: 18843368
-This genome is not being curated.
+  This genome has been published:
+  <a href="http://www.ncbi.nlm.nih.gov/pubmed/18843368" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/18843368" rel="nofollow">
+   Pain
+   <i>
+    et al.
+   </i>
+   (2008) The genome of the simian and human malaria parasite
+   <i>
+    Plasmodium knowlesi
+   </i>
+   .
+   <i>
+    Nature
+   </i>
+   455:799-803
+  </a>
+  .
  </p>
  <a name="Sequencing_Enquiries">
  </a>
@@ -53,7 +68,11 @@ This genome is not being curated.
   </span>
  </h2>
  <p>
-  Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
+  Please address all sequencing enquiries to
+  <a href="mailto:ap2@sanger.ac.uk" class="external text" title="mailto:ap2@sanger.ac.uk" rel="nofollow">
+   Dr. Arnab Pain
+  </a>
+  .
  </p>
  <!-- 
 NewPP limit report
@@ -61,5 +80,5 @@ Preprocessor node count: 5/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5725-0!1!0!!en!2 and timestamp 20091214171805 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5725-0!1!0!!en!2 and timestamp 20091215152848 -->
 </div>
