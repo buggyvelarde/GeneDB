@@ -3,7 +3,7 @@ package org.genedb.web.mvc.controller.download;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
-import org.genedb.querying.core.QueryVisibility;
+import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.util.MutableInteger;
 import org.genedb.web.mvc.controller.WebConstants;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +74,7 @@ public class QueryController extends AbstractGeneDBFormController{
 
         Query query = findQueryType(queryName, session);
         if (query==null){
-            return "redirect:/Query";
+            return "redirect:/QueryList";
         }
 
         //Initialise model data somehow
@@ -161,13 +160,14 @@ public class QueryController extends AbstractGeneDBFormController{
         switch (results.size()) {
         case 0:
             logger.debug("No results found for query");
+            model.addAttribute("noResultFound", Boolean.TRUE);
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
 
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
             resultsKey = cacheResults(gs, query, queryName, session.getId());
-            return "redirect:/feature/" + gs.get(0).getSystematicId();
+            return "redirect:/gene/" + gs.get(0).getSystematicId();
 
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
@@ -191,7 +191,7 @@ public class QueryController extends AbstractGeneDBFormController{
         if (!StringUtils.hasText(queryName)) {
                session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
         }
-        Query query = queryFactory.retrieveQuery(queryName, QueryVisibility.PUBLIC);
+        Query query = queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC);
         if (query == null) {
             session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
         }
