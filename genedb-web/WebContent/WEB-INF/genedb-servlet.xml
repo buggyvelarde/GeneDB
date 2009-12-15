@@ -122,12 +122,14 @@
     <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
   </bean>
 
+<!--
   <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
     <property name="queryFactory" ref="queryFactory" />
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
     <property name="sequenceDao" ref="sequenceDao" />
   </bean>
+-->
 
   <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
