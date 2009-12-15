@@ -43,12 +43,12 @@
 <td align="center" valign="top" width="33%">
 <h3>Parasite Vectors</h3>
 <img src="<misc:url value="/includes/image/dataset-parasite-vectors.jpg"/>" height="163" width="136" alt="Parasite Vectors" />
-<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Pages/parasiteVectors">Parasite Vectors</option></select>
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Page/parasiteVectors">Parasite Vectors</option></select>
 </td>
 <td align="center" valign="top" width="33%">
 <h3>Viruses</h3>
 <img src="<misc:url value="/includes/image/dataset-viruses.jpg"/>" height="163" width="136" alt="Viruses" />
-<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Pages/virus">Viruses</option></select>
+<select name="organism" onChange="document.location.href=''+this.value"><option value="none">Select an organism</option><option value="${baseUrl}Page/virus">Viruses</option></select>
 
 </td>
 </tr>
@@ -77,7 +77,7 @@
 
 <p>
 &raquo; <a href="http://www.wellcome.ac.uk/Education-resources/Courses-and-conferences/Advanced-Courses/Courses/WTX057366.htm">Working with Parasite Database Resources</a><br />
-April 17-21, 2010, Hinxton, Cambridge, UK <br /> 
+April 17-21, 2010, Hinxton, Cambridge, UK <br />
 <em>Deadline: December 18th 2009</em>
 
 </p>
