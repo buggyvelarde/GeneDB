@@ -1,6 +1,6 @@
 
 # Look for features that:
-#  - are not BAC_ends or EST features
+#  - are not BAC_ends, EST features, protein/nucleotide matches
 #  - have a sequence
 #  - are a source feature
 #  - do not have a source feature
@@ -23,7 +23,7 @@ and feature.type_id not in (
                              select cvterm.cvterm_id
                              from cvterm join cv on cvterm.cv_id = cv.cv_id
                              where cv.name = 'sequence'
-                             and cvterm.name in ('BAC_end', 'EST'))
+                             and cvterm.name in ('BAC_end', 'EST', 'protein_match', 'nucleotide_match'))
 and exists (
     select *
     from featureloc
@@ -44,5 +44,6 @@ and not exists (
     and cv.name = 'genedb_misc'
     and cvterm.name = 'top_level_seq'
 )
+and feature.uniquename not ilike '%uniprot%'
 order by organism.common_name
 ;
