@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.PolypeptideRegion;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
@@ -16,11 +17,11 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-public class DtoDataFetcher implements DataFetcher {
+public class DtoDataFetcher implements DataFetcher<Integer> {
 
     private BerkeleyMapFactory bmf;
 
-    public Iterator<DataRow> iterator(List<String> ids, String fieldDelim) {
+    public Iterator<DataRow> iterator(List<Integer> ids, String fieldDelim) {
         return new DtoDataRowIterator(ids, bmf, fieldDelim); // FIXME convert to transcript ids
     }
 
@@ -35,11 +36,11 @@ class DtoDataRowIterator implements Iterator<DataRow> {
 
     private BerkeleyMapFactory bmf;
 
-    private Iterator<String> it;
+    private Iterator<Integer> it;
 
     private String fieldDelim;
 
-    public DtoDataRowIterator(List<String> ids, BerkeleyMapFactory bmf, String fieldDelim) {
+    public DtoDataRowIterator(List<Integer> ids, BerkeleyMapFactory bmf, String fieldDelim) {
         this.it = ids.iterator();
         this.bmf = bmf;
         this.fieldDelim = fieldDelim;
@@ -52,7 +53,8 @@ class DtoDataRowIterator implements Iterator<DataRow> {
 
     @Override
     public DataRow next() {
-        String id = it.next();
+        Integer id = it.next();
+        // Need to convert name to featureId
         TranscriptDTO dto = bmf.getDtoMap().get(id);
         return new DtoDataRow(dto, fieldDelim);
     }
