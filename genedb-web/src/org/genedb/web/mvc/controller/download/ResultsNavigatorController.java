@@ -72,7 +72,7 @@ public class ResultsNavigatorController {
 //            ret.addObject("taxonNodeName", taxonNodeName);
 //        }
         String uniqueName = results.get(checkedIndex).getSystematicId();
-        ret.setViewName("redirect:/feature/"+uniqueName);
+        ret.setViewName("redirect:/gene/"+uniqueName);
         return ret;
     }
 
