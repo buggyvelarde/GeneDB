@@ -121,12 +121,12 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/feature/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
         <url-pattern>/featureSeq/*</url-pattern>
      </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/gene/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/gmodrest/*</url-pattern>
