@@ -1,10 +1,10 @@
 finaldest.webapps=/usr/local/tomcat/webapps/genedb
 webAppRootKey=genedb.root
-dbhost=db.genedb.org
-dbport=5432
-dbname=snapshot
-dbuser=genedb_ro
-dbpassword=
+dbhost=localhost
+dbport=11111
+dbname=pathogens
+dbuser=genedb
+dbpassword=genedb
 lucene.indexDirectory=/Users/rh11/GeneDB/lucene
 cacheDirectory=/Users/rh11/GeneDB/cache
 resultsCacheDirectory=/tmp/results
