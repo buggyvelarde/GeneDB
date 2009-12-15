@@ -25,7 +25,6 @@
    </i>
    419:512-519
   </a>
-  .
  </p>
  <p>
   <br />
@@ -43,5 +42,5 @@ Preprocessor node count: 1/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5831-0!1!0!!en!2 and timestamp 20091214171754 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5831-0!1!0!!en!2 and timestamp 20091215123600 -->
 </div>

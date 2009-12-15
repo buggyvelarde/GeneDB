@@ -51,7 +51,7 @@ Annotation of the
   </span>
  </h2>
  <p>
-  This genome has been published in Carlton et al., Nature 419 (6906):512-519.     PMID: 15637271
+  This genome has been published in Carlton et al., Nature 419 (6906):512-519.     PMID: 15637271.
 The genome is not curated.
  </p>
  <!-- 
@@ -60,5 +60,5 @@ Preprocessor node count: 4/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091214171757 -->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091215123515 -->
 </div>

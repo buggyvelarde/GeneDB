@@ -1,18 +1,18 @@
 <div id="homepage-text">
  <p>
-  <b>
-   Ftp
-  </b>
-  &raquo;
-  <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/rl/" class="external free" title="ftp://ftp.sanger.ac.uk/pub/pathogens/rl/" rel="nofollow">
-   ftp://ftp.sanger.ac.uk/pub/pathogens/rl/
-  </a>
-  Sequence data]
+  Ftp
  </p>
  <p>
-  <b>
-   Article
-  </b>
+  &raquo;
+  <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/rl/" class="external text" title="ftp://ftp.sanger.ac.uk/pub/pathogens/rl/" rel="nofollow">
+   Sequence data
+  </a>
+ </p>
+ <p>
+  <br />
+  Article
+ </p>
+ <p>
   &raquo;
   <a href="http://www.ncbi.nlm.nih.gov/pubmed/16640791" class="external text" title="http://www.ncbi.nlm.nih.gov/pubmed/16640791" rel="nofollow">
    Young
@@ -26,18 +26,20 @@
   </a>
  </p>
  <p>
-  <b>
-   Gene
-  </b>
+  <br />
+  Gene
+ </p>
+ <p>
   &raquo;
   <a href="${baseUrl}gene/RL1572:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/RL1572:mRNA" rel="nofollow">
    RL1572
   </a>
  </p>
  <p>
-  <b>
-   Information
-  </b>
+  <br />
+  Information
+ </p>
+ <p>
   &raquo;
   <a href="http://www.sanger.ac.uk/Projects/R_leguminosarum/" class="external text" title="http://www.sanger.ac.uk/Projects/R_leguminosarum/" rel="nofollow">
    Sanger
@@ -48,12 +50,20 @@
   </a>
  </p>
  <p>
-  <b>
-   Contact
-  </b>
+  <br />
+  Contact
+ </p>
+ <p>
   &raquo;
   <a href="mailto:parkhill@sanger.ac.uk" class="external text" title="mailto:parkhill@sanger.ac.uk" rel="nofollow">
    Dr. Julian Parkhill
   </a>
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 1/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5824-0!1!0!!en!2 and timestamp 20091215132433 -->
 </div>

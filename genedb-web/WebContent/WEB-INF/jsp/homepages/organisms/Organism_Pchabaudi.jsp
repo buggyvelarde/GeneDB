@@ -36,14 +36,21 @@ Whole genome shotgun sequencing has continued to 8x coverage. The Wellcome Trust
   </i>
   AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
  </p>
- <a name="Sequencing_enquiries">
+ <a name="Sequencing_Enquiries">
  </a>
  <h2>
   <span class="mw-headline">
-   Sequencing enquiries
+   Sequencing Enquiries
   </span>
  </h2>
  <p>
   Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5727-0!1!0!!en!2 and timestamp 20091215123409 -->
 </div>
