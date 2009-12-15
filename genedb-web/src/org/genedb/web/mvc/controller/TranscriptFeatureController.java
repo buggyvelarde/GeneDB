@@ -113,7 +113,8 @@ public class TranscriptFeatureController extends TaxonNodeBindingFormController 
         if (feature == null) {
             logger.warn(String.format("Failed to find feature '%s'", name));
             be.reject("no.results");
-            return new ModelAndView("redirect:/feature/notFound.jsp");
+            //return new ModelAndView("redirect:/feature/notFound.jsp");
+            return new ModelAndView("redirect:/QueryList");
         }
 
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
@@ -122,7 +123,8 @@ public class TranscriptFeatureController extends TaxonNodeBindingFormController 
             // is it part of a gene
             logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
             be.reject("no.results");
-            return new ModelAndView("redirect:/feature/notFound.jsp");
+            //return new ModelAndView("redirect:/feature/notFound.jsp");
+            return new ModelAndView("redirect:/QueryList");
         }
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
