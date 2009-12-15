@@ -32,7 +32,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BB0472:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BB0472:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BB0472:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BB0472:mRNA" rel="nofollow">
    BB0472
   </a>
  </p>

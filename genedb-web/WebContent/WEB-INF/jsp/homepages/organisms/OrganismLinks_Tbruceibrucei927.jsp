@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/Tb927.1.700:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/Tb927.1.700:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/Tb927.1.700:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/Tb927.1.700:mRNA" rel="nofollow">
    Tb927.1.700
   </a>
  </p>

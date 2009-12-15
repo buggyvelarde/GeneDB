@@ -20,7 +20,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/EVM301_00000058_Transcript.1:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/EVM301_00000058_Transcript.1:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/EVM301_00000058_Transcript.1:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/EVM301_00000058_Transcript.1:mRNA" rel="nofollow">
    EVM301_00000058_Transcript.1:mRNA
   </a>
  </p>

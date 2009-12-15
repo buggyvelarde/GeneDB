@@ -32,7 +32,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/CAB494:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/CAB494:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/CAB494:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/CAB494:mRNA" rel="nofollow">
    CAB494
   </a>
  </p>

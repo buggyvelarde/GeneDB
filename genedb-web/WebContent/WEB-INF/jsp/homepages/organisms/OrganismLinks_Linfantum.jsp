@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/LinJ31_V3.1460:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/LinJ31_V3.1460:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/LinJ31_V3.1460:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/LinJ31_V3.1460:mRNA" rel="nofollow">
    LinJ31_V3.1460
   </a>
  </p>

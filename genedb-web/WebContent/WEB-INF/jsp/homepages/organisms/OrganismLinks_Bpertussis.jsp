@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BP3496:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BP3496:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BP3496:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BP3496:mRNA" rel="nofollow">
    BP3496
   </a>
  </p>

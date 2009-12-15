@@ -32,7 +32,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BF3909:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BF3909:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BF3909:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BF3909:mRNA" rel="nofollow">
    BF3909
   </a>
  </p>

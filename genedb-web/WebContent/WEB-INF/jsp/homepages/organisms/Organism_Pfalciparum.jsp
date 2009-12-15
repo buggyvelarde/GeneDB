@@ -84,11 +84,4 @@ The
  <p>
   Please address all sequencing enquiries to Dr. Arnab Pain (email: ap2@sanger.ac.uk).
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 6/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5724-0!1!0!!en!2 and timestamp 20091214082721 -->
 </div>

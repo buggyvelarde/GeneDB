@@ -33,7 +33,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BPSS1390:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BPSS1390:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BPSS1390:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BPSS1390:mRNA" rel="nofollow">
    BPSS1390
   </a>
  </p>

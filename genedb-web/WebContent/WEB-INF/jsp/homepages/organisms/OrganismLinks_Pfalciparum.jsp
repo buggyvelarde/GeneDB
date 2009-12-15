@@ -42,7 +42,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/PF14_0641:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PF14_0641:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/PF14_0641:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PF14_0641:mRNA" rel="nofollow">
    PF14_0641
   </a>
  </p>
@@ -58,11 +58,4 @@
    Dr. Ulrike B&#246;hme
   </a>
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 1/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5827-0!1!0!!en!2 and timestamp 20091214101135 -->
 </div>

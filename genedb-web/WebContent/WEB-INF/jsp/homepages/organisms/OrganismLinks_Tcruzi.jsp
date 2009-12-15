@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}/feature/name=Tc00.1047053508601.90" class="external text" title="http://beta.genedb.org/NamedFeature?name=Tc00.1047053508601.90" rel="nofollow">
+  <a href="${baseUrl}gene/Tc00.1047053508601.90" class="external text" title="http://beta.genedb.org/NamedFeature?name=Tc00.1047053508601.90" rel="nofollow">
    Tc00.1047053508601.90
   </a>
  </p>

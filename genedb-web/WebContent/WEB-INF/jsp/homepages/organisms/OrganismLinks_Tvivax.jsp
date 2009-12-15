@@ -14,7 +14,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/TvY486_0102140:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/TvY486_0102140:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/TvY486_0102140:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/TvY486_0102140:mRNA" rel="nofollow">
    TvY486_0102140
   </a>
  </p>

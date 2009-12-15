@@ -32,7 +32,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/SCO5321:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SCO5321:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/SCO5321:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SCO5321:mRNA" rel="nofollow">
    SCO5321
   </a>
  </p>

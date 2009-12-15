@@ -14,7 +14,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/LmxM30.1430:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/LmxM30.1430:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/LmxM30.1430:mRNA" class="external text" title="http://developer.genedb.org/ci-web/feature/LmxM30.1430:mRNA" rel="nofollow">
    LmxM30.1430
   </a>
  </p>

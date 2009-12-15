@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BPP2019:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BPP2019:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BPP2019:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BPP2019:mRNA" rel="nofollow">
    BPP2019
   </a>
  </p>

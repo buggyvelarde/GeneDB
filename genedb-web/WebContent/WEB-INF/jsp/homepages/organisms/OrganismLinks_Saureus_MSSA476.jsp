@@ -31,7 +31,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/SAS2224:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SAS2224:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/SAS2224:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/SAS2224:mRNA" rel="nofollow">
    SAS2224
   </a>
  </p>

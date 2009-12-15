@@ -42,7 +42,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/PCAS_010190:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PCAS_010190:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/PCAS_010190:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/PCAS_010190:mRNA" rel="nofollow">
    PCAS_010190
   </a>
  </p>

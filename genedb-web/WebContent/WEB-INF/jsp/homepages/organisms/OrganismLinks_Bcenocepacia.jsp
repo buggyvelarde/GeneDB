@@ -33,7 +33,7 @@
  </p>
  <p>
   &raquo;
-  <a href="${baseUrl}feature/BCAM0239a:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BCAM0239a:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/BCAM0239a:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/BCAM0239a:mRNA" rel="nofollow">
    BCAM0239a
   </a>
  </p>

@@ -30,7 +30,7 @@
    Gene
   </b>
   &raquo;
-  <a href="${baseUrl}feature/RL1572:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/RL1572:mRNA" rel="nofollow">
+  <a href="${baseUrl}gene/RL1572:mRNA" class="external text" title="http://pcs-genedb1.internal.sanger.ac.uk:8080/feature/RL1572:mRNA" rel="nofollow">
    RL1572
   </a>
  </p>
