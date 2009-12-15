@@ -39,7 +39,7 @@
 	 <h2>About GeneDB</h2>  
     <div class="light-grey-top"></div>
     <div class="light-grey">
-        <P><I>GENEDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
+        <P><I>GeneDB is a database that provides a window into ongoing annotation and curation at the Sanger Institute.</I></P>
     </div>
     <div class="light-grey-bot"></div>
     
