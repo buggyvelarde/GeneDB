@@ -28,6 +28,7 @@ import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
@@ -127,7 +128,9 @@ public class DownloadController {
         }
 
         HistoryItem hItem = historyItems.get(historyItem-1);
-        Iterator<DataRow> iterator = dataFetcher.iterator(hItem.getIds(), fieldSeperator);
+        List<String> uniqueNames = hItem.getIds();
+        List<Integer> featureIds = convertUniquenamesToFeatureIds(uniqueNames);
+        Iterator<DataRow> iterator = dataFetcher.iterator(featureIds, fieldSeperator);
 
         String file = request.getSession().getId();
 //        String columns[] = null;
@@ -175,6 +178,21 @@ public class DownloadController {
             }
         return null;
     }
+
+
+    private List<Integer> convertUniquenamesToFeatureIds(List<String> uniqueNames) {
+        List<Integer> ret = Lists.newArrayList();
+        for (String name : uniqueNames) {
+            //logger.error("Trying to lookup '"+name+"' as a Transcript");
+            Feature f = sequenceDao.getFeatureByUniqueName(name, Feature.class);
+            //logger.error("The value is '"+f+"'");
+            ret.add(f.getFeatureId());
+        }
+
+        return ret;
+    }
+
+
 
 
     private File createFasta(DataFetcher df, String file,List<OutputOption> outputOptions, SequenceType sequenceType) {
