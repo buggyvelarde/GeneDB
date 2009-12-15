@@ -1,6 +1,5 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.QueryVisibility;
 
 /**
  * Similar to DateQuery, but returns a count.

@@ -2,7 +2,6 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
-import org.genedb.querying.core.QueryVisibility;
 
 @QueryClass(
         title="Coding and pseudogenes by their annotation status",
