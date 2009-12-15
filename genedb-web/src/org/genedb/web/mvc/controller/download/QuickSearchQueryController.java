@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
@@ -45,7 +46,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
-        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME, QueryVisibility.PRIVATE);
+        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME, NumericQueryVisibility.PRIVATE);
 
         if (query==null){
             return "redirect:/Query";
@@ -111,7 +112,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
             cacheResults(gs, query, QUERY_NAME, session.getId());
             logger.error("The result is "+gs.get(0));
-            return "redirect:/feature/" + gs.get(0).getSystematicId();
+            return "redirect:/gene/" + gs.get(0).getSystematicId();
 
         case MULTIPLE_RESULTS_IN_CURRENT_TAXON:
             List<GeneSummary> gs2 = quickSearchQueryResults.getResults();
