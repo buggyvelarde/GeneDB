@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.util.Pair;
 
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -19,8 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author art
@@ -182,6 +186,27 @@ public class GeneDBWebUtils {
 
         return Integer.toString(length);
     }
+
+    public static Pair<String, String> parseExtension(String argument, Set<String> validExtensions) {
+        return parseExtension(argument, validExtensions, "");
+    }
+
+    public static Pair<String, String> parseExtension(String argument, Set<String> validExtensions, String defaultExtension) {
+        if (argument != null) {
+            int extensionStart = argument.lastIndexOf('.');
+            if (extensionStart > 0 && extensionStart < argument.length()) {
+                String firstPart = argument.substring(0, extensionStart);
+                String extension = argument.substring(extensionStart+1);
+                //logger.warn("The extension is '"+extension+"'");
+                if (validExtensions.contains(extension)) {
+                    return new Pair<String, String>(firstPart, extension);
+                }
+            }
+            return new Pair<String, String>(argument, defaultExtension);
+        }
+        return null;
+    }
+
 
 
     private SequenceDao sequenceDao;
