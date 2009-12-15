@@ -114,4 +114,8 @@ public class HistoryItem implements Serializable {
     public boolean containsEntry(String uniqueName) {
         return ids.contains(uniqueName);
     }
+
+    public void removeNum(int index) {
+        ids.remove(index);
+    }
 }
