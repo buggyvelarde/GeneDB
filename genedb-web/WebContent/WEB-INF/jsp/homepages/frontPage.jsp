@@ -91,7 +91,7 @@ April 17-21, 2010, Hinxton, Cambridge, UK <br />
 &raquo; <a href="<misc:url value="/Query" />">Query page</a><br />
 &raquo; <a href="<misc:url value="/cgi-bin/amigo/go.cgi"/>">AmiGO</a><br />
 &raquo; <a href="<misc:url value="/JBrowse"/>">JBrowse</a><br />
-&raquo; <a href="http://www.genedb.org/">Classic GeneDB</a><br />
+&raquo; <a href="http://old.genedb.org/">Old GeneDB</a><br />
 </div>
 <div class="light-grey-bot"></div>
 
