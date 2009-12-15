@@ -10,24 +10,8 @@
 
 <br />
 
-<style>
-.readableText
-{
-	font-size: 1.2em;
-	line-height:1.5em;
-	text-align:justify;
-	margin-left:1em;
-}
-.readableText a
-{
-    color:#4381a7;
-}
-ul {
-    padding-left:1em;
-}
-</style>
 
-<div id="readableText">
+<div class="readableText">
 <h2>About GeneDB</h2>
 <p>The GeneDB project is a core part of the Sanger Institute's Pathogen Genomics activities.
  Its primary goals are:</p>
