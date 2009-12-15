@@ -26,17 +26,11 @@ public class ArtemisLaunchController {
             @RequestParam("start") int start,
             @RequestParam("end") int end) {
 
-        int realStart = start - offset;
-        int realEnd = end + offset;
-
-        if (realStart < 0) {
-            realStart = 0;
-        }
-
-        String argument = organism + ":" + chromosome + ":" + realStart + ".." + realEnd;
         Map<String, Object> model = new HashMap<String, Object>();
-        model.put("argument", argument);
-        model.put("offset", start);
+        model.put("organism", organism);
+        model.put("chromosome", chromosome);
+        model.put("start", start);
+        model.put("end", end);
 
         return new ModelAndView("jsp:artemis/artemis", model);
     }
