@@ -18,7 +18,6 @@ public class OrganismHeirachy implements ApplicationContextAware {
     private Collection<Integer> ids;
 
     public void afterPropertiesSet() {
-
         ChadoSessionFactoryBean csfb = applicationContext.getBean('&' +beanName, ChadoSessionFactoryBean.class);
         Configuration cfg = csfb.getConfiguration();
 
