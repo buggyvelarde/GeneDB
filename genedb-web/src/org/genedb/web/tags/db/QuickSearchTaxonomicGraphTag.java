@@ -224,9 +224,9 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
     private String createUrlHref(QuickSearchTaxonNode quickSearchTaxonNode, String contextPath) {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"");
-        sb.append(contextPath);
+        //sb.append(contextPath);
         sb.append("/QuickSearchQuery");
-        sb.append("?q=quickSearchQuery");
+        //sb.append("?q=quickSearchQuery");
         sb.append("&taxons=");
         sb.append(quickSearchTaxonNode.getLabel());
         sb.append("&searchText=");
