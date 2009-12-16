@@ -227,7 +227,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         //sb.append(contextPath);
         sb.append("/QuickSearchQuery");
         //sb.append("?q=quickSearchQuery");
-        sb.append("&taxons=");
+        sb.append("?taxons=");
         sb.append(quickSearchTaxonNode.getLabel());
         sb.append("&searchText=");
         sb.append(searchText);
