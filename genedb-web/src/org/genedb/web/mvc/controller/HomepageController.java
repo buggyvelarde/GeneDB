@@ -60,19 +60,21 @@ public class HomepageController extends BaseController {
             }
         }
 
+        ModelAndView mav = new ModelAndView(DEFAULT_GROUP, map);
+        mav.addObject("organismContext", node.getLabel());
+
         if (node.isRoot()) {
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
 
         if (node.isLeaf()) {
-            ModelAndView mav = new ModelAndView(DEFAULT_SINGLE, map);
+            mav.setViewName(DEFAULT_SINGLE);
             mav.addObject("node", node);
             mav.addObject("label", node.getName(TaxonNameType.LABEL));
             mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
             return mav;
         }
 
-        ModelAndView mav = new ModelAndView(DEFAULT_GROUP, map);
         mav.addObject("label", node.getLabel());
         return mav;
     }
