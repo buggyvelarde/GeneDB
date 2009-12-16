@@ -11,18 +11,3 @@
 			 ],
 			'executables' => [qw(wublastn wutblastn wutblastx wublastx wublastp)],
 		},
-
-		'genedb_${common_name_lc}/omni' => {
-			'home'          =>  'http://beta.genedb.org/Homepage/${common_name}',
-			'name'         =>  '${genus} ${species}',
-			'action'      =>  '/cgi-bin/blast/omniblast_server',
-			'prologue'      =>  qq(
-	These databases contain the polypeptide and spliced gene sequences of <i>${genus} ${species}</i>.
-			),
-
-		     'databases'     =>  [
-					     "genedb/GeneDB_${common_name}_Proteins",
-					     "genedb/GeneDB_${common_name}_Genes",
-			 ],
-		},
-
