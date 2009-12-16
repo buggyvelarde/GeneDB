@@ -58,7 +58,7 @@ for my $common_name (@common_names) {
 
 print <<END;
 # OmniBLAST
-'genedb_proteins' => {
+'genedb_proteins/omni' => {
         'home'          =>  'http://beta.genedb.org/Homepage',
         'name'         =>  'GeneDB proteins',
         'action'      =>  '/blast/blast_server',
@@ -70,7 +70,7 @@ These databases contain the polypeptide sequences of all the GeneDB organisms.
 $protein_databases
          ],
 },
-'genedb_transcripts' => {
+'genedb_transcripts/omni' => {
         'home'          =>  'http://beta.genedb.org/Homepage',
         'name'         =>  'GeneDB transcripts',
         'action'      =>  '/blast/blast_server',
