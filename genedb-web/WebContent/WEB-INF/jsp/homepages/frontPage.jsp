@@ -64,7 +64,7 @@
 <div class="light-grey">
 <form method="post" action="">
 <p class="block-para"><u>omniBLAST</u> (Multi-organism BLAST)</p>
-<p class="block-para">Single organism BLAST: <db:homepageselect title="Select an organism" top="Root" baseUrl="/cgi-bin/blast/submitblast/" leafOnly="true" /></p>
+<p class="block-para">Single organism BLAST: <db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" /></p>
 
 </form>
 </div>
