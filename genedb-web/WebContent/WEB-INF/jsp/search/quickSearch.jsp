@@ -55,7 +55,7 @@
 
                                <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
                                     <td>
-                                        Select <a href="${baseUrl}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
+                                        Select <a href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
                                     </td>
                                </c:if>
 
