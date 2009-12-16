@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
 
 
 @Controller
-@RequestMapping("/genedb/")
+@RequestMapping("/genedb")
 public class ClassicCompatabilityController {
 
     private static final String WWW = "redirect:http://www.genedb.org/";
@@ -78,7 +78,7 @@ public class ClassicCompatabilityController {
 
 
     // Homepage
-    @RequestMapping(method=RequestMethod.GET, value="/genedb/${nickname}/")
+    @RequestMapping(method=RequestMethod.GET, value="/${nickname}/")
     public String viewHomepage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC_FULL + nickname + "/";
@@ -88,7 +88,7 @@ public class ClassicCompatabilityController {
 
 
     // Blast page
-    @RequestMapping(method=RequestMethod.GET, value="/genedb/${nickname}/blast.jsp")
+    @RequestMapping(method=RequestMethod.GET, value="/${nickname}/blast.jsp")
     public String viewBlastPage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC + "genedb/" + nickname + "/blast.jsp";
@@ -98,7 +98,7 @@ public class ClassicCompatabilityController {
 
 
     // Canonical gene
-    @RequestMapping(method=RequestMethod.GET, value="/genedb/Search")
+    @RequestMapping(method=RequestMethod.GET, value="/Search")
     public String viewGenePage(
             @RequestParam("name") String name,
             @RequestParam("organism") String nickname) {
