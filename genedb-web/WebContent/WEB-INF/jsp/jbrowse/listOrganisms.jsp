@@ -24,7 +24,7 @@
 <P>
 <select id="organismSelection">
     <c:forEach items="${commonNames}" var="commonName">
-        <option value="${commonName}">${commonName}</option>
+        <option value="${commonName}">${fullNames[commonName]}</option>
     </c:forEach>
 </select>
 </P>
