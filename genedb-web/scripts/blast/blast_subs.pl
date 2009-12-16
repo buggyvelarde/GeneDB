@@ -23,11 +23,12 @@ open my $f_organism_names, "<", "organisms.tsv"
 while (<$f_organism_names>) {
     chomp;
     our ($common_name, $genus, $species) = split /\t/, $_;
+    our $common_name_lc = lc($common_name);
     
     next unless exists $organisms{$common_name};
     
     my $text = $template;
-    $text =~ s/\$\{(common_name|genus|species)\}/no strict "refs"; $$1/eg;
+    $text =~ s/\$\{(common_name(_lc)?|genus|species)\}/no strict "refs"; $$1/eg;
     print $text, "\n\n";
 }
 close $f_organism_names;
