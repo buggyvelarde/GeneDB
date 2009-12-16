@@ -15,7 +15,7 @@
         <h3>Front page photo contributors</h3>
         <div class="arrowList">
 			&raquo; Apicomplexan Protozoa Photo - Chris Newbold <br />
-			&raquo; Kinetoplastid Protozoa - Catarina ? <br />
+			&raquo; Kinetoplastid Protozoa - Catarina Gadelha <br />
 			&raquo; Parasitic Helminths - Gary Dillon <br />
 			&raquo; Bacteria - Sharon Peacock <br />
 			&raquo; Parasite Vectors - Ray Wilson <br />
@@ -31,7 +31,7 @@
      <h2>Acknowledgements</h2>  
     <div class="light-grey-top"></div>
     <div class="light-grey">
-        <P><I>We would like these contributors for permissions to use their material on the GeneDB website.</I></P>
+        <P><I>We would like to thank these contributors for permissions to use their material on the GeneDB website.</I></P>
     </div>
     <div class="light-grey-bot"></div>
     
