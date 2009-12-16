@@ -19,13 +19,20 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         out.write("\n<select name=\"taxons\">");
 
         //Find the previously selected taxons if any in Request
-        PageContext pageContext = (PageContext)getJspContext();
+        PageContext pageContext = (PageContext) getJspContext();
         String previouslySelectedTaxonsA = pageContext.getRequest().getParameter("taxons");
         String previouslySelectedTaxonsB = pageContext.getRequest().getParameter("taxonNodeName");
         String previouslySelectedTaxons = previouslySelectedTaxonsA;
-        if (!org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
+        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
             previouslySelectedTaxons = previouslySelectedTaxonsB;
         }
+
+        // Pre-launch hack
+        String context = (String) pageContext.getAttribute("organismContext");
+        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
+            previouslySelectedTaxons = context;
+        }
+
         String indentSpaces = "&nbsp;&nbsp;";
         displayImmediateChildren(root, out, 0, indentSpaces, previouslySelectedTaxons);
 
