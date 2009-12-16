@@ -207,8 +207,8 @@ SQL2
          $properties $database_properties \
          org.genedb.db.loading.LoadEmbl
          
-     java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
-        -Dload.organismCommonName="$organism" \
-         $properties $database_properties \
-         org.genedb.db.fixup.FixResidues        
+   #  java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
+   #     -Dload.organismCommonName="$organism" \
+   #      $properties $database_properties \
+   #      org.genedb.db.fixup.FixResidues        
 }
