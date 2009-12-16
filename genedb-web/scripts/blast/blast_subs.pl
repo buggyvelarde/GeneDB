@@ -39,8 +39,8 @@ close $f_organism_names;
 
 my ($transcript_databases, $protein_databases) = ("", "");
 for my $common_name (@common_names) {
-    $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Genes",);
-    $protein_databases    .= qq(                             "genedb/GeneDB_${common_name}_Proteins",);
+    $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Genes",\n);
+    $protein_databases    .= qq(                             "genedb/GeneDB_${common_name}_Proteins",\n);
 }
 
 print <<END;
