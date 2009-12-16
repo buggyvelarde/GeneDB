@@ -89,43 +89,7 @@
    <th>
     Sequencing Centres
    </th>
-  </tr>
-  <tr>
    <td>
-    Schizosaccharomyces pombe
-   </td>
-   <td>
-    <a href="http://www.sanger.ac.uk/Projects/S_pombe/" class="external text" title="http://www.sanger.ac.uk/Projects/S_pombe/" rel="nofollow">
-     Sanger Institute/EUPOM
-    </a>
-   </td>
-  </tr>
-  <tr>
-   <td>
-    Saccharomyces cerevisiae
-   </td>
-   <td>
-    <a href="http://www.sanger.ac.uk/Projects/S_cerevisiae/" class="external text" title="http://www.sanger.ac.uk/Projects/S_cerevisiae/" rel="nofollow">
-     Sanger Institute
-    </a>
-   </td>
-  </tr>
-  <tr>
-   <td>
-   </td>
-   <td>
-    <a href="http://www.nature.com/genomics/papers/s_cerevisiae.html" class="external text" title="http://www.nature.com/genomics/papers/s_cerevisiae.html" rel="nofollow">
-     Yeast Directory
-    </a>
-   </td>
-  </tr>
-  <tr>
-   <td>
-   </td>
-   <td>
-    <a href="http://mips.gsf.de/proj/yeast/CYGD/db/index.html" class="external text" title="http://mips.gsf.de/proj/yeast/CYGD/db/index.html" rel="nofollow">
-     MIPS
-    </a>
    </td>
   </tr>
   <tr>
@@ -142,8 +106,8 @@
    <td>
    </td>
    <td>
-    <a href="http://www.tigr.org/tdb/e2k1/afu1/" class="external text" title="http://www.tigr.org/tdb/e2k1/afu1/" rel="nofollow">
-     TIGR
+    <a href="http://www.jcvi.org/" class="external text" title="http://www.jcvi.org/" rel="nofollow">
+     JCVI
     </a>
    </td>
   </tr>
@@ -189,15 +153,12 @@
    <td>
    </td>
    <td>
-    <a href="http://www.tigr.org/tdb/mdb/tbdb/" class="external text" title="http://www.tigr.org/tdb/mdb/tbdb/" rel="nofollow">
-     TIGR
+    <a href="http://www.jcvi.org/" class="external text" title="http://www.jcvi.org/" rel="nofollow">
+     JCVI
     </a>
    </td>
   </tr>
  </table>
- <p>
-  <br />
- </p>
  <a name="Queries">
  </a>
  <h2>
@@ -218,4 +179,11 @@
  <p>
   The data within GeneDB are provided in good faith, but no guarantee, express or implied, can be made as to their accuracy. We do not assume any legal liability or responsibility for any purpose for which the data are used.
  </p>
+ <!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+-->
+ <!-- Saved in parser cache with key wikidb:pcache:idhash:5736-0!1!0!!en!2 and timestamp 20091216094756 -->
 </div>
