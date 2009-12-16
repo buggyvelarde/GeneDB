@@ -115,7 +115,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <div id="col-4-2">
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
-<format:addToBasket uniqueName="${dto.uniqueName}" />
+<%-- <format:addToBasket uniqueName="${dto.uniqueName}" /> --%>
 <a href="<misc:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<misc:url value="/includes/image/button-view-sequence.gif"/>" height="46" width="144" alt="View Sequence" border="0" /></a>
 <a href="<misc:url value="/ArtemisLaunch/${dto.organismCommonName}/${dto.topLevelFeatureUniqueName}.jnlp?start=${dto.min}&end=${dto.max}"/>"><img src="<misc:url value="/includes/image/button-artemis.gif"/>" height="46" width="144" alt="Launch Artemis" border="0" /></a>
 <%-- The coordinates in the line below rely on JBrowse coping with coordinates off the end of the contig --%>
