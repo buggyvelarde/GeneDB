@@ -78,7 +78,7 @@ public class ClassicCompatabilityController {
 
 
     // Homepage
-    @RequestMapping(method=RequestMethod.GET, value="/{nickname}/")
+    @RequestMapping(method=RequestMethod.GET, value="/{nickname}")
     public String viewHomepage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC_FULL + nickname + "/";
