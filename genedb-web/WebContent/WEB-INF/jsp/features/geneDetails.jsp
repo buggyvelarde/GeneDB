@@ -12,7 +12,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
-<div style="hidden">${dto.organismCommonName}</div>
+
 
 <div id="col-4-1">
 <div class="main-grey-3-4-top"></div>
