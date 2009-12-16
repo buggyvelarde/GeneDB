@@ -62,11 +62,16 @@
 <h2>Sequence searches</h2>
 <div class="light-grey-top"></div>
 <div class="light-grey">
-<form method="post" action="">
-<p class="block-para"><u>omniBLAST</u> (Multi-organism BLAST)</p>
-<p class="block-para">Single organism BLAST: <db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" /></p>
+<p class="block-para">Blast <br />
 
-</form>
+&raquo; Single organism <span class="dataset-table"><db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" /></span> <br />
+
+<!-- uncomment this when multi organism blast is ready... -->
+<!-- &raquo; <a>Multi-organism</a> -->
+
+ </p>
+
+
 </div>
 <div class="light-grey-bot"></div>
 
