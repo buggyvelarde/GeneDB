@@ -32,8 +32,8 @@ ul {
 The Sanger Institute has undertaken the sequencing of selected vectors to provide an
 framework for investigating vector biology.</p>
 
-<p>The data for <a href="http://classic.genedb.org/genedb/glossina/"><i>G. morsitans</i></a>
- and <a href="http://classic.genedb.org/genedb/llongipalpis/"><i>L. longipalpis</i></a> are available
+<p>The data for <a href="http://old.genedb.org/genedb/glossina/"><i>G. morsitans</i></a>
+ and <a href="http://old.genedb.org/genedb/llongipalpis/"><i>L. longipalpis</i></a> are available
 in the classic GeneDB website.</p>
 
 
