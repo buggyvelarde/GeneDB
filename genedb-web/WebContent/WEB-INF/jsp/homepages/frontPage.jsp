@@ -8,7 +8,7 @@
 <format:page>
 <br>
 
-<c:url value="/Homepage/" var="base2" />
+<misc:url value="/Homepage/" var="base2" />
 <div id="col-1-1">
 <h1>Datasets</h1>
 <div class="main-light-grey-top"></div>
