@@ -20,7 +20,7 @@ public class ClassicCompatabilityController {
 
     private static final String WWW = "redirect:http://www.genedb.org/";
 
-    private static final String CLASSIC = "redirect:http://classic.genedb.org/";
+    private static final String CLASSIC = "redirect:http://old.genedb.org/";
 
     private static final String CLASSIC_FULL = CLASSIC + "genedb/";
 
