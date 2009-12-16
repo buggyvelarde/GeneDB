@@ -78,7 +78,7 @@ public class ClassicCompatabilityController {
 
 
     // Homepage
-    @RequestMapping(method=RequestMethod.GET, value="/${nickname}/")
+    @RequestMapping(method=RequestMethod.GET, value="/{nickname}/")
     public String viewHomepage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC_FULL + nickname + "/";
@@ -88,7 +88,7 @@ public class ClassicCompatabilityController {
 
 
     // Blast page
-    @RequestMapping(method=RequestMethod.GET, value="/${nickname}/blast.jsp")
+    @RequestMapping(method=RequestMethod.GET, value="/{nickname}/blast.jsp")
     public String viewBlastPage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC + "genedb/" + nickname + "/blast.jsp";
