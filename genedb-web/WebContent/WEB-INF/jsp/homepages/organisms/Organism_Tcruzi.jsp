@@ -79,11 +79,4 @@
  <p>
   This annotated genome sequence has been published in El-Sayed et al.2005, Science 309(5733):409-415 and is available for use without restriction. However, the annotation is pro-actively updated and curated.If you find the this resource helpful in your research, acknowledging the project in your publications will help insure its longevity.
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 5/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5678-0!1!0!!en!2 and timestamp 20091214171726 -->
 </div>
