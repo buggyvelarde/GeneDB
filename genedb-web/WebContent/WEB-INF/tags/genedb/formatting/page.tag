@@ -86,7 +86,9 @@
 <li><a href="<misc:url value="/category/molecular_function"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Molecular Function</a></li>
 </ul>
 </li>
+<%--
 <li><a href="<misc:url value="/History"/>">History</a></li>
+--%>
 <!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
