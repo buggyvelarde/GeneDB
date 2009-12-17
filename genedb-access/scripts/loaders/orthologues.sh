@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$GENEDB_HOME/bin/loaders/orthopara.ish"
+source "$GENEDB_HOME/$BIN_FOLDER/loaders/orthopara.ish"
 
 summary() {
     echo "load orthologues"
