@@ -5,18 +5,7 @@ summary() {
 }
 
 loaderUsage() {
-    cat <<USAGE
-
-    -phylonode Bbronchiseptica -cv genedb_misc -cvterm htmlFullName -value "<i>Bordetella bronchiseptica</i>"
-
-phylonode   the phylonode's label field
-cv          the name of the controlled vocabulary to type the property
-cvterm      the cvterm used to type the property
-value       the value of the property
-
-NOTE : this loader depends on having the path to the psu/genlib/python/ libraries in you PYTHONPATH. Contact Giles for info.
-
-USAGE
+    python -c "from loaders.phylonodeprop_loader import parser; parser.print_help();"
     standard_options
 }
 
