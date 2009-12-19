@@ -75,20 +75,16 @@
 </div>
 <div class="light-grey-bot"></div>
 
-
-<h2>News</h2>
+<!--
+<h2>Information</h2>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
 
 <p>
-&raquo; <a href="http://www.wellcome.ac.uk/Education-resources/Courses-and-conferences/Advanced-Courses/Courses/WTX057366.htm">Working with Parasite Database Resources</a><br />
-April 17-21, 2010, Hinxton, Cambridge, UK <br />
-<em>Deadline: December 18th 2009</em>
-
 </p>
 </div>
 <div class="baby-blue-bot"></div>
-
+-->
 
 <h2>Go to our</h2>
 <div class="light-grey-top"></div>
@@ -96,7 +92,7 @@ April 17-21, 2010, Hinxton, Cambridge, UK <br />
 &raquo; <a href="<misc:url value="/Query" />">Query page</a><br />
 &raquo; <a href="<misc:url value="/cgi-bin/amigo/go.cgi"/>">AmiGO</a><br />
 &raquo; <a href="<misc:url value="/JBrowse"/>">JBrowse</a><br />
-&raquo; <a href="http://old.genedb.org/">Pervious GeneDB</a><br />
+&raquo; <a href="http://old.genedb.org/">Previous version</a><br />
 &raquo; <a href="http://old.genedb.org/genedb/pombe">Pombase</a><br />
 </div>
 <div class="light-grey-bot"></div>
