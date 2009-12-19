@@ -75,16 +75,16 @@
 </div>
 <div class="light-grey-bot"></div>
 
-<!--
-<h2>Information</h2>
+
+<h2>New release</h2>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-
-<p>
+<p>Welcome to the latest release of the GeneDB website. A small number of
+ features aren't yet released, but are still available on the previous
+ version of the site. This is accessible via the "Previous version" link below.
 </p>
 </div>
 <div class="baby-blue-bot"></div>
--->
 
 <h2>Go to our</h2>
 <div class="light-grey-top"></div>
