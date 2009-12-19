@@ -6,7 +6,7 @@
 
 <c:if test='${dto.organismCommonName == "Pchabaudi"}'>
 <br />
-<P>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated 
+<P>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated
 annotation) of <em>P.chabaudi</em> AS in a peer reviewed journal as soon as possible. Permission of the principal investigator
 should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</P>
 <br />
@@ -119,7 +119,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <a href="<misc:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<misc:url value="/includes/image/button-view-sequence.gif"/>" height="46" width="144" alt="View Sequence" border="0" /></a>
 <a href="<misc:url value="/ArtemisLaunch/${dto.organismCommonName}/${dto.topLevelFeatureUniqueName}.jnlp?start=${dto.min}&end=${dto.max}"/>"><img src="<misc:url value="/includes/image/button-artemis.gif"/>" height="46" width="144" alt="Launch Artemis" border="0" /></a>
 <%-- The coordinates in the line below rely on JBrowse coping with coordinates off the end of the contig --%>
-<a href="<misc:url value="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=Complex+Gene+Models"/>"><img src="<misc:url value="/includes/image/button-jbrowse.gif"/>" height="46" width="144" alt="Show in JBrowse" border="0" /></a>
+<a href="<misc:url value="/jbrowse/${dto.organismCommonName}/?loc=${dto.topLevelFeatureDisplayName}:${dto.min - 5000}..${dto.max + 5000}&tracks=Complex%20Gene%20Models"/>"><img src="<misc:url value="/includes/image/button-jbrowse.gif"/>" height="46" width="144" alt="Show in JBrowse" border="0" /></a>
 </div>
 <div class="main-blue-3-4-bot"></div>
 </div><!-- end internal column -right -->
