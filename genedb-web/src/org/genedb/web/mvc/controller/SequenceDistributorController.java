@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SequenceDistributorController {
     private static final Logger logger = Logger.getLogger(SequenceDistributorController.class);
 
+    private static final String LOCAL_BLAST = "http://www.genedb.org/blast/submitblast";
+
     private SequenceDao sequenceDao;
 
     @RequestMapping(method=RequestMethod.GET, value="/{name}/{type}/{destination}")
@@ -107,10 +109,10 @@ public class SequenceDistributorController {
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            url = String.format("redirect:http://beta.genedb.org/blast/submitblast/%s?sequence=%s", dbName, sequence);
+            url = String.format("redirect:%s/%s?sequence=%s", LOCAL_BLAST, dbName, sequence);
             break;
         case OMNIBLAST:
-            url = String.format("redirect:http://beta.genedb.org/blast/submitblast/%s/omni?sequence=%s", dbName, sequence);
+            url = String.format("redirect:%s/%s/omni?sequence=%s", LOCAL_BLAST, dbName, sequence);
             break;
         case NCBI_BLAST:
             if (nucleotide) {
