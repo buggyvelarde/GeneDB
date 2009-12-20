@@ -181,15 +181,11 @@
        <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDistributor/*</url-pattern>
      </servlet-mapping>
+    <!--
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/JBrowse</url-pattern>
-    </servlet-mapping>
-    <!--
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ws/*</url-pattern>
@@ -264,5 +260,9 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/error.jsp</location>
       </error-page>
+
+      <session-config>
+        <session-timeout>120</session-timeout>
+      </session-config>
 
 </web-app>

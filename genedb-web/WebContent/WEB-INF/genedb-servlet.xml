@@ -133,6 +133,10 @@
 
   <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
+  <bean name="dbController" class="org.genedb.web.mvc.controller.DbController">
+    <property name="generalDao" ref="generalDao" />
+  </bean>
+
   <bean id="restController" class="org.genedb.web.mvc.controller.RestController" />
 
   <bean name="compatabilityController" class="org.genedb.web.mvc.controller.ClassicCompatabilityController" />
@@ -148,8 +152,6 @@
   </bean>
 
   <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
-
-  <bean id="jbrowseController" class="org.genedb.web.mvc.controller.JBrowseController" />
 
 
   <!--
