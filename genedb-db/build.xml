@@ -98,7 +98,7 @@
         </jar>
     </target>
 
-    <target name="make-test-jar" depends="make-springless-jar">
+    <target name="make-test-jar" depends="db-fulljar, make-springless-jar">
         <copy todir="${imported.basedir.db}/ant-build/test">
             <fileset dir="${imported.basedir.db}/test"/>
         </copy>
