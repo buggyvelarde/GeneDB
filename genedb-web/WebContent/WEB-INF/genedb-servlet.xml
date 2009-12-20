@@ -133,9 +133,11 @@
 
   <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
+<!--
   <bean name="dbController" class="org.genedb.web.mvc.controller.DbController">
     <property name="generalDao" ref="generalDao" />
   </bean>
+-->
 
   <bean id="restController" class="org.genedb.web.mvc.controller.RestController" />
 
