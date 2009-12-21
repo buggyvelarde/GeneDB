@@ -124,9 +124,6 @@ public class SequenceDistributorController {
                 sequence
             );
         }
-
-       return url;
-
     }
 
     private String getSequence(Transcript transcript, GeneSection start, int length1, GeneSection end,
