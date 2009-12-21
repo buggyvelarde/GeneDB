@@ -10,13 +10,17 @@
   The Wellcome Trust Sanger Institute is committed to data sharing wherever possible. This maximises the value and scientific impact of the data, and ensures transparency and equity in exploitation of the opportunities created.
  </p>
  <p>
-  The GeneDB data release policy is in line with the Institute's
-  <a href="http://www.sanger.ac.uk/notices/datasharingpolicy.shtml" class="external text" title="http://www.sanger.ac.uk/notices/datasharingpolicy.shtml" rel="nofollow">
-   data sharing policy
+  For more information about the Institute's data policies, please refer to our
+  <a href="http://www.sanger.ac.uk/legal/index.html" class="external text" title="http://www.sanger.ac.uk/legal/index.html" rel="nofollow">
+   legal
   </a>
-  . If you wish to use data made available on GeneDB, please also refer to the Institute's
-  <a href="http://www.sanger.ac.uk/notices/use-policy.shtml" class="external text" title="http://www.sanger.ac.uk/notices/use-policy.shtml" rel="nofollow">
-   data use policy
+  page, which has sections on
+  <a href="http://www.sanger.ac.uk/legal/index.html#t_2" class="external text" title="http://www.sanger.ac.uk/legal/index.html#t_2" rel="nofollow">
+   data sharing
+  </a>
+  and
+  <a href="http://www.sanger.ac.uk/legal/index.html#t_1" class="external text" title="http://www.sanger.ac.uk/legal/index.html#t_1" rel="nofollow">
+   use
   </a>
   .
  </p>
