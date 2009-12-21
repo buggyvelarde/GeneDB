@@ -99,30 +99,30 @@ public class SequenceDistributorController {
             }
         }
 
-        //String sequence = sequenceDao.fetchSequence(transcript, start, end, introns);
-
         sequence = splitSequenceIntoLines(sequence);
-
-        String url = null;
-        String dbName = "GeneDB_" + transcript.getOrganism().getCommonName();
 
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            url = String.format("redirect:%s/%s?sequence=%s", LOCAL_BLAST, dbName, sequence);
-            break;
+            return String.format("redirect:%s/%s?sequence=%s",
+                LOCAL_BLAST,
+                "GeneDB_" + transcript.getOrganism().getCommonName(),
+                sequence
+            );
         case OMNIBLAST:
-            url = String.format("redirect:%s/%s/omni?sequence=%s", LOCAL_BLAST, dbName, sequence);
-            break;
+            return String.format("redirect:%s/%s?sequence=%s",
+                LOCAL_BLAST,
+                nucleotide ? "GeneDB_transcripts" : "GeneDB_proteins",
+                sequence
+            );
         case NCBI_BLAST:
-            if (nucleotide) {
-                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr&PAGE_TYPE=BlastSearch&" +
-                		"SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
-            } else {
-                url = "redirect:http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&" +
-                		"SHOW_DEFAULTS=on&LINK_LOC=blasthome&QUERY="+sequence;
-            }
-            break;
+            return String.format("redirect:%s&%s&QUERY=%s",
+                "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome",
+                nucleotide ?
+                    "PROGRAM=blastnBLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
+                    : "PROGRAM=blastp&BLAST_PROGRAMS=blastp",
+                sequence
+            );
         }
 
        return url;

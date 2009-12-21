@@ -66,8 +66,8 @@
 
 &raquo; Single organism <span class="dataset-table"><db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" /></span> <br />
 
-<!-- uncomment this when multi organism blast is ready... -->
-<!-- &raquo; <a>Multi-organism</a> -->
+&raquo; <a href="<misc:url value="/blast/submitblast/GeneDB_proteins/omni" />">Multi-organism (proteins)</a><br />
+&raquo; <a href="<misc:url value="/blast/submitblast/GeneDB_transcripts/omni" />">Multi-organism (transcripts)</a><br />
 
  </p>
 
