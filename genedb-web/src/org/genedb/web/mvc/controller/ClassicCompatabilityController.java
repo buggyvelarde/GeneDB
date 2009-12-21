@@ -76,9 +76,8 @@ public class ClassicCompatabilityController {
 
     private Logger logger = Logger.getLogger(ClassicCompatabilityController.class);
 
-
     // Homepage
-    @RequestMapping(method=RequestMethod.GET, value={"/{nickname}", "/{nickname}/"})
+    @RequestMapping(method=RequestMethod.GET, value={"/{nickname}", "/{nickname}/", "/{nickname}/index.jsp"})
     public String viewHomepage(@PathVariable("nickname") String nickname) {
         if (classicOnly.contains(nickname)) {
             return CLASSIC_FULL + nickname + "/";
@@ -100,6 +99,18 @@ public class ClassicCompatabilityController {
     // Canonical gene
     @RequestMapping(method=RequestMethod.GET, value="/Search")
     public String viewGenePage(
+            @RequestParam("name") String name,
+            @RequestParam("organism") String nickname) {
+
+        if (classicOnly.contains(nickname)) {
+            return CLASSIC_FULL + "Search?name=" + name + "&organism=" + nickname;
+        }
+        return WWW + "gene/" + name;
+    }
+
+    // Menu bar search
+    @RequestMapping(method=RequestMethod.GET, value="/Dispatcher")
+    public String decodeDispatcher(
             @RequestParam("name") String name,
             @RequestParam("organism") String nickname) {
 
