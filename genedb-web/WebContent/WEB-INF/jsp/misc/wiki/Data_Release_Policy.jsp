@@ -179,11 +179,4 @@
  <p>
   The data within GeneDB are provided in good faith, but no guarantee, express or implied, can be made as to their accuracy. We do not assume any legal liability or responsibility for any purpose for which the data are used.
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 7/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5736-0!1!0!!en!2 and timestamp 20091216094756 -->
 </div>
