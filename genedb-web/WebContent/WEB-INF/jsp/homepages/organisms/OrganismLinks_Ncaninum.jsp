@@ -23,7 +23,7 @@
  <p>
   &raquo;
   <a href="mailto::ap2@sanger.ac.uk" class="external text" title="mailto::ap2@sanger.ac.uk" rel="nofollow">
-   Dr Armab Pain
+   Dr. Arnab Pain
   </a>
  </p>
 </div>

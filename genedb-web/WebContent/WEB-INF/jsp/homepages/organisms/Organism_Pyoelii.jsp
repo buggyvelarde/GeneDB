@@ -69,11 +69,4 @@ Annotation of the
   </a>
   .
  </p>
- <!-- 
-NewPP limit report
-Preprocessor node count: 4/1000000
-Post-expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
--->
- <!-- Saved in parser cache with key wikidb:pcache:idhash:5729-0!1!0!!en!2 and timestamp 20091215152721 -->
 </div>
