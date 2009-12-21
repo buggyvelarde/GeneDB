@@ -123,6 +123,8 @@ public class SequenceDistributorController {
                     : "PROGRAM=blastp&BLAST_PROGRAMS=blastp",
                 sequence
             );
+        default:
+            throw new RuntimeException("Unknown sequence destination");
         }
     }
 
