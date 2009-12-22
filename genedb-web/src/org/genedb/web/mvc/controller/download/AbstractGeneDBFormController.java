@@ -3,6 +3,7 @@ package org.genedb.web.mvc.controller.download;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.servlet.ServletRequest;
 
@@ -11,6 +12,7 @@ import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,24 @@ public class AbstractGeneDBFormController {
         re.queryName = queryName;
         if (q instanceof LuceneQuery){
             re.expanded = true;
+        }
+        map.put(key, re);
+        return key;
+    }
+
+    protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, TreeMap<String, Integer> taxonGroup, String sessionId) {
+        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
+        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
+        ResultEntry re = new ResultEntry();
+        re.numOfResults = gs.size();
+        re.query = q;
+        re.results = gs;
+        re.queryName = queryName;
+        if (q instanceof LuceneQuery){
+            re.expanded = true;
+        }
+        if (taxonGroup != null) {
+            re.taxonGroup = taxonGroup;
         }
         map.put(key, re);
         return key;
