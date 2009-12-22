@@ -133,6 +133,9 @@ public class ResultsController {
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }
+        if (resultEntry.taxonGroup != null) {
+            model.addAttribute("taxonGroup", resultEntry.taxonGroup);
+        }
 
         if (resultEntry.query != null) {
             model.addAttribute("query", resultEntry.query);
