@@ -65,7 +65,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();
 
         // AddTaxonGroupToSession
-        session.setAttribute("taxonGroup", quickSearchQueryResults.getTaxonGroup());
+        model.addAttribute("taxonGroup", quickSearchQueryResults.getTaxonGroup());
 
         return findDestinationView(query, model, quickSearchQueryResults, session);
     }
@@ -110,13 +110,13 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         case SINGLE_RESULT_IN_CURRENT_TAXON:
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
-            cacheResults(gs, query, QUERY_NAME, session.getId());
+            cacheResults(gs, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
             logger.error("The result is "+gs.get(0));
             return "redirect:/gene/" + gs.get(0).getSystematicId();
 
         case MULTIPLE_RESULTS_IN_CURRENT_TAXON:
             List<GeneSummary> gs2 = quickSearchQueryResults.getResults();
-            resultsKey = cacheResults(gs2, query, QUERY_NAME, session.getId());
+            resultsKey = cacheResults(gs2, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
             //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query (Size: '" + gs2.size() + "' key: '" + resultsKey
@@ -125,7 +125,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         case ALL_ORGANISMS_IN_ALL_TAXONS:
             List<GeneSummary> gs3 = quickSearchQueryResults.getResults();
-            resultsKey = cacheResults(gs3, query, QUERY_NAME, session.getId());
+            resultsKey = cacheResults(gs3, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
             //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query (Size: '" + gs3.size() + "' key: '" + resultsKey
