@@ -149,13 +149,13 @@
    <name>quicksearchmessage</name>
    <tag-class>org.genedb.web.tags.db.QuickSearchMessageTag</tag-class>
    <body-content>empty</body-content>
-              <attribute>
+   <attribute>
        <name>taxonGroup</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
-                  <attribute>
-       <name>currentTaxonNodeName</name>
+    <attribute>
+       <name>currentTaxonName</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
