@@ -76,7 +76,7 @@
                                         </td>
                               </c:if>
                                    <td align="left">
-                                    <db:quicksearchmessage />
+                                    <db:quicksearchmessage taxonGroup="${taxonGroup}" currentTaxonName="${taxonNodeName}" />
                                  </td>
 
                             </tr>
