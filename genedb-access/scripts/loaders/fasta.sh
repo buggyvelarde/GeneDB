@@ -20,6 +20,9 @@ Options:
     -e contig (default)
     -e EST
     -e BAC_end
+  -r
+    Reload. If this option is specified, all genomic data for the specified
+    organism are deleted before the load begins. Use with caution!
 USAGE
     standard_options
     echo
@@ -45,9 +48,10 @@ doLoad() {
     entryType=contig
     properties=''
     debug=false
+    reload=false
 
     OPTIND=0
-    while getopts "do:t:e:x:$stdopts" option; do
+    while getopts "do:t:e:x:r$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
@@ -56,6 +60,8 @@ doLoad() {
         t)  topLevel="$OPTARG"
             ;;
         e)  entryType="$OPTARG"
+            ;;
+        r)  reload=true
             ;;
         x)  properties="$properties -Dload.$OPTARG"
             ;;
@@ -83,6 +89,17 @@ doLoad() {
         exit 1
     fi
     
+    if $reload; then
+    	
+        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser"
+        psql --no-psqlrc <<SQL2
+        delete from feature where organism_id in (
+            select organism_id from organism where common_name = '${organism}'
+        );
+SQL2
+    fi
+    
+    
     read_password
 
     if $debug; then
@@ -90,6 +107,8 @@ doLoad() {
         echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
         set -x
     fi
+    
+    echo "in doLoad() from fasta.sh just before java call"
     java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
         -Dload.organismCommonName="$organism" \
         -Dload.inputDirectory="$file" \
