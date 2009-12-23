@@ -108,7 +108,6 @@ SQL2
         set -x
     fi
     
-    echo "in doLoad() from fasta.sh just before java call"
     java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
         -Dload.organismCommonName="$organism" \
         -Dload.inputDirectory="$file" \
