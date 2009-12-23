@@ -21,6 +21,10 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
 
     private static final Logger logger = Logger.getLogger(QuickSearchMessageTag.class);
 
+    private TreeMap<String, Integer> taxonGroup;
+
+    String currentTaxonName;
+
     @SuppressWarnings("unchecked")
     @Override
    public void doTag() throws JspException, IOException {
@@ -28,13 +32,17 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         Integer resultsSize = (Integer)getJspContext().findAttribute("resultsSize");
 
         //Get the taxon group map
-        TreeMap<String, Integer> taxonGroup = (TreeMap) getJspContext().findAttribute("taxonGroup");
+         //= (TreeMap) getJspContext().findAttribute("taxonGroup");
 
         QuickSearchQuery query = (QuickSearchQuery)getJspContext().findAttribute("query");
 
-        String currentTaxonName = (String)getJspContext().findAttribute("taxonNodeName");
+        //= (String)getJspContext().findAttribute("taxonNodeName");
 
         currentTaxonName = checkForHtmlShortName(currentTaxonName);
+
+        logger.error("resultsSize = '"+resultsSize+"'");
+        logger.error("taxonGroup = '"+taxonGroup+"'");
+        logger.error("currentTaxonName = '"+currentTaxonName+"'");
 
         String message = null;
         if (noResultsFound(resultsSize, taxonGroup)){
@@ -43,7 +51,7 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         }else if (noResultsFound(resultsSize) && taxonGroup.size()>0){
             message = printTaxonResultsFound(query, currentTaxonName, taxonGroup);
 
-        }else if (!noResultsFound(resultsSize) && taxonGroup.size() == 1){
+        } else if (!noResultsFound(resultsSize) && taxonGroup.size() == 1) {
             message = printResultsFound(query, currentTaxonName, resultsSize);
 
         }else if(!noResultsFound(resultsSize) && taxonGroup.size() > 1){
@@ -79,8 +87,7 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
      * @return
      */
     private boolean noResultsFound(Integer resultsSize, TreeMap<String, Integer> taxonGroup ){
-        if ((resultsSize==null
-                || (resultsSize!= null && resultsSize.intValue()==0))
+        if ((resultsSize==null || resultsSize.intValue()==0)
                 && taxonGroup.size()==0){
             return true;
         }
@@ -94,8 +101,7 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
      * @return
      */
     private boolean noResultsFound(Integer resultsSize ){
-        if ((resultsSize==null
-                || (resultsSize!= null && resultsSize.intValue()==0))){
+        if ((resultsSize==null || resultsSize.intValue()==0)) {
             return true;
         }
         return false;
@@ -204,5 +210,13 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         sb.append(" organisms.");
         return sb.toString();
 
+    }
+
+    public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
+        this.taxonGroup = taxonGroup;
+    }
+
+    public void setCurrentTaxonName(String currentTaxonName) {
+        this.currentTaxonName = currentTaxonName;
     }
 }
