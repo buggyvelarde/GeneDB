@@ -112,7 +112,7 @@ public class SequenceDistributorController {
         case OMNIBLAST:
             return String.format("redirect:%s/%s?sequence=%s",
                 LOCAL_BLAST,
-                nucleotide ? "GeneDB_transcripts" : "GeneDB_proteins",
+                nucleotide ? "GeneDB_transcripts/omni" : "GeneDB_proteins/omni",
                 sequence
             );
         case NCBI_BLAST:
