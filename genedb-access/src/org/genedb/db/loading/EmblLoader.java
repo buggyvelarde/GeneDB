@@ -597,13 +597,46 @@ class EmblLoader {
             throw new DataError("Tell Robin he needs to write code for loading LTR features!");
             // TODO
         }
+        else if (featureType.equals("fasta_record")) {
+            logger.info(String.format("Creating fasta_record feature"));
+            loadFastaRecord(feature); // These are often used to identify individual contigs within a bin chromosome
+        }
         else {
+            logger.info(String.format("Archiving %s feature", featureType));
             archiveFeature(feature);
         }
 
         if (focalFeature != null) {
             archiveUnusedQualifiers(feature, focalFeature);
         }
+    }
+
+    private void loadFastaRecord(FeatureTable.Feature feature) {
+
+        String featureUniqueName = feature.getQualifierValues("label").get(0);
+        logger.warn(String.format("Creating archived contig feature '%s' from '%s' feature on line %d",
+            featureUniqueName, feature.type, feature.lineNumber));
+
+        Feature focalFeature = new Region(
+            organism, featureUniqueName,
+            /*analysis:*/false, /*obsolete:*/true,
+            new Timestamp(System.currentTimeMillis()));
+        locate(focalFeature, feature.location);
+
+        int rank=0;
+        focalFeature.addFeatureProp(
+                String.format("Archived from %s feature %s with location %s; file '%s', line %d",
+                feature.type, featureUniqueName, feature.location, feature.getFilePath(), feature.lineNumber),
+                "feature_property", "comment", rank++);
+        for (String note: feature.getQualifierValues("note")) {
+            focalFeature.addFeatureProp(note, "feature_property", "comment", rank++);
+        }
+        for (String colour: feature.getQualifierValues("colour")) {
+            focalFeature.addFeatureProp(colour, "genedb_misc", "colour", rank++);
+        }
+        session.persist(focalFeature);
+        archiveUnusedQualifiers(feature, focalFeature);
+
     }
 
     private Counters archivedFeatureIndexes = new Counters();
