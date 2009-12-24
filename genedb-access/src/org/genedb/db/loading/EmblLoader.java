@@ -598,7 +598,6 @@ class EmblLoader {
             // TODO
         }
         else if (featureType.equals("fasta_record")) {
-            logger.info(String.format("Creating fasta_record feature"));
             loadFastaRecord(feature); // These are often used to identify individual contigs within a bin chromosome
         }
         else {
