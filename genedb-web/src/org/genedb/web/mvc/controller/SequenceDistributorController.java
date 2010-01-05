@@ -31,7 +31,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -68,6 +67,7 @@ public class SequenceDistributorController {
         String sequence = null;
         String sequence2 = null;
         boolean nucleotide = true;
+        String program = "wublastn";
 
         SequenceType st = SequenceType.valueOf(sequenceType);
         switch (st) {
@@ -97,6 +97,7 @@ public class SequenceDistributorController {
                     nucleotide = false;
                 }
             }
+            program = "wublastx";
         }
 
         sequence = splitSequenceIntoLines(sequence);
@@ -104,16 +105,18 @@ public class SequenceDistributorController {
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            return String.format("redirect:%s/%s?sequence=%s",
+            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
                 LOCAL_BLAST,
                 "GeneDB_" + transcript.getOrganism().getCommonName(),
-                sequence
+                sequence,
+                program
             );
         case OMNIBLAST:
-            return String.format("redirect:%s/%s?sequence=%s",
+            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
                 LOCAL_BLAST,
                 nucleotide ? "GeneDB_transcripts/omni" : "GeneDB_proteins/omni",
-                sequence
+                sequence,
+                program
             );
         case NCBI_BLAST:
             return String.format("redirect:%s&%s&QUERY=%s",
@@ -129,42 +132,42 @@ public class SequenceDistributorController {
     }
 
     private String getSequence(Transcript transcript, GeneSection start, int length1, GeneSection end,
-			int length2, boolean exons, boolean introns) {
-    	Feature topLevelFeature = transcript.getPrimarySourceFeature();
-    	int min = transcript.getFmin() - length1;
-    	min = (min < 0) ? 0 : min;
-    	int max = transcript.getFmax() + length2;
-    	max = (max < topLevelFeature.getSeqLen()) ? topLevelFeature.getSeqLen() : max;
-    	String seq = topLevelFeature.getResidues(min, max);
-    	return seq;
-	}
+            int length2, boolean exons, boolean introns) {
+        Feature topLevelFeature = transcript.getPrimarySourceFeature();
+        int min = transcript.getFmin() - length1;
+        min = (min < 0) ? 0 : min;
+        int max = transcript.getFmax() + length2;
+        max = (max < topLevelFeature.getSeqLen()) ? topLevelFeature.getSeqLen() : max;
+        String seq = topLevelFeature.getResidues(min, max);
+        return seq;
+    }
 
-	private void compareSequences(String sequence, String sequence2) {
-    	if (sequence.equals(sequence2)) {
-    		logger.error("Sequences match");
-    	} else {
-    		logger.error("Sequences differ");
-    	}
+    private void compareSequences(String sequence, String sequence2) {
+        if (sequence.equals(sequence2)) {
+            logger.error("Sequences match");
+        } else {
+            logger.error("Sequences differ");
+        }
 
-	}
+    }
 
-	private int LINE_LENGTH = 40;
+    private int LINE_LENGTH = 40;
 
     private String splitSequenceIntoLines(String sequence) {
 
-    	StringBuilder ret = new StringBuilder();
-    	String remaining = sequence;
+        StringBuilder ret = new StringBuilder();
+        String remaining = sequence;
 
-    	while (remaining.length() > LINE_LENGTH) {
-    		ret.append(remaining.substring(0, LINE_LENGTH));
-    		ret.append("%0A");
-    		remaining = remaining.substring(LINE_LENGTH);
-    	}
-    	if (remaining.length() != 0) {
-    		ret.append(remaining);
-    	}
+        while (remaining.length() > LINE_LENGTH) {
+            ret.append(remaining.substring(0, LINE_LENGTH));
+            ret.append("%0A");
+            remaining = remaining.substring(LINE_LENGTH);
+        }
+        if (remaining.length() != 0) {
+            ret.append(remaining);
+        }
 
-    	return ret.toString();
+        return ret.toString();
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
