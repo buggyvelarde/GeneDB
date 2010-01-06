@@ -30,7 +30,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.springsource.sts.ide.tomcat.runtimeTarget/SpringSource tc Server v6.0"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/biojava-1.6.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/bytecode-0.91.jar"/>
@@ -50,24 +49,24 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.springsource.org.hibernate.search-3.1.1.GA.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.springsource.org.jdom-1.0.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.springsource.org.junit-4.7.0.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.aop-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.aspects-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.beans-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.context-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.context.support-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.core-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.jdbc-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.orm-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.oxm-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.test-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.transaction-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.web-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.web.servlet-3.0.0.RC1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/postgresql-8.3-603.jdbc4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.springsource.javax.servlet.jsp.jstl-1.1.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/displaytag-1.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/je-3.3.75.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jewelcli-0.53.jar"/>
 	<classpathentry kind="lib" path="bin"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.aop-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.aspects-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.beans-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.context-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.context.support-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.core-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.jdbc-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.orm-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.oxm-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.test-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.transaction-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.web-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/org.springframework.web.servlet-3.0.0.RELEASE.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
