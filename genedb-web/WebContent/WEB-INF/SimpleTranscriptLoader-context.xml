@@ -24,7 +24,7 @@
 	</tx:advice>
 
 
-    <bean id="transcriptLoader" class="org.genedb.web.mvc.model.load.TranscriptLoader">
+    <bean id="simpleTranscriptLoader" class="org.genedb.web.mvc.model.simple.SimpleTranscriptLoader">
         <property name="template" ref="jdbcTemplate"/>
     </bean>
 

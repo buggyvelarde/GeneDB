@@ -141,6 +141,11 @@
 
   <bean id="restController" class="org.genedb.web.mvc.controller.RestController" />
 
+  <bean id="idListController" class="org.genedb.web.mvc.controller.IdListController">
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="hmFactory" ref="historyManagerFactory" />
+  </bean>
+
   <bean name="compatabilityController" class="org.genedb.web.mvc.controller.ClassicCompatabilityController" />
 
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">

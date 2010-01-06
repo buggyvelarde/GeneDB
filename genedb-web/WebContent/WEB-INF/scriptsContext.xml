@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+
+    default-init-method="postConstruction">
+
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:spring-configured/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <tx:annotation-driven mode="aspectj"/>
+
+    <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="messages"/>
+    </bean>
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:project.properties" />
+    </bean>
+
+    <!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+
+
+    <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
+        <property name="rootDirectory" value="${resultsCacheDirectory}"/>
+        <property name="readOnly" value="false" />
+        <property name="allowCreate" value="true" />
+    </bean>
+
+
+    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
+        <property name="taxonNodeManager" ref="taxonNodeManager" />
+    </bean>
+
+    <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
+        <property name="phylogenyDao" ref="phylogenyDao" />
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="findPhylonodeWithOrganismFeatures">
+            <value>true</value>
+        </property>
+    </bean>
+
+    <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
+        <property name="tnm" ref="taxonNodeManager" />
+    </bean>
+
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="generalDao" ref="generalDao" />
+    </bean>
+
+    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="pubDao" class="org.genedb.db.dao.PubDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+
+    <!-- DataSource Property -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
+        <property name="username"><value>${dbuser}</value></property>
+        <property name="password"><value>${dbpassword}</value></property>
+    </bean>
+
+    <!-- Database Property -->
+    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+        <props>
+            <prop key="hibernate.hbm2dll.auto">validate</prop>
+            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+            <prop key="hibernate.bytecode.provider">javassist</prop>
+        </props>
+     </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory" />
+     </bean>
+
+    <bean id="sessionFactory"
+        class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties" ref="hibernateProperties" />
+        <property name="annotatedPackages">
+            <list>
+                <value>org.gmod.schema.mapped</value>
+                <value>org.gmod.schema.feature</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
+        <property name="luceneIndexList">
+        <list>
+            <bean class="org.genedb.querying.core.LuceneIndex">
+                <property name="indexDirectoryName" value="${lucene.indexDirectory}" />
+                <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+            </bean>
+        </list>
+        </property>
+    </bean>
+
+    <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
+        <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
+    </bean>
+    
+
+
+    <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop> 
+            </props>
+        </property>
+
+    </bean>
+
+    <bean name="fullTextIndexEventListener" class="org.hibernate.search.event.FullTextIndexEventListener" />
+
+</beans>

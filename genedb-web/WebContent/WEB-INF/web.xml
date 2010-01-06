@@ -147,6 +147,14 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/IdList/*</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/IdList</url-pattern>
+     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/Image/*</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
