@@ -1,7 +1,7 @@
 package org.genedb.db.taxon;
 
 
-import org.springframework.ui.format.Formatter;
+import org.springframework.format.Formatter;
 import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
@@ -12,7 +12,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
     private TaxonNodeManager taxonNodeManager;
 
     @Override
-    public String format(TaxonNodeList nodeList, Locale locale) {
+    public String print(TaxonNodeList nodeList, Locale locale) {
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (TaxonNode node : nodeList.getNodes()) {

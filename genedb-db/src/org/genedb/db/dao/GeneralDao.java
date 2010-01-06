@@ -125,6 +125,15 @@ public class GeneralDao extends BaseDao {
         return dbs;
     }
 
+
+    public List<String> getAllDbNames() {
+        @SuppressWarnings("unchecked")
+        List<String> names = getSession().createQuery(
+                "select name from Db")
+                .list();
+        return names;
+    }
+
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }

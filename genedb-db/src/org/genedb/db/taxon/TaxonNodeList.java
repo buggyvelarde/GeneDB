@@ -1,12 +1,10 @@
 package org.genedb.db.taxon;
 
-import org.springframework.ui.format.Formatted;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-@Formatted(TaxonNodeListFormatter.class)
 public class TaxonNodeList {
 
     private List<TaxonNode> nodes;
