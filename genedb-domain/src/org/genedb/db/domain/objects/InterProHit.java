@@ -2,6 +2,8 @@ package org.genedb.db.domain.objects;
 
 import org.gmod.schema.mapped.DbXRef;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 
 /**
  * A group of polypeptide domains.
@@ -9,6 +11,7 @@ import org.gmod.schema.mapped.DbXRef;
  *
  * @author rh11
  */
+@XStreamAlias("Interpro")
 public class InterProHit extends PolypeptideRegionGroup {
     private String urlPrefix, description;
     String accession;

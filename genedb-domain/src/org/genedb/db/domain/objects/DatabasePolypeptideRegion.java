@@ -9,11 +9,14 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 /**
  * A region of a polypeptide that has an associated entry in an external database.
  *
  * @author rh11
  */
+@XStreamAlias("polypeptide_region")
 public class DatabasePolypeptideRegion extends PolypeptideRegion {
     private static final long serialVersionUID = 1934739510074730316L;
 
