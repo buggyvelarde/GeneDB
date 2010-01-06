@@ -123,12 +123,13 @@ public class FixResidues {
                 break;
         }
 
-        FixResidues fr = new FixResidues()
-            .setVerbose(verbose).setMarkFragments(markFragments)
+        FixResidues fr = new FixResidues();
+        fr.makeConnection();
+        fr.setVerbose(verbose).setMarkFragments(markFragments)
             .setGuessFrame(guessFrame).setForceGuessFrame(forceGuessFrame);
-        if (i == args.length)
+        if (i == args.length) {
             fr.fixAll();
-        else {
+        } else {
             for (; i < args.length; i++) {
                 fr.fixOrganismByName(args[i]);
             }
@@ -143,7 +144,8 @@ public class FixResidues {
     private boolean guessFrame = false;
     private boolean forceGuessFrame = false;
 
-    private FixResidues ()
+
+    private void makeConnection()
         throws SQLException, ClassNotFoundException {
 
         String url = String.format("jdbc:postgresql://%s:%s/%s",
@@ -157,6 +159,14 @@ public class FixResidues {
         info("Connecting to database '%s' as user '%s'", url, username);
         this.conn = DriverManager.getConnection(url, username, password);
         this.typeCodes = new TypeCodes(conn);
+    }
+
+    public void setConnection(Connection conn) {
+        this.conn = conn;
+    }
+
+    public void setTypeCodes(TypeCodes typeCodes) {
+        this.typeCodes = typeCodes;
     }
 
     private FixResidues setVerbose(boolean verbose) {
