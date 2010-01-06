@@ -1,9 +1,10 @@
 <%@ page import="org.springframework.dao.DataAccessException"%>
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header title="Data Access Failure" name="Data Access Failure">
-    <st:init/>
-</format:header>
+<format:header title="Data Access Failure" />
+<format:page>
+<br>
+<format:header title="Data Access Failure" name="Data Access Failure" />
 
 
 <%
@@ -15,6 +16,7 @@ org.apache.log4j.Logger.getLogger("org.genedb.web.DataAccessFailure").error(ex);
 <P>
 
 
+
 <%
 ex.printStackTrace(new java.io.PrintWriter(out));
 %>
@@ -24,5 +26,4 @@ ex.printStackTrace(new java.io.PrintWriter(out));
 <A href="<c:url value="/"/>">Home</A>
 
 
-<format:footer />
-
+</format:page>
