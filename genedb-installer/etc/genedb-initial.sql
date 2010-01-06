@@ -213,7 +213,7 @@ update db set urlprefix='http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo
     where name='OPI';
 
 -- This is deliberately a relative URL as it redirects via our site
-update db set urlprefix='/DbLinkRedirector?db=EC&acc='
+update db set urlprefix='/DbLinkRedirector/EC/'
     where name='EC';
 
 update db set urlprefix='http://www.expasy.org/cgi-bin/sprot-search-de?'
