@@ -42,6 +42,7 @@ public class WebImageGenerator {
     //private static Color BG = Color.CYAN;
     private static Color BG = new Color(0xde, 0xde, 0xde);
     private static String fileName;
+    private static int RADIUS = 4;
 
     public WebImageGenerator(String fileName) {
         WebImageGenerator.fileName = fileName;
@@ -72,7 +73,7 @@ public class WebImageGenerator {
         g2.addRenderingHints(hints);
 
         // Round corners
-        g2.clip(new RoundRectangle2D.Float(0, 0, in.getWidth(), in.getHeight(), 10, 10));
+        g2.clip(new RoundRectangle2D.Float(0, 0, in.getWidth(), in.getHeight(), RADIUS, RADIUS));
         g2.drawImage(in, 0, 0, null);
 
         g2.setClip(null);
@@ -88,9 +89,9 @@ public class WebImageGenerator {
                 int b = pixel & 0xFF;
 
                 float fadeFraction = (y*1.0f/27);
-                r = (int)((r + fadeFraction * (255 -r)));
-                g = (int)((g + fadeFraction * (255 -g)));
-                b = (int)((b + fadeFraction * (255 -b)));
+                r = (int)((r + fadeFraction * (0xde -r)));
+                g = (int)((g + fadeFraction * (0xde -g)));
+                b = (int)((b + fadeFraction * (0xde -b)));
                 //System.err.println(String.format("x='%d' y='%d' pc='%f' r='%d' g='%d' b='%d'", x,136-y, fadeFraction, r, g, b));
                 int newVal = (pixel & 0xFF000000) | r << 16 | g << 8 | b;
                 dest.setRGB(x, y+136, newVal);
