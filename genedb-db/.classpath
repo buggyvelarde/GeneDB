@@ -57,14 +57,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.apache.lucene-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.search-3.1.1.GA.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.RC1.jar" sourcepath="lib/org.springframework.context-sources-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.RC1.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.RC1.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.com.google.common.collect-0.8.0.20080820.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hsqldb-1.8.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.0.0.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
