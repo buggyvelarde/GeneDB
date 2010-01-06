@@ -1,0 +1,18 @@
+<ivy-module version="2.0">
+    <info organisation="org.genedb" module="genedb-db"/>
+    <dependencies>
+
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RELEASE" />
+      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.RELEASE" />
+      <dependency org="org.springframework" name="org.springframework.test" rev="3.0.0.RELEASE" />
+
+      <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
+      <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
+
+      <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
+      <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
+      <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.1.1.GA"/>
+      <!-- <dependency org="org.slf4j" name="com.springsource.slf4j.org.apache.log4j" rev="1.5.6"/>-->
+      <dependency org="org.slf4j" name="com.springsource.slf4j.log4j" rev="1.5.6"/>
+    </dependencies>
+</ivy-module>

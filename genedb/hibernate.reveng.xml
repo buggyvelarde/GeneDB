@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+	<table-filter match-name="analysis" match-schema="public" />
+	<table-filter match-name="analysisfeature" match-schema="public" />
+	<table-filter match-name="analysisprop" match-schema="public" />
+	<table-filter match-name="cv" match-schema="public" />
+	<table-filter match-name="cvterm" match-schema="public" />
+	<table-filter match-name="cvterm_dbxref" match-schema="public" />
+	<table-filter match-name="cvterm_relationship"
+		match-schema="public" />
+	<table-filter match-name="cvtermpath" match-schema="public" />
+	<table-filter match-name="cvtermprop" match-schema="public" />
+	<table-filter match-name="cvtermsynonym" match-schema="public" />
+	<table-filter match-name="db" match-schema="public" />
+	<table-filter match-name="dbxref" match-schema="public" />
+	<table-filter match-name="dbxrefprop" match-schema="public" />
+	<table-filter match-name="featureprop_pub" match-schema="public" />
+	<table-filter match-name="featureprop" match-schema="public" />
+	<table-filter match-name="featureloc" match-schema="public" />
+	<table-filter match-name="feature_synonym" match-schema="public" />
+	<table-filter match-name="feature_relationshipprop_pub"
+		match-schema="public" />
+	<table-filter match-name="feature_relationshipprop"
+		match-schema="public" />
+	<table-filter match-name="feature_relationship_pub"
+		match-schema="public" />
+	<table-filter match-name="feature_relationship"
+		match-schema="public" />
+	<table-filter match-name="feature_pub" match-schema="public" />
+	<table-filter match-name="feature_dbxref" match-schema="public" />
+	<table-filter match-name="feature_cvtermprop" match-schema="public" />
+	<table-filter match-name="feature_cvterm_pub" match-schema="public" />
+	<table-filter match-name="feature_cvterm_dbxref"
+		match-schema="public" />
+	<table-filter match-name="feature_cvterm" match-schema="public" />
+	<table-filter match-name="feature" match-schema="public" />
+	<table-filter match-name="project" match-schema="public" />
+	<table-filter match-name="phylotree_pub" match-schema="public" />
+	<table-filter match-name="phylotree" match-schema="public" />
+	<table-filter match-name="phylonodeprop" match-schema="public" />
+	<table-filter match-name="phylonode_relationship"
+		match-schema="public" />
+	<table-filter match-name="phylonode_pub" match-schema="public" />
+	<table-filter match-name="phylonode_organism" match-schema="public" />
+	<table-filter match-name="phylonode_dbxref" match-schema="public" />
+	<table-filter match-name="phylonode" match-schema="public" />
+	<table-filter match-name="organismprop" match-schema="public" />
+	<table-filter match-name="organism_dbxref" match-schema="public" />
+	<table-filter match-name="organism" match-schema="public" />
+	<table-filter match-name="tableinfo" match-schema="public" />
+	<table-filter match-name="synonym" match-schema="public" />
+	<table-filter match-name="pubprop" match-schema="public" />
+	<table-filter match-name="pubauthor" match-schema="public" />
+	<table-filter match-name="pub_relationship" match-schema="public" />
+	<table-filter match-name="pub_dbxref" match-schema="public" />
+	<table-filter match-name="pub" match-schema="public" />
+</hibernate-reverse-engineering>

@@ -1,0 +1,9 @@
+<ivy-module version="2.0">
+    <info organisation="org.genedb" module="genedb-libs"/>
+    <dependencies>
+      <dependency org="org.aspectj" name="com.springsource.org.aspectj.runtime" rev="1.6.5.RELEASE" />
+      <dependency org="org.aspectj" name="com.springsource.org.aspectj.weaver" rev="1.6.5.RELEASE" />
+      <dependency org="org.aspectj" name="com.springsource.org.aspectj.tools" rev="1.6.5.RELEASE" />
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RELEASE"/>
+    </dependencies>
+</ivy-module>

@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+
+<project name="genedb-db" default="db-fulljar" basedir=".">
+    <description>This project will build the GeneDB (or any generic Chado) interface</description>
+
+    <!-- If this file is imported into another build.xml, resolve filenames
+         relative to here rather than the importing project. -->
+    <dirname property="imported.basedir.db" file="${ant.file.genedb-db}"/>
+
+    <!-- Imports -->
+    <import file="${imported.basedir.db}/../genedb-libs/build.xml" />
+    <import file="${imported.basedir.db}/../genedb-util/build.xml"/>
+    <import file="${imported.basedir.db}/../genedb-domain/build.xml"/>
+
+    <!-- Properties -->
+    <property name="genedb-db.jar" value="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
+    <property name="version" value="0.2"/>
+
+    <!-- Classpaths -->
+    <path id="db-classpath">
+      <fileset dir="${imported.basedir.db}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <path id="build-test-database-classpath">
+        <path refid="db-classpath"/>
+        <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
+    </path>
+
+    <path id="unit-tests-classpath">
+        <pathelement location="${imported.basedir.db}/${test-classes.dir}"/>
+        <pathelement location="${imported.basedir.db}/${classes.dir}"/>
+        <path refid="db-classpath"/>
+        <pathelement location="${imported.basedir.db}/${classes.dir}"/>
+        <pathelement location="${imported.basedir.db}/test"/>
+        <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
+         <fileset dir="${imported.basedir.db}/../genedb-domain/lib">
+             <include name="*.jar"/>
+         </fileset>
+    </path>
+
+
+    <!-- Targets -->
+
+    <!-- General building, cleaning, JARing type targets -->
+
+    <!-- An internal init target -->
+    <target name="setup-db" depends="util-fulljar">
+        <init-target project="db"/>
+        <mkdir dir="${imported.basedir.db}/ant-build/test" />
+        <mkdir dir="${imported.basedir.db}/ant-build/test-classes" />
+        <mkdir dir="${imported.basedir.db}/ant-build/springless-classes" />
+    </target>
+
+
+    <target name="compile-db" depends="db-populate-lib, db-populate-util" description="Compile">
+        <compile-target project="db"/>
+        <!-- <iajc-target project="db"/>
+        <compile-and-iajc-target project="db" />
+        <uptodate property="db.jar-uptodate" targetfile="${genedb-db.jar}">
+            <srcfiles dir="${imported.basedir.db}/${classes.dir}" />
+        </uptodate> -->
+    </target>
+
+    <target name="db-fulljar" depends="compile-db" unless="db.jar-uptodate"
+        description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+
+        <antcall target="build-time-weave">
+            <param name="directory" value="${imported.basedir.db}/${classes.dir}"/>
+        </antcall>
+
+        <jar-target project="db">
+            <manifest>
+                <attribute name="Implementation-Title" value="Chado Interface"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar-target>
+
+    </target>
+
+    <target name="make-springless-jar" depends="setup-db, db-populate-lib, db-populate-util, db-populate-domain">
+        <javac srcdir="${imported.basedir.db}/src"
+            classpathref="db-classpath"
+            destdir="${imported.basedir.db}/${build.dir}/springless-classes"
+            encoding="utf-8" debug="on" />
+
+        <antcall target="hibernate-instrumentation">
+            <param name="directory" value="${imported.basedir.db}/${build.dir}/springless-classes"/>
+        </antcall>
+
+        <jar jarfile="${imported.basedir.db}/${dist.dir}/genedb-db-springless.jar">
+            <fileset dir="${imported.basedir.db}/${build.dir}/springless-classes" />
+            <manifest>
+                <attribute name="Implementation-Title" value="Chado Interface (Springless)"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="make-test-jar" depends="db-fulljar, make-springless-jar">
+        <copy todir="${imported.basedir.db}/ant-build/test">
+            <fileset dir="${imported.basedir.db}/test"/>
+        </copy>
+
+        <javac srcdir="${imported.basedir.db}/ant-build/test"
+            destdir="${imported.basedir.db}/ant-build/test-classes"
+            encoding="utf-8" debug="on">
+
+            <classpath>
+                <path refid="db-classpath"/>
+                <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
+            </classpath>
+        </javac>
+
+        <copy todir="${imported.basedir.db}/ant-build/test-classes" overwrite="true"
+            file="${imported.basedir.db}/ant-build/test/log4j.test.properties"/>
+
+        <jar jarfile="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar">
+            <fileset dir="${imported.basedir.db}/ant-build/test-classes" />
+            <manifest>
+                <attribute name="Implementation-Title" value="Chado Interface Test Code"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
+      <junit printsummary="yes" haltonfailure="yes" fork="true">
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-classic"/>
+        <classpath>
+            <path refid="db-classpath"/>
+            <path refid="unit-tests-classpath"/>
+            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
+            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
+        </classpath>
+        <sysproperty key="build.tests" value="${build.tests}"/>
+        <formatter type="brief" usefile="false" />
+        <batchtest>
+          <fileset dir="${imported.basedir.db}/ant-build/test-classes">
+            <include name="**/*Test.*" />
+          </fileset>
+        </batchtest>
+      </junit>
+    </target>
+
+    <target name="hibernate-instrumentation">
+        <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
+        <taskdef name="instrument"
+            classname="org.hibernate.tool.instrument.javassist.InstrumentTask"
+            classpathref="db-classpath"/>
+
+        <instrument verbose="false">
+            <fileset dir="${directory}">
+                <include name="org/gmod/schema/mapped/Feature.class"/>
+                <include name="org/gmod/schema/mapped/Organism.class"/>
+                <include name="org/gmod/schema/feature/*.class"/>
+            </fileset>
+        </instrument>
+    </target>
+
+
+    <!-- Invoke the hibernate instrumentation and compile-time weaving -->
+    <!-- Called from an Eclipse ant task, as well as from fulljar-db -->
+    <target name="build-time-weave">
+        <antcall target="hibernate-instrumentation"/>
+        <init-target project="db"/>
+        <iajc-target project="db" directory="${directory}"/>
+    </target>
+
+    <!-- Test database set-up below here -->
+
+    <target name="prompt-for-password" depends="util-fulljar" unless="source.password">
+        <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
+        <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
+
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${genedb-util.jar}" />
+        <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
+    </target>
+
+    <target name="make-schema-database" depends="prompt-for-password,make-test-jar">
+        <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+            <classpath refid="build-test-database-classpath"/>
+            <jvmarg line="-server" />
+            <arg value="--only-schema"/>
+            <arg value="${source.url}"/>
+            <arg value="${source.username}"/>
+            <arg value="${source.password}"/>
+            <arg value="schema"/>
+        </java>
+    </target>
+
+    <target name="make-skeleton-database-if-necessary" depends="does-skeleton-database-exist" unless="db.skeleton.exists">
+        <antcall target="make-skeleton-database"/>
+    </target>
+    <target name="does-skeleton-database-exist">
+        <available property="db.skeleton.exists" file="${imported.basedir.db}/test-data/hsqldb/skeleton.data"/>
+    </target>
+    <target name="make-skeleton-database" depends="prompt-for-password,util-fulljar,make-test-jar">
+        <java fork="true" dir="${imported.basedir.db}" output="make-skeleton-database.log"
+                maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+            <classpath refid="build-test-database-classpath"/>
+            <jvmarg line="-server" />
+            <arg value="${source.url}"/>
+            <arg value="${source.username}"/>
+            <arg value="${source.password}"/>
+            <arg value="skeleton"/>
+        </java>
+    </target>
+
+    <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
+        <antcall target="make-pfalciparum-database"/>
+    </target>
+    <target name="does-pfalciparum-database-exist">
+        <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
+    </target>
+    <target name="make-pfalciparum-database" depends="prompt-for-password,util-fulljar,make-test-jar">
+        <java fork="true" dir="${imported.basedir.db}" output="make-pfalciparum-database.log"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+            <classpath refid="build-test-database-classpath"/>
+            <jvmarg line="-server" />
+            <arg value="${source.url}"/>
+            <arg value="${source.username}"/>
+            <arg value="${source.password}"/>
+            <arg value="pfalciparum"/>
+            <arg value="27"/>
+        </java>
+    </target>
+
+
+    <target name="delete-databases">
+        <delete>
+            <fileset dir="${imported.basedir.db}/test-data/hsqldb">
+                <include name="*"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="rebuild-test-databases" depends="prompt-for-password, delete-databases, make-schema-database, make-skeleton-database, make-pfalciparum-database"/>
+
+    <target name="db-populate-lib" depends="check.db-lib-uptodate" unless="db.lib-uptodate">
+      <populate directory="genedb-db" />
+      <copy todir="${imported.basedir.db}/lib">
+            <fileset dir="${imported.basedir.libs}/lib/biojava">
+                <include name="biojava-1.6.jar"/>
+                <include name="bytecode-0.91.jar"/>
+            </fileset>
+      </copy>
+      <touch file="lib/ivy.timestamp.txt" />
+    </target>
+
+
+    <target name="db-populate-domain" depends="domain-fulljar">
+        <copy file="${imported.basedir.db}/../genedb-domain/ant-build/dist/genedb-domain.jar" todir="${imported.basedir.db}/lib" />
+    </target>
+
+    <target name="db-populate-util" depends="util-fulljar">
+        <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />
+    </target>
+
+    <target name="check.db-lib-uptodate" depends="init-db" if="db.ivy-timestamp-exists">
+      <uptodate property="db.lib-uptodate" srcfile="${imported.basedir.db}/ivy.xml" targetfile="${imported.basedir.db}/lib/ivy.timestamp.txt" />
+    </target>
+
+
+    <target name="init-db" description="Create full JAR file">
+      <init-target project="db" />
+    </target>
+
+    <target name="clean-db">
+      <clean-target project="db" />
+    </target>
+
+
+    <target name="test-changetracker" depends="compile-db" description="Run tests" >
+      <antcall target="build-time-weave">
+        <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
+      </antcall>
+
+      <javac srcdir="${imported.basedir.db}/test"
+             includes="**/HibernateChangeTrackerTest.java"
+             debug="true"
+             destdir="${imported.basedir.db}/${test-classes.dir}"
+             classpathref="unit-tests-classpath" />
+
+       <antcall target="build-time-weave">
+         <param name="directory" value="${imported.basedir.db}/ant-build/test-classes"/>
+       </antcall>
+
+       <junit printsummary="on"
+              fork="true"
+              maxmemory="1024m"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+         <classpath refid="unit-tests-classpath"/>
+         <formatter type="brief" usefile="false"/>
+         <test name="org.genedb.db.audit.HibernateChangeTrackerTest"/>
+      </junit>
+
+      <fail if="tests.failed">
+          tests.failed=${tests.failed}
+          HibernateChangeTrackerTest failed
+      </fail>
+    </target>
+
+</project>
