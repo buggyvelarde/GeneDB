@@ -29,7 +29,7 @@ function initDownload(base,history) {
         var myDT = this.myDataTable = new YAHOO.widget.DataTable("download", myColumnDefs,
                 this.myDataSource,oConfigs );
 
-        YAHOO.widget.DataTable.MSG_EMPTY = "";
+        //YAHOO.widget.DataTable.MSG_EMPTY = "";
         myDT.hideTableMessage();
 
         function onClick(e) {
