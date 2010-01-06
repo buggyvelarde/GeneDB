@@ -1,23 +1,23 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 
-<format:header1 name="Generic Feature Page">
+<format:header title="Generic Feature Page">
 	<st:init />
 	<link rel="stylesheet"
-		href='<c:url value="/"/>includes/style/alternative.css'
+		href='<misc:url value="/"/>includes/style/alternative.css'
 		type="text/css" />
-	<link rel="stylesheet" href='<c:url value="/"/>includes/style/wtsi.css'
+	<link rel="stylesheet" href='<misc:url value="/"/>includes/style/wtsi.css'
 		type="text/css" />
 	<link rel="stylesheet"
-		href='<c:url value="/"/>includes/style/frontpage1.css' type="text/css" />
+		href='<misc:url value="/"/>includes/style/frontpage1.css' type="text/css" />
 	<script type="text/javascript"
-		src='<c:url value="/includes/scripts/extjs/ext-base.js"/>'></script>
+		src='<misc:url value="/includes/scripts/extjs/ext-base.js"/>'></script>
 	<script type="text/javascript"
-		src='<c:url value="/includes/scripts/extjs/ext-all.js"/>'></script>
+		src='<misc:url value="/includes/scripts/extjs/ext-all.js"/>'></script>
 	<link rel="stylesheet" type="text/css"
-		href='<c:url value="/includes/style/extjs/ext-all.css"/>' />
+		href='<misc:url value="/includes/style/extjs/ext-all.css"/>' />
 	<script type="text/javascript"
-		src='<c:url value="/includes/scripts/extjs/ext-history.js"/>'></script>
-</format:header1>
+		src='<misc:url value="/includes/scripts/extjs/ext-history.js"/>'></script>
+</format:header>
 <table width="100%">
 	<tr>
 		<td width="20%">
