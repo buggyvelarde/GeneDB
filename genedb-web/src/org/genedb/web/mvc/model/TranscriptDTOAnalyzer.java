@@ -16,10 +16,11 @@ public class TranscriptDTOAnalyzer {
 
     public static void main(String[] args) throws Exception {
         TranscriptDTOAnalyzer tda = new TranscriptDTOAnalyzer(args[0]);
-        if (args.length <= 1) {
-            args = new String[]{"PF07_0048"};
+        String[] arguments = args;
+        if (arguments.length <= 1) {
+            arguments = new String[]{"PF07_0048"};
         }
-        tda.startConsole(args);
+        tda.startConsole(arguments);
     }
 
 

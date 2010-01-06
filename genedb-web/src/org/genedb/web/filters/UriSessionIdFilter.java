@@ -1,5 +1,8 @@
 package org.genedb.web.filters;
 
+import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.servlet.tags.UrlTag;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -17,15 +20,15 @@ public class UriSessionIdFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		
+
 		if (!(request instanceof HttpServletRequest)) {
 			chain.doFilter(request, response);
 			return;
 		}
-		
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		
+
 		// clear session if session id in URL
 		if (httpRequest.isRequestedSessionIdFromURL()) {
 			HttpSession session = httpRequest.getSession();
@@ -33,7 +36,7 @@ public class UriSessionIdFilter implements Filter {
 				session.invalidate();
 			}
 		}
-				
+
 		// wrap response to remove URL encoding
 		HttpServletResponseWrapper wrappedResponse = new HttpServletResponseWrapper(httpResponse) {
 			@Override
@@ -48,11 +51,11 @@ public class UriSessionIdFilter implements Filter {
 			@Override
 			public String encodeURL(String url) { return url; }
 		};
-		
+
 		chain.doFilter(request, wrappedResponse);
 	}
 
-	
+
 	@Override
 	public void destroy() {
 		// Deliberately empty

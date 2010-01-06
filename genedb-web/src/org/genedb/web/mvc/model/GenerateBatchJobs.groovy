@@ -57,9 +57,11 @@ for (org in orgs) {
 
     String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)
-    script << boilerPlate
+    script < boilerPlate
     script << antLine + '\n'
     "chmod 755 ${scriptName}".execute()
+
+    new File(scriptName + ".out").delete
 
     print "${org} "
     Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
@@ -75,29 +77,37 @@ println "All jobs submitted - waiting for them to finish"
 
 boolean worked = true
 def scriptDir = new File(baseDir, "scripts")
+def originalJobListSize = jobList.size()
 while (jobList.size() > 0) {
     sleep 300000; // 5 *60*1000
 
     List finishedJobs = new ArrayList()
+	List failedJobs = new ArrayList()
     for (job in jobList) {
+		List justFinishedJobs = new ArrayList()
         File f = new File("${baseDir}/scripts/${job}.script.err")
         if (f.exists()) {
             if (f.size() == 0) {
                 finishedJobs.add(job)
-                println("WORKED The script ${baseDir}/scripts/${job}.script has run")
+                justFinishedJobs.add("WORKED The script ${baseDir}/scripts/${job}.script has run")
             } else {
                 worked = false
                 finishedJobs.add(job)
-                println("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
+				failedJobs.add(job)
+                justFinishedJobs.add("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
             }
         } else {
             System.err.print(" ${job}")
         }
     }
+	System.err.println();
+	for (job in justFinishedJobs) {
+		System.err.println(job)
+	}
     for (job in finishedJobs) {
         jobList.remove(job)
     }
-    System.err.println(" ");
+    System.err.println(" \nJobs ${jobList.size()} remaining of ${orginalJobListSize}");
 }
 
 if (worked) {

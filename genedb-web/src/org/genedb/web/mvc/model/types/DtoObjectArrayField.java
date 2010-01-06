@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.model.types;
 
+import org.apache.log4j.Logger;
+
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +11,11 @@ import java.util.Map;
 
 public class DtoObjectArrayField implements Array {
 
+    private static Logger logger = Logger.getLogger(DtoObjectArrayField.class);
+
     private List<?> arrayField = null;
     private String baseTypeName = null;
-    
+
     public <T> DtoObjectArrayField(String objectType, List<T> arr){
         baseTypeName = objectType;
         arrayField = arr;
@@ -83,20 +87,22 @@ public class DtoObjectArrayField implements Array {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 //    @Override
 //    public String getValue(){
 //        return toString();
 //    }
-    
+
     @Override
     public String toString(){
         StringBuffer sb = new StringBuffer();
         sb.append("{");
-        for(Iterator<?> iter = arrayField.iterator(); iter.hasNext();){  
+        for(Iterator<?> iter = arrayField.iterator(); iter.hasNext();){
             sb.append("\"");
-            sb.append(iter.next());  
-            sb.append("\"");                
+            Object next = iter.next();
+            logger.error(String.format("The type is '%s'", next.getClass()));
+            sb.append(next);
+            sb.append("\"");
             if (iter.hasNext()){
                 sb.append(",");
             }

@@ -7,18 +7,18 @@ public class QueryTreeWalker {
 
     private int index;
     private NumberedQueryI query;
-    
-    
-    
+
+
+
     public QueryTreeWalker(NumberedQueryI query, int index) {
         this.query = query;
-        this.index = index;;
+        this.index = index;
     }
 
     public void go() {
         setNode(query);
     }
-    
+
     private void setNode(NumberedQueryI node) {
         node.setIndex(index);
         index++;
@@ -28,6 +28,6 @@ public class QueryTreeWalker {
             setNode(bool.getSecondQuery());
         }
     }
-    
-    
+
+
 }

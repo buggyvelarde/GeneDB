@@ -19,9 +19,11 @@ import com.google.common.collect.Lists;
 
 public class DtoDataFetcher implements DataFetcher<Integer> {
 
+    private Logger logger = Logger.getLogger(DtoDataFetcher.class);
+
     private BerkeleyMapFactory bmf;
 
-    public Iterator<DataRow> iterator(List<Integer> ids, String fieldDelim) {
+    public TroubleTrackingIterator<DataRow> iterator(List<Integer> ids, String fieldDelim) {
         return new DtoDataRowIterator(ids, bmf, fieldDelim); // FIXME convert to transcript ids
     }
 
@@ -32,13 +34,19 @@ public class DtoDataFetcher implements DataFetcher<Integer> {
 }
 
 
-class DtoDataRowIterator implements Iterator<DataRow> {
+class DtoDataRowIterator implements TroubleTrackingIterator<DataRow> {
+
+    private Logger logger = Logger.getLogger(DtoDataRowIterator.class);
 
     private BerkeleyMapFactory bmf;
 
     private Iterator<Integer> it;
 
     private String fieldDelim;
+
+    private TranscriptDTO nextDTO;
+
+    private List<Integer> problems = Lists.newArrayList();
 
     public DtoDataRowIterator(List<Integer> ids, BerkeleyMapFactory bmf, String fieldDelim) {
         this.it = ids.iterator();
@@ -48,20 +56,33 @@ class DtoDataRowIterator implements Iterator<DataRow> {
 
     @Override
     public boolean hasNext() {
-        return it.hasNext();
+        while (it.hasNext()) {
+            Integer next = it.next();
+            nextDTO = bmf.getDtoMap().get(next);
+            if (nextDTO != null) {
+                return true;
+            } else {
+                problems.add(next);
+            }
+        }
+        return false;
     }
 
     @Override
     public DataRow next() {
-        Integer id = it.next();
+        //Integer id = it.next();
         // Need to convert name to featureId
-        TranscriptDTO dto = bmf.getDtoMap().get(id);
-        return new DtoDataRow(dto, fieldDelim);
+        //TranscriptDTO dto = bmf.getDtoMap().get(id);
+        return new DtoDataRow(nextDTO, fieldDelim);
     }
 
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    public List<Integer> getProblems() {
+        return problems;
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -14,6 +15,7 @@ import org.genedb.web.mvc.model.types.DtoStringArrayField;
 import org.genedb.web.mvc.model.types.SynonymType;
 import org.genedb.web.mvc.model.types.TranscriptRegionType;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.util.CollectionUtils;
 
 
 public abstract class AbstractTranscriptLoader {
@@ -50,10 +52,40 @@ public abstract class AbstractTranscriptLoader {
         Date startTime = new Date();
 
         logger.debug(String.format("Field args size: %s", args.size()));
+
         int update = 0;
         try {
-            logger.info("Loading Trnacript: " + args.get("transcript_id"));
-            update = template.update("insert into transcript values(" +
+            logger.info("Loading Transcript: " + args.get("transcript_id"));
+            update = template.update("insert into transcript(" +
+                    "transcript_id," +
+                    "transcript_name," +
+                    "transcript_cvterm_name," +
+                    "transcript_cv_name," +
+                    "transcript_uniquename," +
+                    "transcript_time_last_modified," +
+                    "gene_id," +
+                    "gene_name," +
+                    "gene_time_last_modified," +
+                    "gene_fmax," +
+                    "gene_fmin," +
+                    "gene_strand," +
+                    "gene_cvterm_name," +
+                    "gene_cv_name," +
+                    "organism_id," +
+                    "organism_common_name," +
+                    "top_level_feature_name," +
+                    "top_level_feature_seqlen," +
+                    "top_level_feature_uniquename," +
+                    //"top_level_feature_type," +
+                    "top_level_feature_type" +
+                    //"cluster_ids," +
+                    //"orthologue_names," +
+                    //"publications," +
+                    //"synonyms," +
+                    //"exons," +
+                    //"dbx_refs" +
+            		")" +
+            		" values(" +
                     ":transcript_id," +
                     ":transcript_name," +
                     ":transcript_cvterm_name," +
@@ -76,14 +108,15 @@ public abstract class AbstractTranscriptLoader {
                     ":top_level_feature_name," +
                     ":top_level_feature_seqlen," +
                     ":top_level_feature_uniquename," +
-                    ":top_level_feature_type," +
+                    //":top_level_feature_type," +
+                    ":top_level_feature_type" +
 
-                    ":cluster_ids," +
-                    ":orthologue_names," +
-                    ":publications," +
-                    ":synonyms," +
-                    ":transcript_regions," +
-                    ":dbx_refs" +
+                    //":cluster_ids," +
+                    //":orthologue_names," +
+                    //":publications," +
+                    //":synonyms," +
+                    //":transcript_regions," +
+                    //":dbx_refs" +
                     ") ",  args);
         } catch(Exception e) {
             String message = null;

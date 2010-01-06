@@ -4,8 +4,11 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
 
+import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,8 @@ import com.google.common.collect.Lists;
 @RequestMapping("/IdList")
 public class IdListController {
 
+    private final Logger logger = Logger.getLogger(IdListController.class);
+
     private HistoryManagerFactory hmFactory;
 
     private SequenceDao sequenceDao;
@@ -42,8 +47,8 @@ public class IdListController {
     public String processImageUpload(
             HttpSession session,
             @RequestParam("idList") String idList,
-            @RequestParam("oldIds") boolean useOldIds,
-            @RequestParam("historyItemName") String historyItemName,
+            //@RequestParam("oldIds") boolean useOldIds,
+            //@RequestParam("historyItemName") String historyItemName,
             @RequestParam("ids") MultipartFile mf) {
 
         List<String> ids = Lists.newArrayList();
@@ -76,13 +81,16 @@ public class IdListController {
 
         HistoryManager hm = hmFactory.getHistoryManager(session);
 
-        if (useOldIds) {
-            okIds.addAll(oldIds);
-        }
+//        if (useOldIds) {
+//            okIds.addAll(oldIds);
+//        }
 
         String historyName = "Uploaded";
-        if (StringUtils.hasText(historyItemName)) {
-            historyName = historyItemName;
+//        if (StringUtils.hasText(historyItemName)) {
+//            historyName = historyItemName;
+//        }
+        for (String string : okIds) {
+            logger.error("The list of ok ids includes '"+string+"'");
         }
         hm.addHistoryItem(historyName, HistoryType.MANUAL, okIds);
 
@@ -94,13 +102,16 @@ public class IdListController {
             List<String> oldIds, List<String> ambiguousIds, List<String> badIds) {
 
         for (String id : ids) {
-            if (validatePrimaryId(id)) {
-                okIds.add(id);
+            String realId;
+            if ((realId = validatePrimaryId(id))!= null) {
+                okIds.add(realId);
+                logger.error("Found '"+realId+"'");
                 continue;
             }
             if (validateSecondaryId(id, oldIds, ambiguousIds)) {
                 continue;
             }
+            logger.error("Missed '"+id+"'");
             badIds.add(id);
         }
     }
@@ -120,14 +131,31 @@ public class IdListController {
     }
 
 
-    private boolean validatePrimaryId(String id) {
-        return sequenceDao.getFeatureByUniqueName(id, Feature.class) != null;
+    private String validatePrimaryId(String id) {
+        Feature f = sequenceDao.getFeatureByUniqueName(id, Feature.class);
+        if (f == null) {
+            return null;
+        }
+        if (f instanceof org.gmod.schema.feature.Gene) {
+            Gene g = (org.gmod.schema.feature.Gene) f;
+            Transcript t = g.getTranscripts().iterator().next();
+            return t.getUniqueName();
+        }
+        return f.getUniqueName();
     }
 
 
     private void addIds(List<String> ids, String idList) {
         String[] split= idList.split("\\n");
         ids.addAll(Arrays.asList(split));
+    }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+    public void setHmFactory(HistoryManagerFactory hmFactory) {
+        this.hmFactory = hmFactory;
     }
 
 }

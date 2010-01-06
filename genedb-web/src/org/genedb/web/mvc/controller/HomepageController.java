@@ -62,6 +62,7 @@ public class HomepageController extends BaseController {
 
         ModelAndView mav = new ModelAndView(DEFAULT_GROUP, map);
         mav.addObject("organismContext", node.getLabel());
+        mav.addObject("taxonNodeName", node.getLabel());
 
         if (node.isRoot()) {
             return new ModelAndView(DEFAULT_HOMEPAGE);
@@ -75,7 +76,7 @@ public class HomepageController extends BaseController {
             return mav;
         }
 
-        mav.addObject("label", node.getLabel());
+        //mav.addObject("label", node.getLabel());
         return mav;
     }
 

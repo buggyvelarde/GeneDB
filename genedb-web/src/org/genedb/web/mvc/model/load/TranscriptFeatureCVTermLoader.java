@@ -15,38 +15,38 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 
 /**
- * 
+ *
  * @author lo2@sangerinstitute
  *
  */
 public class TranscriptFeatureCVTermLoader {
     static Logger logger = Logger.getLogger(TranscriptFeatureCVTermLoader.class);
-    
+
     /**
      * Load transcript_featurecvterm records
      * @param pep
      * @param template
-     * @throws Exception 
+     * @throws Exception
      */
-    public static void load(int transcriptId, FeatureMapper pep, SimpleJdbcTemplate template) 
+    public static void load(int transcriptId, FeatureMapper pep, SimpleJdbcTemplate template)
     throws Exception{
-        
+
         //append
         Date fcvtGetTime = new Date();
-        List<FeatureCvtermType> featureCvtermTypes= 
+        List<FeatureCvtermType> featureCvtermTypes=
             template.query(FeatureCvtermMapper.SQL, new FeatureCvtermMapper(), pep.getFeatureId());
         TimerHelper.printTimeLapse(logger, fcvtGetTime, "fcvtGetTime");
-        
+
         //Get the Feature CVTerm Properties
-        for(FeatureCvtermType featureCvtermType : featureCvtermTypes){    
+        for(FeatureCvtermType featureCvtermType : featureCvtermTypes){
             Map<String, Object> args = new HashMap<String, Object>();
             try{
-                Date processFcvtTime = new Date();            
+                Date processFcvtTime = new Date();
 
                 args.put("transcript_id", transcriptId);
                 args.put("feature_cvterm_id", featureCvtermType.getFeatureCvtId());
                 args.put("polypeptide_id", pep.getFeatureId());
-                
+
                 //Get the CV Name
                 logger.debug("Getting ...cvName");
                 args.put("cv_name", featureCvtermType.getCvname());
@@ -95,17 +95,17 @@ public class TranscriptFeatureCVTermLoader {
                 //Get the dbxref
                 logger.debug("Getting ...dbxRefs");
                 List<DBXRefType> dbxRefs = template.query(
-                        DbxRefMapper.FEATURE_CVTERM_SQL, new DbxRefMapper(), featureCvtermType.getFeatureCvtId());                        
+                        DbxRefMapper.FEATURE_CVTERM_SQL, new DbxRefMapper(), featureCvtermType.getFeatureCvtId());
                 DtoObjectArrayField objectField = new DtoObjectArrayField("dbxreftype", dbxRefs);
-                args.put("dbxrefs", objectField);            
+                args.put("dbxrefs", objectField);
 
 
                 //Get the pros
                 logger.debug("Getting ...properties");
                 List<FeatureCVTPropType> props = template.query(
-                        FeatureCVTermPropMapper.SQL, new FeatureCVTermPropMapper(), featureCvtermType.getFeatureCvtId());                        
+                        FeatureCVTermPropMapper.SQL, new FeatureCVTermPropMapper(), featureCvtermType.getFeatureCvtId());
                 objectField = new DtoObjectArrayField("featurecvtproptype", props);
-                args.put("properties", objectField);            
+                args.put("properties", objectField);
 
                 //insert
                 logger.debug("Inserting ...");
@@ -123,17 +123,43 @@ public class TranscriptFeatureCVTermLoader {
             }
         }
     }
-    
+
+    private static String escapeInnerBrackets(String in) {
+        int first = in.indexOf("(");
+        int last = in.indexOf(")");
+        if (first > -1 && last > -1) {
+            return in.substring(0, first) + in.substring(first, last).replaceAll("\\(", "_").replaceAll("\\)", "_") + in.substring(last);
+        }
+        return in;
+    }
+
     private static int insert(Map<String, Object> args, SimpleJdbcTemplate template){
         if (logger.isInfoEnabled()){
             for(String key : args.keySet()){
                 logger.info(String.format("%s: %s", key, args.get(key)));
+                if ("properties".equals(key)) {
+                    DtoObjectArrayField doaf = (DtoObjectArrayField) args.get(key);
+                    logger.error("doaf is '"+doaf+"'");
+                    //args.put(key, escapeInnerBrackets((String)args.get(key)));
+                }
             }
         }
-        int update = template.update("insert into transcript_featurecvterm " +
-        		"values(" +
+        int update = template.update("insert into transcript_featurecvterm(" +
+                "transcript_feature_cvterm_id," +
+                //"polypeptide_id," +
+                "cv_name_prefix," +
+                "cvterm_name," +
+                "type_accession," +
+                "with_from_pub," +
+                "feature_cvterm_count," +
+                "pubs," +
+                "dbxrefs," +
+                //"properties," +
+                "transcript_id" +
+                ") " +
+                "values(" +
         		":feature_cvterm_id," +
-        		":polypeptide_id," +
+        		//":polypeptide_id," +
                 ":cv_name," +
                 ":cvterm_name," +
                 ":type_accession," +
@@ -141,12 +167,12 @@ public class TranscriptFeatureCVTermLoader {
                 ":feature_cvterm_count," +
                 ":pubs," +
                 ":dbxrefs," +
-                ":properties," +
+                //":properties," +
                 ":transcript_id" +
                 ") ",  args);
-        
+
         logger.debug("trans fcvt loaded......");
         logger.debug("\n");
         return update;
-    } 
+    }
 }

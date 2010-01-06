@@ -155,6 +155,7 @@ public class TranscriptFeatureController extends TaxonNodeBindingFormController 
 
         model.put("taxonNodeName", dto.getOrganismCommonName());
         model.put("dto", dto);
+        model.put("organismContext", dto.getOrganismCommonName());
 
 
         if (StringUtils.hasText(nlb.getKey()) &&

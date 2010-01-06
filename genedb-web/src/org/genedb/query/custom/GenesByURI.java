@@ -2,7 +2,7 @@ package org.genedb.query.custom;
 
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
-import org.genedb.querying.core.QueryVisibility;
+import org.genedb.querying.core.NumericQueryVisibility;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;

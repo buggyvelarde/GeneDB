@@ -130,7 +130,7 @@ public class DownloadController {
         HistoryItem hItem = historyItems.get(historyItem-1);
         List<String> uniqueNames = hItem.getIds();
         List<Integer> featureIds = convertUniquenamesToFeatureIds(uniqueNames);
-        Iterator<DataRow> iterator = dataFetcher.iterator(featureIds, fieldSeperator);
+        TroubleTrackingIterator<DataRow> iterator = dataFetcher.iterator(featureIds, fieldSeperator);
 
         String file = request.getSession().getId();
 //        String columns[] = null;
@@ -159,6 +159,7 @@ public class DownloadController {
                 csv.writeHeader();
                 csv.writeBody(iterator);
                 csv.writeFooter();
+                logProblems(iterator);
                 return null;
 
             case HTML:
@@ -168,6 +169,7 @@ public class DownloadController {
                 html.writeHeader();
                 html.writeBody(iterator);
                 html.writeFooter();
+                logProblems(iterator);
                 return null;
 
             case FASTA:
@@ -175,17 +177,29 @@ public class DownloadController {
                     response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment");
                     response.setHeader("filename", output.getName());
+                    logProblems(iterator);
             }
         return null;
     }
 
 
+
+    private void logProblems(TroubleTrackingIterator<DataRow> iterator) {
+        List<Integer> problems = iterator.getProblems();
+        for (Integer problem : problems) {
+            logger.error("Unable to retrieve details for '"+problem+"'");
+        }
+    }
+
+
+
+
     private List<Integer> convertUniquenamesToFeatureIds(List<String> uniqueNames) {
         List<Integer> ret = Lists.newArrayList();
         for (String name : uniqueNames) {
-            //logger.error("Trying to lookup '"+name+"' as a Transcript");
+            logger.error("Trying to lookup '"+name+"' as a Transcript");
             Feature f = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-            //logger.error("The value is '"+f+"'");
+            logger.error("The value is '"+f+"'");
             ret.add(f.getFeatureId());
         }
 

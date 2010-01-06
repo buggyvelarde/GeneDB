@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
-import org.genedb.querying.core.QueryVisibility;
+import org.genedb.querying.core.NumericQueryVisibility;
 import org.springframework.validation.Errors;
 
 public class MockProteinLengthQuery implements Query {
