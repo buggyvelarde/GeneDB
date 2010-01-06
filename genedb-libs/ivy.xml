@@ -4,6 +4,6 @@
       <dependency org="org.aspectj" name="com.springsource.org.aspectj.runtime" rev="1.6.5.RELEASE" />
       <dependency org="org.aspectj" name="com.springsource.org.aspectj.weaver" rev="1.6.5.RELEASE" />
       <dependency org="org.aspectj" name="com.springsource.org.aspectj.tools" rev="1.6.5.RELEASE" />
-      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RC1"/>
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.RELEASE"/>
     </dependencies>
 </ivy-module>
