@@ -1,0 +1,8 @@
+<ivy-module version="2.0">
+    <info organisation="org.genedb" module="genedb-util"/>
+    <dependencies>
+      <dependency org="org.springframework" name="org.springframework.beans" rev="3.0.0.RELEASE" />
+      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.7.0" />
+      <dependency org="org.apache.ant" name="com.springsource.org.apache.tools.ant" rev="1.7.0" />
+    </dependencies>
+</ivy-module>

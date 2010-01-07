@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<!--  This file is here purely for testing purposes. It is not used by any actual application -->
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:11111/pathogens</property>
+        <property name="hibernate.connection.username">pathdb</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+<mapping class="org.gmod.schema.mapped.Analysis"/>
+<mapping class="org.gmod.schema.mapped.AnalysisFeature"/>
+<mapping class="org.gmod.schema.mapped.AnalysisProp"/>
+<mapping class="org.gmod.schema.mapped.Cv"/>
+<mapping class="org.gmod.schema.mapped.CvTerm"/>
+<mapping class="org.gmod.schema.mapped.CvTermDbXRef"/>
+<mapping class="org.gmod.schema.mapped.CvTermPath"/>
+<mapping class="org.gmod.schema.mapped.CvTermProp"/>
+<mapping class="org.gmod.schema.mapped.CvTermRelationship"/>
+<mapping class="org.gmod.schema.mapped.CvTermSynonym"/>
+<mapping class="org.gmod.schema.mapped.DbXRefProp"/>
+<mapping class="org.gmod.schema.mapped.Db"/>
+<mapping class="org.gmod.schema.mapped.DbXRef"/>
+<mapping class="org.gmod.schema.mapped.Project"/>
+<mapping class="org.gmod.schema.mapped.Tableinfo"/>
+<mapping class="org.gmod.schema.mapped.Organism"/>
+<mapping class="org.gmod.schema.mapped.OrganismDbXRef"/>
+<mapping class="org.gmod.schema.mapped.OrganismProp"/>
+<mapping class="org.gmod.schema.mapped.Phylonode"/>
+<mapping class="org.gmod.schema.mapped.PhylonodeDbXRef"/>
+<mapping class="org.gmod.schema.mapped.PhylonodeOrganism"/>
+<mapping class="org.gmod.schema.mapped.PhylonodeProp"/>
+<mapping class="org.gmod.schema.mapped.PhylonodePub"/>
+<mapping class="org.gmod.schema.mapped.PhylonodeRelationship"/>
+<mapping class="org.gmod.schema.mapped.Phylotree"/>
+<mapping class="org.gmod.schema.mapped.PhylotreePub"/>
+<mapping class="org.gmod.schema.mapped.Pub"/>
+<mapping class="org.gmod.schema.mapped.PubAuthor"/>
+<mapping class="org.gmod.schema.mapped.PubDbXRef"/>
+<mapping class="org.gmod.schema.mapped.PubProp"/>
+<mapping class="org.gmod.schema.mapped.PubRelationship"/>
+<mapping class="org.gmod.schema.feature.AbstractExon"/>
+<mapping class="org.gmod.schema.feature.AbstractGene"/>
+<mapping class="org.gmod.schema.feature.ApicoplastChromosome"/>
+<mapping class="org.gmod.schema.feature.Centromere"/>
+<mapping class="org.gmod.schema.feature.Chromosome"/>
+<mapping class="org.gmod.schema.feature.Contig"/>
+<mapping class="org.gmod.schema.feature.Exon"/>
+<mapping class="org.gmod.schema.feature.FivePrimeUTR"/>
+<mapping class="org.gmod.schema.feature.Gap"/>
+<mapping class="org.gmod.schema.feature.Gene"/>
+<mapping class="org.gmod.schema.feature.GPIAnchorCleavageSite"/>
+<mapping class="org.gmod.schema.feature.Intron"/>
+<mapping class="org.gmod.schema.feature.LinearDoubleStrandedDNAChromosome"/>
+<mapping class="org.gmod.schema.feature.Match"/>
+<mapping class="org.gmod.schema.feature.MitochondrialChromosome"/>
+<mapping class="org.gmod.schema.feature.MRNA"/>
+<mapping class="org.gmod.schema.feature.Polypeptide"/>
+<mapping class="org.gmod.schema.feature.PolypeptideDomain"/>
+<mapping class="org.gmod.schema.feature.PolypeptideMotif"/>
+<mapping class="org.gmod.schema.feature.PolypeptideRegion"/>
+<mapping class="org.gmod.schema.feature.ProductiveTranscript"/>
+<mapping class="org.gmod.schema.feature.ProteinMatch"/>
+<mapping class="org.gmod.schema.feature.Pseudogene"/>
+<mapping class="org.gmod.schema.feature.PseudogenicExon"/>
+<mapping class="org.gmod.schema.feature.PseudogenicTranscript"/>
+<mapping class="org.gmod.schema.feature.Region"/>
+<mapping class="org.gmod.schema.feature.Remark"/>
+<mapping class="org.gmod.schema.feature.RepeatRegion"/>
+<mapping class="org.gmod.schema.feature.RRNA"/>
+<mapping class="org.gmod.schema.feature.SECISElement"/>
+<mapping class="org.gmod.schema.feature.SignalPeptide"/>
+<mapping class="org.gmod.schema.feature.SnRNA"/>
+<mapping class="org.gmod.schema.feature.ThreePrimeUTR"/>
+<mapping class="org.gmod.schema.feature.TopLevelFeature"/>
+<mapping class="org.gmod.schema.feature.Transcript"/>
+<mapping class="org.gmod.schema.feature.TranscriptRegion"/>
+<mapping class="org.gmod.schema.feature.TransmembraneRegion"/>
+<mapping class="org.gmod.schema.feature.TRNA"/>
+<mapping class="org.gmod.schema.feature.UTR"/>
+<mapping class="org.gmod.schema.mapped.Feature"/>
+<mapping class="org.gmod.schema.mapped.FeatureCvTerm"/>
+<mapping class="org.gmod.schema.mapped.FeatureCvTermDbXRef"/>
+<mapping class="org.gmod.schema.mapped.FeatureCvTermProp"/>
+<mapping class="org.gmod.schema.mapped.FeatureCvTermPub"/>
+<mapping class="org.gmod.schema.mapped.FeatureDbXRef"/>
+<mapping class="org.gmod.schema.mapped.FeatureLoc"/>
+<mapping class="org.gmod.schema.mapped.FeatureLocPub"/>
+<mapping class="org.gmod.schema.mapped.FeatureProp"/>
+<mapping class="org.gmod.schema.mapped.FeaturePropPub"/>
+<mapping class="org.gmod.schema.mapped.FeaturePub"/>
+<mapping class="org.gmod.schema.mapped.FeatureRelationship"/>
+<mapping class="org.gmod.schema.mapped.FeatureRelationshipProp"/>
+<mapping class="org.gmod.schema.mapped.FeatureRelationshipPropPub"/>
+<mapping class="org.gmod.schema.mapped.FeatureRelationshipPub"/>
+<mapping class="org.gmod.schema.mapped.FeatureSynonym"/>
+<mapping class="org.gmod.schema.mapped.Synonym"/>
+    </session-factory>
+</hibernate-configuration>

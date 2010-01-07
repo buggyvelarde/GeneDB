@@ -1,0 +1,584 @@
+<?xml version="1.0"?>
+
+<project name="genedb-web" default="iajc-web" basedir="."
+  xmlns:ivy="antlib:org.apache.ivy.ant" >
+
+  <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+
+  <import file="${imported.basedir.web}/../genedb-libs/build.xml" />
+  <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
+  <import file="${imported.basedir.web}/../genedb-db/build.xml"/>
+  <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
+  <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
+
+  <!-- Paths/Properties you may have to change -->
+  <property file="property-file.${config}" />
+
+  <property name="version" value="0.2"/>
+  <property name="jar-build" value="ant-build/jar-build"/>
+  <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
+  <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
+
+  <!-- Paths -->
+  <!--
+  <path id="web-deploy-classpath">
+      <pathelement location="${in-lib-dir}/artemis.jar" />
+
+      <fileset dir="${imported.basedir.web}/lib">
+        <include name="*.jar"/>
+      </fileset>
+
+      <pathelement location="${lib-dir}/misc/displaytag-1.2.jar"/>
+      <pathelement location="${lib-dir}/json/ezmorph-1.0.4.jar"/>
+      <pathelement location="${lib-dir}/db/je-3.3.75.jar"/>
+      <pathelement location="${lib-dir}/misc/jewelcli-0.53.jar"/>
+      <pathelement location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar"/>
+      <pathelement location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar"/>
+  </path>
+  -->
+
+  <path id="web-classpath">
+    <!-- <path refid="web-deploy-classpath"/> -->
+    <fileset dir="${imported.basedir.web}/WebContent/WEB-INF/lib/">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${imported.basedir.web}/lib-compiletime/">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="web-tests-classpath">
+    <path refid="web-classpath"/>
+    <pathelement location="${imported.basedir.web}/${classes.dir}"/>
+    <pathelement location="${imported.basedir.web}/${test-classes.dir}"/>
+    <pathelement location="${imported.basedir.domain}/${test-classes.dir}"/>
+    <pathelement location="${imported.basedir.web}/test"/>
+    <pathelement location="${imported.basedir.web}/../genedb-domain/test"/>
+    <pathelement location="${imported.basedir.web}/../genedb-domain/test-lib/hsqldb.jar"/>
+    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+  </path>
+
+  <target name="make-other-projects" depends="genedb-domain.domain-fulljar,genedb-query.query-fulljar,genedb-db.db-fulljar,genedb-util.util-fulljar" />
+
+  <target name="make-all-and-deploy" depends="check-config, compile-web, final-deploy"/>
+
+  <target name="clean-web">
+    <delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
+  </target>
+
+  <!-- =================================
+          target: compile
+       ================================= -->
+  <target name="compile-web" depends="web-populate-lib, web-populate-util, web-populate-query, web-populate-db, web-populate-domain"
+        description="--> Compile classes" >
+    <compile-target project="web"/>
+      <!--
+    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
+              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
+    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/utils/MartinHack.class"
+              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/utils/MartinHack.class" />
+    <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
+                               to-directory="${imported.basedir.web}/ant-build/classes"/>
+                               -->
+    <uptodate property="web.iajc-uptodate" targetfile="${imported.basedir.web}/ant-build/iajc_run">
+      <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
+    </uptodate>
+  </target>
+
+  <target name="genedb-web-tests" depends="compile-web"><!-- , genedb-domain.compile-tests-->
+    <tests-target project="web"/>
+  </target>
+
+  <target name="test-all-modules"
+      depends="genedb-domain.genedb-domain-tests, genedb-query.genedb-query-tests, genedb-web-tests"/>
+
+   <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
+     <iajc-target project="web" />
+   </target>
+
+  <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
+
+  <target name="pre-deploy" depends="check-config, compile-web">
+    <filter token="webAppRootKey" value="${webAppRootKey}" />
+    <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+    <mkdir dir="${finaldest.webapps}.tmp"/>
+    <copy todir="${finaldest.webapps}.tmp">
+      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
+    </copy>
+    <echo message="About to filter web.xml" />
+    <delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
+    <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
+    <echo message="Done filtering web.xml" />
+    <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+    </copy>
+    <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
+    <!--
+  	<echo message="Copying libraries"/>
+    <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
+      <path refid="web-deploy-classpath" />
+    </copy>
+    -->
+  </target>
+
+  <target name="application-deploy" />
+
+  <target name="post-deploy" />
+
+  <target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
+    <echo>About to delete ${finaldest.webapps}.old</echo>
+    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
+    <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+    <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
+    <!-- temp hack -->
+  </target>
+
+
+  <target name="restart-ci-web">
+    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
+      <arg value="ci-web" />
+      <arg value="stop" />
+    </exec>
+    <sleep seconds="5" />
+    <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
+    <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
+    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+      <env key="BUILD_ID" value="dontKillMe" />
+      <arg value="ci-web" />
+      <arg value="start" />
+    </exec>
+    <sleep minutes="3" />
+  </target>
+
+  <target name="check-config">
+    <fail message="The 'config' property must be set" unless="config"/>
+    <available file="${imported.basedir.web}/property-file.${config}" property="config-file-exists"/>
+    <fail message="The file ${imported.basedir.web}/property-file.${config} does not exist" unless="config-file-exists"/>
+    <copy file="${imported.basedir.web}/property-file.${config}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+  </target>
+
+
+  <target name="jsp_test">
+    <property name="webapp.staging" location="ant-build/webapp"/>
+    <property name="catalina.home" location="/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.16"/>
+    <property name="jsp-src.dir" location="ant-build/jsp-src"/>
+
+    <mkdir dir="${webapp.staging}" />
+    <copy todir="${webapp.staging}">
+      <fileset dir="WebContent" id="id" />
+    </copy>
+    <copy flatten="true" todir="${webapp.staging}/WEB-INF/lib">
+      <path refid="web-deploy-classpath" />
+    </copy>
+    <copy todir="${webapp.staging}/WEB-INF/classes">
+      <fileset dir="ant-build/classes" id="id" />
+    </copy>
+    <antcall target="jspc" />
+  </target>
+
+  <target name="jspc">
+
+  	<taskdef classname="org.apache.jasper.JspC" name="jasper2">
+  	<classpath id="jspc.classpath">
+  	<fileset dir="${imported.basedir.web}/lib-compiletime">
+  	<include name="*.jar"/>
+  	</fileset>
+
+  	</classpath>
+  	</taskdef>
+    <!-- Convert the JSP files into Java code -->
+    <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xmlf" outputDir="${jsp-src.dir}"/>
+
+    <!-- Compile the JSP-generated java files -->
+    <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
+       memoryMaximumSize="184M" srcdir="${jsp-src.dir}">
+
+      <classpath>
+        <pathelement location="${webapp.staging}/WEB-INF/classes"/>
+        <fileset dir="${webapp.staging}/WEB-INF/lib">
+          <include name="*.jar"/>
+        </fileset>
+      	<fileset dir="${imported.basedir.web}/lib-compiletime">
+      	<include name="*.jar"/>
+      	</fileset>
+      </classpath>
+
+      <include name="**"/>
+      <exclude name="tags/**"/>
+    </javac>
+  </target>
+
+
+  <target name="create_web.xml">
+    <!--
+       This creates a web.xml from a template and the generated fragments
+      -->
+    <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xmlf"/>
+    <filter token="generated_web.xml" value="${generated}"/>
+    <loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
+    <filter token="webServlets_web.xml" value="${webServlets}"/>
+    <loadfile property="webMappings" srcFile="${webinf.staging}/webMappings_web.xml"/>
+    <filter token="webMappings_web.xml" value="${webMappings}"/>
+    <copy file="${webinf.staging}/template_web.xml" toFile="${webinf.staging}/web.xml" filtering="true" overwrite="true" />
+  </target>
+
+
+    <target name="synchronise-caches" depends="check-config, iajc-web" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
+      <java fork="true" classname="org.genedb.web.mvc.model.CacheSynchroniser">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx1024m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+
+    <target name="populate-caches" depends="check-config, iajc-web" description="Populate the Berkeley DB with TranscriptDTO and images">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
+        <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
+        <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
+        <arg line="-o Pfalciparum"/>
+        <!-- <arg line="-ncm" /> -->
+      </java>
+    </target>
+
+
+    <target name="_PopulateCaches" depends="check-config">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="-o ${organism} --globalFileRoot ${dir}"/>
+      </java>
+    </target>
+
+    <target name="_LuceneIndex" depends="check-config">
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+            <classpath>
+              <path refid="web-classpath"/>
+              <pathelement path="${imported.basedir.web}/ant-build/classes"/>
+              <pathelement path="${imported.basedir.web}/WebContent/WEB-INF"/>
+              <pathelement path="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-o ${organism} -i ${dir} ${dbname}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+
+    <target name="_SmallLuceneIndex" depends="check-config, compile-web">
+        <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.SmallPopulateLuceneIndices">
+            <classpath>
+              <path refid="web-classpath"/>
+              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-o Tbruceibrucei427 -i /tmp/lucene-tmp ${dbname}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+
+    <target name="LuceneIndex" depends="check-config, iajc-web">
+           <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+            <classpath>
+              <path refid="web-classpath"/>
+              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-o ${org} -i /tmp ${dbname}"/>
+            <jvmarg line="-server" />
+           </java>
+     </target>
+
+    <target name="PeriodicUpdater" depends="check-config, iajc-web"
+        description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
+      <java fork="true" classname="org.genedb.web.mvc.model.PeriodicUpdater">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx1024m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+    <target name="test-periodic-updater" depends="check-config, iajc-web" description="Run tests">
+       <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+              PeriodicUpdaterTest failed
+           </fail>
+       </target>
+
+    <target name="check-updater-db-exists">
+       <available property="periodic-updater-db-exists" file="${imported.basedir.web}/test/data/hsqldb/pfalciparum.data"/>
+    </target>
+
+    <target name="init-periodic-updater-db" depends="check-updater-db-exists" unless="periodic-updater-db-exists">
+       <antcall target="make-pfalciparum-database-if-necessary"/>
+       <antcall target="copy-pfalciparum-database-to-web-test-dir"/>
+    </target>
+
+    <target name="copy-pfalciparum-database-to-web-test-dir">
+       <copy todir="${imported.basedir.web}/test/data/hsqldb">
+           <fileset dir="${imported.basedir.db}/test-data/hsqldb" />
+       </copy>
+    </target>
+
+    <target name="test-index-synchroniser" depends="init-periodic-updater-db, check-config, iajc-web" description="Run tests" >
+       <javac srcdir="${imported.basedir.web}/test" includes="**/IndexSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.IndexSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+           	IndexSynchroniserTest failed
+           </fail>
+       </target>
+
+    <target name="test-cache-synchroniser" depends="check-config, iajc-web" description="Run tests" >
+       <javac srcdir="${imported.basedir.web}/test" includes="**/CacheSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.CacheSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+            CacheSynchroniserTest failed
+           </fail>
+       </target>
+
+
+
+  <target name="init-web" description="Create full JAR file">
+    <init-target project="web" />
+  </target>
+
+  <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
+    <populate directory="genedb-web" />
+
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.1.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.el-1.0.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+
+    <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
+    <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
+
+    <copy todir="${imported.basedir.web}/WebContent/WEB-INF/lib">
+        <fileset dir="${imported.basedir.libs}/lib/biojava">
+            <include name="biojava-1.6.jar"/>
+            <include name="bytecode-0.91.jar"/>
+        </fileset>
+        <fileset dir="${lib-dir}/misc">
+            <include name="displaytag-1.2.jar"/>
+            <include name="jewelcli-0.53.jar"/>
+        </fileset>
+        <fileset dir="${lib-dir}/db">
+            <include name="je-3.3.75.jar"/>
+        </fileset>
+        <fileset dir="${lib-dir}/json">
+            <include name="ezmorph-1.0.4.jar"/>
+            <include name="json-lib-2.2.1-jdk15.jar"/>
+            <include name="json-lib-ext-spring-1.0.1.jar"/>
+        </fileset>
+    </copy>
+
+    <move todir="${imported.basedir.web}/WebContent/WEB-INF/lib">
+	<fileset dir="${imported.basedir.web}/lib">
+		<include name="*.jar" />
+  	</fileset>
+    </move>
+  </target>
+
+    <target name="web-populate-util" depends="util-fulljar">
+      <copy file="${genedb-util.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
+    </target>
+
+
+    <target name="web-populate-query" depends="query-fulljar">
+      <copy file="${genedb-query.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
+    </target>
+
+
+    <target name="web-populate-db" depends="db-fulljar">
+      <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
+    </target>
+
+    <target name="web-populate-domain" depends="domain-fulljar">
+      <copy file="${genedb-domain.jar}" todir="${imported.basedir.web}/WebContent/WEB-INF/lib" />
+    </target>
+
+    <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
+      <uptodate property="web.lib-uptodate" srcfile="${imported.basedir.web}/ivy.xml" targetfile="${imported.basedir.web}/lib/ivy.timestamp.txt" />
+    </target>
+
+    <target name="martinHack" depends="check-config, compile-web">
+      <java fork="true" classname="org.genedb.web.utils.MartinHack">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/nfs/team81/art/workspace/workspace-Jul9/genedb-web/martin/merops.file"/>
+      </java>
+    </target>
+
+
+    <target name="runTranscriptAnalyzer" depends="compile-web">
+      <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg value="/nfs/pathdb/genedb/${indexSet}/cache" />
+      </java>
+    </target>
+
+
+    <target name="runTranscriptAnalyzer2" depends="compile-web">
+      <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer2">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/Users/art/Documents/more-workspaces/tomcat-workspace/cache Pchabaudi" />
+      </java>
+    </target>
+
+    <target name="runMergeIndices" depends="check-config, compile-web">
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx1536m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="-r /tmp/destination /nfs/pathdb/genedb/nightly/bulk/DTO/output"/>
+      </java>
+    </target>
+
+
+    <target name="runMergeLuceneIndices" depends="check-config, compile-web">
+      <deltree dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <mkdir dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination /nfs/pathdb/genedb/nightly/bulk/Lucene/output"/>
+      </java>
+    </target>
+
+
+    <target name="compare-lucene-indices" >
+        <compile-target project="web"/>
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.LuceneIndicesComparison">
+            <classpath refid="web-tests-classpath"/>
+            <arg value="/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/lucene"/>
+            <arg value="/Users/sangerinstitute/Downloads/lucene"/>
+        </java>
+    </target>
+
+
+    <target name="load-transcript-cache" depends="compile-web">
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.load.TranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="load-simple-transcript-cache" depends="compile-web">
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.simple.SimpleTranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>

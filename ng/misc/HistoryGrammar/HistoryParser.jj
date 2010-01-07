@@ -1,0 +1,113 @@
+/* history.jj Manipulating history items */ 
+options 
+{ 
+STATIC = false ; 
+IGNORE_CASE = true;
+}
+
+PARSER_BEGIN(HistoryParser) 
+package org.genedb.web.mvc.history.commandline;
+
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+
+
+public class HistoryParser { 
+
+	HistoryItem previousValue = null;
+	
+	private HistoryManager historyManager;
+
+
+	public void setHistoryManager(HistoryManager historyManager) {
+   		 this.historyManager = historyManager;
+	}
+
+	public static void main( String[] args ) throws ParseException, TokenMgrError, NumberFormatException { 
+		HistoryParser historyParser = new HistoryParser( System.in );
+		historyParser.Start(); 
+	}
+}
+PARSER_END(HistoryParser) 
+
+SKIP : { " " } 
+TOKEN : { <EOL : "\n" | "\r" | "\r\n" > } 
+TOKEN : { < UNION : "UNION" > } 
+TOKEN : { < INTERSECT : "INTERSECT" > } 
+TOKEN : { < TIMES : "*" > } 
+TOKEN : { < DIVIDE : "/" > } 
+TOKEN : { < OPEN_PAR : "(" > } 
+TOKEN : { < CLOSE_PAR : ")" > }
+TOKEN : { < PREVIOUS : "$" > } 
+TOKEN : { < NUMBER : <DIGITS> | <DIGITS> "." <DIGITS> | <DIGITS> "." | "." <DIGITS> > } 
+TOKEN : { < #DIGITS : (<DIGIT>)+ > } 
+TOKEN : { < #DIGIT : ["0"-"9"] > } 
+
+HistoryItem Start() throws NumberFormatException : 
+{} 
+{ 
+		{ return Expression() ; } 
+	<EOL>   
+}
+
+
+HistoryItem Expression() throws NumberFormatException : 
+{ 
+	HistoryItem i ; 
+	HistoryItem value ; 
+} 
+{ 
+	{ value = new HistoryItem(Term()); } 
+	( 
+	<UNION> 
+		i = Term() 
+		{ 
+	value.union(i);
+		} 
+	| 
+	<INTERSECT> 
+		i = Term() 
+		{ 
+	value.intersect(i);
+		} 
+	)* 
+	{ return value ; } 
+} 
+
+HistoryItem Term() throws NumberFormatException : 
+{ 
+	HistoryItem i ; 
+	HistoryItem value ; 
+} 
+{ 
+	value = Primary() 
+	( 
+	<TIMES> 
+		i = Primary() 
+		{ value = i ; } 
+	| 
+	<DIVIDE> 
+		i = Primary() 
+		{ value = i ; } 
+	)* 
+	{ return value ; } 
+} 
+
+ 
+HistoryItem Primary() throws NumberFormatException : 
+{ 
+	Token t ; 
+	HistoryItem d ; 
+} 
+{ 
+	t=<NUMBER> 
+	{ int i = Integer.parseInt( t.image ) ;
+	return (HistoryItem) historyManager.getHistoryItems().get(i-1);
+	 } 
+	| 
+	<PREVIOUS> 
+	{ return previousValue ; } 
+	| 
+	<OPEN_PAR> d=Expression() <CLOSE_PAR> 
+	{ return d ; } 
+} 
