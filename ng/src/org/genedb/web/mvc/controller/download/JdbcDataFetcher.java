@@ -39,13 +39,14 @@ public class JdbcDataFetcher implements DataFetcher<String> {
         this.template = new SimpleJdbcTemplate(dataSource);
     }
 
-    public Iterator<DataRow> iterator(List<String> ids, String delimeter) {
+    public TroubleTrackingIterator<DataRow> iterator(List<String> ids, String delimeter) {
 
         String idList = StringUtils.collectionToCommaDelimitedString(ids);
         idList += ":mRNA"; // FIXME
         List<DataRow> rows = this.template.query(SQL, jdbcDataRowMapper, idList);
         logger.error("The number of rows is "+rows.size()+" with an arg of '"+idList+"'");
-        return rows.iterator();
+        //return rows.iterator();
+        return null; // FIXME
     }
 
 }

@@ -40,7 +40,7 @@ public class BaseController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.getFormatterRegistry().addFormatterByType(taxonNodeListFormatter);
+        //binder.getFormatterRegistry().addFormatterByType(taxonNodeListFormatter); //TODO
     }
 
 

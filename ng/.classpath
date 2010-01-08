@@ -13,5 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="lib-compiletime/com.springsource.javax.servlet-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib-compiletime/com.springsource.javax.servlet.jsp-2.1.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

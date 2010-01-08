@@ -10,11 +10,11 @@
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
             </url>
+            <!--
             <url name="com.springsource.repository.bundles.milestone">
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
             </url>
-            <!--
             <url name="com.springsource.repository.bundles.snapshot">
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />

@@ -1,181 +1,142 @@
 <?xml version="1.0"?>
 
-<project name="genedb-libs" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-  <description>This build file describes a set of classpaths and targets "exported"
+<project name="ng" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile-all">
+	<description>This build file describes a set of classpaths and targets "exported"
     from this project, and common properties</description>
 
-  <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
-
-  <!-- Paths/Properties -->
-  <property name="build.dir" value="ant-build" />
-  <property name="dist.dir" value="${build.dir}/dist" />
-  <property name="classes.dir" value="${build.dir}/classes" />
-  <property name="test-classes.dir" value="${build.dir}/test-classes" />
+	<dirname property="ng.directory" file="${ant.file.ng}"/>
+	<property name="lib.dir" value="${ng.directory}/WebContent/WEB-INF/lib" />
+	<property name="lib-compiletime.dir" value="${ng.directory}/lib-compiletime" />
 
 
-  <property name="lib-dir" value="${imported.basedir.libs}/lib" />
-  <property name="lib.dir" value="lib/" />
-
-  <path id="aspectj-tools-classpath">
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
-  </path>
+	<!-- Paths/Properties -->
+	<property name="build.dir" value="ant-build" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="classes.dir" value="${ng.directory}/WebContent/WEB-INF/classes" />
+	<property name="test-classes.dir" value="${build.dir}/test-classes" />
 
 
-  <!-- Classpaths -->
-  <path id="aspect.path">
-    <pathelement location="${imported.basedir.libs}/lib/*.jar"/>
-  </path>
 
 
-  <!-- General targets -->
-
-  <target name="lib-populate-lib-dir" depends="check.lib-lib-uptodate" unless="libs.lib-uptodate">
-    <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <populate directory="genedb-libs"/>
-    <!-- <ivy:retrieve conf="default"/> -->
-  </target>
-
-    <target name="check.lib-lib-uptodate" depends="libs-init" if="libs.ivy-timestamp-exists">
-        <uptodate property="libs.lib-uptodate" srcfile="${imported.basedir.libs}/ivy.xml" targetfile="${imported.basedir.libs}/lib/ivy.timestamp.txt" />
-    </target>
+	<path id="aspectj-tools-classpath">
+		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
+		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
+		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
+	</path>
 
 
-    <target name="libs-init">
-        <init-target project="libs" />
-    </target>
-
-  <target name="populate-lib-dirs">
-      <antcall target="lib-populate-lib-dir"/>
-  </target>
-
-  <target name="clean-all">
-      <echo message="Deleting ${lib-dir}/*.jar"/>
-      <echo message="Deleting ${lib-dir}/license-*.txt"/>
-      <delete>
-          <fileset dir="${lib-dir}">
-              <include name="*.jar"/>
-              <include name="license-*.txt"/>
-              <include name="ivy.timestamp.txt"/>
-          </fileset>
-      </delete>
-      <clean-target project="access" topdir="${imported.basedir.libs}/../genedb-access"/>
-      <clean-target project="db" topdir="${imported.basedir.libs}/../genedb-db"/>
-      <clean-target project="domain" topdir="${imported.basedir.libs}/../genedb-domain"/>
-      <clean-target project="query" topdir="${imported.basedir.libs}/../genedb-query"/>
-      <clean-target project="util" topdir="${imported.basedir.libs}/../genedb-util"/>
-      <clean-target project="web" topdir="${imported.basedir.libs}/../genedb-web"/>
-      <clean-target project="Jogra" topdir="${imported.basedir.libs}/../Jogra"/>
-      <clean-target project="Medusa" topdir="${imported.basedir.libs}/../Medusa"/>
-  </target>
-
-  <!-- The following target may look stupid, but it's actually extremely cunning. :-)
-
-       Normally when an ant property is set, it can't be changed thereafter:
-       subsequent attempts to set the value are silently ignored. However,
-       antcall parameters are an exception. They behave mostly like properties,
-       except that their values exist only for the duration of the antcall.
-       So, by wrapping <ivy:retrieve/> in a target, it's possible to make
-       multiple calls to it with different configuration values. (This is
-       precisely what the "populate" macro does, of course.)
-    -->
-  <target name="ivy-retrieve">
-    <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
-    <ivy:retrieve conf="default"/>
-  </target>
+	<!-- Classpaths -->
+	<path id="aspect.path">
+		<pathelement location="${imported.basedir.libs}/lib/*.jar"/>
+	</path>
 
 
-  <!-- Macro definitions -->
-
-  <macrodef name="populate">
-    <attribute name="directory"/>
-    <sequential>
-      <delete>
-          <fileset dir="../@{directory}/lib">
-              <include name="*.jar"/>
-              <include name="license-*.txt"/>
-              <include name="ivy.timestamp.txt"/>
-          </fileset>
-      </delete>
-      <mkdir dir="../@{directory}/lib" />
-      <antcall target="ivy-retrieve">
-        <param name="ivy.lib.dir"  value="../@{directory}/lib"/>
-        <param name="ivy.dep.file" value="../@{directory}/ivy.xml"/>
-      </antcall>
-      <touch file="../@{directory}/lib/ivy.timestamp.txt" />
-    </sequential>
-  </macrodef>
-
-  <macrodef name="init-target" description="Create initial build structure">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <sequential>
-      <mkdir dir="@{topdir}/${build.dir}" />
-      <mkdir dir="@{topdir}/${dist.dir}" />
-      <mkdir dir="@{topdir}/${classes.dir}" />
-      <mkdir dir="@{topdir}/${test-classes.dir}" />
-      <mkdir dir="@{topdir}/${lib.dir}" />
-      <available property="@{project}.ivy-timestamp-exists" file="@{topdir}/${lib.dir}/ivy.timestamp.txt" />
-    </sequential>
-  </macrodef>
-
-  <macrodef name="clean-target" description="Remove all build artifacts">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <sequential>
-      <delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
-      <delete dir="@{topdir}/${lib.dir}" includeEmptyDirs="true" />
-      <delete dir="@{topdir}/${test-classes.dir}"/>
-    </sequential>
-  </macrodef>
+	<!-- General targets -->
 
 
-  <macrodef name="check-config-target" description="Check config target supplied">
-    <attribute name="project" />
-    <sequential>
-      <fail message="The 'config' property must be set" unless="config"/>
-      <available file="${imported.basedir.@{project}}/property-file.${config}" property="@{project}-config-file-exists"/>
-      <fail message="The file ${imported.basedir.@{project}}/property-file.${config} does not exist" unless="@{project}-config-file-exists"/>
-    </sequential>
-  </macrodef>
 
-  <macrodef name="compile-target" description="Compile a module">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <attribute name="classpathref" default="@{project}-classpath"/>
-    <sequential>
-      <!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
-      <javac srcdir="@{topdir}/src" includes="**/*.java" debug="true" source="1.6" target="1.6"
+	<target name="check.lib-uptodate" depends="libs-init" if="libs.ivy-timestamp-exists">
+		<uptodate property="lib-uptodate" srcfile="${imported.basedir.libs}/ivy.xml" targetfile="${lib.dir}/ivy.timestamp.txt" />
+	</target>
+
+
+	<target name="libs-init">
+		<init-target project="libs" />
+	</target>
+
+	<target name="clean-all">
+		<echo message="Deleting ${lib-dir}/*.jar"/>
+		<echo message="Deleting ${lib-dir}/license-*.txt"/>
+		<delete>
+			<fileset dir="${lib-dir}">
+				<include name="*.jar"/>
+				<include name="license-*.txt"/>
+				<include name="ivy.timestamp.txt"/>
+			</fileset>
+		</delete>
+		<clean-target project="access" topdir="${imported.basedir.libs}/../genedb-access"/>
+		<clean-target project="db" topdir="${imported.basedir.libs}/../genedb-db"/>
+		<clean-target project="domain" topdir="${imported.basedir.libs}/../genedb-domain"/>
+		<clean-target project="query" topdir="${imported.basedir.libs}/../genedb-query"/>
+		<clean-target project="util" topdir="${imported.basedir.libs}/../genedb-util"/>
+		<clean-target project="web" topdir="${imported.basedir.libs}/../genedb-web"/>
+		<clean-target project="Jogra" topdir="${imported.basedir.libs}/../Jogra"/>
+		<clean-target project="Medusa" topdir="${imported.basedir.libs}/../Medusa"/>
+	</target>
+
+
+
+
+	<!-- Macro definitions -->
+
+	<macrodef name="init-target" description="Create initial build structure">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<sequential>
+			<mkdir dir="@{topdir}/${build.dir}" />
+			<mkdir dir="@{topdir}/${dist.dir}" />
+			<mkdir dir="@{topdir}/${classes.dir}" />
+			<mkdir dir="@{topdir}/${test-classes.dir}" />
+			<mkdir dir="@{topdir}/${lib.dir}" />
+			<available property="@{project}.ivy-timestamp-exists" file="@{topdir}/${lib.dir}/ivy.timestamp.txt" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="clean-target" description="Remove all build artifacts">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<sequential>
+			<delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
+			<delete dir="@{topdir}/${lib.dir}" includeEmptyDirs="true" />
+			<delete dir="@{topdir}/${test-classes.dir}"/>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="check-config-target" description="Check config target supplied">
+		<attribute name="project" />
+		<sequential>
+			<fail message="The 'config' property must be set" unless="config"/>
+			<available file="${imported.basedir.@{project}}/property-file.${config}" property="@{project}-config-file-exists"/>
+			<fail message="The file ${imported.basedir.@{project}}/property-file.${config} does not exist" unless="@{project}-config-file-exists"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="compile-target" description="Compile a module">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<attribute name="classpathref" default="@{project}-classpath"/>
+		<sequential>
+			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
+			<javac srcdir="@{topdir}/src" includes="**/*.java" debug="true" source="1.6" target="1.6"
              destdir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
-      <!-- <echo>Compile finished</echo> -->
-    </sequential>
-  </macrodef>
+			<!-- <echo>Compile finished</echo> -->
+		</sequential>
+	</macrodef>
 
-  <macrodef name="tests-target" description="Test a module">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <attribute name="classpathref" default="@{project}-tests-classpath"/>
-    <sequential>
-      <javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
+	<macrodef name="tests-target" description="Test a module">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<attribute name="classpathref" default="@{project}-tests-classpath"/>
+		<sequential>
+			<javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
                  destdir="@{topdir}/${test-classes.dir}"
                  classpathref="@{classpathref}" />
 
-      <junit printsummary="on"
+			<junit printsummary="on"
         fork="false"
         haltonfailure="false"
         failureproperty="tests.failed"
         showoutput="true">
-        <classpath refid="@{classpathref}"/>
-        <formatter type="brief" usefile="false"/>
-        <batchtest>
-            <fileset dir="@{topdir}/${test-classes.dir}">
-                <include name="**/*Test.*"/>
-            </fileset>
-        </batchtest>
-      </junit>
-      <fail if="tests.failed">
+				<classpath refid="@{classpathref}"/>
+				<formatter type="brief" usefile="false"/>
+				<batchtest>
+					<fileset dir="@{topdir}/${test-classes.dir}">
+						<include name="**/*Test.*"/>
+					</fileset>
+				</batchtest>
+			</junit>
+			<fail if="tests.failed">
             tests.failed=${tests.failed}
             ***********************************************************
             ***********************************************************
@@ -183,62 +144,212 @@
             ***********************************************************
             ***********************************************************
       </fail>
-    </sequential>
-  </macrodef>
+		</sequential>
+	</macrodef>
 
-  <macrodef name="compile-and-iajc-target" description="Compile and weave a module">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <attribute name="classpathref" default="@{project}-classpath"/>
-    <sequential>
-      <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-        <classpath refid="aspectj-tools-classpath"/>
-      </taskdef>
-      <iajc
+	<macrodef name="compile-and-iajc-target" description="Compile and weave a module">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<attribute name="classpathref" default="@{project}-classpath"/>
+		<sequential>
+			<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+				<classpath refid="aspectj-tools-classpath"/>
+			</taskdef>
+			<iajc
         sourceRoots="@{topdir}/src"
         source="1.6"
         target="1.6"
         verbose="true"
         destDir="@{topdir}/${classes.dir}"
         classpathref="@{classpathref}" />
-    </sequential>
-  </macrodef>
+		</sequential>
+	</macrodef>
 
-  <macrodef name="iajc-target" description="Compile-time aspectj weaving">
-      <attribute name="project" />
-      <attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
-      <attribute name="from-directory" default="@{directory}"/>
-      <attribute name="to-directory" default="@{directory}"/>
-      <attribute name="classpathref" default="@{project}-classpath"/>
-    <sequential>
-      <antcall target="lib-populate-lib-dir" />
-      <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-        <classpath refid="aspectj-tools-classpath"/>
-      </taskdef>
-      <iajc
+	<macrodef name="iajc-target" description="Compile-time aspectj weaving">
+		<attribute name="project" />
+		<attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
+		<attribute name="from-directory" default="@{directory}"/>
+		<attribute name="to-directory" default="@{directory}"/>
+		<attribute name="classpathref" default="@{project}-classpath"/>
+		<sequential>
+			<antcall target="lib-populate-lib-dir" />
+			<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+				<classpath refid="aspectj-tools-classpath"/>
+			</taskdef>
+			<iajc
         verbose="false" nowarn="true"
         inpath="@{from-directory}"
         aspectpathref="@{classpathref}"
         classpathRef ="@{classpathref}"
         destdir="@{to-directory}" maxmem="1024M" fork="true">
 
-       <forkclasspath refid="aspectj-tools-classpath"/>
-      </iajc>
-    </sequential>
-  </macrodef>
+				<forkclasspath refid="aspectj-tools-classpath"/>
+			</iajc>
+		</sequential>
+	</macrodef>
 
-  <macrodef name="jar-target" description="Make a distribution JAR">
-    <attribute name="project" />
-    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-    <attribute name="jar" default="genedb-@{project}.jar" />
-    <element name="extra-elements" optional="true" implicit="true"/>
-    <sequential>
-      <delete file="@{topdir}/${dist.dir}/@{jar}" />
-      <jar jarfile="@{topdir}/${dist.dir}/@{jar}" basedir="@{topdir}/${classes.dir}"
+	<macrodef name="jar-target" description="Make a distribution JAR">
+		<attribute name="project" />
+		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+		<attribute name="jar" default="genedb-@{project}.jar" />
+		<element name="extra-elements" optional="true" implicit="true"/>
+		<sequential>
+			<delete file="@{topdir}/${dist.dir}/@{jar}" />
+			<jar jarfile="@{topdir}/${dist.dir}/@{jar}" basedir="@{topdir}/${classes.dir}"
            excludes="**/*Test.class">
-        <extra-elements/>
-      </jar>
-    </sequential>
-  </macrodef>
+				<extra-elements/>
+			</jar>
+		</sequential>
+	</macrodef>
+
+	<!-- Sorted targets -->
+	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
+		<ivy:settings file="${ng.directory}/ivysettings.xml" />
+		<delete dir="${lib.dir}" failonerror="false" />
+		<mkdir dir="${lib.dir}" />
+		<property name="ivy.lib.dir"  value="${lib.dir}"/>
+		<property name="ivy.dep.file" value="${ng.directory}/ivy.xml"/>
+		<ivy:retrieve conf="default" />
+		<touch file="${lib.dir}/ivy.timestamp.txt" />
+
+
+		<move todir="${lib-compiletime.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="com.springsource.javax.servlet-2.5.0.jar"/>
+				<include name="com.springsource.javax.servlet-sources-2.5.0.jar"/>
+				<include name="com.springsource.javax.servlet.jsp-2.1.0.jar"/>
+				<include name="com.springsource.javax.servlet.jsp-sources-2.1.0.jar"/>
+				<include name="com.springsource.javax.el-1.0.0.jar"/>
+				<include name="com.springsource.javax.el-sources-1.0.0.jar"/>
+			</fileset>
+		</move>
+
+		<copy todir="${lib.dir}">
+			<fileset dir="lib-repos/biojava">
+				<include name="biojava-1.6.jar"/>
+				<include name="bytecode-0.91.jar"/>
+			</fileset>
+			<fileset dir="lib-repos/misc">
+				<include name="displaytag-1.2.jar"/>
+				<include name="jewelcli-0.53.jar"/>
+			</fileset>
+			<fileset dir="lib-repos/db">
+				<include name="je-3.3.75.jar"/>
+			</fileset>
+			<fileset dir="lib-repos/json">
+				<include name="ezmorph-1.0.4.jar"/>
+				<include name="json-lib-2.2.1-jdk15.jar"/>
+				<include name="json-lib-ext-spring-1.0.1.jar"/>
+			</fileset>
+		</copy>
+<!--
+		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
+		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
+
+		<copy todir="${imported.basedir.web}/WebContent/WEB-INF/lib">
+			<fileset dir="${imported.basedir.libs}/lib/biojava">
+				<include name="biojava-1.6.jar"/>
+				<include name="bytecode-0.91.jar"/>
+			</fileset>
+			<fileset dir="${lib-dir}/misc">
+				<include name="displaytag-1.2.jar"/>
+				<include name="jewelcli-0.53.jar"/>
+			</fileset>
+			<fileset dir="${lib-dir}/db">
+				<include name="je-3.3.75.jar"/>
+			</fileset>
+			<fileset dir="${lib-dir}/json">
+				<include name="ezmorph-1.0.4.jar"/>
+				<include name="json-lib-2.2.1-jdk15.jar"/>
+				<include name="json-lib-ext-spring-1.0.1.jar"/>
+			</fileset>
+		</copy>
+-->
+
+
+
+	</target>
+
+
+	  <target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
+	    <echo>About to delete ${finaldest.webapps}.old</echo>
+	    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
+	    <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+	    <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+	    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
+	    <!-- temp hack -->
+	  </target>
+
+	  <target name="deploy" depends="check-config, compile-all">
+	    <filter token="webAppRootKey" value="${webAppRootKey}" />
+	    <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+	    <mkdir dir="${finaldest.webapps}.tmp"/>
+	    <copy todir="${finaldest.webapps}.tmp">
+	      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
+	    </copy>
+	    <echo message="About to filter web.xml" />
+	    <delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
+	    <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
+	    <echo message="Done filtering web.xml" />
+	    <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+	      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+	    </copy>
+	    <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
+	    <!--
+	  	<echo message="Copying libraries"/>
+	    <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
+	      <path refid="web-deploy-classpath" />
+	    </copy>
+	    -->
+	  </target>
+
+	  <target name="compile-all" depends="populate-lib-dirs"
+	        description="--> Compile classes" >
+
+	  	<!--
+		<macrodef name="compile-target" description="Compile a module">
+			<attribute name="project" />
+			<attribute name="topdir" default="${imported.basedir.@{project}}"/>
+			<attribute name="classpathref" default="@{project}-classpath"/>
+			-->
+
+			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
+			<javac srcdir="${ng.directory}/src"
+				   includes="**/*.java"
+				   debug="true" source="1.6" target="1.6"
+	               destdir="${classes.dir}"
+				   classpathref="${classpathref}" />
+
+
+			<!-- <echo>Compile finished</echo> -->
+
+	      <!--
+	    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
+	              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
+	    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/utils/MartinHack.class"
+	              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/utils/MartinHack.class" />
+	    <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
+	                               to-directory="${imported.basedir.web}/ant-build/classes"/>
+	                               -->
+	    <uptodate property="web.iajc-uptodate" targetfile="${imported.basedir.web}/ant-build/iajc_run">
+	      <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
+	    </uptodate>
+	  </target>
+
+	  <target name="check-config">
+	    <fail message="The 'config' property must be set" unless="config"/>
+	    <available file="${imported.basedir.web}/property-file.${config}" property="config-file-exists"/>
+	    <fail message="The file ${imported.basedir.web}/property-file.${config} does not exist" unless="config-file-exists"/>
+	    <copy file="${imported.basedir.web}/property-file.${config}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+	  </target>
+
+	  <path id="classpathref">
+	    <fileset dir="${imported.basedir.web}/WebContent/WEB-INF/lib/">
+	      <include name="*.jar"/>
+	    </fileset>
+	    <fileset dir="${imported.basedir.web}/lib-compiletime/">
+	      <include name="*.jar"/>
+	    </fileset>
+	  </path>
 
 </project>
