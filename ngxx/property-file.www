@@ -1,0 +1,16 @@
+finaldest.webapps=/nfs/pathdb/genedb/www/webapps/ROOT
+webAppRootKey=genedb.www.root
+
+dbhost=pathdbsrv1-dmz
+dbport=5432
+dbname=snapshot
+dbuser=genedb_ro
+dbpassword=genedb_ro
+
+lucene.indexDirectory=/nfs/pathdb/genedb/www/lucene
+cacheDirectory=/nfs/pathdb/genedb/www/cache
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+resultsCacheDirectory=/tmp/results_staging.www
+
+diagram.fontFile=file:///nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
