@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd" 
+         default-init-method="postConstruction">
+         
+    <context:component-scan base-package="org.gmod.schema.mapped" />
+    <context:spring-configured/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <tx:annotation-driven mode="aspectj" />
+    
+    
+
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="generalDao" ref="generalDao" />
+    </bean>
+
+    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean> 
+    
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean name="periodicUpdater" class="org.genedb.web.mvc.model.PeriodicUpdater">
+        <property name="indexUpdaters">
+            <util:list>
+                <ref bean="indexSynchroniser" />
+                <ref bean="cacheSynchroniser" />
+            </util:list>
+        </property>
+        <property name="changeTracker" ref="changeTracker" />
+        <property name="clientName" value="NightlyUpdateProcess" />
+    </bean>
+
+    <!--bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
+        <property name="indexBaseDirectory" value="test/data/lucene" />
+        <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
+    </bean>
+
+
+    <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+            </props>
+        </property>
+    </bean-->
+    
+    
+    <bean name="indexSynchroniser" class="org.genedb.web.mvc.model.IndexSynchroniser">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean name="sessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="hibernateProperties" ref="hibernateProperties" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.worker.batch_size" >1000</prop>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">test/data/lucene</prop>
+            </props>
+        </property>
+        <property name="annotatedPackages">
+            <list>
+                <value>org.gmod.schema.mapped</value>
+                <value>org.gmod.schema.feature</value>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:file:test/data/hsqldb/Pfalciparum;readonly=true"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+    
+    
+    <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+    <bean id="propertyConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:project.properties" />
+    </bean>
+
+
+    <!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+    <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+    </bean>
+
+    <bean id="cacheSynchroniser" class="org.genedb.web.mvc.model.CacheSynchroniser">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="modelBuilder" ref="modelBuilder" />
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+        <property name="renderedDiagramFactory" ref="renderedDiagramFactory" />
+        <property name="changeTracker" ref="changeTracker" />
+        <property name="noContextMap"><value>false</value></property>
+    </bean>
+    
+    <bean id="changeTracker" class="org.genedb.db.audit.MockChangeTrackerImpl"/>
+
+    <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
+        <property name="labelFont">
+            <bean class="org.genedb.util.FontFactoryBean">
+                <property name="source" value="file://${diagram.fontFile}" />
+                <property name="style" value="1" />
+                <property name="size" value="12" />
+            </bean>
+        </property>
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+    </bean>
+
+    <bean name="berkeleyReadWriteMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="/tmp/test"/>
+    </bean>
+
+    <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="transcriptDTOFactory" ref="transcriptDTOFactory" />
+    </bean>
+
+    <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" /> 
+    
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory" />
+     </bean>
+
+    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="hibernate.hbm2dll.auto">validate</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.bytecode.provider">javassist</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
+        <property name="luceneIndexList">
+        <list>
+            <bean class="org.genedb.querying.core.LuceneIndex">
+                <property name="indexDirectoryName" value="test/data/lucene" />
+                <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+            </bean>
+        </list>
+        </property>
+    </bean>
+</beans>
