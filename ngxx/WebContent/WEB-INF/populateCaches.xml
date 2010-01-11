@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+
+    <!-- <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:spring-configured/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/> -->
+    <tx:annotation-driven mode="aspectj" />
+
+
+    <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+    <bean id="propertyConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:project.properties" />
+    </bean>
+
+    <!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+    <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+    </bean>
+
+    <bean id="populateCaches" class="org.genedb.web.mvc.model.PopulateCaches">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="modelBuilder" ref="modelBuilder" />
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+        <property name="renderedDiagramFactory" ref="renderedDiagramFactory" />
+    </bean>
+
+    <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
+        <property name="labelFont">
+            <bean class="org.genedb.util.FontFactoryBean">
+                <property name="source" value="${diagram.fontFile}" />
+                <property name="style" value="1" />
+                <property name="size" value="12" />
+            </bean>
+        </property>
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
+    </bean>
+
+    <bean name="berkeleyReadWriteMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="/tmp"/>
+    </bean>
+
+    <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="transcriptDTOFactory" ref="transcriptDTOFactory" />
+    </bean>
+
+    <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" />
+
+</beans>

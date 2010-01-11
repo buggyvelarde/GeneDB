@@ -1,0 +1,152 @@
+body,
+html {
+    margin:0;
+    padding:0;
+    color:#000;
+    }
+    
+body {
+    min-width:100%;
+    }
+    
+#wrap {
+    margin:0 auto;
+    width:100%;
+    }
+    
+#header {
+    height: 115px;
+	background-image: url('../images/a2.gif');
+	background-position: bottom left;
+	padding-left: 5px;
+	padding-top: 5px;
+    }
+    
+#nav {
+    background-image: url('../images/a3.gif');
+	background-repeat: repeat-x;
+	background-position: bottom left;
+	padding: 1em 2.5em 1em 2.5em;
+    }
+    
+#main {
+    float:left;
+    width:75%;
+    background: url('../images/a4.gif') repeat-x top left;
+    }
+    
+#sidebar {
+    float:left;
+    width:25%;
+    background: url('../images/a4.gif') repeat-x top left;
+    }
+
+#sb {
+	padding: 15px;
+}
+
+#footer {
+    clear:both;
+    background: url('../images/a4.gif') repeat-x top left;
+    }
+    
+#nav ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    }
+    
+#nav li{
+    display:inline;
+    margin:0;
+    padding:0;
+    }
+
+#nav li a{
+	font-size: 1.1em;
+	font-weight: bold;
+	text-transform: lowercase;
+	color: #5D5F53;
+	text-decoration: none;
+	margin-right: 1em;
+	}
+
+#nav li a:hover{
+	color: #6B7E09;
+	text-decoration: underline;
+    }
+    
+#header h2 {
+    padding-left:165px;
+    padding-top: 15px;
+    margin:0;
+    text-transform: lowercase;
+	font-size: 1.6em;
+	text-align: center;
+	top: 23em;
+	color: #EEFC82;
+    }
+    
+#main h2, #main h3, #main p {
+    padding:0 10px;
+    }
+
+#maininner h2 {
+	padding: 10px;
+	border-bottom: dotted 1px #ECEEDF;
+	}
+
+#main ul li {
+	padding-right: 3px;
+	}
+	
+#sidebar ul {
+    margin-bottom:0;
+    }
+
+#sidebar li a {
+	font-size: 1.1em;
+	font-weight: bold;
+	text-transform: lowercase;
+	color: #5D5F53;
+	text-decoration: none;
+	margin-right: 1em;
+	}
+
+#sidebar li a:hover {
+	color: #6B7E09;
+	text-decoration: underline;
+	}
+	
+#sidebar h3, #sidebar p {
+    padding:0 10px;
+    background: url('../images/a1.gif') no-repeat;
+    color: #5D5F53;
+    height: 27px;
+    font-size: 1.0em;
+	font-weight: bold;
+	padding-left: 15px;
+	padding-top: 5px;
+    }
+    
+#footer p {
+    padding:5px;
+    margin:0;
+    }
+ 
+#floating-left {
+	vertical-align: bottom;
+	}
+	
+#floating-left img {
+	border: 3px solid #FFFFFF;
+	}
+
+#floating-right {
+	vertical-align: top;
+	padding-right: 5px;
+	}
+	
+#floating-right img {
+	border: 3px solid #FFFFFF;
+	}

@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+  default-init-method="postConstruction">
+
+  <!--
+    ========================= MESSAGE SOURCE DEFINITION
+    =========================
+  -->
+
+  <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.querying.core" />
+  <context:spring-configured />
+  <context:mbean-export />
+
+
+  <!--
+    ============================= VIEW RESOLVERS
+    =============================
+  -->
+
+  <bean class="org.genedb.web.mvc.view.PrefixViewResolver">
+    <property name="order" value="1" />
+    <property name="viewResolverMap">
+      <map>
+        <entry key="jsp" value-ref="jspCheckingViewResolver" />
+        <entry key="ftl" value-ref="ftlViewResolver" />
+      </map>
+    </property>
+    <property name="viewMap">
+      <map>
+        <entry key="xml">
+          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+            <property name="contentType" value="application/xml" />
+            <property name="modelKey" value="resultset" />
+            <property name="marshaller">
+              <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                <property name="autodetectAnnotations" value="true" />
+              </bean>
+            </property>
+          </bean>
+        </entry>
+        <entry key="json">
+          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+            <property name="contentType" value="application/json" />
+            <property name="modelKey" value="resultset" />
+            <property name="marshaller">
+              <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                <property name="autodetectAnnotations" value="true" />
+                <property name="streamDriver">
+                  <bean class="com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver" />
+                </property>
+              </bean>
+            </property>
+          </bean>
+        </entry>
+        <entry key="service-xml">
+          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+            <property name="contentType" value="application/xml" />
+            <property name="marshaller">
+              <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                <property name="autodetectAnnotations" value="true" />
+                <property name="supportedClasses">
+                  <list>
+                    <!-- see org.genedb.web.mvc.controller.RestController -->
+                    <!--
+                      Build broken - most of these files don't exist
+                      <value>org.genedb.web.mvc.controller.BaseResult</value>
+                      <value>org.genedb.web.mvc.controller.ErrorModel</value>
+                      <value>org.genedb.web.mvc.controller.FeatureStatus</value>
+                      <value>org.genedb.web.mvc.controller.OrganismSetResult</value>
+                      <value>org.genedb.web.mvc.controller.OrganismStatus</value>
+                      <value>org.genedb.web.mvc.controller.OrganismStatusList</value>
+                      <value>org.genedb.web.mvc.controller.ResultSet</value>
+                    -->
+                  </list>
+                </property>
+              </bean>
+            </property>
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="jspCheckingViewResolver" class="org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver"
+    init-method="postConstruction">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+    <property name="order" value="2" />
+  </bean>
+
+  <bean id="ftlViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <property name="cache" value="true"/>
+    <property name="prefix" value=""/>
+    <property name="suffix" value=".ftl"/>
+  </bean>
+
+
+  <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <!-- FIXME STS complains where is superclass -->
+    <property name="templateLoaderPath" value="/WEB-INF/freemarker" />
+  </bean>
+
+  <bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
+    <property name="order" value="4" />
+    <property name="serviceView">
+      <bean class="org.genedb.web.mvc.view.ServiceView" />
+    </property>
+  </bean>
+
+  <!--
+    ========================= CONTROLLER DEFINITIONS
+    =========================
+  -->
+
+  <bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController">
+    <property name="taxonNodeManager" ref="taxonNodeManager" />
+    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+  </bean>
+
+<!--
+  <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
+    <property name="taxonNodeManager" ref="taxonNodeManager" />
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+    <property name="sequenceDao" ref="sequenceDao" />
+  </bean>
+-->
+
+  <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
+
+<!--
+  <bean name="dbController" class="org.genedb.web.mvc.controller.DbController">
+    <property name="generalDao" ref="generalDao" />
+  </bean>
+-->
+
+  <bean id="restController" class="org.genedb.web.mvc.controller.RestController" />
+
+  <bean id="idListController" class="org.genedb.web.mvc.controller.IdListController">
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="hmFactory" ref="historyManagerFactory" />
+  </bean>
+
+  <bean name="compatabilityController" class="org.genedb.web.mvc.controller.ClassicCompatabilityController" />
+
+  <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+  </bean>
+
+  <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >
+  	<property name="queryFactory" ref="queryFactory" />
+  </bean>
+
+  <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
+
+
+  <!--
+    <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController"> <property name="queryFactory"
+    ref="queryFactory" /> </bean>
+  -->
+  <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
+    <property name="historyManagerFactory" ref="historyManagerFactory" />
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="downloadView" value="download/download" />
+    <property name="dataFetcher" ref="dtoDataFetcher" />
+  </bean>
+
+  <bean id="luceneDataFetcher" class="org.genedb.web.mvc.controller.download.LuceneDataFetcher">
+    <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+  </bean>
+
+
+  <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
+    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+    <!--
+      <property name=""> <bean class="org.genedb.web.mvc.controller.download.DtoDataRowMapper" /> </property>
+    -->
+  </bean>
+
+
+  <!--
+    - Message source for this context, loaded from localized "messages_xx" files. - Could also reside in the root
+    application context, as it is generic, - but is currently just used within PetClinic's web tier.
+  -->
+  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basenames">
+      <list>
+        <value>exceptions</value>
+        <value>ValidatorMessages</value>
+      </list>
+    </property>
+  </bean>
+
+  <context:property-placeholder location="classpath:project.properties"/>
+
+  <!--
+    ========================= QUERY CONFIGURATION
+    =========================
+  -->
+
+  <bean name="proteinLength" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
+  <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
+  <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
+  <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" />
+  <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />
+  <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
+  <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
+  <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
+  <bean name="proteinNumTM" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" scope="prototype" />
+  <bean name="product" class="org.genedb.querying.tmpquery.ProductQuery" scope="prototype" />
+  <bean name="simpleName" class="org.genedb.querying.tmpquery.SimpleNameQuery" scope="prototype" />
+  <bean name="go" class="org.genedb.querying.tmpquery.GoQuery" scope="prototype" />
+  <bean name="ec" class="org.genedb.querying.tmpquery.EcQuery" scope="prototype" />
+  <bean name="pfam" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
+  <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
+  <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
+  <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
+  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
+  <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+
+  <!-- this does not currently implement query, so it can't be called from QueryFactory -->
+  <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+  <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+    <bean id="org.genedb.querying.core.NumericQueryVisibility.PRIVATE"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+
+  <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
+    <property name="queryNameMap">
+      <map>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC">
+
+          <map>
+            <entry key="proteinLength" value-ref="proteinLength" />
+            <entry key="proteinMass" value-ref="proteinMass" />
+            <entry key="geneType" value-ref="geneType" />
+            <entry key="nameProduct" value-ref="nameProduct" />
+            <entry key="controlledCuration" value-ref="controlledCuration" />
+            <entry key="date" value-ref="date" />
+            <entry key="geneLocation" value-ref="geneLocation" />
+            <entry key="proteinTargetingSeq" value-ref="proteinTargetingSeq" />
+            <entry key="proteinNumTM" value-ref="proteinNumTM" />
+            <entry key="product" value-ref="product" />
+            <entry key="simpleName" value-ref="simpleName" />
+            <entry key="go" value-ref="go" />
+            <entry key="ec" value-ref="ec" />
+            <entry key="pfam" value-ref="pfam" />
+          </map>
+        </entry>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
+          <map>
+            <entry key="annotationStatus" value-ref="annotationStatus" />
+            <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
+            <entry key="quickSearch" value-ref="quickSearch" />
+            <entry key="dateCount" value-ref="dateCount" />
+            <entry key="geneByDb" value-ref="geneByDb" />
+          </map>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+
+  <!--
+    ========================= MAPPING DEFINITIONS
+    =========================
+  -->
+
+
+  <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+    <property name="rootDirectory" value="${cacheDirectory}" />
+    <property name="readOnly" value="true" />
+  </bean>
+
+
+  <bean name="berkeleyReadWriteTempMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+    <property name="rootDirectory" value="/tmp" />
+    <property name="readOnly" value="false" />
+  </bean>
+
+
+
+  <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
+    <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+  </bean>
+
+  <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
+    <property name="cvDao" ref="cvDao" />
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="cvNames">
+      <list>
+        <value>biological_process</value>
+        <value>cellular_component</value>
+        <value>molecular_function</value>
+        <value>RILEY</value>
+        <value>genedb_products</value>
+        <value>CC_genedb_controlledcuration</value>
+        <!-- <value>UNIPROT_KEYWORDS</value> -->
+      </list>
+    </property>
+  </bean>
+
+  <bean id="nameBrowse" class="org.genedb.web.mvc.controller.BrowseBeanName">
+    <property name="cvDao" ref="cvDao" />
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="cvTerm" value="gene" />
+  </bean>
+
+
+  <!--
+    - This bean resolves specific types of exception to corresponding error views. - The default behaviour of
+    DispatcherServlet is to propagate all exceptions to the - servlet container: This will happen here with all other
+    types of exception.
+  -->
+  <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+      <props>
+        <prop key="org.springframework.dao.DataAccessException">
+          dataAccessFailure
+                </prop>
+        <prop key="org.springframework.transaction.TransactionException">
+          dataAccessFailure
+                </prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+    <!-- one of the properties available; the maximum file size in bytes -->
+    <property name="maxUploadSize" value="20000000" />
+  </bean>
+
+
+  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+    <property name="alwaysUseFullPath" value='true' />
+    <property name="useDefaultSuffixPattern" value="false" />
+    <property name="interceptors">
+      <list>
+        <ref bean="openSessionInView" />
+      </list>
+    </property>
+  </bean>
+
+  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <property name="alwaysUseFullPath" value='true' />
+  </bean>
+
+
+  <!--
+    - This bean is a MultiActionController that manages general View rendering. - It uses the "clinicControllerResolver"
+    bean below for method name resolution.
+  -->
+
+  <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
+    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+    <property name="cvDao" ref="cvDao" />
+  </bean>
+
+  <bean id="taxonNodeListFormatter" class="org.genedb.db.taxon.TaxonNodeListFormatter">
+    <property name="taxonNodeManager" ref="taxonNodeManager" />
+  </bean>
+
+  <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
+  </bean>
+
+  <bean id="DbLinkRedirect" class="org.genedb.web.mvc.controller.DbLinkRedirectController" />
+
+  <bean id="HistoryController" class="org.genedb.web.mvc.controller.HistoryController">
+    <property name="historyManagerFactory" ref="historyManagerFactory" />
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="historyView" value="history/historyIndex" />
+    <property name="downloadView" value="download/download" />
+    <property name="editView" value="history/editHistory" />
+  </bean>
+
+  <bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
+
+  <bean id="Root" class="org.genedb.web.mvc.controller.RootController" />
+
+  <bean id="pfamLookup" class="org.genedb.web.mvc.controller.PfamLookup" />
+
+  <bean id="OrganismChooserController" class="org.genedb.web.mvc.controller.OrganismChooserController">
+    <property name="commandClass" value="org.genedb.web.mvc.controller.OrganismChooserBean" />
+  </bean>
+
+  <bean id="ArtemisLaunchController" class="org.genedb.web.mvc.controller.ArtemisLaunchController" />
+
+
+  <bean id="BasketController" class="org.genedb.web.mvc.controller.BasketController">
+    <property name="modelBuilder" ref="modelBuilder" />
+    <property name="historyManagerFactory" ref="historyManagerFactory" />
+    <property name="sequenceDao" ref="sequenceDao" />
+  </bean>
+
+
+  <bean id="ContextMapWindowController" class="org.genedb.web.gui.ContextMapWindowController" />
+
+  <bean id="FeatureSequenceController" class="org.genedb.web.mvc.controller.FeatureSequenceController">
+    <!--
+      <property name="commandClass"
+      value="org.genedb.web.mvc.controller.FeatureSequenceController$FeatureSequenceBean"/>
+    -->
+    <property name="modelBuilder" ref="modelBuilder" />
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="geneSequenceView" value="features/geneSequence" />
+  </bean>
+
+
+  <bean id="SequenceDistributorController" class="org.genedb.web.mvc.controller.SequenceDistributorController">
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="modelBuilder" ref="modelBuilder" />
+    <!-- Anything to inject? -->
+  </bean>
+
+  <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
+
+
+  <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+  </bean>
+
+
+  <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController">
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+  </bean>
+
+  <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController">
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+  </bean>
+
+  <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
+    <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+  </bean>
+
+  <bean id="TranscriptFeatureController" class="org.genedb.web.mvc.controller.TranscriptFeatureController">
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="modelBuilder" ref="modelBuilder" />
+    <property name="formView" value="search/nameLookup" />
+    <property name="geneView" value="features/gene" />
+    <property name="geneDetailsView" value="features/geneDetails" />
+    <!-- <property name="bindOnNewForm" value="true" /> -->
+    <!-- <property name="validator" ref="namedFeatureValidator" /> -->
+    <!-- <property name="cacheSeconds" value="86400" /> -->
+    <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+    <property name="historyManagerFactory" ref="historyManagerFactory" />
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+    <property name="validExtensions">
+      <set>
+        <value>jsp</value>
+        <value>xml</value>
+        <value>json</value>
+      </set>
+    </property>
+  </bean>
+  <!--
+    <bean id="namedFeatureValidator" class="org.genedb.web.mvc.validators.NamedFeatureFormValidator"
+    />
+  -->
+
+  <!--
+    <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory"> <property
+    name="luceneIndexList"> <list> <bean class="org.genedb.querying.core.LuceneIndex"> <property
+    name="indexDirectoryName" value="${lucene.indexDirectory}" /> <property name="indexName"
+    value="org.gmod.schema.mapped.Feature" /> </bean> </list> </property> </bean>
+  -->
+
+  <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
+    <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+  </bean>
+
+
+  <bean id="FeatureDownloadController" class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
+    <!--
+      <property name="sessionForm" value="true" /> <property name="commandName" value="featureDownload" /> <property
+      name="commandClass" value="org.genedb.web.mvc.controller.download.FeatureDownloadController$FeatureDownloadBean"
+      />
+    -->
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="sequenceView" value="download/featureDownload" />
+    <!-- <property name="formView" value="search/featureDownload" /> -->
+    <!-- <property name="bindOnNewForm" value="true" /> -->
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <!-- <property name="cacheSeconds" value="86400" /> -->
+  </bean>
+
+  <bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
+    <property name="sequenceDao" ref="sequenceDao" />
+    <property name="listResultsView" value="list/results2" />
+    <property name="genePage" value="redirect:NamedFeature" />
+    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+  </bean>
+
+
+  <bean id="ComplexQueryController" class="org.genedb.web.mvc.controller.ComplexQueryController">
+    <property name="webUtils" ref="GeneDBWebUtils" />
+  </bean>
+
+
+  <bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
+    <property name="sequenceDao" ref="sequenceDao" />
+  </bean>
+
+  <bean id="openSessionInView" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+    <property name="sessionFactory">
+      <ref bean="sessionFactory" />
+    </property>
+  </bean>
+
+  <bean id="cachedFileFactory" class="org.genedb.web.mvc.controller.cgview.CachedFileFactory" />
+
+
+  <bean id="searchControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
+  <bean id="historyControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
+  <bean id="complexControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
+
+
+  <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
+    <property name="diagramCache" ref="diagramCache" />
+  </bean>
+
+
+</beans>

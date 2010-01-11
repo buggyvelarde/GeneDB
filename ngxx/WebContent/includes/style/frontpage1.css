@@ -1,0 +1,94 @@
+/* CSS Document */
+
+ul
+{
+margin: 0;
+padding: 0;
+list-style: none;
+}
+
+li
+{
+line-height: 15px;
+padding-left: 15px;
+padding-top: 0px;
+background-image: url(../images/arrow.png);
+background-repeat: no-repeat;
+background-position: 0px 2px;
+}
+
+a:link, a:visited {
+	color: #c64934; text-decoration: none;
+	font-weight: bold;
+}
+
+a:hover {
+	color: #900;	text-decoration: none;
+	font-weight: bold;
+}
+
+
+table.moduletable {
+	width: 100%;
+	margin-bottom: 5px;
+	padding: 0px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+div.moduletable {
+	padding: 0;
+	margin-bottom: 5px;
+}
+
+table.moduletable th, div.moduletable h3 {
+	background: url(../images/subhead_bg.png) repeat-x;
+	color: #666666;
+	text-align: left;
+	padding-left: 4px;
+	height: 21px;
+	line-height: 21px;
+	font-weight: bold;
+	font-size: 10px;
+	text-transform: uppercase;
+	margin: 0 0 2px 0;
+}
+
+table.moduletable td {
+	font-size: 11px;
+	padding: 0px;
+	margin: 0px;
+	font-weight: normal;
+}
+
+a.mainlevel:link, a.mainlevel:visited {
+	display: block;
+	background: url(../images/menu_bg.png) no-repeat;
+	vertical-align: middle;
+	font-size: 11px;
+	font-weight: bold;
+	color: #ccc;
+	text-align: left;
+	padding-top: 5px;
+	padding-left: 24px;
+	height: 20px !important;
+	height: 25px;
+	width: 100%;
+	text-decoration: none;
+}
+
+a.mainlevel:hover {
+	background-position: 0px -25px;
+	text-decoration: none;
+	color: #fff;
+}
+
+a.mainlevel#active_menu {
+	color:#fff;
+	font-weight: bold;
+}
+
+a.mainlevel#active_menu:hover {
+	color: #fff;
+}
+

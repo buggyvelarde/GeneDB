@@ -1,0 +1,60 @@
+#list {
+    text-align: center;
+}
+#list table {
+    margin-left:auto; margin-right:auto;
+}
+#list .yui-pg-container a {
+    color: #00d;
+}
+#list .yui-pg-pages a {
+    text-decoration: underline;
+}
+#list, #list .yui-dt-loading {
+    text-align: center; background-color: transparent;
+}
+
+#queryName {
+	background-color: #F0F0E4;
+	float:left;
+	font-size: 1.3em;
+	margin-bottom: 10px;
+	width:100%;
+	height: 50px;
+	text-align: center;
+	padding-top: 5px;
+}
+
+#queryDetails {
+	background-color: #F0F0E4;
+	height: 105px;
+	margin-bottom: 10px;
+}
+
+#details {
+	float:left;
+	margin-left:5px;
+	width:300px;
+}
+
+#historyEditLeft {
+	float: left;
+	width:300px;
+}
+
+#historyEditButtons {
+	border: 1px solid gray;
+	margin: 2px;
+	height:	200px;
+}
+
+#historyEditSelectedId {
+	border: 1px solid gray;
+	margin: 2px;
+}
+
+#historyEdit {
+	float: left;
+	margin-left: 5px;
+	border: 1px solid gray;
+}
