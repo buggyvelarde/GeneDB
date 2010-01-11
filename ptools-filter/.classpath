@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="web/WEB-INF/lib/spring-2.0.1.jar" sourcepath="/Users/art/Documents/eclipse-workspace/repository/springframework/spring-framework-2.0.1/src"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry kind="output" path="web/WEB-INF/classes"/>
-</classpath>
