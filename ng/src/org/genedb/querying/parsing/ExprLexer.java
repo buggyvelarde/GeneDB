@@ -2,14 +2,15 @@ package org.genedb.querying.parsing;
 
 // $ANTLR 3.0 Expr.g 2007-06-19 14:34:38
 
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.Lexer;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.RecognitionException;
+//import org.antlr.runtime.CharStream;
+//import org.antlr.runtime.EarlyExitException;
+//import org.antlr.runtime.Lexer;
+//import org.antlr.runtime.MismatchedSetException;
+//import org.antlr.runtime.NoViableAltException;
+//import org.antlr.runtime.RecognitionException;
 
-public class ExprLexer extends Lexer {
+public class ExprLexer {
+//public class ExprLexer extends Lexer {
     public static final int T21=21;
     public static final int UNION=7;
     public static final int T29=29;
@@ -38,8 +39,8 @@ public class ExprLexer extends Lexer {
     public static final int T24=24;
     public static final int T19=19;
     public static final int INTERSECT=8;
-    public ExprLexer() {;} 
-    public ExprLexer(CharStream input) {
+    public ExprLexer() {;}
+/*    public ExprLexer(CharStream input) {
         super(input);
     }
     @Override
@@ -52,7 +53,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:3:7: ( '(' )
             // Expr.g:3:7: '('
             {
-            match('('); 
+            match('(');
 
             }
 
@@ -70,7 +71,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:4:7: ( ')' )
             // Expr.g:4:7: ')'
             {
-            match(')'); 
+            match(')');
 
             }
 
@@ -88,7 +89,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:5:7: ( '{' )
             // Expr.g:5:7: '{'
             {
-            match('{'); 
+            match('{');
 
             }
 
@@ -106,7 +107,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:6:7: ( '}' )
             // Expr.g:6:7: '}'
             {
-            match('}'); 
+            match('}');
 
             }
 
@@ -124,7 +125,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:7:7: ( ';' )
             // Expr.g:7:7: ';'
             {
-            match(';'); 
+            match(';');
 
             }
 
@@ -142,7 +143,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:8:7: ( '=' )
             // Expr.g:8:7: '='
             {
-            match('='); 
+            match('=');
 
             }
 
@@ -160,7 +161,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:9:7: ( 'union' )
             // Expr.g:9:7: 'union'
             {
-            match("union"); 
+            match("union");
 
 
             }
@@ -179,7 +180,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:10:7: ( 'or' )
             // Expr.g:10:7: 'or'
             {
-            match("or"); 
+            match("or");
 
 
             }
@@ -198,7 +199,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:11:7: ( 'intersect' )
             // Expr.g:11:7: 'intersect'
             {
-            match("intersect"); 
+            match("intersect");
 
 
             }
@@ -217,7 +218,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:12:7: ( 'and' )
             // Expr.g:12:7: 'and'
             {
-            match("and"); 
+            match("and");
 
 
             }
@@ -236,7 +237,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:13:7: ( 'subtract' )
             // Expr.g:13:7: 'subtract'
             {
-            match("subtract"); 
+            match("subtract");
 
 
             }
@@ -255,7 +256,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:14:7: ( 'not' )
             // Expr.g:14:7: 'not'
             {
-            match("not"); 
+            match("not");
 
 
             }
@@ -274,7 +275,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:38:9: ( 'OP_UNION' )
             // Expr.g:38:9: 'OP_UNION'
             {
-            match("OP_UNION"); 
+            match("OP_UNION");
 
 
             }
@@ -293,7 +294,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:40:4: ( 'OP_INTERSECT' )
             // Expr.g:40:4: 'OP_INTERSECT'
             {
-            match("OP_INTERSECT"); 
+            match("OP_INTERSECT");
 
 
             }
@@ -312,7 +313,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:41:11: ( 'OP_SUBTRACT' )
             // Expr.g:41:11: 'OP_SUBTRACT'
             {
-            match("OP_SUBTRACT"); 
+            match("OP_SUBTRACT");
 
 
             }
@@ -392,7 +393,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:45:11: ( '\"' ( LCA | UCA | '0' .. '9' | WS | ':' | '/' | '.' | '?' | '=' | '&' )* '\"' )
             // Expr.g:45:11: '\"' ( LCA | UCA | '0' .. '9' | WS | ':' | '/' | '.' | '?' | '=' | '&' )* '\"'
             {
-            match('\"'); 
+            match('\"');
             // Expr.g:45:15: ( LCA | UCA | '0' .. '9' | WS | ':' | '/' | '.' | '?' | '=' | '&' )*
             loop2:
             do {
@@ -517,70 +518,70 @@ public class ExprLexer extends Lexer {
                 case 1 :
                     // Expr.g:45:16: LCA
                     {
-                    mLCA(); 
+                    mLCA();
 
                     }
                     break;
                 case 2 :
                     // Expr.g:45:20: UCA
                     {
-                    mUCA(); 
+                    mUCA();
 
                     }
                     break;
                 case 3 :
                     // Expr.g:45:24: '0' .. '9'
                     {
-                    matchRange('0','9'); 
+                    matchRange('0','9');
 
                     }
                     break;
                 case 4 :
                     // Expr.g:45:33: WS
                     {
-                    mWS(); 
+                    mWS();
 
                     }
                     break;
                 case 5 :
                     // Expr.g:45:36: ':'
                     {
-                    match(':'); 
+                    match(':');
 
                     }
                     break;
                 case 6 :
                     // Expr.g:45:40: '/'
                     {
-                    match('/'); 
+                    match('/');
 
                     }
                     break;
                 case 7 :
                     // Expr.g:45:44: '.'
                     {
-                    match('.'); 
+                    match('.');
 
                     }
                     break;
                 case 8 :
                     // Expr.g:45:48: '?'
                     {
-                    match('?'); 
+                    match('?');
 
                     }
                     break;
                 case 9 :
                     // Expr.g:45:52: '='
                     {
-                    match('='); 
+                    match('=');
 
                     }
                     break;
                 case 10 :
                     // Expr.g:45:56: '&'
                     {
-                    match('&'); 
+                    match('&');
 
                     }
                     break;
@@ -590,7 +591,7 @@ public class ExprLexer extends Lexer {
                 }
             } while (true);
 
-            match('\"'); 
+            match('\"');
 
             }
 
@@ -624,7 +625,7 @@ public class ExprLexer extends Lexer {
                 case 1 :
                     // Expr.g:47:7: '0' .. '9'
                     {
-                    matchRange('0','9'); 
+                    matchRange('0','9');
 
                     }
                     break;
@@ -711,7 +712,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:51:9: ( 'param' )
             // Expr.g:51:9: 'param'
             {
-            match("param"); 
+            match("param");
 
 
             }
@@ -728,7 +729,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:53:10: ( 'params' )
             // Expr.g:53:10: 'params'
             {
-            match("params"); 
+            match("params");
 
 
             }
@@ -745,7 +746,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:55:9: ( 'query' )
             // Expr.g:55:9: 'query'
             {
-            match("query"); 
+            match("query");
 
 
             }
@@ -762,7 +763,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:58:4: ( 'by_name' )
             // Expr.g:58:4: 'by_name'
             {
-            match("by_name"); 
+            match("by_name");
 
 
             }
@@ -779,7 +780,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:61:4: ( 'by_num' )
             // Expr.g:61:4: 'by_num'
             {
-            match("by_num"); 
+            match("by_num");
 
 
             }
@@ -796,7 +797,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:64:4: ( 'a' .. 'z' )
             // Expr.g:64:4: 'a' .. 'z'
             {
-            matchRange('a','z'); 
+            matchRange('a','z');
 
             }
 
@@ -812,7 +813,7 @@ public class ExprLexer extends Lexer {
             // Expr.g:67:4: ( 'A' .. 'Z' )
             // Expr.g:67:4: 'A' .. 'Z'
             {
-            matchRange('A','Z'); 
+            matchRange('A','Z');
 
             }
 
@@ -1321,133 +1322,133 @@ public class ExprLexer extends Lexer {
             case 1 :
                 // Expr.g:1:10: T18
                 {
-                mT18(); 
+                mT18();
 
                 }
                 break;
             case 2 :
                 // Expr.g:1:14: T19
                 {
-                mT19(); 
+                mT19();
 
                 }
                 break;
             case 3 :
                 // Expr.g:1:18: T20
                 {
-                mT20(); 
+                mT20();
 
                 }
                 break;
             case 4 :
                 // Expr.g:1:22: T21
                 {
-                mT21(); 
+                mT21();
 
                 }
                 break;
             case 5 :
                 // Expr.g:1:26: T22
                 {
-                mT22(); 
+                mT22();
 
                 }
                 break;
             case 6 :
                 // Expr.g:1:30: T23
                 {
-                mT23(); 
+                mT23();
 
                 }
                 break;
             case 7 :
                 // Expr.g:1:34: T24
                 {
-                mT24(); 
+                mT24();
 
                 }
                 break;
             case 8 :
                 // Expr.g:1:38: T25
                 {
-                mT25(); 
+                mT25();
 
                 }
                 break;
             case 9 :
                 // Expr.g:1:42: T26
                 {
-                mT26(); 
+                mT26();
 
                 }
                 break;
             case 10 :
                 // Expr.g:1:46: T27
                 {
-                mT27(); 
+                mT27();
 
                 }
                 break;
             case 11 :
                 // Expr.g:1:50: T28
                 {
-                mT28(); 
+                mT28();
 
                 }
                 break;
             case 12 :
                 // Expr.g:1:54: T29
                 {
-                mT29(); 
+                mT29();
 
                 }
                 break;
             case 13 :
                 // Expr.g:1:58: UNION
                 {
-                mUNION(); 
+                mUNION();
 
                 }
                 break;
             case 14 :
                 // Expr.g:1:64: INTERSECT
                 {
-                mINTERSECT(); 
+                mINTERSECT();
 
                 }
                 break;
             case 15 :
                 // Expr.g:1:74: SUBTRACT
                 {
-                mSUBTRACT(); 
+                mSUBTRACT();
 
                 }
                 break;
             case 16 :
                 // Expr.g:1:83: NAME
                 {
-                mNAME(); 
+                mNAME();
 
                 }
                 break;
             case 17 :
                 // Expr.g:1:88: STRING
                 {
-                mSTRING(); 
+                mSTRING();
 
                 }
                 break;
             case 18 :
                 // Expr.g:1:95: INT
                 {
-                mINT(); 
+                mINT();
 
                 }
                 break;
             case 19 :
                 // Expr.g:1:99: WS
                 {
-                mWS(); 
+                mWS();
 
                 }
                 break;
@@ -1457,6 +1458,6 @@ public class ExprLexer extends Lexer {
     }
 
 
- 
+ */
 
 }

@@ -14,6 +14,7 @@
 
     <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core" />
     <context:spring-configured/>
+    <!-- <context:load-time-weaver/> --> 
     <context:property-placeholder location="classpath:project.properties" />
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
     <tx:annotation-driven mode="aspectj"/>

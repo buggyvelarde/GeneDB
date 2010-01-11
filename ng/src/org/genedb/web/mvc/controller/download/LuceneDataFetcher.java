@@ -51,14 +51,14 @@ public class LuceneDataFetcher implements DataFetcher<String> {
         luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
     }
 
-    public Iterator<DataRow> iterator(List<String> ids, String delimeter) {
+    public TroubleTrackingIterator<DataRow> iterator(List<String> ids, String delimeter) {
         return new LuceneDataRowIterator(luceneIndex, ids);
     }
 
 }
 
 
-class LuceneDataRowIterator implements Iterator<DataRow> {
+class LuceneDataRowIterator implements TroubleTrackingIterator<DataRow> {
 
     private Logger logger = Logger.getLogger(LuceneDataRowIterator.class);
 
@@ -105,6 +105,13 @@ class LuceneDataRowIterator implements Iterator<DataRow> {
     private Document fetchDocument(int docId) throws CorruptIndexException, IOException {
         return luceneIndex.getDocument(docId);
     }
+
+
+	@Override
+	public List<Integer> getProblems() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
 

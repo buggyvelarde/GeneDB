@@ -2,23 +2,24 @@ package org.genedb.querying.parsing;
 
 // $ANTLR 3.0 Expr.g 2007-06-19 14:34:36
 
-import org.antlr.runtime.BitSet;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.Parser;
-import org.antlr.runtime.ParserRuleReturnScope;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.Token;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeAdaptor;
-import org.antlr.runtime.tree.RewriteEarlyExitException;
-import org.antlr.runtime.tree.RewriteRuleSubtreeStream;
-import org.antlr.runtime.tree.RewriteRuleTokenStream;
-import org.antlr.runtime.tree.TreeAdaptor;
+//import org.antlr.runtime.BitSet;
+//import org.antlr.runtime.EarlyExitException;
+//import org.antlr.runtime.NoViableAltException;
+//import org.antlr.runtime.Parser;
+//import org.antlr.runtime.ParserRuleReturnScope;
+//import org.antlr.runtime.RecognitionException;
+//import org.antlr.runtime.Token;
+//import org.antlr.runtime.TokenStream;
+//import org.antlr.runtime.tree.CommonTree;
+//import org.antlr.runtime.tree.CommonTreeAdaptor;
+//import org.antlr.runtime.tree.RewriteEarlyExitException;
+//import org.antlr.runtime.tree.RewriteRuleSubtreeStream;
+//import org.antlr.runtime.tree.RewriteRuleTokenStream;
+//import org.antlr.runtime.tree.TreeAdaptor;
 
 @SuppressWarnings("all")
-public class ExprParser extends Parser {
+public class ExprParser {
+//public class ExprParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "INT", "NAME", "STRING", "UNION", "INTERSECT", "SUBTRACT", "LCA", "UCA", "WS", "PARAM", "PARAMS", "QUERY", "HISTORY_BY_NAME", "HISTORY_BY_NUM", "'('", "')'", "'{'", "'}'", "';'", "'='", "'union'", "'or'", "'intersect'", "'and'", "'subtract'", "'not'"
     };
@@ -38,10 +39,10 @@ public class ExprParser extends Parser {
     public static final int HISTORY_BY_NAME=16;
     public static final int INTERSECT=8;
 
-        public ExprParser(TokenStream input) {
+/*        public ExprParser(TokenStream input) {
             super(input);
         }
-        
+
     protected TreeAdaptor adaptor = new CommonTreeAdaptor();
 
     public void setTreeAdaptor(TreeAdaptor adaptor) {
@@ -294,16 +295,16 @@ public class ExprParser extends Parser {
                     // Expr.g:13:9: INT
                     {
                     INT5=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_atom69); 
+                    match(input,INT,FOLLOW_INT_in_atom69);
                     stream_INT.add(INT5);
 
 
                     // AST REWRITE
                     // elements: INT
-                    // token labels: 
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -330,16 +331,16 @@ public class ExprParser extends Parser {
                     // Expr.g:14:5: NAME
                     {
                     NAME6=(Token)input.LT(1);
-                    match(input,NAME,FOLLOW_NAME_in_atom83); 
+                    match(input,NAME,FOLLOW_NAME_in_atom83);
                     stream_NAME.add(NAME6);
 
 
                     // AST REWRITE
                     // elements: NAME
-                    // token labels: 
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -381,14 +382,14 @@ public class ExprParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
 
                     char_literal8=(Token)input.LT(1);
-                    match(input,18,FOLLOW_18_in_atom103); 
+                    match(input,18,FOLLOW_18_in_atom103);
                     pushFollow(FOLLOW_expr_in_atom106);
                     expr9=expr();
                     _fsp--;
 
                     adaptor.addChild(root_0, expr9.getTree());
                     char_literal10=(Token)input.LT(1);
-                    match(input,19,FOLLOW_19_in_atom108); 
+                    match(input,19,FOLLOW_19_in_atom108);
 
                     }
                     break;
@@ -442,11 +443,11 @@ public class ExprParser extends Parser {
             // Expr.g:19:8: NAME '{' params '}'
             {
             NAME11=(Token)input.LT(1);
-            match(input,NAME,FOLLOW_NAME_in_bean121); 
+            match(input,NAME,FOLLOW_NAME_in_bean121);
             stream_NAME.add(NAME11);
 
             char_literal12=(Token)input.LT(1);
-            match(input,20,FOLLOW_20_in_bean123); 
+            match(input,20,FOLLOW_20_in_bean123);
             stream_20.add(char_literal12);
 
             pushFollow(FOLLOW_params_in_bean125);
@@ -455,16 +456,16 @@ public class ExprParser extends Parser {
 
             stream_params.add(params13.getTree());
             char_literal14=(Token)input.LT(1);
-            match(input,21,FOLLOW_21_in_bean127); 
+            match(input,21,FOLLOW_21_in_bean127);
             stream_21.add(char_literal14);
 
 
             // AST REWRITE
             // elements: NAME, params
-            // token labels: 
+            // token labels:
             // rule labels: retval
-            // token list labels: 
-            // rule list labels: 
+            // token list labels:
+            // rule list labels:
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -552,7 +553,7 @@ public class ExprParser extends Parser {
                     // Expr.g:21:18: ';' param
                     {
                     char_literal16=(Token)input.LT(1);
-                    match(input,22,FOLLOW_22_in_params151); 
+                    match(input,22,FOLLOW_22_in_params151);
                     stream_22.add(char_literal16);
 
                     pushFollow(FOLLOW_param_in_params153);
@@ -572,10 +573,10 @@ public class ExprParser extends Parser {
 
             // AST REWRITE
             // elements: param
-            // token labels: 
+            // token labels:
             // rule labels: retval
-            // token list labels: 
-            // rule list labels: 
+            // token list labels:
+            // rule list labels:
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -651,24 +652,24 @@ public class ExprParser extends Parser {
             // Expr.g:23:9: NAME '=' STRING
             {
             NAME18=(Token)input.LT(1);
-            match(input,NAME,FOLLOW_NAME_in_param174); 
+            match(input,NAME,FOLLOW_NAME_in_param174);
             stream_NAME.add(NAME18);
 
             char_literal19=(Token)input.LT(1);
-            match(input,23,FOLLOW_23_in_param176); 
+            match(input,23,FOLLOW_23_in_param176);
             stream_23.add(char_literal19);
 
             STRING20=(Token)input.LT(1);
-            match(input,STRING,FOLLOW_STRING_in_param178); 
+            match(input,STRING,FOLLOW_STRING_in_param178);
             stream_STRING.add(STRING20);
 
 
             // AST REWRITE
             // elements: NAME, STRING
-            // token labels: 
+            // token labels:
             // rule labels: retval
-            // token list labels: 
-            // rule list labels: 
+            // token list labels:
+            // rule list labels:
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -861,16 +862,16 @@ public class ExprParser extends Parser {
                     // Expr.g:28:4: 'union'
                     {
                     string_literal24=(Token)input.LT(1);
-                    match(input,24,FOLLOW_24_in_union215); 
+                    match(input,24,FOLLOW_24_in_union215);
                     stream_24.add(string_literal24);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -895,16 +896,16 @@ public class ExprParser extends Parser {
                     // Expr.g:29:4: 'or'
                     {
                     string_literal25=(Token)input.LT(1);
-                    match(input,25,FOLLOW_25_in_union226); 
+                    match(input,25,FOLLOW_25_in_union226);
                     stream_25.add(string_literal25);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -987,16 +988,16 @@ public class ExprParser extends Parser {
                     // Expr.g:31:4: 'intersect'
                     {
                     string_literal26=(Token)input.LT(1);
-                    match(input,26,FOLLOW_26_in_intersect240); 
+                    match(input,26,FOLLOW_26_in_intersect240);
                     stream_26.add(string_literal26);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -1021,16 +1022,16 @@ public class ExprParser extends Parser {
                     // Expr.g:32:4: 'and'
                     {
                     string_literal27=(Token)input.LT(1);
-                    match(input,27,FOLLOW_27_in_intersect251); 
+                    match(input,27,FOLLOW_27_in_intersect251);
                     stream_27.add(string_literal27);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -1113,16 +1114,16 @@ public class ExprParser extends Parser {
                     // Expr.g:34:4: 'subtract'
                     {
                     string_literal28=(Token)input.LT(1);
-                    match(input,28,FOLLOW_28_in_subtract265); 
+                    match(input,28,FOLLOW_28_in_subtract265);
                     stream_28.add(string_literal28);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -1147,16 +1148,16 @@ public class ExprParser extends Parser {
                     // Expr.g:35:4: 'not'
                     {
                     string_literal29=(Token)input.LT(1);
-                    match(input,29,FOLLOW_29_in_subtract276); 
+                    match(input,29,FOLLOW_29_in_subtract276);
                     stream_29.add(string_literal29);
 
 
                     // AST REWRITE
-                    // elements: 
-                    // token labels: 
+                    // elements:
+                    // token labels:
                     // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
+                    // token list labels:
+                    // rule list labels:
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
@@ -1196,7 +1197,7 @@ public class ExprParser extends Parser {
     // $ANTLR end subtract
 
 
- 
+
 
     public static final BitSet FOLLOW_expr_in_prog36 = new BitSet(new long[]{0x0000000000040032L});
     public static final BitSet FOLLOW_atom_in_expr48 = new BitSet(new long[]{0x000000003F000002L});
@@ -1227,5 +1228,5 @@ public class ExprParser extends Parser {
     public static final BitSet FOLLOW_27_in_intersect251 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_28_in_subtract265 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_29_in_subtract276 = new BitSet(new long[]{0x0000000000000002L});
-
+*/
 }
