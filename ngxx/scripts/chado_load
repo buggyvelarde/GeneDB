@@ -1,0 +1,162 @@
+#!/bin/bash
+
+shopt -s nullglob
+set -e
+
+# You can explicitly set GENEDB_HOME in the environment, for testing
+if [ -z "$GENEDB_HOME" ]; then
+    GENEDB_HOME="/software/pathogen/projects/genedb"
+fi
+
+if [ -z "$JAVA_HOME" ]; then
+    JAVA_HOME="/software/pathogen/external/applications/java/java6"
+fi
+
+# Also to help with testing, the BIN_FOLDER can be explicitly set to a different subfolder (gv1)
+if [ -z "$BIN_FOLDER" ]; then
+    BIN_FOLDER="bin"
+fi
+
+export CLASSPATH=''
+for jar in "$GENEDB_HOME/lib"/*.jar; do
+    if [ -n "$CLASSPATH" ]; then
+        CLASSPATH="$CLASSPATH:$jar"
+    else
+        CLASSPATH="$jar"
+    fi
+done
+
+# readdir(array, dir, extension)
+readdir() {
+    array="$1"; dir="$2"; extension="$3"
+    
+    pushd >/dev/null "$dir"
+    local -a files=(*.$extension)
+    popd >/dev/null
+    eval "${array}=(\"\${files[@]}\")"
+}
+
+readdir loaders "$GENEDB_HOME/$BIN_FOLDER/loaders" sh
+
+print_help() {
+    echo >&2
+    echo >&2 "Usage: `basename $0` <loader> [options] <file or directory>"
+    echo >&2
+    echo >&2 "For help with a loader: `basename $0` <loader> -h"
+    echo >&2 "(or `basename $0` <loader> -u to just print the usage summary)"
+    echo >&2
+    echo >&2 "The available loaders are:"
+    for loading_script in "${loaders[@]}"; do
+        echo >&2 -ne "\t${loading_script%.sh} - "
+        source "$GENEDB_HOME/$BIN_FOLDER/loaders/$loading_script"
+        >&2 summary
+    done
+    echo >&2
+}
+
+if [ $# -lt 1 ]; then
+    print_help
+    exit 1
+fi
+
+
+loader="$1"; shift
+if [ ! -e "$GENEDB_HOME/$BIN_FOLDER/loaders/$loader.sh" ]; then
+    echo >&2 "`basename $0`: No such loader '$loader'"
+    exit 2
+fi
+source "$GENEDB_HOME/$BIN_FOLDER/loaders/$loader.sh"
+
+dbhost=pgsrv1.internal.sanger.ac.uk
+dbport=5432
+dbname=pathogens
+dbuser="$LOGNAME@sanger.ac.uk"
+dbpassword_from_stdin=false
+
+# These functions may be used by the loaders
+process_standard_options() {
+  case "$1" in
+    D)  case "$OPTARG" in
+        *:*/*)
+            host_and_port="${OPTARG%/*}"
+            dbname="${OPTARG#*/}"
+            dbhost="${host_and_port%:*}"
+            dbport="${host_and_port#*:}"
+            ;;
+        */*)
+            dbhost="${OPTARG%/*}"
+            dbname="${OPTARG#*/}"
+            ;;
+        *) loaderUsage >&2
+           exit 1
+           ;;
+        esac
+        echo "Database host: $dbhost"
+        echo "Database port: $dbport"
+        echo "Database name: $dbname"
+        ;;
+    U)  dbuser="$OPTARG"
+        ;;
+    P)  dbpassword_from_stdin=true
+        ;;
+    *)  loaderUsage >&2
+        exit 1
+        ;;
+  esac
+}
+
+stdopts="D:U:P"
+
+standard_options() {
+cat <<OPTIONS
+  -D database_connection_details
+    In the format host:port/database, for example:
+     -D pathdbsrv1b.internal.sanger.ac.uk:10120/bigtest
+     -D pgsrv2.internal.sanger.ac.uk:5432/pathdev
+    The default, if this option is not given, is to use the main pathogens db.
+  -U database_username
+    The default is your Sanger email address.
+  -P
+    The password is read from standard input, rather than prompted
+    for on the terminal. This option is intended for use by scripts
+    that invoke a loader as part of their operation.
+OPTIONS
+}
+
+read_password() {
+    if $dbpassword_from_stdin; then
+        read password
+    else
+        echo -n "Password for $dbuser: " > /dev/tty
+        read -s password < /dev/tty
+        echo > /dev/tty
+    fi
+
+    database_properties="-Ddbhost=$dbhost -Ddbport=$dbport -Ddbname=$dbname \
+    -Ddbuser=$dbuser -Ddbpassword=$password"
+}
+
+if [ $# -lt 1 ]; then
+    loaderUsage
+    exit 1
+fi
+
+case "$1" in
+    -h)  echo "Help for the $loader loader"
+        if [ -t 1 ]; then
+            {
+                loaderHelp
+                loaderUsage
+            } | ${PAGER:-less}
+        else
+            loaderHelp
+            loaderUsage
+        fi
+        exit 0
+        ;;
+    -u)  loaderUsage
+        exit 0
+        ;;
+esac
+
+doLoad "$@"

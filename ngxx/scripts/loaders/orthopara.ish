@@ -1,0 +1,156 @@
+# Common code used by orthologues and paralogues loader.
+# The extension is .ish (Include SHell), so that it's not
+# detected as a loader by the chado_load script.
+
+orthoparaUsage() {
+    cat <<USAGE
+Usage: `basename $0` $1 -n <dataset> -p <program> -v <version>
+                        [-a <algorithm>] [options] <file>
+        - for algorithmically-predicted ${1}
+
+       `basename $0` $1 -n <dataset> -m [options] <file>
+        - for manually-curated ${1}
+Options:
+  -n dataset
+    The name of the dataset. Existing orthologues or paralogues with the same 
+    dataset name and program will be deleted.
+  -p program
+    The name of the program used to predict the ${1}
+  -v version
+    The version of the program that was used. This should always be supplied
+    if at all possible. Occasionally it is impossible to determine, in which
+    case you should use -v unknown.
+  -a algorithm
+    If applicable, the name of the algorithm. This is optional.
+  -m
+    Indicates that the ${1} are manually curated rather than algorithmically 
+    predicted. If this option is specified then -p, -v and -a should not be used.
+  -x notFoundNotFatal
+    If this property is set, it is not a fatal error if a gene mentioned in the
+    input file does not exist. This can be useful when gene models have been
+    deleted or renamed since the $1 data were generated.
+  -x geneNames
+    Treat the names in the input file as gene names, rather than polypeptide
+    or transcript names.
+USAGE
+    standard_options
+    echo
+}
+
+orthoparaLoad() {
+    properties=''
+    debug=false
+    program=''
+    version=unknown
+    algorithm=''
+    manual=false
+    geneNames=false
+    notFoundNotFatal=false
+    paralogues=false
+    
+    if [ "$1" == "paralogues" ]; then
+        paralogues=true
+    fi
+    shift
+    
+    OPTIND=0
+    while getopts "dn:p:v:a:mx:$stdopts" option; do
+        case "$option" in
+        d)  debug=true
+            ;;
+        n)  dataset="$OPTARG"
+            ;;
+        p)  program="$OPTARG"
+            ;;
+        v)  version="$OPTARG"
+            ;;
+        a)  algorithm="$OPTARG"
+            ;;
+        m)  manual=true
+            ;;
+        x)  case "$OPTARG" in
+            notFoundNotFatal)
+                notFoundNotFatal=true
+                ;;
+            geneNames)
+                geneNames=true
+                ;;
+            *)  loaderUsage >&2
+                exit 1
+                ;;
+            esac
+            ;;
+        *)  process_standard_options "$option"
+            ;;
+        esac
+    done
+
+    shift $[ $OPTIND - 1 ]
+
+    if [ $# -ne 1 ]; then
+        loaderUsage >&2
+        exit 1
+    fi
+    
+    file="$1"
+    shift
+    
+    if [ ! -e "$file" ]; then
+        echo >&2 "`basename $0`: no such file or directory '$file'"
+        exit 1
+    fi
+    
+    if [ -z "$dataset" ]; then
+        echo "Error: no datasetName supplied with -n"
+        loaderUsage >&2
+        exit 1
+    fi
+    
+    if [ -z "$program" ]; then
+        echo "Error: no program supplied with -p"
+        loaderUsage >&2
+        exit 1
+    fi
+    
+    read_password
+
+    if $debug; then
+        echo "Classpath:"
+        echo "$CLASSPATH" | perl -0777 -ne 'for (split(/:/,$_)) {print"\t$_\n"}'
+        set -x
+    fi
+     
+    if [ "$manual" == "false" ]; then
+    
+        echo >&2 "Deleting orthologues/paralogues from dataset $dataset"
+        
+        export PGHOST="$dbhost" PGPORT="$dbport" PGDATABASE="$dbname" PGUSER="$dbuser" PGPASSWORD="$password"
+        psql --no-psqlrc <<SQL
+        
+            delete
+            from feature
+            using analysisfeature join analysis using (analysis_id)
+            , organism
+            where analysisfeature.feature_id = feature.feature_id
+            and feature.organism_id = organism.organism_id
+            and organism.common_name = 'dummy'
+            and feature.type_id = (
+              select cvterm_id
+              from cvterm join cv using (cv_id)
+              where cv.name = 'sequence' and cvterm.name = 'protein_match'
+            )
+            and feature.uniquename like '${dataset}:%'
+            and analysis.program = '$program'
+            ;
+SQL
+    fi
+    
+    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
+        $properties $database_properties \
+        -Dload.dataset="$dataset" -Dload.analysis.paralogues="$paralogues" \
+        -Dload.analysis.program="$program" -Dload.analysis.programVersion="$version" \
+        -Dload.orthologues.manual="$manual" -Dload.orthologues.geneNames="$geneNames" \
+        -Dload.orthologues.notFoundNotFatal="$notFoundNotFatal"  -Dload.inputDirectory="$file" \
+        org.genedb.db.loading.LoadOrthologues
+        
+}
