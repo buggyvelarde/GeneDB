@@ -1,0 +1,16 @@
+finaldest.webapps=/nfs/pathdb/genedb/staging/webapps/ROOT
+webAppRootKey=genedb.staging.root
+
+dbhost=pathdbsrv1-dmz
+dbport=5432
+dbname=staging
+dbuser=genedb_ro
+dbpassword=genedb_ro
+
+lucene.indexDirectory=/nfs/pathdb/genedb/staging/lucene
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+cacheDirectory=/nfs/pathdb/genedb/staging/cache
+resultsCacheDirectory=/tmp/results_staging
+
+diagram.fontFile=file:///nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
