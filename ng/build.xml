@@ -360,7 +360,7 @@
 		</iajc>
 		</target>
 
-
+<!--
 	<macrodef name="iajc-target" description="Compile-time aspectj weaving">
 		<attribute name="project" />
 		<attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
@@ -372,6 +372,7 @@
 
 		</sequential>
 	</macrodef>
+-->
 
 	  <target name="compile-javac" depends="populate-lib-dirs"
 	        description="--> Compile classes" >
