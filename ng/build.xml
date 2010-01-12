@@ -351,7 +351,7 @@
 		</taskdef>
 
 		<iajc
-    verbose="false" nowarn="true"
+    verbose="true" nowarn="false"
     inpath="${ng.directory}/WebContent/WEB-INF/classes"
     aspectpathref="classpathref"
     classpathRef ="classpathref"
