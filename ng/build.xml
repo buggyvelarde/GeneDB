@@ -343,7 +343,6 @@
     </target>
 
 	<target name="iajc-compile">
-        <iajc-target project="db" />
 
 		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
 			<classpath refid="aspectj-tools-classpath"/>
