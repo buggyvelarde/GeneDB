@@ -300,7 +300,13 @@
 
 	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
 		<ivy:settings file="${ng.directory}/ivysettings.xml" />
-		<delete dir="${lib.dir}" failonerror="false" />
+		<delete failonerror="false">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+				<include name="license-*.txt"/>
+				<include name="ivy.timestamp.txt"/>
+			</fileset>
+		</delete>
 		<mkdir dir="${lib.dir}" />
 		<property name="ivy.lib.dir"  value="${lib.dir}"/>
 		<property name="ivy.dep.file" value="${ng.directory}/ivy.xml"/>
