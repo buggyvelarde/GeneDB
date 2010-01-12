@@ -8,19 +8,14 @@
 
 	<dirname property="ng.directory" file="${ant.file.ng}"/>
 	<property name="lib.dir" value="${ng.directory}/WebContent/WEB-INF/lib" />
+	<property name="classes.dir" value="${lib.dir}/../classes" />
 	<property name="lib-compiletime.dir" value="${ng.directory}/lib-compiletime" />
 
 
 	<!-- Paths/Properties -->
 	<property name="build.dir" value="ant-build" />
 	<property name="dist.dir" value="${build.dir}/dist" />
-	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="test-classes.dir" value="${build.dir}/test-classes" />
-
-
-
-
-
 
 
 	<!-- Classpaths -->
@@ -352,10 +347,10 @@
 
 		<iajc
     verbose="true" nowarn="false"
-    inpath="${ng.directory}/WebContent/WEB-INF/classes"
+    inpath="${classes.dir}"
     aspectpathref="classpathref"
     classpathRef ="classpathref"
-    destdir="${ng.directory}/WebContent/WEB-INF/classes" maxmem="1024M" fork="true">
+    destdir="${classes.dir}" maxmem="1024M" fork="true">
 
 			<forkclasspath refid="aspectj-tools-classpath"/>
 		</iajc>
