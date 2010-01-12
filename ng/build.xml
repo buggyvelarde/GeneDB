@@ -5,7 +5,7 @@
     from this project, and common properties</description>
 
 	<property file="property-file.${config}" />
-	
+
 	<dirname property="ng.directory" file="${ant.file.ng}"/>
 	<property name="lib.dir" value="${ng.directory}/WebContent/WEB-INF/lib" />
 	<property name="lib-compiletime.dir" value="${ng.directory}/lib-compiletime" />
@@ -233,10 +233,26 @@
 
 	<!-- Sorted targets -->
 
+	  <target name="restart-ci-web">
+	    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
+	      <arg value="ci-web" />
+	      <arg value="stop" />
+	    </exec>
+	    <sleep seconds="5" />
+	    <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
+	    <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
+	    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+	      <env key="BUILD_ID" value="dontKillMe" />
+	      <arg value="ci-web" />
+	      <arg value="start" />
+	    </exec>
+	    <sleep minutes="3" />
+	  </target>
+
 	<target name="check.lib-uptodate" depends="init" if="libs.ivy-timestamp-exists">
 		<uptodate property="lib-uptodate" srcfile="${ng.directory}/ivy.xml" targetfile="${ng.directory}/WebContent/WEB-INF/libs/ivy.timestamp.txt" />
 	</target>
-	
+
 	<target name="init" description="Create initial build structure">
 		    <mkdir dir="${build.dir}" />
 			<mkdir dir="${dist.dir}" />
@@ -245,7 +261,7 @@
 			<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
 			<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
 	</target>
-	
+
 	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
 		<ivy:settings file="${ng.directory}/ivysettings.xml" />
 		<delete dir="${lib.dir}" failonerror="false" />
