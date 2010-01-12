@@ -233,6 +233,42 @@
 
 	<!-- Sorted targets -->
 
+	  <property name="host" value="http://developer.genedb.org"/>
+	  <property name="prefix" value="ci-web/"/> <!-- Include trailing slash -->
+
+	  <target name="test-deployment">
+	    <taskdef name="groovy"
+	           classname="org.codehaus.groovy.ant.Groovy"
+	           classpathref="classpathref"/>
+	    <groovy>
+	      <arg value="${host}"/>
+	      <arg value="${prefix}" />
+	      <![CDATA[
+	        try {
+	            downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
+	            downloadAndGrep("${args[0]}/${args[1]}gene/PF07_0048", "Duffy")
+	        }
+	        catch (Exception exp) {
+	           System.err.println(exp)
+	           println "tail -50 /nfs/pathdb/genedb/ci-web/logs/catalina.out".execute().text
+	           throw exp
+	        }
+	        //return 0
+
+	        def downloadAndGrep(address, searchPattern) {
+	          if (!(new URL(address).getText() =~ searchPattern)) {
+	            throw new RuntimeException("Pattern '$searchPattern' not found in '$address' - probable deployment problem");
+	          }
+	        }
+	      ]]>
+	    </groovy>
+	  </target>
+
+	  <target name="wait">
+	    <sleep minutes="3" />
+	  </target>
+
+
 	  <target name="restart-ci-web">
 	    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
 	      <arg value="ci-web" />
