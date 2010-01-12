@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="ng" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile">
+<project name="ng" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile-all">
 	<description>This build file describes a set of classpaths and targets "exported"
     from this project, and common properties</description>
 
@@ -149,28 +149,6 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="iajc-target" description="Compile-time aspectj weaving">
-		<attribute name="project" />
-		<attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
-		<attribute name="from-directory" default="@{directory}"/>
-		<attribute name="to-directory" default="@{directory}"/>
-		<attribute name="classpathref" default="@{project}-classpath"/>
-		<sequential>
-			<antcall target="lib-populate-lib-dir" />
-			<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-				<classpath refid="aspectj-tools-classpath"/>
-			</taskdef>
-			<iajc
-        verbose="false" nowarn="true"
-        inpath="@{from-directory}"
-        aspectpathref="@{classpathref}"
-        classpathRef ="@{classpathref}"
-        destdir="@{to-directory}" maxmem="1024M" fork="true">
-
-				<forkclasspath refid="aspectj-tools-classpath"/>
-			</iajc>
-		</sequential>
-	</macrodef>
 
 	<macrodef name="jar-target" description="Make a distribution JAR">
 		<attribute name="project" />
@@ -197,7 +175,7 @@
 	    <!-- temp hack -->
 	  </target>
 
-	  <target name="deploy" depends="check-config, compile">
+	  <target name="deploy" depends="check-config, compile-all">
 	    <filter token="webAppRootKey" value="${webAppRootKey}" />
 	    <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
 	    <mkdir dir="${finaldest.webapps}.tmp"/>
@@ -364,15 +342,39 @@
         </instrument>
     </target>
 
-	  <target name="compile" depends="populate-lib-dirs"
-	        description="--> Compile classes" >
+	<target name="iajc-compile">
+        <iajc-target project="db" />
 
-	  	<!--
-		<macrodef name="compile-target" description="Compile a module">
-			<attribute name="project" />
-			<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-			<attribute name="classpathref" default="@{project}-classpath"/>
-			-->
+		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+			<classpath refid="aspectj-tools-classpath"/>
+		</taskdef>
+
+		<iajc
+    verbose="false" nowarn="true"
+    inpath="${ng.directory}/WebContent/WEB-INF/classes"
+    aspectpathref="classpathref"
+    classpathRef ="classpathref"
+    destdir="${ng.directory}/WebContent/WEB-INF/classes" maxmem="1024M" fork="true">
+
+			<forkclasspath refid="aspectj-tools-classpath"/>
+		</iajc>
+		</target>
+
+
+	<macrodef name="iajc-target" description="Compile-time aspectj weaving">
+		<attribute name="project" />
+		<attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
+		<attribute name="from-directory" default="@{directory}"/>
+		<attribute name="to-directory" default="@{directory}"/>
+		<attribute name="classpathref" default="@{project}-classpath"/>
+		<sequential>
+			<antcall target="lib-populate-lib-dir" />
+
+		</sequential>
+	</macrodef>
+
+	  <target name="compile-javac" depends="populate-lib-dirs"
+	        description="--> Compile classes" >
 
 			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
 			<javac srcdir="${ng.directory}/src"
@@ -396,6 +398,8 @@
 	      <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
 	    </uptodate>
 	  </target>
+
+	 <target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
 
 	  <path id="classpathref">
 	    <fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
