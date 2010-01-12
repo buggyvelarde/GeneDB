@@ -20,11 +20,7 @@
 
 
 
-	<path id="aspectj-tools-classpath">
-		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
-		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
-		<pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
-	</path>
+
 
 
 	<!-- Classpaths -->
@@ -341,6 +337,12 @@
             </fileset>
         </instrument>
     </target>
+
+	<path id="aspectj-tools-classpath">
+		<pathelement location="${lib.dir}/com.springsource.org.aspectj.weaver-1.6.5.RELEASE.jar"/>
+		<pathelement location="${lib.dir}/com.springsource.org.aspectj.runtime-1.6.5.RELEASE.jar"/>
+		<pathelement location="${lib.dir}/com.springsource.org.aspectj.tools-1.6.5.RELEASE.jar"/>
+	</path>
 
 	<target name="iajc-compile">
 
