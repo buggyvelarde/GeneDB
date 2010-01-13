@@ -289,7 +289,7 @@
         <sysproperty key="build.tests" value="${build.tests}"/>
         <formatter type="brief" usefile="false" />
         <batchtest>
-          <fileset dir="${imported.basedir.db}/ant-build/test-classes">
+          <fileset dir="${build.dir}/test-classes">
             <include name="**/*Test.*" />
           </fileset>
         </batchtest>
