@@ -199,6 +199,100 @@
 
 
 	<!-- Sorted targets -->
+    <target name="fulljar" depends="compile-all"
+        description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+
+    			<delete file="${dist.dir}/ng.jar" />
+    			<jar jarfile="${dist.dir}/ng.jar" basedir="${classes.dir}"
+               excludes="**/*Test.class">
+    	            <manifest>
+    	                <attribute name="Implementation-Title" value="Chado Interface"/>
+    	                <attribute name="Implementation-Version" value="${version}"/>
+    	            </manifest>
+    			</jar>
+
+    </target>
+
+
+    <target name="prompt-for-password" depends="fulljar" unless="source.password">
+        <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
+        <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
+
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${ng.jar}" />
+        <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
+    </target>
+
+
+    <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
+        <antcall target="make-pfalciparum-database"/>
+    </target>
+    <target name="does-pfalciparum-database-exist">
+        <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
+    </target>
+    <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
+        <java fork="true" dir="${imported.basedir.db}" output="make-pfalciparum-database.log"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+            <classpath refid="build-test-database-classpath"/>
+            <jvmarg line="-server" />
+            <arg value="${source.url}"/>
+            <arg value="${source.username}"/>
+            <arg value="${source.password}"/>
+            <arg value="pfalciparum"/>
+            <arg value="27"/>
+        </java>
+    </target>
+
+
+    <target name="make-test-jar" depends="fulljar">
+        <copy todir="${imported.basedir.db}/ant-build/test">
+            <fileset dir="${imported.basedir.db}/test"/>
+        </copy>
+
+        <javac srcdir="${imported.basedir.db}/ant-build/test"
+            destdir="${imported.basedir.db}/ant-build/test-classes"
+            encoding="utf-8" debug="on">
+
+            <classpath>
+                <path refid="db-classpath"/>
+                <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
+            </classpath>
+        </javac>
+
+        <copy todir="${imported.basedir.db}/ant-build/test-classes" overwrite="true"
+            file="${imported.basedir.db}/ant-build/test/log4j.test.properties"/>
+
+        <jar jarfile="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar">
+            <fileset dir="${imported.basedir.db}/ant-build/test-classes" />
+            <manifest>
+                <attribute name="Implementation-Title" value="Chado Interface Test Code"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+
+    <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
+      <junit printsummary="yes" haltonfailure="yes" fork="true">
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-classic"/>
+        <classpath>
+            <path refid="db-classpath"/>
+            <path refid="unit-tests-classpath"/>
+            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
+            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
+        </classpath>
+        <sysproperty key="build.tests" value="${build.tests}"/>
+        <formatter type="brief" usefile="false" />
+        <batchtest>
+          <fileset dir="${imported.basedir.db}/ant-build/test-classes">
+            <include name="**/*Test.*" />
+          </fileset>
+        </batchtest>
+      </junit>
+    </target>
+
+
 
 	  <property name="host" value="http://developer.genedb.org"/>
 	  <property name="prefix" value="ci-web/"/> <!-- Include trailing slash -->
