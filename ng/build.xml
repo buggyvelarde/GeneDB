@@ -272,7 +272,7 @@
 
 
 
-    <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
+    <target name="run-db-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
       <junit printsummary="yes" haltonfailure="yes" fork="true">
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-classic"/>
