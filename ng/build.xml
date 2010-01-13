@@ -237,10 +237,10 @@
         <antcall target="make-pfalciparum-database"/>
     </target>
     <target name="does-pfalciparum-database-exist">
-        <available property="db.pfalciparum.exists" file="${ng.dir}/test-data/hsqldb/pfalciparum.data"/>
+        <available property="db.pfalciparum.exists" file="${ng.directory}/test-data/hsqldb/pfalciparum.data"/>
     </target>
     <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
-        <java fork="true" dir="${ng.dir}" output="make-pfalciparum-database.log"
+        <java fork="true" dir="${ng.directory}" output="make-pfalciparum-database.log"
                 maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="allandtest"/>
             <jvmarg line="-server" />
