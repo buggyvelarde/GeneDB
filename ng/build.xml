@@ -284,10 +284,7 @@
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-classic"/>
         <classpath>
-            <path refid="db-classpath"/>
-            <path refid="unit-tests-classpath"/>
-            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
-            <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
+            <path refid="allandtest"/>
         </classpath>
         <sysproperty key="build.tests" value="${build.tests}"/>
         <formatter type="brief" usefile="false" />
