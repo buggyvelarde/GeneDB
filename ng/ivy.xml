@@ -17,7 +17,7 @@
 <!--
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" conf="default->*" />
-      <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
+
 -->
 <!--
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.io" rev="1.4.0" conf="default->*" />
@@ -27,6 +27,7 @@
       <dependency org="org.apache.ant" name="com.springsource.org.apache.tools.ant" rev="1.7.0" />
       -->
 
+      <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
       <dependency org="org.apache.commons" name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
       <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
       <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.6.5" conf="default->*"/>
