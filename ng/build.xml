@@ -24,6 +24,16 @@
 		<pathelement location="${imported.basedir.libs}/lib/*.jar"/>
 	</path>
 
+	<path id="all">
+        <path refid="classpathref"/>
+        <pathelement location="${ng.jar}"/>
+	</path>
+
+
+	<path id="allandtest">
+        <path refid="all"/>
+        <pathelement location="${dist.dir}/test.jar"/>
+	</path>
 
 	<!-- General targets -->
 
@@ -232,7 +242,7 @@
     <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
         <java fork="true" dir="${imported.basedir.db}" output="make-pfalciparum-database.log"
                 maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
-            <classpath refid="build-test-database-classpath"/>
+            <classpath refid="allandtest"/>
             <jvmarg line="-server" />
             <arg value="${source.url}"/>
             <arg value="${source.username}"/>
@@ -252,10 +262,7 @@
             destdir="${build.dir}/test-classes"
             encoding="utf-8" debug="on">
 
-            <classpath>
-                <path refid="classpathref"/>
-                <pathelement location="${ng.jar}"/>
-            </classpath>
+            <classpath refid="all" />
         </javac>
 
         <copy todir="${build.dir}/test-classes" overwrite="true"
