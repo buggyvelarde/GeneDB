@@ -34,7 +34,7 @@
         <entry key="xml">
           <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
             <property name="contentType" value="application/xml" />
-            <property name="modelKey" value="resultset" />
+            <property name="modelKey" value="model" />
             <property name="marshaller">
               <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
                 <property name="autodetectAnnotations" value="true" />
@@ -45,37 +45,12 @@
         <entry key="json">
           <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
             <property name="contentType" value="application/json" />
-            <property name="modelKey" value="resultset" />
+            <property name="modelKey" value="model" />
             <property name="marshaller">
               <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
                 <property name="autodetectAnnotations" value="true" />
                 <property name="streamDriver">
                   <bean class="com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver" />
-                </property>
-              </bean>
-            </property>
-          </bean>
-        </entry>
-        <entry key="service-xml">
-          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
-            <property name="contentType" value="application/xml" />
-            <property name="marshaller">
-              <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
-                <property name="autodetectAnnotations" value="true" />
-                <property name="supportedClasses">
-                  <list>
-                    <!-- see org.genedb.web.mvc.controller.RestController -->
-                    <!--
-                      Build broken - most of these files don't exist
-                      <value>org.genedb.web.mvc.controller.BaseResult</value>
-                      <value>org.genedb.web.mvc.controller.ErrorModel</value>
-                      <value>org.genedb.web.mvc.controller.FeatureStatus</value>
-                      <value>org.genedb.web.mvc.controller.OrganismSetResult</value>
-                      <value>org.genedb.web.mvc.controller.OrganismStatus</value>
-                      <value>org.genedb.web.mvc.controller.OrganismStatusList</value>
-                      <value>org.genedb.web.mvc.controller.ResultSet</value>
-                    -->
-                  </list>
                 </property>
               </bean>
             </property>
@@ -457,9 +432,9 @@
     <!-- <property name="cacheSeconds" value="86400" /> -->
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     <property name="historyManagerFactory" ref="historyManagerFactory" />
-    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
     <property name="validExtensions">
       <set>
         <value>jsp</value>
@@ -506,15 +481,7 @@
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
   </bean>
 
-
-  <bean id="ComplexQueryController" class="org.genedb.web.mvc.controller.ComplexQueryController">
-    <property name="webUtils" ref="GeneDBWebUtils" />
-  </bean>
-
-
-  <bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
-    <property name="sequenceDao" ref="sequenceDao" />
-  </bean>
+  <bean id="ComplexQueryController" class="org.genedb.web.mvc.controller.ComplexQueryController" />
 
   <bean id="openSessionInView" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
     <property name="sessionFactory">
