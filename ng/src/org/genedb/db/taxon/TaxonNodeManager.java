@@ -20,6 +20,7 @@
 package org.genedb.db.taxon;
 
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.PhylogenyDao;
 
 import org.gmod.schema.mapped.Phylonode;
@@ -38,6 +39,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class TaxonNodeManager implements InitializingBean {
+
+	private static Logger logger = Logger.getLogger(TaxonNodeManager.class);
 
     private PhylogenyDao phylogenyDao;
 
@@ -85,7 +88,7 @@ public class TaxonNodeManager implements InitializingBean {
                         tempNodes.add(tn);
                     }
                 } else {
-                    System.err.println("Skipping one - maybe Root?");
+                    logger.trace("Skipping one - maybe Root?");
 
                 }
             }
