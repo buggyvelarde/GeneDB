@@ -13,13 +13,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:testContext.xml"})
+@ContextConfiguration(locations={"classpath:testContext-query.xml"})
 public class SimpleNameQueryTest {
 
     @Autowired
     private SimpleNameQuery simpleNameQuery;
 
-   
+
     @SuppressWarnings("unchecked")
     @Test
     public void basic() throws QueryException {
