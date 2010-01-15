@@ -40,31 +40,31 @@ public class ProteinLengthQueryTest {
 
 
 	//@Test
-	public void testMinLengthValidation(){
-		ProteinLengthQuery query = new ProteinLengthQuery();
-		query.setMin(0);
-		Errors errors = new BindException(query, "query");
-		query.validate(query, errors);
-
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertTrue(errors.hasFieldErrors());
-		Assert.assertFalse(errors.hasGlobalErrors());
-		Assert.assertEquals(errors.getFieldError("min").getField(), "min");
-		Assert.assertEquals(errors.getFieldError("min").getDefaultMessage(),
-				"Min must be greater than or equal to 1. Bla bla bla");
-	}
+//	public void testMinLengthValidation(){
+//		ProteinLengthQuery query = new ProteinLengthQuery();
+//		query.setMin(0);
+//		Errors errors = new BindException(query, "query");
+//		query.validate(query, errors);
+//
+//		Assert.assertTrue(errors.hasErrors());
+//		Assert.assertTrue(errors.hasFieldErrors());
+//		Assert.assertFalse(errors.hasGlobalErrors());
+//		Assert.assertEquals(errors.getFieldError("min").getField(), "min");
+//		Assert.assertEquals(errors.getFieldError("min").getDefaultMessage(),
+//				"Min must be greater than or equal to 1. Bla bla bla");
+//	}
 
 	//@Test
-	public void testPositiveRangeValidation(){
-		ProteinLengthQuery query = new ProteinLengthQuery();
-		query.setMin(500);
-		query.setMax(400);
-		Errors errors = new BindException(query, "query");
-		query.validate(query, errors);
-
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertFalse(errors.hasFieldErrors());
-		Assert.assertTrue(errors.hasGlobalErrors());
-		Assert.assertEquals(errors.getGlobalError().getCode(), "min.greater.than.max");
-	}
+//	public void testPositiveRangeValidation(){
+//		ProteinLengthQuery query = new ProteinLengthQuery();
+//		query.setMin(500);
+//		query.setMax(400);
+//		Errors errors = new BindException(query, "query");
+//		query.validate(query, errors);
+//
+//		Assert.assertTrue(errors.hasErrors());
+//		Assert.assertFalse(errors.hasFieldErrors());
+//		Assert.assertTrue(errors.hasGlobalErrors());
+//		Assert.assertEquals(errors.getGlobalError().getCode(), "min.greater.than.max");
+//	}
 }
