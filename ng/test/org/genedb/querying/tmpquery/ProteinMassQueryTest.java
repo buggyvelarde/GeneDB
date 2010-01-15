@@ -12,8 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:testContext-query.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations={"classpath:testContext-query.xml"})
 public class ProteinMassQueryTest {
 
     @Autowired
@@ -21,7 +21,7 @@ public class ProteinMassQueryTest {
 
 
     @SuppressWarnings("unchecked")
-    @Test
+    //@Test
     public void basic() throws QueryException {
 
         proteinMassQuery.setMin(10);
