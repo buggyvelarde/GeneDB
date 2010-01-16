@@ -108,7 +108,7 @@
         <property name="luceneIndexList">
         <list>
             <bean class="org.genedb.querying.core.LuceneIndex">
-                <property name="indexDirectoryName" value="/Users/rn2/Downloads/tomcat-workspace/lucene" />
+                <property name="indexDirectoryName" value="/nfs/pathdb/.hudson/jobs/db-access-util-test2/lucene" />
                 <property name="indexName" value="org.gmod.schema.mapped.Feature" />
             </bean>
         </list>
