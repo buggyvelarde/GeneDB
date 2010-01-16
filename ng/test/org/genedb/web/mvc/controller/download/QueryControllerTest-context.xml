@@ -16,6 +16,9 @@
  		<property name="queryFactory" ref="queryFactory" />
  	</bean>
 
+  <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+
   <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
     <property name="queryNameMap">
       <map>
