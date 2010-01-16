@@ -1,6 +1,8 @@
 package org.genedb.querying.tmpquery;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -9,10 +11,12 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.NumericQueryVisibility;
 import org.springframework.validation.Errors;
 
+import com.google.common.collect.Maps;
+
 public class MockProteinLengthQuery implements Query {
 
 	private List<String> results = new ArrayList<String>();
-	
+
 	public void initResult(List<String> results){
 		this.results = results;
 	}
@@ -35,7 +39,7 @@ public class MockProteinLengthQuery implements Query {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {                
+	public void validate(Object target, Errors errors) {
 		return;
 	}
 
@@ -48,8 +52,7 @@ public class MockProteinLengthQuery implements Query {
 
 	@Override
 	public Map<String, Object> prepareModelData() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override
@@ -63,10 +66,10 @@ public class MockProteinLengthQuery implements Query {
         // TODO Auto-generated method stub
         return false;
     }
-    
+
     @Override
     public String getQueryName() {
         return "Mock Protein Length";
     }
-    
+
 }
