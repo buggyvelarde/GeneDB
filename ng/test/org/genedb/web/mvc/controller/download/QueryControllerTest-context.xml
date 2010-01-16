@@ -24,14 +24,14 @@
       <map>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC">
           <map>
-            <entry key="proteinLength" value-ref="proteinLengthQuery" />
+            <entry key="proteinLength" value-ref="proteinLength" />
           </map>
         </entry>
       </map>
     </property>
   </bean>
 
- 	<bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.MockProteinLengthQuery" scope="prototype" />
+ 	<bean name="proteinLength" class="org.genedb.querying.tmpquery.MockProteinLengthQuery" scope="prototype" />
 
  	<bean name="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor"/>
 
