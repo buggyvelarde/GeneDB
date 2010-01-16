@@ -16,9 +16,19 @@
  		<property name="queryFactory" ref="queryFactory" />
  	</bean>
 
- 	<bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
+  <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
+    <property name="queryNameMap">
+      <map>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC">
+          <map>
+            <entry key="proteinLength" value-ref="proteinLengthQuery" />
+          </map>
+        </entry>
+      </map>
+    </property>
+  </bean>
 
- 	<bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.MockProteinLengthQuery"/>
+ 	<bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.MockProteinLengthQuery" scope="prototype" />
 
  	<bean name="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor"/>
 
