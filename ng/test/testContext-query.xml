@@ -54,6 +54,10 @@
         <property name="password"><value></value></property>
     </bean>
 
+    <bean name="organismHeirachy" class="org.gmod.schema.cfg.OrganismHeirachy" init-method="afterPropertiesSet">
+      <property name="beanName" value="sessionFactory" />
+    </bean>
+
     <!-- DataSource Property -->
 <!--
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
