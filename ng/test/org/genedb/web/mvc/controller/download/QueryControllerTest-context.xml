@@ -10,15 +10,16 @@
   http://www.springframework.org/schema/util/spring-util-2.5.xsd
   http://www.springframework.org/schema/context
   http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-    default-init-method="postConstruction">   
-    
- 	<bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
- 	
- 	<bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
+    default-init-method="postConstruction">
+
+ 	<bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
+ 		<property name="queryFactory" ref="queryFactory" />
  	</bean>
- 	
+
+ 	<bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
+
  	<bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.MockProteinLengthQuery"/>
- 	
+
  	<bean name="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor"/>
- 	
+
 </beans>
