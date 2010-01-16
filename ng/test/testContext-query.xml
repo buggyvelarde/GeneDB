@@ -73,7 +73,7 @@
             <prop key="hibernate.bytecode.provider">javassist</prop>
             <prop key="hibernate.jdbc.batch_size">20</prop>
             <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-            <prop key="hibernate.search.default.indexBase">/Users/rn2/Downloads/tomcat-workspace/lucene</prop>
+            <prop key="hibernate.search.default.indexBase">/nfs/pathdb/.hudson/jobs/db-access-util-test2/lucene</prop>
         </props>
      </property>
     </bean>
