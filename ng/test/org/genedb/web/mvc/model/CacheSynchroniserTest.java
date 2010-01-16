@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class CacheSynchroniserTest extends AbstractUpdaterTest{
+public class CacheSynchroniserTest extends TestAbstractUpdater{
     Logger logger = Logger.getLogger(CacheSynchroniserTest.class);
     @Autowired
     private CacheSynchroniser cacheSynchroniser;
