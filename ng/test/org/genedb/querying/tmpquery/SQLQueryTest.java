@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:testContext-query.xml"})
+@ContextConfiguration(locations = { "classpath:testContext-query.xml" })
 public class SQLQueryTest {
 
 	private static final Logger logger = Logger.getLogger(SQLQueryTest.class);
@@ -36,53 +36,50 @@ public class SQLQueryTest {
 	private int count;
 
 	@Test
-	public void testProcessCallBack() throws ParseException
-	{
-		SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+	public void testProcessCallBack() throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = dateFormat.parse("2009-06-01");
 
 		dateWithAncestors.setDate(date);
 		dateWithAncestors.setOrganismId(14);
 
-		logger.info("Running SQL ChangedGeneFeaturesQuery with " + dateFormat.format(date) + " and an organismID of " + 14);
+		logger.info("Running SQL ChangedGeneFeaturesQuery with "
+				+ dateFormat.format(date) + " and an organismID of " + 14);
 
 		count = 0;
 
-		dateWithAncestors.processCallBack(new RowCallbackHandler(){
-            public void processRow(ResultSet rs) throws SQLException {
-            	int colNum = rs.getMetaData().getColumnCount();
-            	for (int i = 1; i <= colNum; i++)
-                {
-            		Assert.assertNotNull(rs.getObject(i));
-                }
-            	count++;
-            }
+		dateWithAncestors.processCallBack(new RowCallbackHandler() {
+			public void processRow(ResultSet rs) throws SQLException {
+				int colNum = rs.getMetaData().getColumnCount();
+				for (int i = 1; i <= colNum; i++) {
+					Assert.assertNotNull(rs.getObject(i));
+				}
+				count++;
+			}
 		});
 		logger.info("Counted " + count + " rows");
 		Assert.assertTrue(count > 0);
 	}
 
 	@Test
-	public void testProcess() throws ParseException
-	{
-		SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+	public void testProcess() throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = dateFormat.parse("2009-06-01");
 
 		dateWithAncestors.setDate(date);
 		dateWithAncestors.setOrganismId(14);
 
-		logger.info("Running SQL ChangedGeneFeaturesQuery with " + dateFormat.format(date) + " and an organismID of " + 14);
+		logger.info("Running SQL ChangedGeneFeaturesQuery with "
+				+ dateFormat.format(date) + " and an organismID of " + 14);
 
 		Result results = dateWithAncestors.process();
 
 		count = 0;
 
-		for (Object result : results)
-		{
+		for (Object result : results) {
 			Object[] objectArray = (Object[]) result;
 			StringBuffer sb = new StringBuffer();
-			for (Object obj : objectArray)
-			{
+			for (Object obj : objectArray) {
 				sb.append(obj);
 				sb.append("\t");
 			}
