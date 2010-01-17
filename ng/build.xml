@@ -35,6 +35,8 @@
         <pathelement location="${dist.dir}/test.jar"/>
 	</path>
 
+    <import file="test.xml"/>
+
 	<!-- General targets -->
 
 
@@ -269,8 +271,7 @@
 	  <target name="run-util-tests" depends="fulljar, compile-all">
 	    <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
 	      <classpath>
-	        <path refid="test-jars"/>
-	        <pathelement location="${imported.basedir.util}/ant-build/test-classes"/>
+	        <path refid="allandtest" />
 	      </classpath>
 	      <batchtest>
 	        <fileset dir="${imported.basedir.util}/ant-build/test-classes">
@@ -283,7 +284,7 @@
     <target name="run-db-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
       <junit printsummary="yes" haltonfailure="yes" fork="true">
         <jvmarg value="-Xmx512m"/>
-        <jvmarg value="-classic"/>
+        <jvmarg value="-client"/>
         <classpath>
             <path refid="allandtest"/>
         </classpath>
