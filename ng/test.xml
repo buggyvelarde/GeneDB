@@ -3,9 +3,7 @@
 <project name="ng.test">
 
     <path id="test-classpath">
-        <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
-        <pathelement location="${genedb-access.jar}"/>
-        <path refid="exec-classpath"/>
+        <path refid="allandtest"/>
     </path>
 
 	<!--
