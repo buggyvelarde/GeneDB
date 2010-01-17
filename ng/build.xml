@@ -131,24 +131,6 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="compile-and-iajc-target" description="Compile and weave a module">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<attribute name="classpathref" default="@{project}-classpath"/>
-		<sequential>
-			<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-				<classpath refid="aspectj-tools-classpath"/>
-			</taskdef>
-			<iajc
-        sourceRoots="@{topdir}/src"
-        source="1.6"
-        target="1.6"
-        verbose="true"
-        destDir="@{topdir}/${classes.dir}"
-        classpathref="@{classpathref}" />
-		</sequential>
-	</macrodef>
-
 
 	<macrodef name="jar-target" description="Make a distribution JAR">
 		<attribute name="project" />
@@ -284,7 +266,19 @@
         </jar>
     </target>
 
-
+	  <target name="run-util-tests" depends="fulljar, compile-all">
+	    <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
+	      <classpath>
+	        <path refid="test-jars"/>
+	        <pathelement location="${imported.basedir.util}/ant-build/test-classes"/>
+	      </classpath>
+	      <batchtest>
+	        <fileset dir="${imported.basedir.util}/ant-build/test-classes">
+	          <include name="**/*Test.*" />
+	        </fileset>
+	      </batchtest>
+	    </junit>
+	  </target>
 
     <target name="run-db-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
       <junit printsummary="yes" haltonfailure="yes" fork="true">
@@ -459,19 +453,6 @@
 		</iajc>
 		</target>
 
-<!--
-	<macrodef name="iajc-target" description="Compile-time aspectj weaving">
-		<attribute name="project" />
-		<attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
-		<attribute name="from-directory" default="@{directory}"/>
-		<attribute name="to-directory" default="@{directory}"/>
-		<attribute name="classpathref" default="@{project}-classpath"/>
-		<sequential>
-			<antcall target="lib-populate-lib-dir" />
-
-		</sequential>
-	</macrodef>
--->
 
 	  <target name="compile-javac" depends="populate-lib-dirs"
 	        description="--> Compile classes" >
