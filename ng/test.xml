@@ -6,6 +6,12 @@
         <path refid="allandtest"/>
     </path>
 
+	<path id="allandtest2">
+	        <!--<path refid="classpathref"/>-->
+	    <pathelement location="ant-build/dist/ng.jar"/>
+        <pathelement location="ant-build/dist/test.jar"/>
+	</path>
+
 	<!--
     <target name="compile-tests" depends="fulljar">
       <mkdir dir="${imported.basedir.access}/${build.dir}/test-classes"/>
@@ -27,7 +33,7 @@
 
     <target name="file-test">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
-            <classpath refid="test-classpath"/>
+            <classpath refid="allandtest2"/>
             <formatter type="brief" usefile="false" />
             <test name="org.genedb.db.loading.FastaFileTest"/>
             <test name="org.genedb.db.loading.EmblFileTest"/>
