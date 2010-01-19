@@ -217,6 +217,18 @@
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
+    <target name="copy-skeleton-database" depends="does-skeleton-database-exist">
+        <fail unless="db.skeleton.exists" message="The skeleton test database does not exist in genedb-db" />
+        <copy todir="test/access-data" overwrite="true">
+            <fileset dir="test-data/hsqldb" includes="skeleton.*"/>
+        </copy>
+    </target>
+
+    <target name="does-skeleton-database-exist">
+        <available property="db.skeleton.exists" file="test-data/hsqldb/skeleton.data"/>
+    </target>
+
+
 
     <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
         <antcall target="make-pfalciparum-database"/>
