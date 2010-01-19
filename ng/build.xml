@@ -217,7 +217,7 @@
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
-    <target name="copy-skeleton-database" depends="does-skeleton-database-exist">
+    <target name="copy-skeleton-database" depends="make-skeleton-database-if-necessary">
         <fail unless="db.skeleton.exists" message="The skeleton test database does not exist in genedb-db" />
         <copy todir="test/access-data" overwrite="true">
             <fileset dir="test-data/hsqldb" includes="skeleton.*"/>
@@ -226,6 +226,20 @@
 
     <target name="does-skeleton-database-exist">
         <available property="db.skeleton.exists" file="test-data/hsqldb/skeleton.data"/>
+    </target>
+    <target name="make-skeleton-database-if-necessary" depends="does-skeleton-database-exist" unless="db.skeleton.exists">
+        <antcall target="make-skeleton-database"/>
+    </target>
+    <target name="make-skeleton-database" depends="fulljar,make-test-jar">
+        <java fork="true" dir="${imported.basedir.db}" output="make-skeleton-database.log"
+                maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+            <classpath refid="allandtest"/>
+            <jvmarg line="-server" />
+            <arg value="${source.url}"/>
+            <arg value="${source.username}"/>
+            <arg value="${source.password}"/>
+            <arg value="skeleton"/>
+        </java>
     </target>
 
 
