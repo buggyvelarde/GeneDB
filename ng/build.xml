@@ -273,6 +273,21 @@
             <classpath refid="all" />
         </javac>
 
+
+    		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+    			<classpath refid="aspectj-tools-classpath"/>
+    		</taskdef>
+
+    		<iajc
+        verbose="true" nowarn="false"
+        inpath="${build.dir}/test-classes"
+        aspectpathref="classpathref"
+        classpathRef ="classpathref"
+        destdir="${build.dir}/test-classes" maxmem="1024M" fork="true">
+
+    			<forkclasspath refid="aspectj-tools-classpath"/>
+    		</iajc>
+
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
 
