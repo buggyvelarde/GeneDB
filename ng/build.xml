@@ -237,7 +237,7 @@
     </target>
 
 
-    <target name="make-test-jar" depends="fulljar">
+    <target name="make-test-jar" depends="fulljar, check-config">
         <copy todir="${build.dir}/test">
             <fileset dir="test"/>
         </copy>
@@ -251,6 +251,9 @@
 
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
+
+        <copy todir="${build.dir}/test-classes" overwrite="true"
+            file="property-file.${config}"/>
 
 
         <copy todir="${build.dir}/test-classes" overwrite="true">
