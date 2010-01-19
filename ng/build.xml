@@ -252,7 +252,7 @@
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
 
-        <copy todir="${build.dir}/test-classes" overwrite="true"
+        <copy tofile="${build.dir}/test-classes/project.properties" overwrite="true"
             file="property-file.${config}"/>
 
 
