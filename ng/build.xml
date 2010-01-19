@@ -218,7 +218,7 @@
     </target>
 
     <target name="copy-pfalciparum-database" depends="make-pfalciparum-database-if-necessary">
-        <copy todir="test-access/data" overwrite="true">
+        <copy todir="test/access-data" overwrite="true">
             <fileset dir="test-data/hsqldb" includes="pfalciparum.*"/>
         </copy>
     </target>
