@@ -35,7 +35,18 @@
 	-->
 
     <target name="all-tests"
-    	depends="file-test,location-test,embl-test,ortho-test,domainloader-test"/>
+    	depends="include-properties, file-test,location-test,embl-test,ortho-test,domainloader-test"/>
+
+	<target name="include-properties">
+    	<copy tofile="${build.dir}/resources/project.properties" overwrite="true"
+        	file="property-file.${config}"/>
+	</target>
+
+	<path id="allandtest2">
+        <path refid="allandtst"/>
+        <pathelement location="${build.dir}/resources/project.properties"/>
+	</path>
+
 
     <target name="file-test">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">

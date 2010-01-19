@@ -73,6 +73,7 @@
 			<mkdir dir="@{topdir}/${classes.dir}" />
 			<mkdir dir="@{topdir}/${test-classes.dir}" />
 			<mkdir dir="@{topdir}/${lib.dir}" />
+
 			<available property="@{project}.ivy-timestamp-exists" file="@{topdir}/${lib.dir}/ivy.timestamp.txt" />
 		</sequential>
 	</macrodef>
@@ -237,7 +238,7 @@
     </target>
 
 
-    <target name="make-test-jar" depends="fulljar, check-config">
+    <target name="make-test-jar" depends="fulljar">
         <copy todir="${build.dir}/test">
             <fileset dir="test"/>
         </copy>
@@ -251,9 +252,6 @@
 
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
-
-        <copy tofile="${build.dir}/test-classes/project.properties" overwrite="true"
-            file="property-file.${config}"/>
 
 
         <copy todir="${build.dir}/test-classes" overwrite="true">
@@ -364,6 +362,7 @@
 			<mkdir dir="${dist.dir}" />
 			<mkdir dir="${classes.dir}" />
 			<mkdir dir="${test-classes.dir}" />
+			<mkdir dir="${build.dir}/resources" />
 			<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
 			<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
 	</target>
