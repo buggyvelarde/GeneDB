@@ -281,8 +281,8 @@
     		<iajc
         verbose="true" nowarn="false"
         inpath="${build.dir}/test-classes"
-        aspectpathref="classpathref"
-        classpathRef ="classpathref"
+        aspectpathref="all"
+        classpathRef ="all"
         destdir="${build.dir}/test-classes" maxmem="1024M" fork="true">
 
     			<forkclasspath refid="aspectj-tools-classpath"/>
