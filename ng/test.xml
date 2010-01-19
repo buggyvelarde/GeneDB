@@ -43,7 +43,7 @@
 	</target>
 
 	<path id="allandtest2">
-        <path refid="allandtst"/>
+        <path refid="allandtest"/>
         <pathelement location="${build.dir}/resources/project.properties"/>
 	</path>
 
