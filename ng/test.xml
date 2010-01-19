@@ -44,7 +44,7 @@
 
 	<path id="allandtest3">
         <path refid="allandtest2"/>
-        <pathelement location="${build.dir}/resources/project.properties"/>
+        <pathelement location="${build.dir}/resources"/>
 	</path>
 
 
