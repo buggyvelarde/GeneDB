@@ -42,9 +42,10 @@
         	file="property-file.${config}"/>
 	</target>
 
-	<path id="allandtest3">
+	<path id="allandtest4">
         <path refid="allandtest2"/>
         <pathelement location="${build.dir}/resources"/>
+        <pathelement location="resources"/>
 	</path>
 
 
