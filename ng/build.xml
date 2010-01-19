@@ -294,6 +294,7 @@
         <batchtest>
           <fileset dir="${build.dir}/test-classes">
             <include name="**/*Test.*" />
+          	<exclude name="**/org/genedb/db/loading/**/*Test.*" />
           </fileset>
         </batchtest>
       </junit>
