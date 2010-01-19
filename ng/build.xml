@@ -231,7 +231,7 @@
         <antcall target="make-skeleton-database"/>
     </target>
     <target name="make-skeleton-database" depends="fulljar,make-test-jar">
-        <java fork="true" dir="${imported.basedir.db}" output="make-skeleton-database.log"
+        <java fork="true" dir="${ng.directory}" output="make-skeleton-database.log"
                 maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="allandtest"/>
             <jvmarg line="-server" />
