@@ -218,20 +218,19 @@
     </target>
 
     <target name="copy-skeleton-database" depends="make-skeleton-database-if-necessary">
-        <fail unless="db.skeleton.exists" message="The skeleton test database does not exist in genedb-db" />
         <copy todir="test/access-data" overwrite="true">
             <fileset dir="test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
 
     <target name="does-skeleton-database-exist">
-        <available property="db.skeleton.exists" file="test-data/hsqldb/skeleton.data"/>
+        <available property="db.skeleton.exists" file="${ng.directory}/test-data/hsqldb/skeleton.data"/>
     </target>
     <target name="make-skeleton-database-if-necessary" depends="does-skeleton-database-exist" unless="db.skeleton.exists">
         <antcall target="make-skeleton-database"/>
     </target>
     <target name="make-skeleton-database" depends="fulljar,make-test-jar">
-        <java fork="true" dir="${ng.directory}" output="make-skeleton-database.log"
+        <java fork="true" dir="${ng.directory}" output="make-skeleton-database.txt"
                 maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="allandtest"/>
             <jvmarg line="-server" />
@@ -242,8 +241,6 @@
         </java>
     </target>
 
-
-
     <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
         <antcall target="make-pfalciparum-database"/>
     </target>
@@ -251,7 +248,7 @@
         <available property="db.pfalciparum.exists" file="${ng.directory}/test-data/hsqldb/pfalciparum.data"/>
     </target>
     <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
-        <java fork="true" dir="${ng.directory}" output="make-pfalciparum-database.log"
+        <java fork="true" dir="${ng.directory}" output="make-pfalciparum-database.txt"
                 maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="allandtest"/>
             <jvmarg line="-server" />
@@ -390,6 +387,7 @@
 			<mkdir dir="${classes.dir}" />
 			<mkdir dir="${test-classes.dir}" />
 			<mkdir dir="${build.dir}/resources" />
+			<mkdir dir="test/access-data" />
 			<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
 			<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
 	</target>
