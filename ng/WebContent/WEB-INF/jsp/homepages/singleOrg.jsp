@@ -8,28 +8,32 @@
 <br>
 
 
+<script>
 
+function updateContent(elementID, prefix, label) {
+    //url = "http://localhost:6666/wiki/page.json?name=" + prefix + "_" + label + "&callback=?";
+    url = "http://www.genedb.org/testservice/wiki/page.json?name=" + prefix + "_" + label + "&callback=?";
+    $.getJSON(url , function(data) {
+        if (data.response.data) {
+            $(elementID).html(data.response.data);
+        }
+    });
+}
+
+$(document).ready(function() {
+    updateContent("#readableContent", "Organism", "${label}");
+    updateContent("#readableContentLinks", "OrganismLinks", "${label}");
+});
+
+
+</script>
 
   
 <div id="col-1-1">  
-
-	<div class="readableText">
-	
-		<h1>${full} Genome Project</h1>
-	
-		<c:catch var="e">
-			<jsp:include page="organisms/Organism_${label}.jsp" />
-		</c:catch>
-		<c:if test="${e!=null}">
-		  The ${full} genome has been loaded into GeneDB. At this moment, we have not yet 
-		  entered the details of this sequencing project. If you are one of the contributors
-		  to this project and you would like to help with this page, 
-		  then please get <a href="mailto:webmaster@genedb.org">email us</a> with some copy, which
-		  we can then edit to make more consistent with the rest of the site.  
-		</c:if>
-	
-	</div>
-
+    <div class="readableText">
+        <h1>${full} Genome Project</h1>
+        <div id="readableContent"></div>
+    </div>
 </div>
   
 
@@ -43,26 +47,19 @@
     </div>
     <div class="light-grey-bot"></div>
     
-	
-	<h2>Links</h2>
-	
-	<div class="baby-blue-top"></div>
-		<div class="baby-blue">
-			<c:catch var="e2">
-	        <jsp:include page="organisms/OrganismLinks_${label}.jsp" />
-	        </c:catch>
-	        <c:if test="${e2!=null}">
-	           <p>Ftp <br />
-	           &raquo; <a href="ftp://ftp.sanger.ac.uk/pub/pathogens/">sequence data</a>
-	           </p>
-	        </c:if>
-		</div>
-	<div class="baby-blue-bot"></div>
-	
-	
-	
-	
-	
+    
+    <h2>Links</h2>
+
+    <div class="baby-blue-top"></div>
+        <div class="baby-blue">
+            <div id="readableContentLinks" ></div>
+        </div>
+    <div class="baby-blue-bot"></div>
+
+
+
+
+
 </div>
 
 
