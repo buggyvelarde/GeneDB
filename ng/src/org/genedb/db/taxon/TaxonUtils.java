@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.genedb.web.mvc.controller.Taxon;
 import org.springframework.util.StringUtils;
 
 public class TaxonUtils {
@@ -67,10 +66,6 @@ public class TaxonUtils {
         return ret.toString();
     }
 
-    public static Taxon getTaxonFromList(List<String> answers, int i) {
-        // TODO Auto-generated method stub
-        return new Taxon();
-    }
 
     public void setTnm(TaxonNodeManager tnm) {
         TaxonUtils.tnm = tnm;
