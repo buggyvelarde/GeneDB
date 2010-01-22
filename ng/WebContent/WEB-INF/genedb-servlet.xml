@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:security="http://www.springframework.org/schema/security"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+  	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+  	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd"
   default-init-method="postConstruction">
 
   <!--
@@ -15,6 +21,18 @@
   <context:spring-configured />
   <context:mbean-export />
 
+
+  <bean name="gConversionService" class="org.genedb.util.GeneDBFormattingConversionServiceFactoryBean">
+  	<property name="formatters">
+  		<map>
+  		<entry key="org.genedb.db.taxon.TaxonNodeList" value-ref="taxonNodeListFormatter" />
+  		</map>
+  	</property>
+  </bean>
+
+  <bean name="genedbWebBindingInitializer" class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+  	<property name="conversionService" ref="gConversionService" />
+  </bean>
 
   <!--
     ============================= VIEW RESOLVERS
@@ -76,15 +94,7 @@
 
 
   <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-    <!-- FIXME STS complains where is superclass -->
     <property name="templateLoaderPath" value="/WEB-INF/freemarker" />
-  </bean>
-
-  <bean class="org.genedb.web.mvc.view.UriSuffixServiceViewResolver">
-    <property name="order" value="4" />
-    <property name="serviceView">
-      <bean class="org.genedb.web.mvc.view.ServiceView" />
-    </property>
   </bean>
 
   <!--
@@ -94,17 +104,21 @@
 
   <bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
-    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+    <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" /> -->
   </bean>
 
-<!--
-  <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1">
+  <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1_1">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
     <property name="queryFactory" ref="queryFactory" />
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
     <property name="sequenceDao" ref="sequenceDao" />
+    <property name="validExtensions">
+    	<set>
+    		<value>xml</value>
+    		<value>json</value>
+    	</set>
+    </property>
   </bean>
--->
 
   <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
@@ -126,7 +140,7 @@
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
   </bean>
 
   <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >
@@ -329,7 +343,10 @@
 
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
     <property name="alwaysUseFullPath" value='true' />
+    <property name="webBindingInitializer" ref="genedbWebBindingInitializer" />
   </bean>
+
+
 
 
   <!--
@@ -338,12 +355,8 @@
   -->
 
   <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
-    <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
+    <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" /> -->
     <property name="cvDao" ref="cvDao" />
-  </bean>
-
-  <bean id="taxonNodeListFormatter" class="org.genedb.db.taxon.TaxonNodeListFormatter">
-    <property name="taxonNodeManager" ref="taxonNodeManager" />
   </bean>
 
   <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
@@ -404,7 +417,7 @@
   <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
   </bean>
 
 
@@ -470,7 +483,7 @@
     <property name="sequenceView" value="download/featureDownload" />
     <!-- <property name="formView" value="search/featureDownload" /> -->
     <!-- <property name="bindOnNewForm" value="true" /> -->
-    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
     <!-- <property name="cacheSeconds" value="86400" /> -->
   </bean>
 
