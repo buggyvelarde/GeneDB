@@ -20,7 +20,6 @@
 package org.genedb.web.utils;
 
 import org.genedb.web.mvc.controller.Strand;
-import org.genedb.web.mvc.controller.Taxon;
 
 import org.gmod.schema.mapped.Feature;
 
@@ -32,17 +31,17 @@ import java.util.List;
 
 public class Gff3Utils {
 
-    public void exportGff3(Writer w, Taxon taxon, boolean internal) throws IOException {
-        // TODO Get all top level features and call other export Gff3 method with top not true
-        // Write sequence for all top level features as fasta
-        List<Feature> top = null;
-        for (Feature feature : top) {
-            exportGff3(w, feature, false, internal);
-        }
-        for (Feature feature : top) {
-            //FastaUtils.exportFeatureFasta(w, false, feature);
-        }
-    }
+//    public void exportGff3(Writer w, Taxon taxon, boolean internal) throws IOException {
+//        // TODO Get all top level features and call other export Gff3 method with top not true
+//        // Write sequence for all top level features as fasta
+//        List<Feature> top = null;
+//        for (Feature feature : top) {
+//            exportGff3(w, feature, false, internal);
+//        }
+//        for (Feature feature : top) {
+//            //FastaUtils.exportFeatureFasta(w, false, feature);
+//        }
+//    }
 
 
     public static String URLencode(String text) {
