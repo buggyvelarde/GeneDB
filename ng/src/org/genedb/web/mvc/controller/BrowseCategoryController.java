@@ -21,7 +21,6 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeListFormatter;
 import org.genedb.querying.tmpquery.BrowseCategory;
@@ -69,8 +68,6 @@ public class BrowseCategoryController extends BaseController {
 
     private CvDao cvDao;
 
-    //@Autowired
-    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
 
 
@@ -181,8 +178,4 @@ public class BrowseCategoryController extends BaseController {
         this.successView = successView;
     }
 
-
-    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
-        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
-    }
 }
