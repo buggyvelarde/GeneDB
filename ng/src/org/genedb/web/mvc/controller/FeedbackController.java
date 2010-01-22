@@ -35,7 +35,7 @@ import java.net.URI;
  */
 @Controller
 @RequestMapping("/Feedback")
-public class FeedbackController extends TaxonNodeBindingFormController {
+public class FeedbackController {
      private static final Logger logger = Logger.getLogger(FeedbackController.class);
 
     private String formView = "feedback/general";
