@@ -4,20 +4,43 @@
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:security="http://www.springframework.org/schema/security"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd"
 
     default-init-method="postConstruction">
 
     <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core" />
     <context:spring-configured/>
-    <!-- <context:load-time-weaver/> --> 
+    <!-- <context:load-time-weaver/> -->
     <context:property-placeholder location="classpath:project.properties" />
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
     <tx:annotation-driven mode="aspectj"/>
+
+<!--
+    <security:http auto-config="true">
+        <security:intercept-url pattern="/includes/**" filters="none"/> -->
+        <!-- <security:intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/> -->
+    <!--	<security:intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+    	<security:intercept-url pattern="/**" access="ROLE_USER" />
+    	<security:remember-me key="AmyPond"/> -->
+    	<!-- <security:form-login login-page='/login.jsp' default-target-url='/Homepage' always-use-default-target="true" authentication-failure-url="/login.jsp?login_error=1"/> -->
+	<!-- </security:http>
+
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider>
+			--> <!-- For testing just use the simpler password system --><!--
+			<security:user-service>
+				<security:user name="art" password="art" authorities="ROLE_USER, ROLE_ADMIN"/>
+				<security:user name="user" password="user" authorities="ROLE_USER"/>
+		</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+-->
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
@@ -37,17 +60,22 @@
         <property name="allowCreate" value="true" />
     </bean>
 
-
+<!--
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
+-->
+
+  <bean name="taxonNodeListFormatter" class="org.genedb.db.taxon.TaxonNodeListFormatter">
+  	<property name="taxonNodeManager" ref="taxonNodeManager" />
+  </bean>
 
     <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <!-- <property name="sessionFactory" ref="sessionFactory" /> -->
     </bean>
 
-    <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
+    <bean id="taxonUtils" class="org.genedb.db.taxon.TaxonUtils">
         <property name="tnm" ref="taxonNodeManager" />
     </bean>
 

@@ -21,7 +21,7 @@
   <context:spring-configured />
   <context:mbean-export />
 
-
+  <!-- Don't use a well known name here  -->
   <bean name="gConversionService" class="org.genedb.util.GeneDBFormattingConversionServiceFactoryBean">
   	<property name="formatters">
   		<map>
