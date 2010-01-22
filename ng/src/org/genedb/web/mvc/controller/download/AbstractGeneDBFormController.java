@@ -8,7 +8,6 @@ import java.util.TreeMap;
 import javax.servlet.ServletRequest;
 
 import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
@@ -33,12 +32,12 @@ public class AbstractGeneDBFormController {
     }
 
 
-    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
-        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
-    }
-
-    //@Autowired
-    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
+//    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+//        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+//    }
+//
+//    //@Autowired
+//    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
     protected List<GeneSummary> possiblyConvertList(List results) {
         List<GeneSummary> gs;
@@ -103,7 +102,7 @@ public class AbstractGeneDBFormController {
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+        //binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
 
         binder.bind(request);
 
