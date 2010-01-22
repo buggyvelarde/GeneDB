@@ -3,6 +3,8 @@ package org.genedb.db.taxon;
 
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.google.common.collect.Lists;
 
 public class TaxonNodeList {
@@ -14,7 +16,6 @@ public class TaxonNodeList {
     }
 
     public TaxonNodeList(TaxonNode node) {
-        this();
         nodes.add(node);
     }
 
@@ -24,6 +25,10 @@ public class TaxonNodeList {
 
     public void add(TaxonNode node) {
         nodes.add(node);
+    }
+
+    public String toString() {
+    	return StringUtils.collectionToCommaDelimitedString(nodes);
     }
 
 }

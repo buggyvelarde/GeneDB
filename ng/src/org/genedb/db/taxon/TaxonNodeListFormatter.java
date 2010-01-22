@@ -1,6 +1,7 @@
 package org.genedb.db.taxon;
 
 
+import org.apache.log4j.Logger;
 import org.springframework.format.Formatter;
 import org.springframework.util.StringUtils;
 
@@ -8,6 +9,8 @@ import java.text.ParseException;
 import java.util.Locale;
 
 public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
+
+	private Logger logger = Logger.getLogger(TaxonNodeListFormatter.class);
 
     private TaxonNodeManager taxonNodeManager;
 
@@ -27,6 +30,8 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
 
     @Override
     public TaxonNodeList parse(String text, Locale locale) throws ParseException {
+    	System.err.println("The input text is '"+text+"'");
+    	logger.error("The input text is '"+text+"'");
         if (! StringUtils.hasText(text)) {
             return new TaxonNodeList(taxonNodeManager.getTaxonNodeByString("Root", false));
         }
