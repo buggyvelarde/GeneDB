@@ -44,6 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.sleepycat.collections.StoredMap;
 
 /**
@@ -62,13 +64,14 @@ import com.sleepycat.collections.StoredMap;
 @Controller
 @RequestMapping("/feature")
 //@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
-public class NamedFeatureController extends TaxonNodeBindingFormController {
+public class NamedFeatureController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private SequenceDao sequenceDao;
     private String formView;
     private String geneView;
     private String geneDetailsView;
+    private Set<String> validExtensions = Sets.newHashSet();
     private int cacheHit = 0;
     private int cacheMiss = 0;
 
@@ -78,8 +81,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     private ResultsCacheFactory resultsCacheFactory;
 
-
-    @Override
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
@@ -94,7 +95,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             ) throws Exception {
 
 
-        Pair<String, String> pair = parseExtension(nameAndExtension);
+        Pair<String, String> pair = GeneDBWebUtils.parseExtension(nameAndExtension, validExtensions);
         String name = pair.getFirst();
         String extension = pair.getSecond();
         logger.warn("Trying to find NamedFeature of '"+name+"'");
