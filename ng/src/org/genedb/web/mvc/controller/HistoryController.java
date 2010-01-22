@@ -4,8 +4,6 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
-import org.genedb.web.mvc.history.commandline.HistoryParser;
-import org.genedb.web.mvc.history.commandline.ParseException;
 import org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver;
 
 import org.apache.log4j.Logger;
@@ -403,6 +401,7 @@ public class HistoryController {
     // this.pubHome = pubHome;
     // }
 
+    // FIXME - Not working
     public ModelAndView ParseCommand(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -420,19 +419,19 @@ public class HistoryController {
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
 
         String command = null;
-        HistoryParser historyParser = new HistoryParser(new StringReader(command));
-        historyParser.setHistoryManager(historyManager);
+        //HistoryParser historyParser = new HistoryParser(new StringReader(command));
+        //historyParser.setHistoryManager(historyManager);
 
-        HistoryItem historyItem = null;
-        try {
-            historyItem = historyParser.Start();
-        } catch (NumberFormatException exp) {
+        //HistoryItem historyItem = null;
+        //try {
+        //    historyItem = historyParser.Start();
+        //} catch (NumberFormatException exp) {
             // TODO Auto-generated catch block
-            exp.printStackTrace();
-        } catch (ParseException exp) {
+        //    exp.printStackTrace();
+        //} catch (ParseException exp) {
             // TODO Auto-generated catch block
-            exp.printStackTrace();
-        }
+        //    exp.printStackTrace();
+        //}
 
         //historyManager.addHistoryItems("merged", historyItem.getIds());
         return new ModelAndView("redirect:/History/View");
