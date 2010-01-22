@@ -107,6 +107,7 @@
     <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" /> -->
   </bean>
 
+<!--
   <bean id="GmodRestController" class="org.genedb.web.mvc.controller.GmodRestControllerV1_1">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
     <property name="queryFactory" ref="queryFactory" />
@@ -119,6 +120,7 @@
     	</set>
     </property>
   </bean>
+-->
 
   <!-- <bean id="commonUrlController" class="org.genedb.web.mvc.controller.CommonUrlController" /> -->
 
