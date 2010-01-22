@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
 import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.ProductiveTranscript;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-public class FeatureDownloadController extends TaxonNodeBindingFormController{
+public class FeatureDownloadController {
 
     private SequenceDao sequenceDao;
     private String sequenceView;
