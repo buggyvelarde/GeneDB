@@ -23,7 +23,7 @@ import org.genedb.web.mvc.controller.download.OutputFormat;
 
 public class RegionCommand {
     String name;
-    Taxon organism;
+    //Taxon organism;
     int min;
     int max;
     boolean truncateEndFeatures;
@@ -52,17 +52,17 @@ public class RegionCommand {
     public void setOf(OutputFormat of) {
         this.of = of;
     }
-    public Taxon getOrganism() {
-        return this.organism;
-    }
-    public void setOrganism(Taxon organism) {
-        this.organism = organism;
-    }
+//    public Taxon getOrganism() {
+//        return this.organism;
+//    }
+//    public void setOrganism(Taxon organism) {
+//        this.organism = organism;
+//    }
     public boolean isTruncateEndFeatures() {
         return this.truncateEndFeatures;
     }
     public void setTruncateEndFeatures(boolean truncateEndFeatures) {
         this.truncateEndFeatures = truncateEndFeatures;
     }
-    
+
 }
