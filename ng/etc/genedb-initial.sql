@@ -315,3 +315,37 @@ insert into phylotree (dbxref_id, name, type_id, comment) values (
         (select cvterm_id from cvterm where name='taxonomy'),
         'GeneDB organism hierarchy'
 );
+
+--
+-- ----------------------
+-- --- Graph tables
+-- ----------------------
+
+CREATE SCHEMA graph;
+
+CREATE SEQUENCE graph.graph_graph_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+SELECT pg_catalog.setval('graph.graph_graph_id_seq', 1, false);
+
+
+CREATE TABLE graph.graph (
+        graph_id integer PRIMARY KEY DEFAULT
+nextval('graph.graph_graph_id_seq'::regclass),
+        feature_id integer NOT NULL,
+        name varchar(255) NOT NULL,
+        description text,
+        data OID
+);
+
+ALTER TABLE ONLY graph.graph
+  ADD CONSTRAINT feature_id_fkey FOREIGN KEY (feature_id) REFERENCES
+feature(feature_id) ON CASCADE DELETE;
+
+
+
+
