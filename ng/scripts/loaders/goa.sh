@@ -25,7 +25,7 @@ doLoad() {
     debug=false
 
     OPTIND=0
-    while getopts "d$stdopts" option; do
+    while getopts "dx:$stdopts" option; do
         case "$option" in
         d)  debug=true
             ;;
