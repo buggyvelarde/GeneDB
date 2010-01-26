@@ -19,6 +19,7 @@ join featureloc subloc on subloc.feature_id = sub.feature_id
 where reltype.name = 'part_of'
 and superloc.locgroup = subloc.locgroup
 and superloc.srcfeature_id = subloc.srcfeature_id
+and organism.organism_id=27
 group by organism.common_name, supertype.name, super.uniquename, superloc.fmax
 having superloc.fmax <> max(subloc.fmax)
 order by organism.common_name
