@@ -1,5 +1,6 @@
  
-#Checks that all transcript components lie within the transcript
+#Checks that all transcript components (exons, utrs and promoters) lie within the 
+#boundaries of the transcript
 
 
 select locsub.feature_id as sub_id
@@ -16,14 +17,16 @@ join feature_relationship sub_transcript on sub_transcript.subject_id = sub.feat
 join feature transcript on sub_transcript.object_id = transcript.feature_id
 join featureloc loctranscript on loctranscript.feature_id = transcript.feature_id
 where transcript.type_id in (
-      321 
-    , 339 
-    , 340 
-    , 361 
-    , 604 
+        select cvterm_id 
+        from cvterm
+        where name in ('snRNA', 'tRNA', 'transcript', 'pseudogenic_transcript', 'rRNA', 'mRNA')
+ 
 )
- and locsub.srcfeature_id = loctranscript.srcfeature_id
- and (locsub.fmax > loctranscript.fmax
-   or locsub.fmin < loctranscript.fmin)
- and sub.type_id <> 191 
+and (locsub.fmax > loctranscript.fmax
+     or locsub.fmin < loctranscript.fmin)
+and locsub.srcfeature_id = loctranscript.srcfeature_id
+and sub_transcript.type_id = (select cvterm_id
+                              from cvterm
+                              where name='part_of')
+order by transcript_uniquename
 ;
