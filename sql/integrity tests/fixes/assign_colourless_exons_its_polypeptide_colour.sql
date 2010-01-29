@@ -1,7 +1,8 @@
-insert into featureprop (feature_id, type_id, value) 
-select exon.feature_id as feature_id,
+insert into featureprop (feature_id, type_id, value, rank) 
+select distinct exon.feature_id as feature_id,
      polypeptide_colour_term.cvterm_id as type_id, 
-     polypeptide_colour.value as value
+     polypeptide_colour.value as value,
+     polypeptide_colour.rank as rank
 from feature exon
 join feature_relationship exon_transcript on exon.feature_id = exon_transcript.subject_id
 join feature transcript on transcript.feature_id = exon_transcript.object_id
