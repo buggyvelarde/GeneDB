@@ -21,6 +21,6 @@ and superloc.locgroup = subloc.locgroup
 and superloc.srcfeature_id = subloc.srcfeature_id
 and organism.organism_id=27
 group by organism.common_name, supertype.name, super.uniquename, superloc.fmax
-having superloc.fmax <> max(subloc.fmax)
+having superloc.fmax < max(subloc.fmax)
 order by organism.common_name
 ;
