@@ -1,6 +1,7 @@
 #Checks if the fmax values of any features are within the fmax value
 #of the feature it is contained in. In principle there could be legitimate cases where this fails.
-#If any such arise, they should be systematically excluded, e.g. by type.
+#If any such arise, they should be systematically excluded, e.g. by type. For now the LMexicana
+#data are ignored since the new genome will be added soon (1.2.2010)
 
 select organism.common_name
      , supertype.name
@@ -20,6 +21,7 @@ where reltype.name = 'part_of'
 and superloc.locgroup = subloc.locgroup
 and superloc.srcfeature_id = subloc.srcfeature_id
 and superloc.strand = subloc.strand
+and organism.common_name != 'Lmexicana' 
 group by organism.common_name, supertype.name, super.uniquename, superloc.fmax
 having superloc.fmax < max(subloc.fmax)
 order by organism.common_name
