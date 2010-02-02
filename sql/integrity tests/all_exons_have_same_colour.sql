@@ -12,9 +12,9 @@ join organism on transcript.organism_id=organism.organism_id
 where transcript.type_id in (select cvterm_id 
                              from cvterm
                              where name in ('snRNA', 'tRNA', 'transcript', 'pseudogenic_transcript', 'rRNA', 'mRNA'))
-and exon.type_id = (select cvterm_id
+and exon.type_id in select cvterm_id
                     from cvterm
-                    where name = 'exon')
+                    where name in ('exon', 'pseudogenic_exon')
 and exon_colour.type_id = (select cvterm_id
                            from cvterm 
                            join cv using (cv_id)
