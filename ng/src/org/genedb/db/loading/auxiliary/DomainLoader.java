@@ -130,6 +130,13 @@ public class DomainLoader extends Loader {
                 session.clear();
             }
         }
+
+        //remove redundant go terms
+        try{
+            DeleteRedundantGOTerms.deleteRedundantGOTerms(session);
+        }catch (SQLException sqle){
+            logger.debug(sqle.toString());
+        }
     }
 
     private void loadKey(DomainFile domainFile, String key) throws IOException {
