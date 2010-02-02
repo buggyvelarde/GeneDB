@@ -1,5 +1,6 @@
 #The colour assigned to exon should match the colour of the polypeptide.
-#(Complication in correcting this is deciding which colour is correct.)
+#The complication in correcting this is deciding which colour is correct. It was decided that, in general, the exon colour
+#should be assigned to the polypeptide (1.2.2010)
 
 
 select organism.common_name as organism
@@ -50,6 +51,7 @@ and   (product.cv_id is null or product.cv_id = (
                   select cv_id 
                   from cv 
                   where name='genedb_products'))
+and exon_colour.rank = polypeptide_colour.rank
 and   (exon_colour.value is null <> polypeptide_colour.value is null
         or exon_colour.value <> polypeptide_colour.value)
 order by organism.common_name
