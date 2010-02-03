@@ -23,7 +23,7 @@
 	<path id="aspect.path">
 		<pathelement location="${imported.basedir.libs}/lib/*.jar"/>
 	</path>
-	
+
     <path id="compile-classpathref">
        <fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
          <include name="*.jar"/>
@@ -541,16 +541,16 @@
           <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
           <delete dir="${installDir}/lib"/>
           <copy flatten="true" todir="${installDir}/lib" verbose="true">
-              <path refid="compile-classpathref"/>
+              <path refid="run-classpathref"/>
           </copy>
           <copy todir="${installDir}/bin">
-              <fileset dir="${imported.basedir.access}/scripts" />
+              <fileset dir="${ng.directory}/scripts" />
           </copy>
           <chmod perm="ugo+rx" maxparallel="100">
               <fileset dir="${installDir}/bin"/>
           </chmod>
       </target>
-	
+
 
 
 </project>
