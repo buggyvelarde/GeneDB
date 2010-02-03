@@ -23,15 +23,25 @@
 	<path id="aspect.path">
 		<pathelement location="${imported.basedir.libs}/lib/*.jar"/>
 	</path>
+	
+    <path id="compile-classpathref">
+       <fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
+         <include name="*.jar"/>
+       </fileset>
+       <fileset dir="${ng.directory}/lib-compiletime/">
+         <include name="*.jar"/>
+       </fileset>
+     </path>
 
-	<path id="all">
-        <path refid="classpathref"/>
+	<path id="run-classpathref">
+        <path refid="compile-classpathref"/>
         <pathelement location="${ng.jar}"/>
+		<pathelement location="${ng.directory}/resources" />
 	</path>
 
 
 	<path id="allandtest">
-        <path refid="all"/>
+        <path refid="run-classpathref"/>
         <pathelement location="${dist.dir}/test.jar"/>
 	</path>
 
@@ -92,11 +102,11 @@
 	<macrodef name="compile-target" description="Compile a module">
 		<attribute name="project" />
 		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<attribute name="classpathref" default="@{project}-classpath"/>
+		<attribute name="compile-classpathref" default="@{project}-classpath"/>
 		<sequential>
-			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
+			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', compile-classpathref is '@{compile-classpathref}'" /> -->
 			<javac srcdir="@{topdir}/src" includes="**/*.java" debug="true" source="1.6" target="1.6"
-             destdir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
+             destdir="@{topdir}/${classes.dir}" classpathref="@{compile-classpathref}" />
 			<!-- <echo>Compile finished</echo> -->
 		</sequential>
 	</macrodef>
@@ -276,7 +286,7 @@
             destdir="${build.dir}/test-classes"
             encoding="utf-8" debug="on">
 
-            <classpath refid="all" />
+            <classpath refid="run-classpathref" />
         </javac>
 
 
@@ -287,8 +297,8 @@
     		<iajc
         verbose="true" nowarn="false"
         inpath="${build.dir}/test-classes"
-        aspectpathref="all"
-        classpathRef ="all"
+        aspectpathref="run-classpathref"
+        classpathRef ="run-classpathref"
         destdir="${build.dir}/test-classes" maxmem="1024M" fork="true">
 
     			<forkclasspath refid="aspectj-tools-classpath"/>
@@ -297,12 +307,6 @@
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
 
-
-        <copy todir="${build.dir}/test-classes" overwrite="true">
-        	<fileset dir="test">
-    <include name="**/*.xml"/>
-</fileset>
-</copy>
 
         <jar jarfile="${dist.dir}/test.jar">
             <fileset dir="${build.dir}/test-classes" />
@@ -352,7 +356,7 @@
 	  <target name="test-deployment">
 	    <taskdef name="groovy"
 	           classname="org.codehaus.groovy.ant.Groovy"
-	           classpathref="classpathref"/>
+	           classpathref="compile-classpathref"/>
 	    <groovy>
 	      <arg value="${host}"/>
 	      <arg value="${prefix}" />
@@ -468,7 +472,7 @@
         <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
         <taskdef name="instrument"
             classname="org.hibernate.tool.instrument.javassist.InstrumentTask"
-            classpathref="classpathref"/>
+            classpathref="compile-classpathref"/>
 
         <instrument verbose="false">
             <fileset dir="${classes.dir}">
@@ -494,8 +498,8 @@
 		<iajc
     verbose="true" nowarn="false"
     inpath="${classes.dir}"
-    aspectpathref="classpathref"
-    classpathRef ="classpathref"
+    aspectpathref="compile-classpathref"
+    classpathRef ="compile-classpathref"
     destdir="${classes.dir}" maxmem="1024M" fork="true">
 
 			<forkclasspath refid="aspectj-tools-classpath"/>
@@ -506,12 +510,12 @@
 	  <target name="compile-javac" depends="populate-lib-dirs"
 	        description="--> Compile classes" >
 
-			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
+			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{compile-classpathref}'" /> -->
 			<javac srcdir="${ng.directory}/src"
 				   includes="**/*.java"
 				   debug="true" source="1.6" target="1.6"
 	               destdir="${classes.dir}"
-				   classpathref="classpathref" />
+				   classpathref="compile-classpathref" />
 
 
 			<!-- <echo>Compile finished</echo> -->
@@ -531,14 +535,7 @@
 
 	 <target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
 
-	  <path id="classpathref">
-	    <fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
-	      <include name="*.jar"/>
-	    </fileset>
-	    <fileset dir="${ng.directory}/lib-compiletime/">
-	      <include name="*.jar"/>
-	    </fileset>
-	  </path>
+
 
       <target name="install" depends="fulljar">
           <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
@@ -553,5 +550,19 @@
               <fileset dir="${installDir}/bin"/>
           </chmod>
       </target>
+	
+	<!-- Added by nds for testing purposes - to see why the EST matches were always one base shorter -->
+	
+	   <target name="load-vulgar" depends="check-config, fulljar">
+	        <!-- java fork="true" failonerror="true" classpathref="${ng.directory}/WebContent/WEB-INF/classes/" classname="org.genedb.db.loading.LoadVulgar" -->
+	   	   <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadVulgar" >
+	            <sysproperty key="load.organismCommonName" value="${organism}"/>
+	            <sysproperty key="load.inputDirectory" value="${file}"/>
+	            <syspropertyset>
+	                <propertyref builtin="commandline"/>
+	            </syspropertyset>
+	            <jvmarg line="-Xmx768M"/>
+	        </java>
+	    </target>
 
 </project>
