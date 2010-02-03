@@ -541,7 +541,7 @@
           <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
           <delete dir="${installDir}/lib"/>
           <copy flatten="true" todir="${installDir}/lib" verbose="true">
-              <path refid="all"/>
+              <path refid="compile-classpathref"/>
           </copy>
           <copy todir="${installDir}/bin">
               <fileset dir="${imported.basedir.access}/scripts" />
@@ -551,18 +551,6 @@
           </chmod>
       </target>
 	
-	<!-- Added by nds for testing purposes - to see why the EST matches were always one base shorter -->
-	
-	   <target name="load-vulgar" depends="check-config, fulljar">
-	        <!-- java fork="true" failonerror="true" classpathref="${ng.directory}/WebContent/WEB-INF/classes/" classname="org.genedb.db.loading.LoadVulgar" -->
-	   	   <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadVulgar" >
-	            <sysproperty key="load.organismCommonName" value="${organism}"/>
-	            <sysproperty key="load.inputDirectory" value="${file}"/>
-	            <syspropertyset>
-	                <propertyref builtin="commandline"/>
-	            </syspropertyset>
-	            <jvmarg line="-Xmx768M"/>
-	        </java>
-	    </target>
+
 
 </project>
