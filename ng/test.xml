@@ -2,6 +2,8 @@
 
 <project name="ng.test">
 
+    <import file="build.xml"/>
+
     <path id="test-classpath">
         <path refid="allandtest"/>
     </path>
@@ -17,6 +19,32 @@
 	      <include name="*.jar"/>
 	    </fileset>
 	</path>
+
+
+	<path id="allandtest3">
+        <path refid="allandtest2"/>
+        <pathelement location="${build.dir}/resources"/>
+        <pathelement location="resources"/>
+	</path>
+
+
+    <target name="run-db-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
+      <junit printsummary="yes" haltonfailure="yes" fork="true">
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-client"/>
+        <classpath>
+            <path refid="allandtest"/>
+        </classpath>
+        <sysproperty key="build.tests" value="${build.tests}"/>
+        <formatter type="brief" usefile="false" />
+        <batchtest>
+          <fileset dir="${build.dir}/test-classes">
+            <include name="**/*Test.*" />
+          	<exclude name="**/org/genedb/db/loading/**/*Test.*" />
+          </fileset>
+        </batchtest>
+      </junit>
+    </target>
 
 	<!--
     <target name="compile-tests" depends="fulljar">
@@ -42,11 +70,6 @@
         	file="property-file.${config}"/>
 	</target>
 
-	<path id="allandtest3">
-        <path refid="allandtest2"/>
-        <pathelement location="${build.dir}/resources"/>
-        <pathelement location="resources"/>
-	</path>
 
 
     <target name="file-test">

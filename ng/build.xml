@@ -45,7 +45,7 @@
         <pathelement location="${dist.dir}/test.jar"/>
 	</path>
 
-    <import file="test.xml"/>
+    <!-- <import file="test.xml"/> -->
 
 	<!-- General targets -->
 
@@ -330,23 +330,6 @@
 	    </junit>
 	  </target>
 
-    <target name="run-db-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
-      <junit printsummary="yes" haltonfailure="yes" fork="true">
-        <jvmarg value="-Xmx512m"/>
-        <jvmarg value="-client"/>
-        <classpath>
-            <path refid="allandtest"/>
-        </classpath>
-        <sysproperty key="build.tests" value="${build.tests}"/>
-        <formatter type="brief" usefile="false" />
-        <batchtest>
-          <fileset dir="${build.dir}/test-classes">
-            <include name="**/*Test.*" />
-          	<exclude name="**/org/genedb/db/loading/**/*Test.*" />
-          </fileset>
-        </batchtest>
-      </junit>
-    </target>
 
 
 
