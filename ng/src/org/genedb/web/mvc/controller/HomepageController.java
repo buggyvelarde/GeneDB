@@ -73,6 +73,14 @@ public class HomepageController extends BaseController {
             mav.addObject("node", node);
             mav.addObject("label", node.getName(TaxonNameType.LABEL));
             mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
+            
+            if (map.containsKey("app_www_homePage_content")) {
+                mav.addObject("content", map.get("app_www_homePage_content"));
+            }
+            if (map.containsKey("app_www_homePage_links")) {
+                mav.addObject("links", map.get("app_www_homePage_links"));
+            }
+            
             return mav;
         }
 
