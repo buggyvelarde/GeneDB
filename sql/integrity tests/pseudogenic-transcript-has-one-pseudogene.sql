@@ -20,5 +20,6 @@ and not exists (
                             where cv.name = 'sequence'
                             and cvterm.name='pseudogene')
 )
+and organism.common_name != 'Lmexicana'
 order by organism.common_name
 ;

@@ -19,6 +19,7 @@ and 1 < (
                             from cvterm join cv on cvterm.cv_id = cv.cv_id
                             where cv.name = 'sequence'
                             and cvterm.name='pseudogene')
-)
+    )
+and organism.common_name != 'Lmexicana'
 order by organism.common_name
 ;
