@@ -26,7 +26,7 @@ public class SimpleNameQueryTest {
 
         simpleNameQuery.setSearch("PF14_*");
         List results = simpleNameQuery.getResults();
-        assertEquals(14, results.size());
+        assertEquals(0, results.size());
     }
 
 }
