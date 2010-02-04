@@ -36,7 +36,6 @@
 	<path id="run-classpathref">
         <path refid="compile-classpathref"/>
         <pathelement location="${ng.jar}"/>
-		<pathelement location="${ng.directory}/resources" />
 	</path>
 
 
@@ -300,7 +299,6 @@
 			<mkdir dir="${dist.dir}" />
 			<mkdir dir="${classes.dir}" />
 			<mkdir dir="${test-classes.dir}" />
-			<mkdir dir="${build.dir}/resources" />
 			<mkdir dir="test/access-data" />
 			<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
 			<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
