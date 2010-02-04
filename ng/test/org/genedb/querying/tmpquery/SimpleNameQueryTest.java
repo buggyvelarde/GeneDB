@@ -24,9 +24,9 @@ public class SimpleNameQueryTest {
     @Test
     public void basic() throws QueryException {
 
-        simpleNameQuery.setSearch("Tb927.1.*");
+        simpleNameQuery.setSearch("PF14_*");
         List results = simpleNameQuery.getResults();
-        assertEquals(522, results.size());
+        assertEquals(14, results.size());
     }
 
 }
