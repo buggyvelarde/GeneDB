@@ -73,7 +73,7 @@
 
 
 	<!-- Macro definitions -->
-
+<!--
 	<macrodef name="init-target" description="Create initial build structure">
 		<attribute name="project" />
 		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
@@ -104,10 +104,9 @@
 		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
 		<attribute name="compile-classpathref" default="@{project}-classpath"/>
 		<sequential>
-			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', compile-classpathref is '@{compile-classpathref}'" /> -->
+			--><!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', compile-classpathref is '@{compile-classpathref}'" /> --><!--
 			<javac srcdir="@{topdir}/src" includes="**/*.java" debug="true" source="1.6" target="1.6"
              destdir="@{topdir}/${classes.dir}" classpathref="@{compile-classpathref}" />
-			<!-- <echo>Compile finished</echo> -->
 		</sequential>
 	</macrodef>
 
@@ -143,8 +142,9 @@
       </fail>
 		</sequential>
 	</macrodef>
+	-->
 
-
+	<!--
 	<macrodef name="jar-target" description="Make a distribution JAR">
 		<attribute name="project" />
 		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
@@ -158,7 +158,7 @@
 			</jar>
 		</sequential>
 	</macrodef>
-
+-->
 
 
 	  <target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
@@ -209,6 +209,12 @@
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
     			<delete file="${ng.jar}" />
+        <copy todir="${classes.dir}">
+            <fileset dir="resources/classpath">
+            	<include name="**/*.xml"/>
+            	</fileset>
+        </copy>
+
     			<jar jarfile="${ng.jar}" basedir="${classes.dir}"
                excludes="**/*Test.class">
     	            <manifest>
@@ -227,114 +233,8 @@
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
-    <target name="copy-pfalciparum-database" depends="make-pfalciparum-database-if-necessary">
-        <copy todir="test/access-data" overwrite="true">
-            <fileset dir="test-data/hsqldb" includes="pfalciparum.*"/>
-        </copy>
-    </target>
-
-    <target name="copy-skeleton-database" depends="make-skeleton-database-if-necessary">
-        <copy todir="test/access-data" overwrite="true">
-            <fileset dir="test-data/hsqldb" includes="skeleton.*"/>
-        </copy>
-    </target>
-
-    <target name="does-skeleton-database-exist">
-        <available property="db.skeleton.exists" file="${ng.directory}/test-data/hsqldb/skeleton.data"/>
-    </target>
-    <target name="make-skeleton-database-if-necessary" depends="does-skeleton-database-exist" unless="db.skeleton.exists">
-        <antcall target="make-skeleton-database"/>
-    </target>
-    <target name="make-skeleton-database" depends="fulljar,make-test-jar">
-        <java fork="true" dir="${ng.directory}" output="make-skeleton-database.txt"
-                maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
-            <classpath refid="allandtest"/>
-            <jvmarg line="-server" />
-            <arg value="${source.url}"/>
-            <arg value="${source.username}"/>
-            <arg value="${source.password}"/>
-            <arg value="skeleton"/>
-        </java>
-    </target>
-
-    <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
-        <antcall target="make-pfalciparum-database"/>
-    </target>
-    <target name="does-pfalciparum-database-exist">
-        <available property="db.pfalciparum.exists" file="${ng.directory}/test-data/hsqldb/pfalciparum.data"/>
-    </target>
-    <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
-        <java fork="true" dir="${ng.directory}" output="make-pfalciparum-database.txt"
-                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
-            <classpath refid="allandtest"/>
-            <jvmarg line="-server" />
-            <arg value="${source.url}"/>
-            <arg value="${source.username}"/>
-            <arg value="${source.password}"/>
-            <arg value="pfalciparum"/>
-            <arg value="27"/>
-        </java>
-    </target>
 
 
-    <target name="make-test-jar" depends="fulljar">
-        <copy todir="${build.dir}/test">
-            <fileset dir="test"/>
-        </copy>
-
-        <javac srcdir="${build.dir}/test"
-            destdir="${build.dir}/test-classes"
-            encoding="utf-8" debug="on">
-
-            <classpath refid="run-classpathref" />
-        </javac>
-
-
-    	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-    		<classpath refid="aspectj-tools-classpath"/>
-    	</taskdef>
-
-    		<iajc
-        verbose="true" nowarn="false"
-        inpath="${build.dir}/test-classes"
-        aspectpathref="run-classpathref"
-        classpathRef ="run-classpathref"
-        destdir="${build.dir}/test-classes" maxmem="1024M" fork="true">
-
-    			<forkclasspath refid="aspectj-tools-classpath"/>
-    		</iajc>
-
-        <copy todir="${build.dir}/test-classes" overwrite="true"
-            file="${build.dir}/test/log4j.test.properties"/>
-
-        <copy todir="${build.dir}/test-classes">
-            <fileset dir="test">
-            	<include name="**/*.xml"/>
-            	</fileset>
-        </copy>
-
-
-        <jar jarfile="${dist.dir}/test.jar">
-            <fileset dir="${build.dir}/test-classes" />
-            <manifest>
-                <attribute name="Implementation-Title" value="Chado Interface Test Code"/>
-                <attribute name="Implementation-Version" value="${version}"/>
-            </manifest>
-        </jar>
-    </target>
-
-	  <target name="run-util-tests" depends="fulljar, compile-all">
-	    <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
-	      <classpath>
-	        <path refid="allandtest" />
-	      </classpath>
-	      <batchtest>
-	        <fileset dir="${imported.basedir.util}/ant-build/test-classes">
-	          <include name="**/*Test.*" />
-	        </fileset>
-	      </batchtest>
-	    </junit>
-	  </target>
 
 
 
