@@ -54,10 +54,8 @@
     			<forkclasspath refid="aspectj-tools-classpath"/>
     		</iajc>
 
-        <copy todir="${build.dir}/test-classes" overwrite="true"
-            file="${build.dir}/test/log4j.test.properties"/>
 
-        <copy todir="${build.dir}/test-classes">
+        <copy todir="${build.dir}/test-classes" overwrite="true">
             <fileset dir="resources/test-classpath">
             	<include name="**/*.xml"/>
             	<include name="**/*.properties"/>
