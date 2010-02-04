@@ -296,6 +296,7 @@
 
 	<target name="init" description="Create initial build structure">
 		    <mkdir dir="${build.dir}" />
+			<mkdir dir="${build.dir}/resources" />
 			<mkdir dir="${dist.dir}" />
 			<mkdir dir="${classes.dir}" />
 			<mkdir dir="${test-classes.dir}" />
