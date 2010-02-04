@@ -23,7 +23,7 @@
 
 	<path id="allandtest3">
         <path refid="allandtest2"/>
-        <pathelement location="resources"/>
+        <pathelement location="ant-build/resources"/>
 	</path>
 
 
