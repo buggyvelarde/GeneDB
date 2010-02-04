@@ -290,9 +290,9 @@
         </javac>
 
 
-    		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-    			<classpath refid="aspectj-tools-classpath"/>
-    		</taskdef>
+    	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+    		<classpath refid="aspectj-tools-classpath"/>
+    	</taskdef>
 
     		<iajc
         verbose="true" nowarn="false"
@@ -306,6 +306,12 @@
 
         <copy todir="${build.dir}/test-classes" overwrite="true"
             file="${build.dir}/test/log4j.test.properties"/>
+
+        <copy todir="${build.dir}/test-classes">
+            <fileset dir="test">
+            	<include name="**/*.xml"/>
+            	</fileset>
+        </copy>
 
 
         <jar jarfile="${dist.dir}/test.jar">
