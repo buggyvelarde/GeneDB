@@ -214,6 +214,10 @@
             	</fileset>
         </copy>
 
+        <copy todir="${classes.dir}" overwrite="true">
+            <fileset dir="resources/misc" />
+        </copy>
+
     			<jar jarfile="${ng.jar}" basedir="${classes.dir}"
                excludes="**/*Test.class">
     	            <manifest>
@@ -223,7 +227,7 @@
     			</jar>
     </target>
 
-
+<!--
     <target name="prompt-for-password" depends="fulljar" unless="source.password">
         <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
         <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
@@ -231,7 +235,7 @@
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${ng.jar}" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
-
+-->
 
 
 
