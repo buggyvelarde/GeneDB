@@ -55,6 +55,7 @@
         </copy>
 
 
+
         <jar jarfile="${dist.dir}/test.jar">
             <fileset dir="${build.dir}/test-classes" />
             <manifest>
