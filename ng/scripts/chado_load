@@ -25,11 +25,12 @@ for jar in "$GENEDB_HOME/lib"/*.jar; do
         CLASSPATH="$jar"
     fi
 done
+CLASSPATH="$CLASSPATH:$GENEDB_HOME/lib"
 
 # readdir(array, dir, extension)
 readdir() {
     array="$1"; dir="$2"; extension="$3"
-    
+
     pushd >/dev/null "$dir"
     local -a files=(*.$extension)
     popd >/dev/null
