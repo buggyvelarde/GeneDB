@@ -432,6 +432,7 @@
       <target name="install" depends="fulljar">
           <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
           <delete dir="${installDir}/lib"/>
+          <delete dir="${installDir}/bin/loaders"/>
           <copy flatten="true" todir="${installDir}/lib" verbose="true">
               <path refid="run-classpathref"/>
           </copy>
