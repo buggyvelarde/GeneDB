@@ -4,25 +4,17 @@
 
     <import file="build.xml"/>
 
+	<!--
     <path id="test-classpath">
-        <path refid="allandtest"/>
+		<path refid="run-classpathref"/>
+        <pathelement location="${dist.dir}/test.jar"/>
     </path>
-
-	<path id="allandtest2">
-	        <!--<path refid="classpathref"/>-->
-	    <pathelement location="ant-build/dist/ng.jar"/>
-        <pathelement location="ant-build/dist/test.jar"/>
-	    <fileset dir="WebContent/WEB-INF/lib/">
-	      <include name="*.jar"/>
-	    </fileset>
-	    <fileset dir="lib-compiletime/">
-	      <include name="*.jar"/>
-	    </fileset>
-	</path>
-
+	-->
 
 	<path id="allandtest3">
-        <path refid="allandtest2"/>
+		<path refid="run-classpathref"/>
+        <pathelement location="${dist.dir}/test.jar"/>
+        <!-- <path refid="test-classpath"/> -->
         <pathelement location="ant-build/resources"/>
 	</path>
 
@@ -109,7 +101,7 @@
 	    <target name="does-pfalciparum-database-exist">
 	        <available property="db.pfalciparum.exists" file="${ng.directory}/test-data/hsqldb/pfalciparum.data"/>
 	    </target>
-	    <target name="make-pfalciparum-database" depends="prompt-for-password,make-test-jar">
+	    <target name="make-pfalciparum-database" depends="make-test-jar">
 	        <java fork="true" dir="${ng.directory}" output="make-pfalciparum-database.txt"
 	                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
 	            <classpath refid="allandtest"/>
@@ -123,13 +115,13 @@
 	    </target>
 
     <target name="copy-pfalciparum-database" depends="make-pfalciparum-database-if-necessary">
-        <copy todir="test/access-data" overwrite="true">
+        <copy todir="ant-build/test-data" overwrite="true">
             <fileset dir="test-data/hsqldb" includes="pfalciparum.*"/>
         </copy>
     </target>
 
     <target name="copy-skeleton-database" depends="make-skeleton-database-if-necessary">
-        <copy todir="test/access-data" overwrite="true">
+        <copy todir="ant-build/test-data" overwrite="true">
             <fileset dir="test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
