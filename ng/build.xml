@@ -180,6 +180,9 @@
 	    <delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
 	    <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
 	    <echo message="Done filtering web.xml" />
+	    <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+	      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+	    </copy>
 	    <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
 	    <!--
 	  	<echo message="Copying libraries"/>
@@ -432,6 +435,7 @@
           <copy flatten="true" todir="${installDir}/lib" verbose="true">
               <path refid="run-classpathref"/>
           </copy>
+          <copy tofile="${installDir}/lib/project.properties"  file="property-file.loader" />
           <copy todir="${installDir}/bin">
               <fileset dir="${ng.directory}/scripts" />
           </copy>
