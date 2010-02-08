@@ -1,1 +1,0 @@
-This directory is used to store dynamically-generated protein map images.
