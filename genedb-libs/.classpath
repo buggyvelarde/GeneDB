@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/db/je-3.3.75.jar" sourcepath="lib-src/je-3.3.75-src.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
