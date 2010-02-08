@@ -24,27 +24,27 @@
 		<pathelement location="${imported.basedir.libs}/lib/*.jar"/>
 	</path>
 
-    <path id="compile-classpathref">
-       <fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
-         <include name="*.jar"/>
-       </fileset>
-       <fileset dir="${ng.directory}/lib-compiletime/">
-         <include name="*.jar"/>
-       </fileset>
-     </path>
+	<path id="compile-classpathref">
+		<fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${ng.directory}/lib-compiletime/">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
 
 	<path id="run-classpathref">
-        <path refid="compile-classpathref"/>
-        <pathelement location="${ng.jar}"/>
+		<path refid="compile-classpathref"/>
+		<pathelement location="${ng.jar}"/>
 	</path>
 
 
 	<path id="allandtest">
-        <path refid="run-classpathref"/>
-        <pathelement location="${dist.dir}/test.jar"/>
+		<path refid="run-classpathref"/>
+		<pathelement location="${dist.dir}/test.jar"/>
 	</path>
 
-    <!-- <import file="test.xml"/> -->
+	<!-- <import file="test.xml"/> -->
 
 	<!-- General targets -->
 
@@ -69,191 +69,86 @@
 	</target>
 
 
+	<target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
+		<echo>About to delete ${finaldest.webapps}.old</echo>
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+		<move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+		<move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+		<!-- temp hack -->
+	</target>
 
-
-	<!-- Macro definitions -->
-<!--
-	<macrodef name="init-target" description="Create initial build structure">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<sequential>
-			<mkdir dir="@{topdir}/${build.dir}" />
-			<mkdir dir="@{topdir}/${dist.dir}" />
-			<mkdir dir="@{topdir}/${classes.dir}" />
-			<mkdir dir="@{topdir}/${test-classes.dir}" />
-			<mkdir dir="@{topdir}/${lib.dir}" />
-
-			<available property="@{project}.ivy-timestamp-exists" file="@{topdir}/${lib.dir}/ivy.timestamp.txt" />
-		</sequential>
-	</macrodef>
-
-	<macrodef name="clean-target" description="Remove all build artifacts">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<sequential>
-			<delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
-			<delete dir="@{topdir}/${lib.dir}" includeEmptyDirs="true" />
-			<delete dir="@{topdir}/${test-classes.dir}"/>
-		</sequential>
-	</macrodef>
-
-
-	<macrodef name="compile-target" description="Compile a module">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<attribute name="compile-classpathref" default="@{project}-classpath"/>
-		<sequential>
-			--><!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', compile-classpathref is '@{compile-classpathref}'" /> --><!--
-			<javac srcdir="@{topdir}/src" includes="**/*.java" debug="true" source="1.6" target="1.6"
-             destdir="@{topdir}/${classes.dir}" classpathref="@{compile-classpathref}" />
-		</sequential>
-	</macrodef>
-
-	<macrodef name="tests-target" description="Test a module">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<attribute name="classpathref" default="@{project}-tests-classpath"/>
-		<sequential>
-			<javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
-                 destdir="@{topdir}/${test-classes.dir}"
-                 classpathref="@{classpathref}" />
-
-			<junit printsummary="on"
-        fork="false"
-        haltonfailure="false"
-        failureproperty="tests.failed"
-        showoutput="true">
-				<classpath refid="@{classpathref}"/>
-				<formatter type="brief" usefile="false"/>
-				<batchtest>
-					<fileset dir="@{topdir}/${test-classes.dir}">
-						<include name="**/*Test.*"/>
-					</fileset>
-				</batchtest>
-			</junit>
-			<fail if="tests.failed">
-            tests.failed=${tests.failed}
-            ***********************************************************
-            ***********************************************************
-            ****  One or more tests failed!  Check the output ...  ****
-            ***********************************************************
-            ***********************************************************
-      </fail>
-		</sequential>
-	</macrodef>
-	-->
-
-	<!--
-	<macrodef name="jar-target" description="Make a distribution JAR">
-		<attribute name="project" />
-		<attribute name="topdir" default="${imported.basedir.@{project}}"/>
-		<attribute name="jar" default="genedb-@{project}.jar" />
-		<element name="extra-elements" optional="true" implicit="true"/>
-		<sequential>
-			<delete file="@{topdir}/${dist.dir}/@{jar}" />
-			<jar jarfile="@{topdir}/${dist.dir}/@{jar}" basedir="@{topdir}/${classes.dir}"
-           excludes="**/*Test.class">
-				<extra-elements/>
-			</jar>
-		</sequential>
-	</macrodef>
--->
-
-
-	  <target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
-	    <echo>About to delete ${finaldest.webapps}.old</echo>
-	    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
-	    <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
-	    <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
-	    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
-	    <!-- temp hack -->
-	  </target>
-
-	  <target name="deploy" depends="check-config, compile-all">
-	    <filter token="webAppRootKey" value="${webAppRootKey}" />
-	    <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
-	    <mkdir dir="${finaldest.webapps}.tmp"/>
-	    <copy todir="${finaldest.webapps}.tmp">
-	      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
-	    </copy>
-	    <echo message="About to filter web.xml" />
-	    <delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
-	    <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
-	    <echo message="Done filtering web.xml" />
-	    <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
-	      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
-	    </copy>
-	    <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
-	    <!--
+	<target name="deploy" depends="check-config, compile-all">
+		<filter token="webAppRootKey" value="${webAppRootKey}" />
+		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+		<mkdir dir="${finaldest.webapps}.tmp"/>
+		<copy todir="${finaldest.webapps}.tmp">
+			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
+		</copy>
+		<echo message="About to filter web.xml" />
+		<delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
+		<echo message="Done filtering web.xml" />
+		<copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+			<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
+		<!--
 	  	<echo message="Copying libraries"/>
 	    <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
 	      <path refid="web-deploy-classpath" />
 	    </copy>
 	    -->
-	  </target>
+	</target>
 
 
 
-	  <target name="check-config">
-	    <fail message="The 'config' property must be set" unless="config"/>
-	    <available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
-	    <fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
-	    <copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
-	  </target>
+	<target name="check-config">
+		<fail message="The 'config' property must be set" unless="config"/>
+		<available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
+		<fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
+		<copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+	</target>
 
 
 
 	<!-- Sorted targets -->
-    <target name="fulljar" depends="compile-all"
+	<target name="fulljar" depends="compile-all"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-    			<delete file="${ng.jar}" />
-        <copy todir="${classes.dir}">
-            <fileset dir="resources/classpath">
-            	<include name="**/*.xml"/>
-            	<include name="**/*.properties"/>
-            	</fileset>
-        </copy>
+		<delete file="${ng.jar}" />
+		<copy todir="${classes.dir}">
+			<fileset dir="resources/classpath">
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
 
-        <copy todir="${classes.dir}" overwrite="true">
-            <fileset dir="resources/misc" />
-        </copy>
+		<copy todir="${classes.dir}" overwrite="true">
+			<fileset dir="resources/misc" />
+		</copy>
 
-    			<jar jarfile="${ng.jar}" basedir="${classes.dir}"
+		<jar jarfile="${ng.jar}" basedir="${classes.dir}"
                excludes="**/*Test.class">
-    	            <manifest>
-    	                <attribute name="Implementation-Title" value="Chado Interface"/>
-    	                <attribute name="Implementation-Version" value="${version}"/>
-    	            </manifest>
-    			</jar>
-    </target>
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado Interface"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+	</target>
 
-<!--
-    <target name="prompt-for-password" depends="fulljar" unless="source.password">
-        <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
-        <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
+	<property name="host" value="http://developer.genedb.org"/>
+	<property name="prefix" value="ci-web/"/>
+	<!-- Include trailing slash -->
 
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${ng.jar}" />
-        <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
-    </target>
--->
-
-
-
-
-
-
-	  <property name="host" value="http://developer.genedb.org"/>
-	  <property name="prefix" value="ci-web/"/> <!-- Include trailing slash -->
-
-	  <target name="test-deployment">
-	    <taskdef name="groovy"
+	<target name="test-deployment">
+		<taskdef name="groovy"
 	           classname="org.codehaus.groovy.ant.Groovy"
 	           classpathref="compile-classpathref"/>
-	    <groovy>
-	      <arg value="${host}"/>
-	      <arg value="${prefix}" />
-	      <![CDATA[
+		<groovy>
+			<arg value="${host}"/>
+			<arg value="${prefix}" />
+			<![CDATA[
 	        try {
 	            downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
 	            downloadAndGrep("${args[0]}/${args[1]}gene/PF07_0048", "Duffy")
@@ -271,43 +166,43 @@
 	          }
 	        }
 	      ]]>
-	    </groovy>
-	  </target>
+		</groovy>
+	</target>
 
-	  <target name="wait">
-	    <sleep minutes="3" />
-	  </target>
+	<target name="wait">
+		<sleep minutes="3" />
+	</target>
 
 
-	  <target name="restart-ci-web">
-	    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
-	      <arg value="ci-web" />
-	      <arg value="stop" />
-	    </exec>
-	    <sleep seconds="5" />
-	    <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
-	    <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
-	    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
-	      <env key="BUILD_ID" value="dontKillMe" />
-	      <arg value="ci-web" />
-	      <arg value="start" />
-	    </exec>
-	    <sleep minutes="3" />
-	  </target>
+	<target name="restart-ci-web">
+		<exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
+			<arg value="ci-web" />
+			<arg value="stop" />
+		</exec>
+		<sleep seconds="5" />
+		<delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
+		<mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
+		<exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+			<env key="BUILD_ID" value="dontKillMe" />
+			<arg value="ci-web" />
+			<arg value="start" />
+		</exec>
+		<sleep minutes="3" />
+	</target>
 
 	<target name="check.lib-uptodate" depends="init" if="libs.ivy-timestamp-exists">
 		<uptodate property="lib-uptodate" srcfile="${ng.directory}/ivy.xml" targetfile="${ng.directory}/WebContent/WEB-INF/libs/ivy.timestamp.txt" />
 	</target>
 
 	<target name="init" description="Create initial build structure">
-		    <mkdir dir="${build.dir}" />
-			<mkdir dir="${build.dir}/resources" />
-			<mkdir dir="${dist.dir}" />
-			<mkdir dir="${classes.dir}" />
-			<mkdir dir="${test-classes.dir}" />
-			<mkdir dir="test/access-data" />
-			<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
-			<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/resources" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${test-classes.dir}" />
+		<mkdir dir="test/access-data" />
+		<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
+		<available property="ivy-timestamp-exists" file="@{ng.directory}/WebContent/WEB-INF/lib/ivy.timestamp.txt" />
 	</target>
 
 	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
@@ -354,27 +249,27 @@
 				<include name="json-lib-ext-spring-1.0.1.jar"/>
 			</fileset>
 		</copy>
-<!--
+		<!--
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
 -->
 
 	</target>
 
-    <target name="hibernate-instrumentation">
-        <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
-        <taskdef name="instrument"
+	<target name="hibernate-instrumentation">
+		<!-- This task is used to instrument the Feature class to enable lazy property fetching -->
+		<taskdef name="instrument"
             classname="org.hibernate.tool.instrument.javassist.InstrumentTask"
             classpathref="compile-classpathref"/>
 
-        <instrument verbose="false">
-            <fileset dir="${classes.dir}">
-                <include name="org/gmod/schema/mapped/Feature.class"/>
-                <include name="org/gmod/schema/mapped/Organism.class"/>
-                <include name="org/gmod/schema/feature/*.class"/>
-            </fileset>
-        </instrument>
-    </target>
+		<instrument verbose="false">
+			<fileset dir="${classes.dir}">
+				<include name="org/gmod/schema/mapped/Feature.class"/>
+				<include name="org/gmod/schema/mapped/Organism.class"/>
+				<include name="org/gmod/schema/feature/*.class"/>
+			</fileset>
+		</instrument>
+	</target>
 
 	<path id="aspectj-tools-classpath">
 		<pathelement location="${lib.dir}/com.springsource.org.aspectj.weaver-1.6.6.RELEASE.jar"/>
@@ -397,54 +292,43 @@
 
 			<forkclasspath refid="aspectj-tools-classpath"/>
 		</iajc>
-		</target>
+	</target>
 
 
-	  <target name="compile-javac" depends="populate-lib-dirs"
+	<target name="compile-javac" depends="populate-lib-dirs"
 	        description="--> Compile classes" >
 
-			<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{compile-classpathref}'" /> -->
-			<javac srcdir="${ng.directory}/src"
+		<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{compile-classpathref}'" /> -->
+		<javac srcdir="${ng.directory}/src"
 				   includes="**/*.java"
 				   debug="true" source="1.6" target="1.6"
 	               destdir="${classes.dir}"
 				   classpathref="compile-classpathref" />
 
+		<uptodate property="web.iajc-uptodate" targetfile="${imported.basedir.web}/ant-build/iajc_run">
+			<srcfiles dir="${imported.basedir.web}/ant-build/classes" />
+		</uptodate>
+	</target>
 
-			<!-- <echo>Compile finished</echo> -->
-
-	      <!--
-	    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
-	              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
-	    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/utils/MartinHack.class"
-	              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/utils/MartinHack.class" />
-	    <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
-	                               to-directory="${imported.basedir.web}/ant-build/classes"/>
-	                               -->
-	    <uptodate property="web.iajc-uptodate" targetfile="${imported.basedir.web}/ant-build/iajc_run">
-	      <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
-	    </uptodate>
-	  </target>
-
-	 <target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
+	<target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
 
 
 
-      <target name="install" depends="fulljar">
-          <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
-          <delete dir="${installDir}/lib"/>
-          <delete dir="${installDir}/bin/loaders"/>
-          <copy flatten="true" todir="${installDir}/lib" verbose="true">
-              <path refid="run-classpathref"/>
-          </copy>
-          <copy tofile="${installDir}/lib/project.properties"  file="property-file.loader" />
-          <copy todir="${installDir}/bin">
-              <fileset dir="${ng.directory}/scripts" />
-          </copy>
-          <chmod perm="ugo+rx" maxparallel="100">
-              <fileset dir="${installDir}/bin"/>
-          </chmod>
-      </target>
+	<target name="install" depends="fulljar">
+		<fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
+		<delete dir="${installDir}/lib"/>
+		<delete dir="${installDir}/bin/loaders"/>
+		<copy flatten="true" todir="${installDir}/lib" verbose="true">
+			<path refid="run-classpathref"/>
+		</copy>
+		<copy tofile="${installDir}/lib/project.properties"  file="property-file.loader" />
+		<copy todir="${installDir}/bin">
+			<fileset dir="${ng.directory}/scripts" />
+		</copy>
+		<chmod perm="ugo+rx" maxparallel="100">
+			<fileset dir="${installDir}/bin"/>
+		</chmod>
+	</target>
 
 
 

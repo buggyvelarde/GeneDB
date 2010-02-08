@@ -10,7 +10,7 @@
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib-compiletime/com.springsource.javax.servlet-2.5.0.jar">
+	<classpathentry kind="lib" path="lib-compiletime/com.springsource.javax.servlet-2.5.0.jar" sourcepath="lib-compiletime/com.springsource.javax.servlet-sources-2.5.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
