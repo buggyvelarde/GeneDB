@@ -1,6 +1,0 @@
-dbhost=pgsrv1.internal.sanger.ac.uk
-dbport=5432
-dbname=pathogens
-# dbuser and dbpassword intentionally not specified here
-installDir=/software/pathogen/projects/genedb
-indexDir=/tmp
