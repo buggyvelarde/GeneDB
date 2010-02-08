@@ -1,2 +1,0 @@
-perl5.8.5/bin/sqlt -f PostgreSQL -t XML-SQLFairy gmod-0.003-rc1-edited_schema > gmod-0.003-rc1-edited_schema.sqlf.xml
-

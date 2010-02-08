@@ -1,2 +1,0 @@
-This module tasks a db definition in XML-SQLFairy format, and generates 
-hibernate mappings for it.
