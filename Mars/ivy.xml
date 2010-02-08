@@ -1,8 +1,0 @@
-<ivy-module version="2.0">
-    <info organisation="org.genedb" module="genedb-mars"/>
-    <dependencies>
-
-      <dependency org="org.springframework" name="org.springframework.core" rev="3.0.0.M1" />
-      <dependency org="org.springframework" name="org.springframework.beans" rev="3.0.0.M1" />
-    </dependencies>
-</ivy-module>
