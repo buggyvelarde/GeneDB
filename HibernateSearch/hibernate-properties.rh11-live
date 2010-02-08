@@ -1,9 +1,0 @@
-# the default directory provider
-hibernate.search.default.directory_provider = org.hibernate.search.store.FSDirectoryProvider
-
-# the default base directory for the indices
-hibernate.search.default.indexBase = /software/pathogen/projects/genedb/indexes/malaria-live
-
-# database connection info
-database.url=jdbc:postgresql://localhost:10101/malaria_workshop
-database.user=genedb
