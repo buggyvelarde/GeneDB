@@ -13,7 +13,7 @@
   
 <div id="col-1-1">  
     <div class="readableText">
-        <h1>${full} Genome Project</h1>
+        <h1>${full}</h1>
         <div id="readableContent">${content}</div>
     </div>
 </div>
