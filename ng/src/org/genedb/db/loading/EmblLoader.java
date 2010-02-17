@@ -1063,7 +1063,8 @@ class EmblLoader {
             Set<String> terms = new HashSet<String>();
             for (String term: feature.getQualifierValues(qualifierName)) {
                 if (termParser != null) {
-                    for (String normalisedTerm: termParser.parse(term)) {
+                    for (String partNormalisedTerm: termParser.parse(term)) {
+                    	String normalisedTerm = partNormalisedTerm.trim();
                         processNormalisedCvTermQualifier(qualifierName, cvName, dbName, createTerms, terms, term,
                             normalisedTerm);
                     }
