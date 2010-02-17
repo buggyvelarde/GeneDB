@@ -46,13 +46,13 @@ public class FeatureUtils implements InitializingBean {
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GO_KEY_ATTRIBUTION,
                    GO_KEY_RESIDUE, GO_KEY_DATE, GENEDB_AUTOCOMMENT;
     private CvTerm PUB_TYPE_UNFETCHED;
-    private Db PUBMED_DB;
+    private Db PMID_DB;
     private int NULL_PUB_ID;
 
     public void afterPropertiesSet() {
         logger.trace("Initialising FeatureUtils");
         objectManager.setDaos(generalDao, pubDao, cvDao);
-        PUBMED_DB = objectManager.getExistingDbByName("PMID");
+        PMID_DB = objectManager.getExistingDbByName("PMID");
 
         GO_KEY_EVIDENCE = cvDao.getExistingCvTermByNameAndCvName("evidence", "genedb_misc");
         GO_KEY_ATTRIBUTION = cvDao.getExistingCvTermByNameAndCvName("attribution", "genedb_misc");
@@ -79,11 +79,11 @@ public class FeatureUtils implements InitializingBean {
     private Pub findOrCreatePubFromPMID(String ref) {
         String accession = ref.substring(1 + ref.indexOf(':')); // Text after first colon, or whole string if no colon
         logger.trace(String.format("Looking for Pub object with accession number '%s'", accession));
-        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(PUBMED_DB, accession); //objectManager.getDbXRef("PUBMED", accession);
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(PMID_DB, accession); //objectManager.getDbXRef("PUBMED", accession);
         Pub pub;
         if (dbXRef == null) {
             logger.trace(String.format("Could not find DbXRef for PUBMED:%s; creating new DbXRef", accession));
-            dbXRef = new DbXRef(PUBMED_DB, accession);
+            dbXRef = new DbXRef(PMID_DB, accession);
             generalDao.persist(dbXRef);
             pub = pubDao.getPubByUniqueName("PMID:" + accession);
             if (pub == null) {
