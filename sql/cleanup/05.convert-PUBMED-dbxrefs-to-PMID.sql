@@ -5,6 +5,8 @@ set db_id = (select db_id from db where name = 'PMID')
 from db
 where dbxref.db_id = db.db_id
 and db.name = 'PUBMED'
+and accession not in (
+                select accession from dbxref where db_id=46 )
 ;
 
 create temporary table pmid_pubmed on commit drop as

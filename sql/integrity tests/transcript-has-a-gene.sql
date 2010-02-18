@@ -1,7 +1,8 @@
+#Checks if each transcript has atleast one gene
 
-#Checks if all transcripts have one gene.
-
-select organism.common_name, feature_id, uniquename
+select organism.common_name 
+       , feature_id as transcript_id
+       , uniquename as transccript
 from feature transcript
 join organism on transcript.organism_id=organism.organism_id
 where transcript.type_id in (
@@ -16,7 +17,7 @@ where transcript.type_id in (
                         'ncRNA',
                         'transcript')
  
-)
+    )
 and not exists (
     select *
     from feature_relationship transcript_gene
@@ -28,6 +29,6 @@ and not exists (
                           where cv.name = 'sequence'
                           and cvterm.name='gene')
 
-)
+    )
 order by organism.common_name
 ;

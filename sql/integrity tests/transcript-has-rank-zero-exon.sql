@@ -3,14 +3,10 @@
 #The LMexicana transcripts returned by this test are ignored until the new Mexicana data is loaded. For now, we ignore LMexicana altogether.
 
 select organism.common_name as organism
+     , transcript.feature_id as transcript_id
      , transcript.uniquename as transcript_uniquename
-     , chromosome.uniquename as chromosome
-     , featureloc.fmin
-     , featureloc.fmax
 from feature transcript
 join organism using (organism_id)
-join featureloc using (feature_id)
-join feature chromosome on featureloc.srcfeature_id = chromosome.feature_id
 where transcript.type_id in (
                              select cvterm.cvterm_id
                              from cvterm join cv on cvterm.cv_id = cv.cv_id
@@ -22,7 +18,10 @@ where transcript.type_id in (
                                                  'snoRNA',
                                                  'ncRNA',
                                                  'transcript'))
-and transcript.organism_id != (select organism_id from organism where common_name='Lmexicana') 
+and transcript.organism_id != (
+                              select organism_id 
+                              from organism 
+                              where common_name='Lmexicana') 
 and not exists (
                 select *
                 from feature_relationship exon_transcript
