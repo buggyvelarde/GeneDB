@@ -4,8 +4,10 @@ select feature.feature_id
      , feature.uniquename
      , fp1.featureprop_id as fp1_featureprop_id
      , fp1.value          as colour1
+     , fp1.rank           as colour1_rank      
      , fp2.featureprop_id as fp2_featureprop_id
      , fp2.value          as colour2
+     , fp2.rank           as colour2_rank
 from feature
 join featureprop fp1 using (feature_id)
 join featureprop fp2 using (feature_id)
