@@ -43,13 +43,13 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @QueryParam(order = 3, title = "Include pseudogenes")
     private boolean pseudogenes;
-    
-    
+
+
     @Override
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
-    
+
     @Override
     public String getQueryDescription() {
     	return "Allows you to quickly search for genes by name (including synonyms) or function";
@@ -61,11 +61,11 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     }
 
     @Override
-    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){  
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){
         BooleanQuery bq = new BooleanQuery();
-        
+
         String tokens[] = searchText.trim().split("\\s");
-        
+
         if (allNames) {
             if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
@@ -77,13 +77,13 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
         }
-        
+
 
         if (product) {
             if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
-                    pq.add(new Term("product", token));
+                    pq.add(new Term("product", token.toLowerCase()));
                 }
                 bq.add(pq, Occur.SHOULD);
             } else {
@@ -166,7 +166,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
             }
             Collections.sort(geneSummaries);
-            
+
             if(luceneIndex.getMaxResults() == geneSummaries.size()){
                 isActualResultSizeSameAsMax = true;
             }
@@ -313,7 +313,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     public void setPseudogenes(boolean pseudogenes) {
         this.pseudogenes = pseudogenes;
     }
-    
+
     @Override
     public String getQueryName() {
         return "Quick search";
