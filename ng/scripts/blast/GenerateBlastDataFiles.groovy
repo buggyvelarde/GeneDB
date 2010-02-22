@@ -46,7 +46,7 @@ for (org in orgs) {
         worked = false
     } else {
         println("OK")
-	    serr.delete()
+	    //serr.delete()
     }
 
 	// Transcript Files
@@ -70,7 +70,7 @@ for (org in orgs) {
         worked = false
     } else {
         println("OK")
-	    serr.delete()
+	    //serr.delete()
     }
 
 
@@ -83,7 +83,7 @@ for (org in orgs) {
 	serr.delete()
 
 	print "${scriptName} : "
-	p = ["ssh", HOST, "chado_dump_genome -o ${org}"].execute()
+ 	p = ["ssh", HOST, "chado_dump_genome -o ${org}"].execute()
 	sout = new FileOutputStream(script)
 	serros = new FileOutputStream(serr)
 	p.consumeProcessOutput(sout, serros)
@@ -95,7 +95,7 @@ for (org in orgs) {
 		worked = false
 	} else {
 		println("OK")
-	    serr.delete()
+	    //serr.delete()
 	}
 }
 
