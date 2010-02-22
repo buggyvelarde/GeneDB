@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 
 String HOST = "pcs4j"
-String PATH = "/data/blastdb/website/genedb/"
+String PATH = "/lustre/pathogen/blast/website/genedb/"
 
 List<String> orgs = new ArrayList<String>()
 
