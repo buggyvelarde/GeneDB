@@ -5,7 +5,7 @@
          <information>
            <title>Artemis</title>
            <vendor>Sanger Institute</vendor>
-           <homepage href="http://www.sanger.ac.uk/Software/Artemis/"/>
+           <homepage href="http://www.sanger.ac.uk/resources/software/artemis/java/"/>
            <description>Artemis</description>
            <description kind="short">DNA sequence viewer and annotation tool.
            </description>
@@ -16,7 +16,7 @@
          </security>
          <resources>
            <j2se version="1.5+" initial-heap-size="32m" max-heap-size="512m"/>
-             <jar href="sartemis_current.jar"/>
+             <jar href="artemis.jar"/>
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis" />
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
