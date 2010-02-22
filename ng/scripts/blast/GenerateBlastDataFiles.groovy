@@ -32,7 +32,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    Process p = ["ssh", HOST, "chado_dump_proteins --nostop ${org}"].execute()
+    Process p = ["ssh", HOST, "chado_dump_proteins --nostop -o ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -83,7 +83,7 @@ for (org in orgs) {
 	serr.delete()
 
 	print "${scriptName} : "
-	p = ["ssh", HOST, "chado_dump_genome ${org}"].execute()
+	p = ["ssh", HOST, "chado_dump_genome -o ${org}"].execute()
 	sout = new FileOutputStream(script)
 	serros = new FileOutputStream(serr)
 	p.consumeProcessOutput(sout, serros)
