@@ -1,13 +1,14 @@
 		'genedb_${common_name_lc}' => {
-		     'home'          =>  'http://beta.genedb.org/Homepage/${common_name}',
+		     'home'          =>  'http://www.genedb.org/Homepage/${common_name}',
 		     'name'         =>  '${genus} ${species}',
 		     'prologue'      =>  qq(
-	These databases contain the polypeptide and spliced gene sequences of <i>${genus} ${species}</i>.
+	These databases contain the contigs, polypeptide and spliced gene sequences of <i>${genus} ${species}</i>.
 			),
 
 		     'databases'     =>  [
 					     "genedb/GeneDB_${common_name}_Proteins",
 					     "genedb/GeneDB_${common_name}_Genes",
+					     "genedb/GeneDB_${common_name}_Contigs",
 			 ],
 			'executables' => [qw(wublastn wutblastn wutblastx wublastx wublastp)],
 		},

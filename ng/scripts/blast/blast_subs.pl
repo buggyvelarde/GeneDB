@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+qq#!/usr/bin/perl
 
 use warnings;
 use strict;
@@ -32,16 +32,16 @@ while (<$f_organism_names>) {
     chomp;
     our ($common_name, $genus, $species) = split /\t/, $_;
     our $common_name_lc = lc($common_name);
-    
+
     next unless exists $organisms{$common_name};
-    
+
     print $f_blast_list <<END;
 genedb:genedb/GeneDB_${common_name}_Genes:D:$genus $species Genes
 genedb:genedb/GeneDB_${common_name}_Proteins:P:$genus $species Proteins
 END
-    
+
     push @common_names, $common_name;
-    
+
     my $text = $template;
     $text =~ s/\$\{(common_name(_lc)?|genus|species)\}/no strict "refs"; $$1/eg;
     print $text, "\n\n";
@@ -53,13 +53,14 @@ close $f_blast_list;
 my ($transcript_databases, $protein_databases) = ("", "");
 for my $common_name (@common_names) {
     $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Genes",\n);
+#    $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Contigs",\n);
     $protein_databases    .= qq(                             "genedb/GeneDB_${common_name}_Proteins",\n);
 }
 
 print <<END;
 # OmniBLAST
 'genedb_proteins/omni' => {
-        'home'          =>  'http://beta.genedb.org/Homepage',
+        'home'          =>  'http://www.genedb.org/Homepage',
         'name'         =>  'GeneDB proteins',
         'action'      =>  '/blast/blast_server',
         'prologue'      =>  qq(
@@ -71,7 +72,7 @@ $protein_databases
          ],
 },
 'genedb_transcripts/omni' => {
-        'home'          =>  'http://beta.genedb.org/Homepage',
+        'home'          =>  'http://www.genedb.org/Homepage',
         'name'         =>  'GeneDB transcripts',
         'action'      =>  '/blast/blast_server',
         'prologue'      =>  qq(
