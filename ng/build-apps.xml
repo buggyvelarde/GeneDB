@@ -473,8 +473,13 @@
 	<!-- fix residues -->
 	<target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
+	<path id="tmp-run">
+		<path refid="run-classpathref"/>
+		<pathelement location="."/>
+	</path>
+
     <target name="fix-residues-verbose" depends="fulljar" if="verbose">
-        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResidues">
+        <java fork="true" failonerror="true" classpathref="tmp-run" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg line="${organism}"/>
         </java>
@@ -487,6 +492,16 @@
 
     <target name="fix-residues-on-load" unless="load.noFixResidues">
         <antcall target="fix-residues"/>
+    </target>
+
+	<target name="fix-residues-with-selenocysteine" depends="fix-residues-with-selenocysteine-verbose, fix-residues-with-selenocysteine-nonverbose" />
+    <target name="fix-residues-with-selenocysteine-verbose" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResiduesWithSelenocysteine">
+            <arg value="--verbose" />
+        </java>
+    </target>
+    <target name="fix-residues-with-selenocysteine-nonverbose" depends="fulljar" unless="verbose">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResiduesWithSelenocysteine" />
     </target>
 
 
@@ -504,15 +519,17 @@
     </target>
 
 
+	<!-- Old genedb-web targets -->
+
   <target name="genedb-web-tests" depends="fulljar">
     <tests-target project="web"/>
   </target>
 
   <target name="check-config">
     <fail message="The 'config' property must be set" unless="config"/>
-    <available file="${imported.basedir.web}/property-file.${config}" property="config-file-exists"/>
-    <fail message="The file ${imported.basedir.web}/property-file.${config} does not exist" unless="config-file-exists"/>
-    <copy file="${imported.basedir.web}/property-file.${config}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+    <available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
+    <fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
+    <copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
   </target>
 
     <target name="synchronise-caches" depends="check-config, fulljar" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
@@ -566,41 +583,16 @@
     <target name="_LuceneIndex" depends="check-config">
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
-              <path refid="web-classpath"/>
-              <pathelement path="${imported.basedir.web}/ant-build/classes"/>
-              <pathelement path="${imported.basedir.web}/WebContent/WEB-INF"/>
-              <pathelement path="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+              <path refid="run-classpathref"/>
+              <pathelement path="${ng.directory}/WebContent/WEB-INF"/>
+              <pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
             </classpath>
             <arg line="-o ${organism} -i ${dir} ${dbname}"/>
             <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
 
-    <target name="_SmallLuceneIndex" depends="check-config, fulljar">
-        <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.SmallPopulateLuceneIndices">
-            <classpath>
-              <path refid="web-classpath"/>
-              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
-            </classpath>
-            <arg line="-o Tbruceibrucei427 -i /tmp/lucene-tmp ${dbname}"/>
-            <jvmarg line="-server -Djava.awt.headless=true" />
-        </java>
-    </target>
-
-    <target name="LuceneIndex" depends="check-config, fulljar">
-           <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
-            <classpath>
-              <path refid="web-classpath"/>
-              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
-            </classpath>
-            <arg line="-o ${org} -i /tmp ${dbname}"/>
-            <jvmarg line="-server" />
-           </java>
-     </target>
+    <target name="LuceneIndex" depends="check-config, fulljar, _LuceneIndex" />
 
     <target name="PeriodicUpdater" depends="check-config, fulljar"
         description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
