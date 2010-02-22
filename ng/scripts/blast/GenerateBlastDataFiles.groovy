@@ -32,7 +32,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    Process p = ["ssh", HOST, "chado_dump_proteins --nostop -o ${org}"].execute()
+    Process p = ["ssh", HOST, "chado_dump_proteins -s -o ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
