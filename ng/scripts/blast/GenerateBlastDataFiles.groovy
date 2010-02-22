@@ -23,6 +23,7 @@ if (args.length >= 1) {
 boolean worked = true
 for (org in orgs) {
 
+	// PROTEIN Files
     String scriptName = PATH + "GeneDB_" + org + "_Proteins"
     File script = new File(scriptName)
     script.delete()
@@ -45,8 +46,10 @@ for (org in orgs) {
         worked = false
     } else {
         println("OK")
+	    serr.delete()
     }
 
+	// Transcript Files
     scriptName = PATH + "GeneDB_" + org + "_Genes"
     script = new File(scriptName)
     script.delete()
@@ -63,12 +66,37 @@ for (org in orgs) {
     sout.close()
     serros.close()
     if (serr.length() > 0) {
-        // Hack as script outputs a progress msg
         println("Looks like we got a problem")
         worked = false
     } else {
         println("OK")
+	    serr.delete()
     }
+
+
+	// Whole genome Files
+	scriptName = PATH + "GeneDB_" + org + "_Contigs"
+	script = new File(scriptName)
+	script.delete()
+
+	serr = new File("/tmp/stderr.contig."+org + ".txt")
+	serr.delete()
+
+	print "${scriptName} : "
+	p = ["ssh", HOST, "chado_dump_genome ${org}"].execute()
+	sout = new FileOutputStream(script)
+	serros = new FileOutputStream(serr)
+	p.consumeProcessOutput(sout, serros)
+	p.waitFor()
+	sout.close()
+	serros.close()
+	if (serr.length() > 0) {
+		println("Looks like we got a problem")
+		worked = false
+	} else {
+		println("OK")
+	    serr.delete()
+	}
 }
 
 
