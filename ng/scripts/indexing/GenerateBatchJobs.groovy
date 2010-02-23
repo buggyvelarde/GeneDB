@@ -1,6 +1,6 @@
 import groovy.sql.Sql
 
-def boilerPlate = '''
+String boilerPlate = '''
 export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
@@ -57,11 +57,13 @@ for (org in orgs) {
 
     String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)
-    script < boilerPlate
+    script.delete()
+    script << boilerPlate
     script << antLine + '\n'
     "chmod 755 ${scriptName}".execute()
 
-    new File(scriptName + ".out").delete
+    new File(scriptName + ".out").delete()
+    new File(scriptName + ".err").delete()
 
     print "${org} "
     Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
@@ -82,9 +84,9 @@ while (jobList.size() > 0) {
     sleep 300000; // 5 *60*1000
 
     List finishedJobs = new ArrayList()
-	List failedJobs = new ArrayList()
+    List failedJobs = new ArrayList()
+    List justFinishedJobs = new ArrayList()
     for (job in jobList) {
-		List justFinishedJobs = new ArrayList()
         File f = new File("${baseDir}/scripts/${job}.script.err")
         if (f.exists()) {
             if (f.size() == 0) {
@@ -93,21 +95,21 @@ while (jobList.size() > 0) {
             } else {
                 worked = false
                 finishedJobs.add(job)
-				failedJobs.add(job)
+		failedJobs.add(job)
                 justFinishedJobs.add("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
             }
         } else {
             System.err.print(" ${job}")
         }
     }
-	System.err.println();
-	for (job in justFinishedJobs) {
-		System.err.println(job)
-	}
+    System.err.println();
+    for (job in justFinishedJobs) {
+	System.err.println(job)
+    }
     for (job in finishedJobs) {
         jobList.remove(job)
     }
-    System.err.println(" \nJobs ${jobList.size()} remaining of ${orginalJobListSize}");
+    System.err.println(" \nJobs ${jobList.size()} remaining of ${originalJobListSize}");
 }
 
 if (worked) {
