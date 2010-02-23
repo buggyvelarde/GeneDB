@@ -473,13 +473,8 @@
 	<!-- fix residues -->
 	<target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
-	<path id="tmp-run">
-		<path refid="run-classpathref"/>
-		<pathelement location="."/>
-	</path>
-
     <target name="fix-residues-verbose" depends="fulljar" if="verbose">
-        <java fork="true" failonerror="true" classpathref="tmp-run" classname="org.genedb.db.fixup.FixResidues">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg line="${organism}"/>
         </java>
@@ -746,7 +741,7 @@
       <mkdir dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
       <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
         <classpath>
-          <path refid="web-classpath"/>
+          <path refid="run-classpath"/>
           <pathelement location="${imported.basedir.web}/ant-build/classes"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
