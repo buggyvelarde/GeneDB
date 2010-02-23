@@ -38,6 +38,7 @@ while (<$f_organism_names>) {
     print $f_blast_list <<END;
 genedb:genedb/GeneDB_${common_name}_Genes:D:$genus $species Genes
 genedb:genedb/GeneDB_${common_name}_Proteins:P:$genus $species Proteins
+genedb:genedb/GeneDB_${common_name}_Contigs:P:$genus $species Contigs
 END
 
     push @common_names, $common_name;
