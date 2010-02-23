@@ -489,6 +489,10 @@ public class TranscriptDTOFactory {
         featureSynonyms = gene.getFeatureSynonyms();
         //Get the map of lists of synonyms
         ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+
+        featureSynonyms = gene.getFeatureSynonyms();
+        //Get the map of lists of synonyms
+        ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
     }
 
 

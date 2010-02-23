@@ -55,6 +55,7 @@ public class TranscriptDTO implements Serializable {
     private Map<String, List<String>> geneSynonymsByTypes;
     private List<String> transcriptSynonyms;
     private Map<String, List<String>> transcriptSynonymsByTypes;
+    private Map<String, List<String>> proteinSynonymsByTypes;
     private String topLevelFeatureDisplayName;
     private int topLevelFeatureLength;
     private String topLevelFeatureType;
@@ -87,7 +88,16 @@ public class TranscriptDTO implements Serializable {
         return algorithmData;
     }
 
-    public List<String> getClusterIds() {
+    public Map<String, List<String>> getProteinSynonymsByTypes() {
+		return proteinSynonymsByTypes;
+	}
+
+	public void setProteinSynonymsByTypes(
+			Map<String, List<String>> proteinSynonymsByTypes) {
+		this.proteinSynonymsByTypes = proteinSynonymsByTypes;
+	}
+
+	public List<String> getClusterIds() {
         return listOrEmptyList(clusterIds);
     }
 
