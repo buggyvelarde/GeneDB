@@ -76,9 +76,9 @@ my $failed_tests = 0;
 my $pwd = `pwd`;
 print "I am working in $pwd \n";
 
-chdir('./sql/integrity tests');
+chdir('./ng/sql/integrity tests');
 $pwd = `pwd`;
-#print "After the chdir, I am now working in $pwd \n";
+print "After the chdir, I am now working in $pwd \n";
 opendir(DIR, '.') or die "Couldn't open directory, $!";
 
 
