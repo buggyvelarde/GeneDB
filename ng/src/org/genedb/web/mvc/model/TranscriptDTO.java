@@ -61,8 +61,17 @@ public class TranscriptDTO implements Serializable {
     private String topLevelFeatureUniqueName;
     private String typeDescription;
     private String uniqueName;
+    private boolean selenoprotein = false;
 
-    public boolean isProperGeneName() {
+    public boolean isSelenoprotein() {
+		return selenoprotein;
+	}
+
+	public void setSelenoprotein(boolean selenoprotein) {
+		this.selenoprotein = selenoprotein;
+	}
+
+	public boolean isProperGeneName() {
         //<c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
 
         if (getGeneName() == null) {

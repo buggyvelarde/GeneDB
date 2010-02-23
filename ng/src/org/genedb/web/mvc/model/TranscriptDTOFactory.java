@@ -449,6 +449,13 @@ public class TranscriptDTOFactory {
         Assert.notNull(polypeptide);
         ret.setNotes(stringListFromFeaturePropList(polypeptide, "feature_property", "comment"));
         ret.setComments(stringListFromFeaturePropList(polypeptide, "genedb_misc", "curation"));
+
+        // Set the selenoprotein flag if it has the right property
+        String fp = polypeptide.getFeatureProp("sequence", "stop_codon_redefined_as_selenocysteine");
+        if (fp != null) {
+        	ret.setSelenoprotein(true);
+        }
+
     }
 
 
