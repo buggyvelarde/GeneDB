@@ -1,4 +1,4 @@
-qq#!/usr/bin/perl
+#!/usr/bin/perl
 
 use warnings;
 use strict;
@@ -15,7 +15,7 @@ my %organisms;
 open my $f_dbs, "<", "fastas.txt"
     or die "Failed to open fastas.txt: $!\n";
 while (<$f_dbs>) {
-    /^GeneDB_(.*)_(Genes|Proteins)$/ or die "$_??";
+    /^GeneDB_(.*)_(Genes|Proteins|Contigs)$/ or die "$_??";
     $organisms{$1} = undef;
 }
 close $f_dbs;
