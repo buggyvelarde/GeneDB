@@ -54,7 +54,7 @@ close $f_blast_list;
 my ($transcript_databases, $protein_databases) = ("", "");
 for my $common_name (@common_names) {
     $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Genes",\n);
-#    $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Contigs",\n);
+    $transcript_databases .= qq(                             "genedb/GeneDB_${common_name}_Contigs",\n);
     $protein_databases    .= qq(                             "genedb/GeneDB_${common_name}_Proteins",\n);
 }
 
