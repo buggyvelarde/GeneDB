@@ -1,7 +1,7 @@
 <% response.setContentType("application/x-java-jnlp-file"); %><?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/">
+        codebase="http://www.sanger.ac.uk/resources/software/artemis/java/">
          <information>
            <title>Artemis</title>
            <vendor>Sanger Institute</vendor>
