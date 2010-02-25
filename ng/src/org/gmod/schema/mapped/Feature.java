@@ -14,12 +14,16 @@ import org.gmod.schema.utils.SimilarityI;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.analysis.ISOLatin1AccentFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.WhitespaceTokenizerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -27,11 +31,15 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.testng.v6.Lists;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -747,17 +755,13 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
 
     @Transient
     @Field(name = "synonym", index = Index.TOKENIZED, store = Store.YES)
-    private String getSynonymsAsTabSeparatedString() {
-        StringBuilder ret = new StringBuilder();
-        boolean first = true;
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    private String getSynonymsAsSpaceSeparatedString() {
+        List<String> synonyms = Lists.newArrayList();
         for (Synonym synonym: getSynonyms()) {
-            if (!first) {
-                ret.append('\t');
-            }
-            ret.append(synonym.getName());
-            first = false;
+            synonyms.add(synonym.getName());
         }
-        return ret.toString();
+        return allNamesSupport(synonyms);
     }
 
     /**
@@ -767,23 +771,33 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
      * @return
      */
     @Transient
-    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.YES)
     @Analyzer(impl = AllNamesAnalyzer.class)
     String getAllNames() {
-        StringBuilder allNames = new StringBuilder();
+    	List<String> names = Lists.newArrayList();
         if (getName() != null) {
-            allNames.append(getName());
-            allNames.append(' ');
+            names.add(getName());
         }
         String sysId = getUniqueName();
-        allNames.append(sysId);
-        allNames.append(' ');
+        names.add(sysId);
         if (sysId.indexOf(':') != -1) {
-            allNames.append(sysId.substring(0, sysId.lastIndexOf(':')));
-            allNames.append(' ');
+            names.add(sysId.substring(0, sysId.lastIndexOf(':')));
         }
-        allNames.append(getSynonymsAsTabSeparatedString());
-        return allNames.toString().toLowerCase();
+        StringBuilder ret = new StringBuilder(allNamesSupport(names));
+        ret.append(" ");
+        ret.append(getSynonymsAsSpaceSeparatedString());
+        return ret.toString();
+    }
+
+    protected String allNamesSupport(List<String> names) {
+    	List<String> newNames = Lists.newArrayList();
+    	for (String name : names) {
+			if (name.contains("-")) {
+				newNames.add(name.replaceAll("-", ""));
+			}
+		}
+    	names.addAll(newNames);
+    	return StringUtils.collectionToDelimitedString(names, " ");
     }
 
     @Transient
