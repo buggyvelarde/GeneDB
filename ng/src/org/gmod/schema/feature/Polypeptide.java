@@ -1,6 +1,7 @@
 package org.gmod.schema.feature;
 
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
@@ -22,11 +23,14 @@ import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.springframework.util.StringUtils;
+
+import com.google.common.collect.Lists;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -358,25 +362,22 @@ public class Polypeptide extends Region {
      * @return
      */
     @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
     @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
     public String getProductsAsTabSeparatedString() {
-        StringBuilder ret = new StringBuilder();
-        boolean first = true;
         List<String> products = getProducts();
         if (products == null) {
             return null;
         }
-        for (String product: getProducts()) {
-            if (first) {
-                first = false;
-            } else {
-                ret.append('\t');
-            }
-            ret.append(product);
-        }
-        return ret.toString();
-    }
 
+        List<String> munged = Lists.newArrayList();
+        for (String product : products) {
+			munged.add(product.replace("-", ""));
+		}
+        products.addAll(munged);
+
+        return StringUtils.collectionToDelimitedString(products, "\t");
+    }
 
 
     @Transient

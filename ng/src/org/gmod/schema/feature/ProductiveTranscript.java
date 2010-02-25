@@ -12,6 +12,9 @@ import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
+import org.springframework.util.StringUtils;
+
+import com.google.common.collect.Lists;
 
 import java.sql.Timestamp;import java.util.List;
 
@@ -112,23 +115,23 @@ public abstract class ProductiveTranscript extends Transcript {
     }
 
     @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
     @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
     public String getProductsAsTabSeparatedString() {
-        StringBuilder ret = new StringBuilder();
-        boolean first = true;
         List<String> products = getProducts();
         if (products == null) {
             return null;
         }
-        for (String product: getProducts()) {
-            if (first) {
-                first = false;
-            } else {
-                ret.append('\t');
-            }
-            ret.append(product);
-        }
-        return ret.toString();
+
+        List<String> munged = Lists.newArrayList();
+        for (String product : products) {
+        	if (product.contains("-")) {
+        		munged.add(product.replace("-", ""));
+        	}
+		}
+        products.addAll(munged);
+
+        return StringUtils.collectionToDelimitedString(products, " ");
     }
 
     @Override
@@ -154,61 +157,45 @@ public abstract class ProductiveTranscript extends Transcript {
 
 
     @Transient
-    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.YES)
     @Analyzer(impl = AllNamesAnalyzer.class)
     public String getAllTranscriptNames() {
-        StringBuilder allNames = new StringBuilder();
+    	List<String> names = Lists.newArrayList();
 
         //gene name like say PGKC should be indexed on it's transcript
         if (gene!= null && gene.getName() != null) {
-            allNames.append(' ');
-            allNames.append(gene.getName());
-            allNames.append(' ');
-
-            //
-            if(gene.getName().contains("-")){
-                allNames.append(' ');
-                allNames.append(gene.getName().replaceAll("-", ""));
-                allNames.append(' ');
-            }
-            logger.debug("Transcript's gene name: " + gene.getName());
+            names.add(gene.getName());
+            names.add(gene.getUniqueName());
         }
 
-        if(gene!= null && gene.getSynonyms().size()>0){
+        if (gene!= null && gene.getSynonyms().size()>0) {
             for (Synonym synonym : gene.getSynonyms()){
-                allNames.append(' ');
-                allNames.append(synonym.getName());
-                allNames.append(' ');
-                logger.debug("Transcript's gene synonym: " + synonym.getName());
+                names.add(synonym.getName());
             }
         }
 
 
         //Process Unique Name
         String uniqueName = getUniqueName();
+        names.add(uniqueName);
 
-        //if say Smp_000030.1:mRNA is uniqueName, then add Smp_000030 and  Smp_000030.1
+        //if say Smp_000030.1:mRNA is uniqueName, then add Smp_000030.1
         int before = uniqueName.toLowerCase().indexOf(":");
         if (before != -1) {
             String firstPart = uniqueName.substring(0, before);
             //add something like Smp_000030.1
-            allNames.append(' ');
-            allNames.append(firstPart);
-            allNames.append(' ');
-            logger.debug("Transcript's name: " + firstPart);
+            names.add(firstPart);
         }
 
         if (this.getGene().getTranscripts().size() > 1) {
-            // Multiply spliced
             Transcript first = getGene().getFirstTranscript();
             if (first.getUniqueName().equals(getUniqueName())) {
-                allNames.append(' ');
-                allNames.append(this.getGene().getUniqueName());
-                allNames.append(' ');
-                logger.debug("First Transcript' other name: " + this.getGene().getUniqueName());
+                names.add(this.getGene().getUniqueName());
             }
 
         }
-        return allNames.toString();
+        String ret = allNamesSupport(names);
+        System.err.println("** T "+ret);
+        return ret;
     }
 }
