@@ -372,11 +372,13 @@ public class Polypeptide extends Region {
 
         List<String> munged = Lists.newArrayList();
         for (String product : products) {
-			munged.add(product.replace("-", ""));
+        	if (product.contains("-")) {
+        		munged.add(product.replace("-", ""));
+        	}
 		}
         products.addAll(munged);
 
-        return StringUtils.collectionToDelimitedString(products, "\t");
+        return StringUtils.collectionToDelimitedString(products, " ");
     }
 
 
