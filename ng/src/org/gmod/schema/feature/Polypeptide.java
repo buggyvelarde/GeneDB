@@ -364,7 +364,31 @@ public class Polypeptide extends Region {
     @Transient
     @Analyzer(impl = AllNamesAnalyzer.class)
     @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
-    public String getProductsAsTabSeparatedString() {
+    public String getProductsAsSpaceSeparatedString() {
+        List<String> products = getProducts();
+        if (products == null) {
+            return null;
+        }
+
+        List<String> munged = Lists.newArrayList();
+        for (String product : products) {
+        	if (product.contains("-")) {
+        		munged.add(product.replace("-", ""));
+        	}
+		}
+        products.addAll(munged);
+
+        return StringUtils.collectionToDelimitedString(products, " ");
+    }
+
+    /**
+     * FIX_ME - This method is duplicated (and also in the ProductiveTranscript class)
+     * @return
+     */
+    @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    @Field(name = "expandedProduct", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsSeparatedString() {
         List<String> products = getProducts();
         if (products == null) {
             return null;
