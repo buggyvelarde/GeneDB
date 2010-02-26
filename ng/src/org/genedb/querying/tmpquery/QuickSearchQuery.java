@@ -83,11 +83,11 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
-                    pq.add(new Term("product", token.toLowerCase()));
+                    pq.add(new Term("expandedProduct", token.toLowerCase()));
                 }
                 bq.add(pq, Occur.SHOULD);
             } else {
-                bq.add(new WildcardQuery(new Term("product", tokens[0].toLowerCase())), Occur.SHOULD);
+                bq.add(new WildcardQuery(new Term("expandedProduct", tokens[0].toLowerCase())), Occur.SHOULD);
             }
         }
         queries.add(bq);

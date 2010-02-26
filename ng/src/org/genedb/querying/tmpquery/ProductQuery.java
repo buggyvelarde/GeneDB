@@ -5,7 +5,6 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -51,14 +50,14 @@ public class ProductQuery extends OrganismLuceneQuery {
         BooleanQuery bq = new BooleanQuery();
         if (StringUtils.containsWhitespace(search)) {
             for (String term : search.split(" ")) {
-                bq.add(new TermQuery(new Term("product",term.toLowerCase()
+                bq.add(new TermQuery(new Term("expandedProduct",term.toLowerCase()
                     )), Occur.SHOULD);
             }
         } else {
             if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
+                bq.add(new TermQuery(new Term("expandedProduct",search.toLowerCase())), Occur.SHOULD);
             } else {
-                bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
+                bq.add(new WildcardQuery(new Term("expandedProduct", search.toLowerCase())), Occur.SHOULD);
             }
         }
 

@@ -31,12 +31,12 @@ public class NameProductQuery extends OrganismLuceneQuery {
     protected String getluceneIndexName() {
         return "org.gmod.schema.mapped.Feature";
     }
-    
+
     @Override
     public String getQueryDescription() {
     	return "Searches for polypeptides of a certain function, that have a certain name.";
     }
-    
+
     @Override
     public String getQueryName() {
         return "Named Product";
@@ -48,16 +48,16 @@ public class NameProductQuery extends OrganismLuceneQuery {
         BooleanQuery bq = new BooleanQuery();
         if(StringUtils.containsWhitespace(search)) {
             for(String term : search.split(" ")) {
-                bq.add(new TermQuery(new Term("product",term.toLowerCase()
+                bq.add(new TermQuery(new Term("expandedProduct",term.toLowerCase()
                     )), Occur.SHOULD);
             }
         } else {
             if (search.indexOf('*') == -1) {
                 bq.add(new TermQuery(new Term("allNames",search.toLowerCase())), Occur.SHOULD);
-                bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
+                bq.add(new TermQuery(new Term("expandedProduct",search.toLowerCase())), Occur.SHOULD);
             } else {
                 bq.add(new WildcardQuery(new Term("allNames", search.toLowerCase())), Occur.SHOULD);
-                bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
+                bq.add(new WildcardQuery(new Term("expandedProduct", search.toLowerCase())), Occur.SHOULD);
             }
         }
 
