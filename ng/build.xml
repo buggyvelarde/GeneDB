@@ -13,7 +13,7 @@
 
 
 	<!-- Paths/Properties -->
-	<property name="build.dir" value="ant-build" />
+	<property name="build.dir" value="${ng.directory}/ant-build" />
 	<property name="dist.dir" value="${build.dir}/dist" />
 	<property name="ng.jar" value="${build.dir}/dist/ng.jar" />
 	<property name="test-classes.dir" value="${build.dir}/test-classes" />
@@ -25,17 +25,17 @@
 	</path>
 
 	<path id="compile-classpathref">
-		<fileset dir="${ng.directory}/WebContent/WEB-INF/lib/">
+		<fileset dir="${lib.dir}">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${ng.directory}/lib-compiletime/">
+		<fileset dir="${lib-compiletime.dir}">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
 
 	<path id="run-classpathref">
-		<path refid="compile-classpathref"/>
 		<pathelement location="${ng.jar}"/>
+		<path refid="compile-classpathref"/>	
 	</path>
 
 
