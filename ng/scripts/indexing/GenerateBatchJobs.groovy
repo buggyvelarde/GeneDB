@@ -33,7 +33,7 @@ def prefix = ''  // Default is empty prefix.
 def method
 def extraArguments = options.arguments()
 if (extraArguments) {
-	date = extraArguments[0]
+	method = extraArguments[0]
 	// The rest of the arguments belong to the prefix.
 	if (extraArguments.size() > 1) {
 		prefix = extraArguments[1..-1].join(' ')
