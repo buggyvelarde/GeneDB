@@ -1,16 +1,59 @@
 import groovy.sql.Sql
 
+def myCwd = new File(".").getAbsolutePath()
+if (!new File(myCwd, "GenerateBatchJobs.groovy").exists()) {
+	println "Can't find script file in current dir. Please cd to the indexing directory first'"
+	System.exit(-1)
+}
+println myCwd;
+System.exit(-1)
+File srcDirRoot = new File(myCwd, "../..")
+
+
+def cli = new CliBuilder(usage: 'GenerateBatchJobs.groovy -[dghoq] Lucene|DTO [prefix]')
+cli.with {
+	h longOpt: 'help', 'Show usage information'
+	d longOpt: 'date', args:1, argName: 'date', 'The date after which an organism must have been modified eg 20100219'
+	g longOpt: 'genedb', args: 1, argName: 'nickname', 'Nickname of GeneDB instance to connect to'
+	o longOpt: 'output', args: 1, argName: 'directory', 'The subdir of /nfs/pathdb/genedb/ to use default: nightly'
+	q longOpt: 'queue', args: 1, argName: 'queue', 'The LSF queue to use'
+}
+
+def options = cli.parse(args)
+if (!options) {
+	return
+}
+
+if (options.h) {
+	cli.usage()
+	return
+}
+
+// Handle all non-option arguments.
+def prefix = ''  // Default is empty prefix.
+def date = new Date()  // Default is current date.
+def extraArguments = options.arguments()
+if (extraArguments) {
+	date = new Date().parse(extraArguments[0])
+	// The rest of the arguments belong to the prefix.
+	if (extraArguments.size() > 1) {
+		prefix = extraArguments[1..-1].join(' ')
+	}
+}
+
+
 String boilerPlate = '''
 export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
-cd "/nfs/pathdb/.hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-web"
+cd "${srcDirRoot.toAbsolutePath()}"
 '''
 
-def queueName = "yesterday";
+def queueName = ${opt.q} ? ${opt.q} : "yesterday";
+def output = ${opt.o} ? ${opt.o} : "nightly";
 
-String baseDir = "/nfs/pathdb/genedb/nightly/bulk/${args[0]}"
+String baseDir = "/nfs/pathdb/genedb/${output}/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
 new File("${baseDir}/output").mkdir()
 
@@ -21,12 +64,17 @@ if (args.length >= 3) {
 
 } else {
 
-    def sql = Sql.newInstance("jdbc:postgresql://pgsrv2/nightly", "genedb",
+    def sql = Sql.newInstance("jdbc:postgresql://pathdbsrv1b/nightly", "genedb",
                                       "genedb", "org.postgresql.Driver")
 
-    sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'") { row ->
-        def org = row.common_name
-        orgs.add(org)
+    def sqlCommand = "select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'"
+
+	if (options.d) {
+		sqlCommand = "select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy' and f.datelastmodified > ${opt.d}"
+	}
+
+    sql.eachRow(sqlCommand) { row ->
+        orgs.add(row.common_name)
     }
     sql.close()
 }
