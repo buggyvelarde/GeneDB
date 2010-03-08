@@ -87,13 +87,15 @@ for (org in orgs) {
     switch (method) {
 
     case "Lucene":
-        new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
+    	new File("${baseDir}/output/${org}").deletDir()
+    	new File("${baseDir}/output/${org}").mkdir()
+        antLine="ant -f build-apps.xml -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
         break;
 
     case "DTO":
-        antLine="ant -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
-        new File("${baseDir}/output/${org}").mkdir()
+    	new File("${baseDir}/output/${org}").deletDir()
+    	new File("${baseDir}/output/${org}").mkdir()
+        antLine="ant -f build-apps.xml -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
         break
 
     default:
@@ -111,7 +113,6 @@ for (org in orgs) {
 
     new File(scriptName + ".out").delete()
     new File(scriptName + ".err").delete()
-	new File(baseDir, "output/${org}").delete()
 
     print "${org} "
     Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
