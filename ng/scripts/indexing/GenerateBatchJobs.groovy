@@ -89,13 +89,13 @@ for (org in orgs) {
     case "Lucene":
     	new File("${baseDir}/output/${org}").deleteDir()
     	new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -f build-apps.xml -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
+        antLine="ant -f build-apps.xml -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
         break;
 
     case "DTO":
     	new File("${baseDir}/output/${org}").deleteDir()
     	new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -f build-apps.xml -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
+        antLine="ant -f build-apps.xml -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
         break
 
     default:

@@ -561,7 +561,7 @@
     </target>
 
 
-    <target name="_PopulateCaches" depends="check-config">
+    <target name="_PopulateCaches">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>
           <path refid="web-classpath"/>
@@ -575,7 +575,7 @@
       </java>
     </target>
 
-    <target name="_LuceneIndex" depends="check-config">
+    <target name="_LuceneIndex">
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="run-classpathref"/>
