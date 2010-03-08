@@ -6,7 +6,6 @@ if (!new File(myCwd, "GenerateBatchJobs.groovy").exists()) {
 	System.exit(-1)
 }
 println myCwd;
-System.exit(-1)
 File srcDirRoot = new File(myCwd, "../..")
 
 
