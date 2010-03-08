@@ -84,20 +84,20 @@ for (org in orgs) {
 
     def antLine
 
-    switch (this.args[0]) {
+    switch (method) {
 
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -Dconfig=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
+        antLine="ant -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
         break;
 
     case "DTO":
-        antLine="ant -Dconfig=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
+        antLine="ant -Dconfig=${prefix} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
         new File("${baseDir}/output/${org}").mkdir()
         break
 
     default:
-        throw new RuntimeException("Don't know how to run '${args[0]}'")
+        throw new RuntimeException("Don't know how to run '${method}'")
     }
 
     jobList.add(org)
