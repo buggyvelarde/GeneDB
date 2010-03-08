@@ -49,8 +49,8 @@ unset DISPLAY
 cd "${srcDirRoot.toAbsolutePath()}"
 '''
 
-def queueName = ${opt.q} ? ${opt.q} : "yesterday";
-def output = ${opt.o} ? ${opt.o} : "nightly";
+def queueName = options.q ? options.q : "yesterday";
+def output = options.o ? options.o : "nightly";
 
 String baseDir = "/nfs/pathdb/genedb/${output}/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
