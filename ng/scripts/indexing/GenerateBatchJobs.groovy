@@ -41,13 +41,13 @@ if (extraArguments) {
 }
 
 
-String boilerPlate = '''
+String boilerPlate = """
 export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
-export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
+export PATH=\${ANT_HOME}/bin:\${JAVA_HOME}/bin:$PATH
 unset DISPLAY
 cd "${srcDirRoot.toAbsolutePath()}"
-'''
+"""
 
 def queueName = options.q ? options.q : "yesterday";
 def output = options.o ? options.o : "nightly";
@@ -111,6 +111,7 @@ for (org in orgs) {
 
     new File(scriptName + ".out").delete()
     new File(scriptName + ".err").delete()
+	new File(baseDir, "output/${org}").delete()
 
     print "${org} "
     Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
