@@ -30,10 +30,10 @@ if (options.h) {
 
 // Handle all non-option arguments.
 def prefix = ''  // Default is empty prefix.
-def date = new Date()  // Default is current date.
+def method
 def extraArguments = options.arguments()
 if (extraArguments) {
-	date = new Date().parse(extraArguments[0])
+	date = extraArguments[0]
 	// The rest of the arguments belong to the prefix.
 	if (extraArguments.size() > 1) {
 		prefix = extraArguments[1..-1].join(' ')
@@ -52,7 +52,7 @@ cd "${srcDirRoot.toAbsolutePath()}"
 def queueName = options.q ? options.q : "yesterday";
 def output = options.o ? options.o : "nightly";
 
-String baseDir = "/nfs/pathdb/genedb/${output}/bulk/${args[0]}"
+String baseDir = "/nfs/pathdb/genedb/${output}/bulk/${method}"
 new File("${baseDir}/scripts").mkdirs()
 new File("${baseDir}/output").mkdir()
 
