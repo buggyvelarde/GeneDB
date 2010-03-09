@@ -26,14 +26,11 @@ import org.genedb.util.SequenceUtils;
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
-import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -85,42 +82,45 @@ public class FeatureSequenceController {
 
         // ---------------------------------------------
         model.put("unspliced", transcript.getGene().getResidues());
-
-        List<Pair<Integer, Integer>> coords;
-        for (AbstractExon exon : transcript.getExons()) {
-            exon.getFeatureLocs();
-        }
+        // geneSequence - from UTR to UTR inclusive, with introns
+        String geneSequence = transcript.getGene().getResidues();
 
         boolean reverseCompliment = false;
         if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
             reverseCompliment = true;
         }
-
-        // geneSequence - from UTR to UTR inclusive, with introns
-        String geneSequence = transcript.getGene().getResidues();
         if (reverseCompliment) {
            geneSequence = SequenceUtils.reverseComplement(geneSequence);
         }
         model.put("gene_sequence", geneSequence); // formerly unspliced
-        //Transcript - from UTR to UTR inclusive, without introns
-        model.put("transcript", transcript.getResidues()); // formerly spliced
-        //CDS - exons
 
 
-
-        SortedSet<AbstractExon> exons = transcript.getExons();
-        StringBuilder sb = new StringBuilder();
-        for (AbstractExon exon : exons) {
-            String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
-            sb.append(seq);
-        }
-        model.put("cds", sb.toString());
-
-        //model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
-
-
-        // -----------------------------------------------
         if (transcript instanceof ProductiveTranscript) {
+        	// Don't want CDS or protein for non-coding features
+
+        	List<Pair<Integer, Integer>> coords;
+        	for (AbstractExon exon : transcript.getExons()) {
+        		exon.getFeatureLocs();
+        	}
+
+
+        	//Transcript - from UTR to UTR inclusive, without introns
+        	model.put("transcript", transcript.getResidues()); // formerly spliced
+
+        	//CDS - exons
+        	SortedSet<AbstractExon> exons = transcript.getExons();
+        	StringBuilder sb = new StringBuilder();
+        	for (AbstractExon exon : exons) {
+        		String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
+        		sb.append(seq);
+        	}
+        	model.put("cds", sb.toString());
+
+        	//model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
+
+
+        	// -----------------------------------------------
+
             Polypeptide pp = ((ProductiveTranscript) transcript).getProtein();
             if (pp != null) {
                 model.put("protein", pp.getResidues());
@@ -157,14 +157,6 @@ public class FeatureSequenceController {
         public void setName(String name) {
             this.name = name;
         }
-
-//        public boolean isSequenceView() {
-//            return sequenceView;
-//        }
-//
-//        public void setSequenceView(boolean sequenceView) {
-//            this.sequenceView = sequenceView;
-//        }
 
     }
 }
