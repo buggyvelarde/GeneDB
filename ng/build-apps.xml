@@ -728,7 +728,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
         </classpath>
-        <jvmarg value="-Xmx1536m"/>
+        <jvmarg value="-Xmx2048m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <arg line="-r /tmp/destination /nfs/pathdb/genedb/nightly/bulk/DTO/output"/>
       </java>
