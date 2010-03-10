@@ -9,7 +9,7 @@ println myCwd;
 File srcDirRoot = new File(myCwd, "../..")
 
 
-def cli = new CliBuilder(usage: 'GenerateBatchJobs.groovy -[dghoq] Lucene|DTO [prefix]')
+def cli = new CliBuilder(usage: 'GenerateBatchJobs.groovy -[dghoq] Lucene|DTO [org1 org2 ...]')
 cli.with {
 	h longOpt: 'help', 'Show usage information'
 	d longOpt: 'date', args:1, argName: 'date', 'The date after which an organism must have been modified eg 20100219'
@@ -58,8 +58,8 @@ new File("${baseDir}/output").mkdir()
 
 List<String> orgs = new ArrayList<String>()
 
-if (args.length >= 3) {
-    orgs = args[2].split(":")
+if (extraArguments.size() > 1) {
+    orgs = extraArguments[1..-1].asList()
 
 } else {
 
