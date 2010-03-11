@@ -6,6 +6,7 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="misc" uri="misc" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="structure" tagdir="/WEB-INF/tags/genedb/structure" %>
 
 <% if (onLoad == null) { %>
 <body>
@@ -33,7 +34,7 @@
 </tr>
 <tr>
 <td colspan="2">
-<db:simpleselect/>
+<db:simpleselect selection="${taxonNodeName}"/>
 </td>
 </tr>
 </table>
@@ -48,7 +49,8 @@
 
 <div id="navigation">
 <ul id="nav">
-<li><a href="<misc:url value="/Homepage"/>">Home</a>
+<li>
+<!--<li><a href="<misc:url value="/Homepage"/>">Home</a>-->
 </li>
 <%--
 <li class="has-sub"><a href="/Homepage">Home</a>
@@ -86,12 +88,21 @@
 <li><a href="<misc:url value="/category/molecular_function"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Molecular Function</a></li>
 </ul>
 </li>
-<%--
-<li><a href="<misc:url value="/History"/>">History</a></li>
---%>
+<li class="has-sub"><a href="">Tools</a>
+<ul class="sub-menu">
+<li><a href="<misc:url value="/History" />">History</a></li>
+<li><a href="<misc:url value="/IdList" />">ID List Upload</a></li>
+</ul>
+</li>
 <!-- end sub menu -->
 </ul>
 </div><!-- end navigation block -->
+<structure:motdMessage />
+<structure:flashMessage />
+
+<db:breadcrumb selection="${taxonNodeName}" showingHomepage="${showingHomepage}" />
+</p>
+
 
 <jsp:doBody />
 
@@ -103,7 +114,7 @@
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td valign="top" align="left">
-<p>&copy; 2009 and hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></p>
+<p>&copy; 2009-2010 and hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></p>
 </td>
 
 <td valign="top" align="right">
