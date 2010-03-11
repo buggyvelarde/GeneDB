@@ -490,9 +490,11 @@ public class TranscriptDTOFactory {
         //Get the map of lists of synonyms
         ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
 
-        featureSynonyms = gene.getFeatureSynonyms();
-        //Get the map of lists of synonyms
-        ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+        if (transcript instanceof ProductiveTranscript) {
+        	featureSynonyms = ((ProductiveTranscript)transcript).getProtein().getFeatureSynonyms();
+        	//Get the map of lists of synonyms
+        	ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+        }
     }
 
 
