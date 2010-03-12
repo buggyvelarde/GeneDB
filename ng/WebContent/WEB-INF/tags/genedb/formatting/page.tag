@@ -49,9 +49,9 @@
 
 <div id="navigation">
 <ul id="nav">
-<li>
-<!--<li><a href="<misc:url value="/Homepage"/>">Home</a>-->
-</li>
+<!-- <li>
+<li><a href="<misc:url value="/Homepage"/>">Home</a>
+</li> -->
 <%--
 <li class="has-sub"><a href="/Homepage">Home</a>
 <ul class="sub-menu">
