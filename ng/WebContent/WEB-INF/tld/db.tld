@@ -96,6 +96,28 @@
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
+    <attribute>
+       <name>selection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+ </tag>
+
+
+ <tag>
+   <name>breadcrumb</name>
+   <tag-class>org.genedb.web.tags.db.BreadcrumbTag</tag-class>
+   <body-content>empty</body-content>
+   <attribute>
+       <name>selection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>showingHomepage</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
  </tag>
 
 
@@ -206,12 +228,11 @@
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
- </tag>
-
- <tag>
-   <name>breadcrumb</name>
-   <tag-class>org.genedb.web.tags.db.BreadcrumbTag</tag-class>
-   <body-content>empty</body-content>
+    <attribute>
+       <name>alwaysLink</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
  </tag>
 
  <tag>
@@ -220,6 +241,18 @@
    <body-content>empty</body-content>
    <attribute>
        <name>dbXRef</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+ </tag>
+
+
+ <tag>
+   <name>dbName</name>
+   <tag-class>org.genedb.web.tags.db.DbNameTag</tag-class>
+   <body-content>empty</body-content>
+   <attribute>
+       <name>db</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
