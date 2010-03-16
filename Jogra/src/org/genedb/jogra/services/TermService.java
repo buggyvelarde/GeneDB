@@ -10,6 +10,9 @@ public interface TermService {
     
     /* Accepts multiple organisms and returns a list of corresponding terms */
     List<Term> getTerms(List<TaxonNode> taxonNode, String termType);
+    
+    /* Get all the terms in a given CV */
+    List<Term> getAllTerms(String cvName);
    
     /* Takes the new term, list of old terms and the corrected text (if any) */
     RationaliserResult rationaliseTerm(List<Term> oldTerms, String correctedText, boolean allOrganisms, List<TaxonNode> selectedTaxons) throws SQLException;
@@ -21,6 +24,6 @@ public interface TermService {
     List<String> getEvidenceCodes(Term term);
     
     /* Given a name, get the corresponding Term */
-    Term getTerm(String name, String type, boolean ignoreCase);
+    Term getTerm(String name, String type);
  
 }
