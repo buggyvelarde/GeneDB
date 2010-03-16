@@ -46,7 +46,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,7 +82,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.google.common.collect.Maps;
 
 /********************************************************************************************************
  * The TermRationalier is a tool that allows curators to correct (rationalise) terms from a chosen 
@@ -102,15 +103,16 @@ public class TermRationaliser implements JograPlugin {
     private Jogra jogra;                                                        //Instance of Jogra
     private boolean showEVC;                                                    //Show Evidence codes?
     private String termType;                                                    //One of the CVs set in the Spring application context
-    private List<Term> terms = new ArrayList<Term>();                           //All terms (for JList)
-    private LinkedHashMap<String, String> instances = Maps.newLinkedHashMap();  //To hold the types of cvterms
+    private List<Term> terms = new ArrayList<Term>();                           //Terms specific to selected taxons (for JList)
+    private List<Term> allTerms = new ArrayList<Term>();                        //All the terms in the CV
+    private HashMap<String, String> instances = new HashMap<String, String>();  //To hold the types of cvterms
     private String[] cvnames;                                                   //Holds the cv names passed in through Spring
 
     /*Variables related to the user interface */
     private JFrame frame = new JFrame(); 
     private RationaliserJList fromList = new RationaliserJList();
     private RationaliserJList toList = new RationaliserJList();
-    private JTextField textField;
+    private JTextArea textField;
     private JLabel productCountLabel = new JLabel();
     private JLabel scopeLabel = new JLabel();       //Label showing user's selection. Default: All organisms
     private JTextArea information = new JTextArea(10,10);   
@@ -135,7 +137,6 @@ public class TermRationaliser implements JograPlugin {
                     protected JFrame doInBackground() throws Exception {
                         ret.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         setTermType(instances.get((String)termTypeBox.getSelectedItem()));
-                        logger.debug("I have set the term type to: " + instances.get((String)termTypeBox.getSelectedItem()));
                         setShowEVC(showEVCFilter.isSelected());
                         return makeWindow();
                     }
@@ -176,7 +177,8 @@ public class TermRationaliser implements JograPlugin {
         JograProgressBar jpb = new JograProgressBar("Loading terms from database..."); //Progress bar added for better user information    
         this.setSelectedTaxonsAndScopeLabel(jogra.getSelectedOrganismNames());
 
-        SwingWorker worker = new SwingWorker<List<Term>, Void>() { //Loading can take a while; so in a worker thread
+        //trying to get these two threads to run simultaneously
+        SwingWorker worker_1 = new SwingWorker<List<Term>, Void>() { //Loading can take a while; so in a worker thread
             @Override
             public List<Term> doInBackground() { 
                 terms = termService.getTerms(getSelectedTaxons(), getTermType());
@@ -186,18 +188,39 @@ public class TermRationaliser implements JograPlugin {
             @Override
             public void done() { }
         };
-        worker.run();
- 
-        fromList.addAll(terms);
-        toList.addAll(terms);
+        worker_1.run();
         
+        SwingWorker worker_2 = new SwingWorker<List<Term>, Void>() {
+            @Override
+            public List<Term> doInBackground() { 
+                allTerms = termService.getAllTerms(getTermType());
+                Collections.sort(allTerms);
+                return allTerms;
+            }
+            @Override
+            public void done() { }
+        };
+        worker_2.run();
+        
+        //Is there a way to combine these two loops?
         for (Term term : terms) { 
             if(isShowEVC()){ //Fetch the evidence codes for the terms if the user wants them
                 term.setEvidenceCodes(termService.getEvidenceCodes(term));    
             }
         }
+        
+        for (Term term : allTerms) { 
+            if(isShowEVC()){ //Fetch the evidence codes for the terms if the user wants them
+                term.setEvidenceCodes(termService.getEvidenceCodes(term));    
+            }
+        }
 
-        productCountLabel.setText(String.format("Number of terms: %d terms found (%s)", terms.size(), getTermType()));
+        fromList.addAll(terms);
+        toList.addAll(allTerms);
+        
+        
+
+        productCountLabel.setText(String.format("Number of terms for selected organisms: %d terms found (%s)", terms.size(), getTermType()));
         textField.setText(""); //Re-set the editable text box   
         fromList.clearSelection(); //Clear any previous selections
         toList.clearSelection(); 
@@ -273,7 +296,7 @@ public class TermRationaliser implements JograPlugin {
             public void keyTyped(KeyEvent arg0) {}
         });
         
-        Box fromPanel = this.createRationaliserPanel("From", fromList); //Box on left hand side
+        Box fromPanel = this.createRationaliserPanel("From (selected terms)", fromList); //Box on left hand side
         fromPanel.add(Box.createVerticalStrut(55)); //Add some space
         center.add(fromPanel); //Add to main box
         center.add(Box.createHorizontalStrut(3)); //Add some space
@@ -328,12 +351,15 @@ public class TermRationaliser implements JograPlugin {
             public void keyTyped(KeyEvent arg0) {}
         });
         
-        Box toPanel = this.createRationaliserPanel("To", toList);
+        Box toPanel = this.createRationaliserPanel("To (all terms)", toList);
         
         Box newTerm = Box.createVerticalBox();
-        textField = new JTextField(20); //textfield to let the user edit the name of an existing term
+        textField = new JTextArea(1,1); //textfield to let the user edit the name of an existing term
         textField.setForeground(Color.BLUE);
-        newTerm.add(textField);
+        JScrollPane jsp = new JScrollPane(textField); //scroll pane so that there is a horizontal scrollbar
+        jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        
+        newTerm.add(jsp);
         TitledBorder editBorder = BorderFactory.createTitledBorder("Edit term name");
         editBorder.setTitleColor(Color.DARK_GRAY);
         newTerm.setBorder(editBorder);
@@ -506,12 +532,21 @@ public class TermRationaliser implements JograPlugin {
 
        TitledBorder sysidBorder = BorderFactory.createTitledBorder("Systematic IDs"); //systematic ID box
        sysidBorder.setTitleColor(Color.DARK_GRAY);
-       final JTextField idField = new JTextField(20);
+       
+//       final JTextField idField = new JTextField(20);
+//       idField.setEditable(false);
+//       idField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+//       idField.setForeground(Color.DARK_GRAY);
+       
+       final JTextArea idField = new JTextArea(1,1);
        idField.setEditable(false);
        idField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
        idField.setForeground(Color.DARK_GRAY);
+       JScrollPane scroll = new JScrollPane(idField);
+       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+              
        Box sysidBox = Box.createVerticalBox();
-       sysidBox.add(idField);
+       sysidBox.add(scroll /*idField*/);
        sysidBox.setBorder(sysidBorder);
        box.add(sysidBox);
 
@@ -522,7 +557,7 @@ public class TermRationaliser implements JograPlugin {
                if(highlightedTerm!=null){
                    //Set the sys id box to show the sys id
                    idField.setText(StringUtils.collectionToCommaDelimitedString(termService.getSystematicIDs(highlightedTerm, selectedTaxons)));
-                   if(name.equalsIgnoreCase("To")){
+                   if(name.equalsIgnoreCase("To (all terms)")){
                        textField.setText(highlightedTerm.getName()); //Allow the user to edit the spelling of the term in the to list
                    }
                }
@@ -635,6 +670,7 @@ public class TermRationaliser implements JograPlugin {
                     return i;
                 }
                 int d = org.apache.commons.lang.StringUtils.getLevenshteinDistance(in, element);
+                
                 if (d==1) {
                     return i;
                 }
@@ -682,10 +718,11 @@ public class TermRationaliser implements JograPlugin {
         public void actionPerformed(ActionEvent e) {
             
             List<Term> from = new ArrayList<Term>(); 
-            Object[] temp = fromList.getSelectedValues();
-            for (Object o: temp){ //TODO:is there an easier way to convert an array to a list of typed objects?
+            Object[] temp = fromList.getSelectedValues(); //terms selected on the left
+            for (Object o: temp){ //TODO:is there an easier way to convert an array to a list of **typed** objects?
                 from.add((Term)o);
-            }            
+            }  
+            
            
             Term to = (Term) toList.getSelectedValue(); //Term selected on the right
             String text = textField.getText(); //Corrected name (if provided) in the text box
@@ -696,76 +733,47 @@ public class TermRationaliser implements JograPlugin {
             
             boolean changeAllOrganisms = false;
             
-            if(to.getName().equals(text)){
-                //Go ahead, rationalise
+            if(toList.contains(text)==1){ //User chose to rationalise to a term from the L.H.S. list
+
                 int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
                                                                 StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
-                                                                "to a new term: \n" +
+                                                                "to: \n" +
                                                                 text + "\n\n" +
                                                                 "Do you want to continue? ", 
-                                                                "Confirm");
-     
-
+                                                                "Confirm");     
                 if (userDecision==JOptionPane.CANCEL_OPTION){
                     writeMessage("Request to rationalise cancelled.");
                     return;
                 }
 
             
-            }else  { //so, user has decided to enter a 'new' term name (or what appears to be a new term name)
+            }else if(toList.contains(text)==0) { //So, user has decided to rationalise to a new term that is currently not in the cv
                 
-                Term t = termService.getTerm(text, getTermType(), false); //is it in the cvterm table?
-                
-                if(t!=null){ //Yes it is
-                    //Confirm with the user first before rationalising
-                    int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
-                                                                    StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
-                                                                    "to a term that already exists in the database: \n" +
-                                                                    text + "\n\n" +
-                                                                    "Do you want to continue? ", 
-                                                                    "Confirm");
-                    if (userDecision==JOptionPane.CANCEL_OPTION){
-                        writeMessage("Request to rationalise cancelled.");
-                        return;
-                    }
-                    
-                }else{ //No it does not
-                    Term tignorecase = termService.getTerm(text, getTermType(), true); //ok, is it in the cvterm table in a different case?
-                    
-                    if(tignorecase!=null){ //yes it does
-                        //confirm with user. change all or nothing
-                        int userDecision = this.show_OK_Cancel_Dialogue ("There is already a term with the name '" + text + 
-                                                                         "' differing just in case.\n" +      
-                                                                         "Do you want to delete the old term and make this " +
-                                                                         "change across *ALL* the organisms? ",
-                                                                         "Term with similar name already exists");
-
-                        if(userDecision==JOptionPane.OK_OPTION){
-                            changeAllOrganisms = true;
-                            writeMessage("Making requested change across all organisms....");
-                        }else if (userDecision==JOptionPane.CANCEL_OPTION){
-                            writeMessage("Request to rationalise cancelled.");
-                            return;
-                        }
-
-                    }else{ //no it does not
-                        //new term is truly new and has to be created. confirm first
-                        int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
-                                                                         StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
-                                                                         "to a new term: \n" +
-                                                                         text + "\n\n" +
-                                                                         "Do you want to continue? ", 
-                                                                         "Confirm");
-
-                        if (userDecision==JOptionPane.CANCEL_OPTION){
-                            writeMessage("Request to rationalise cancelled.");
-                            return;
-                        }
-
-                        
-                    }
+                int userDecision = this.show_OK_Cancel_Dialogue("You are about to rationalise the following terms:\n" + 
+                                                                StringUtils.collectionToDelimitedString(from, "\n") + "\n\n" +
+                                                                "to a new term: \n" +
+                                                                text + "\n\n" +
+                                                                "Do you want to continue? ", 
+                                                                "Confirm");     
+                if (userDecision==JOptionPane.CANCEL_OPTION){
+                    writeMessage("Request to rationalise cancelled.");
+                    return;
                 }
-         
+ 
+            }else if(toList.contains(text)==2){ //So, the user is just changing the case of the terms
+                
+                int userDecision = this.show_OK_Cancel_Dialogue("You are about to change the case of this term:\n" + 
+                                                                 text + "\n\n" +
+                                                                " and this will be done across ALL the organisms. " +                                                               
+                                                                "Do you want to continue? ", 
+                                                                "Confirm");     
+                if (userDecision==JOptionPane.CANCEL_OPTION){
+                    writeMessage("Request to rationalise cancelled.");
+                    return;
+                }
+                
+                changeAllOrganisms = true;
+                             
             }
         
                 
@@ -775,6 +783,8 @@ public class TermRationaliser implements JograPlugin {
              * Having validated the input, the rationaliseTerm method can be called. The result of this process is then used
              * to update the JLists. The changes in the terms are made in the jlists rather than fetching *all* the
              * terms again from the database as this was too slow.
+             * The user can opt to fetch the terms from the database by selecting 'refresh models' which will call
+             * the init method
              */
           
             try{    
@@ -785,26 +795,32 @@ public class TermRationaliser implements JograPlugin {
                 
                 RationaliserResult result = termService.rationaliseTerm(from, text, changeAllOrganisms, selectedTaxons);
 
-                Set<Term> add = new HashSet<Term>(result.getTermsAdded()); //Terms that have been added (if any)
-                Set<Term> remove = new HashSet<Term>(result.getTermsDeleted()); //Terms that have been deleted (if any)
-                logger.info("Items in remove: " + StringUtils.collectionToCommaDelimitedString(remove));
-                logger.info("Items in add: " + StringUtils.collectionToCommaDelimitedString(add));
-                terms.removeAll(remove); //Always do a remove first so that duplicates are dealt with
-                terms.addAll(add);  
+                //Left list (specific)
+                terms.removeAll(result.getTermsDeletedSpecific()); //Always do a remove first so that duplicates are dealt with
+                terms.addAll(result.getTermsAddedSpecific());  
+                //Right list (general)
+                allTerms.removeAll(result.getTermsDeletedGeneral());
+                allTerms.removeAll(result.getTermsAddedGeneral());
+                
+                //Can we try to get rid of this as this sort can be slow?
                 Collections.sort(terms);
-                toList.addAll(terms);
+                Collections.sort(allTerms);
+ 
                 fromList.addAll(terms);
+                toList.addAll(allTerms);
 
-                if(add.size()!=0){ //Make the lists point to the added term
-                    toList.setSelectedValue(add.iterator().next(), true);
-                    fromList.setSelectedValue(add.iterator().next(), true);
+                if(result.getTermsAddedSpecific().size()!=0){ //Make the lists point to the added term
+                    toList.setSelectedValue(result.getTermsAddedSpecific().iterator().next(), true);
+                    fromList.setSelectedValue(result.getTermsAddedSpecific().iterator().next(), true);
                 }
                 writeMessage(result.getMessage());
+                //Draw the lists again
                 toList.repaint();
                 fromList.repaint();
                 
             }catch (Exception se){ //Any other unexpected errors
-                writeMessage("There was an error while trying to rationalise. Try again or contact the WTSI Pathogens Informatics team with details of what you tried to do.");
+                writeMessage("There was an error while trying to rationalise. " +
+                	     "Try again or contact the WTSI Pathogens Informatics team with details of what you tried to do.");
                 writeMessage(se.toString());
                 logger.debug(se.toString());      
             }
