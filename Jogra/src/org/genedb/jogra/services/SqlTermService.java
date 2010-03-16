@@ -40,7 +40,7 @@ import javax.sql.DataSource;
 /**
  * This class implements the Data Access Layer for the Term Rationaliser. It contains all the SQL needed for 
  * querying, updating and deleting terms. We use the Spring JDBCTemplate here to have more control over the 
- * sql we execute rather than using the existing DAOs which use Hibernate. 
+ * sql we execute rather than using the existing DAOs which use Hibernate. It also does make db access faster.
  * 
  * @author nds
  */
@@ -87,6 +87,32 @@ public class SqlTermService implements TermService {
         return terms;
     }
     
+    /**
+     * Gets ALL the terms in a given cv
+     */
+    
+    public List<Term> getAllTerms(final String cvName){
+        List<Term> terms = new ArrayList<Term>();
+        
+        RowMapper<Term> mapper = new RowMapper<Term>() {
+            public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), cvName);
+                return term;
+            }
+        };
+              
+        String SQL_TO_GET_TERMS =   "select distinct cvterm.name, cvterm.cvterm_id " +
+                                    "from cvterm " +
+                                    "join cv on cvterm.cv_id=cv.cv_id " +
+                                    "where cv.name= ? ;"; 
+        
+        logger.info(SQL_TO_GET_TERMS);
+        
+        terms = jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvName)}, mapper);
+        
+        return terms;
+    }
+    
   
 
     /**
@@ -102,111 +128,109 @@ public class SqlTermService implements TermService {
     @Override
 
 
-    public RationaliserResult rationaliseTerm(List<Term> oldTerms, String newText, boolean changeAllOrganisms, List<TaxonNode> selectedTaxons) throws SQLException{
+    public RationaliserResult rationaliseTerm(List<Term> oldTerms, String newText,
+                              boolean changeAllOrganisms, List<TaxonNode> selectedTaxons) throws SQLException{
         
-        /* Variables */
-        List<Term> termsAdded = new ArrayList<Term>();
-        List<Term> termsDeleted = new ArrayList<Term>();
-        String message = new String(); 
-        int cvterm_id = 0;
-        int dbxref_id = 0;
-        /* Constants */
-        String type = oldTerms.get(0).getType();
-        int db_id = this.getDbIdByCvType(type);
-        int cv_id = jdbcTemplate.queryForInt("select cv_id from cv where name=?", new Object[]{ type }); //Get cv id
+        /* SHOULDNT THIS HAVE SOME SORT OF TRANSACTIONAL ANNOTATION OR ROLLBACK MECHANISM ??? */
+        
         /* */
-
-        List<Integer> cvterm_list = jdbcTemplate.queryForList("select cvterm_id from cvterm where lower(name)= ? and cv_id=?", 
-                                                      new Object[]{newText.toLowerCase(), new Integer(cv_id)}, Integer.class);
+        Set<Term> termsAddedSpecific = new HashSet<Term>();
+        Set<Term> termsDeletedSpecific = new HashSet<Term>();
+        
+        Set<Term> termsAddedGeneral = new HashSet<Term>();
+        Set<Term> termsDeletedGeneral = new HashSet<Term>();
+        
+        String message = new String(); 
+        
+        String type = oldTerms.get(0).getType();  
+        /* */
+        
+        Term new_term = getTerm(newText, type); //Does this term exist?
        
-        if(cvterm_list.size() < 1){ //New cvterm does not already exist. Create a new one.
-            
-            jdbcTemplate.update("insert into dbxref (db_id, accession) values (?,?)", new Object[]{new Integer(db_id), newText});  
-            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id from dbxref where accession=?", new Object[]{newText}); //get dbxref of added row
-            
-            jdbcTemplate.update("insert into cvterm (cv_id, name, dbxref_id) values (?,?,?)", new Object[]{cv_id, newText, dbxref_id});
-            cvterm_id = jdbcTemplate.queryForInt("select cvterm_id from cvterm where name= ?", new Object[]{newText}); //get cvtermid of inserted row
-
-            termsAdded.add(new Term(cvterm_id, newText, type));
-            message = message.concat("New term created: '" + newText + "'.\n");
-            logger.info(String.format("The cvterm with name '%s' did not exist - so created a new one.", newText));
-
-        }else if(cvterm_list.size()==1){ //Cvterm exists already
-            
-            cvterm_id = cvterm_list.get(0);
-            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id from dbxref where lower(accession)=?", new Object[]{newText.toLowerCase()});
-            
-        }else if(cvterm_list.size()>1){ //Error (can never really happen because of the constraint on the cvterm table
-            message = message.concat("Data error: There appears to be more than one cvterm called '"+newText+"' in the database! Please check. \n");
-            RationaliserResult rationaliserResult  = new RationaliserResult(message, termsAdded, termsDeleted);
-            return rationaliserResult;
+        if(new_term == null){ //This term does not yet exist, so create one
+          
+            new_term = addTerm(newText, type);
+            termsAddedSpecific.add(new_term);
+            termsAddedGeneral.add(new_term);
+            message = message.concat(String.format("Created term '%s' in cv %s. \n", newText, type));
+            logger.info(String.format("Created term %s in cv %s", newText, type));
+ 
         }
 
-        for(Term old: oldTerms){
-            logger.info(String.format("Inside rationalise method: '%s' to '%s' (type %s), changeAll: %s", 
-                                                                   old.getName(), newText, type, changeAllOrganisms));
+        if(new_term!=null){ //sanity check as something could have gone wrong with the sql insert
+            for(Term old: oldTerms){
+    
+                if(!old.getName().equals(newText)){ //Sanity check 
+    
+                    if(changeAllOrganisms){ //Just a difference in case, so update the cvterm name and dbxref accession in-situ
 
-            if(!old.getName().equals(newText)){ //Sanity check (ignores case which is what we want)
-
-                if(changeAllOrganisms){ //Just a difference in case, so update the cvterm name and dbxref accession in-situ
-
-                    logger.info("Inside: Change the case of the name and dbxref-accession only");
-                    
-                    jdbcTemplate.update("update cvterm " + 
-                            "set name= ? where cvterm_id=?;", 
-                             new Object[]{newText, new Integer(cvterm_id)});
-                    
-                    jdbcTemplate.update("update dbxref " + 
-                            "set accession= ? where dbxref_id=?;", 
-                             new Object[]{newText, new Integer(dbxref_id)});
-  
-                    termsAdded.add(new Term(cvterm_id, newText, type));
-                    termsDeleted.add(new Term(old.getId(), old.getName(), type));
-                    message = message.concat(String.format("Changed all annotations from '%s' to '%s'. \n", old.getName(), newText));
-
-                }else{ //Change only annotations associated with the selected organisms
-
-                    for(String s: getTaxonNamesList(selectedTaxons)){
-                        jdbcTemplate.update("update feature_cvterm " + 
-                                "set cvterm_id= ? " + 
-                                "from feature, organism " +
-                                "where feature_cvterm.cvterm_id=? " +
-                                "and feature_cvterm.feature_id = feature.feature_id " +
-                                "and feature.organism_id=organism.organism_id " +
-                                "and organism.common_name = ?;", 
-                                new Object[]{new Integer(cvterm_id), new Integer(old.getId()), s});
+                        jdbcTemplate.update("update cvterm " + 
+                                            "set name=? where cvterm_id=?;", 
+                                             new Object[]{new_term.getName(), old.getId()});
+                        
+                        jdbcTemplate.update("update dbxref " + 
+                                            "set accession= ? where dbxref_id=?;", 
+                                            new Object[]{new_term.getName(), 
+                                            this.getDbxrefId(new_term.getName(), type)});
+                        
+                        logger.info(String.format("Changed the case of the cvterm name and dbxref accession to %s", newText));
+                        termsDeletedSpecific.add(old);
+                        termsDeletedGeneral.add(old);
+                        message = message.concat(String.format("Changed all annotations from '%s' to '%s'. \n", old.getName(), newText));
+    
+                    }else{ //Change only annotations associated with the selected organisms
+    
+                        //One way is to check each one (delete wrong ones, add correct ones)
+                        // Or can we not just delete everything after making a list of th efeatures and then add them again
+                        for(String s: getTaxonNamesList(selectedTaxons)){
+                            jdbcTemplate.update("update feature_cvterm " + 
+                                    "set cvterm_id= ? " + 
+                                    "from feature, organism " +
+                                    "where feature_cvterm.cvterm_id=? " +
+                                    "and feature_cvterm.feature_id = feature.feature_id " +
+                                    "and feature.organism_id=organism.organism_id " +
+                                    "and organism.common_name = ?;", 
+                                    new Object[]{new Integer(new_term.getId()), new Integer(old.getId()), s});
+                        }
+    
+                        logger.info(String.format("Changed relevant annotations from '%s' to '%s'",old.getName(), newText));
+                        message = message.concat(String.format("Changed relevant annotations within selected organisms from '%s' to '%s'.\n",
+                                                 old.getName(), newText));
+                        
+                        termsDeletedSpecific.add(old);
+                        
+                        
+                        //If scope of old term within user's chosen organisms, delete cvterm and corresponding dbxref
+                        if(selectedTaxons.containsAll(getTermScope(old))){
+                            jdbcTemplate.execute("delete from cvterm where cvterm_id=" + old.getId()); 
+                            jdbcTemplate.update("delete from dbxref where accession=?", new Object[]{old.getName()} );
+                            termsDeletedGeneral.add(old);
+                            logger.info(String.format("Deleted old cvterm '%s' and dbxref.", old.getName()));
+                            message = message.concat(String.format("Deleted cvterm '%s'. \n", old.getName()));                    
+                        }
+    
                     }
-
-                    logger.info(String.format("Changed relevant annotations from '%s' to '%s'",old.getName(), newText));
-                    message = message.concat(String.format("Changed relevant annotations within selected organisms from '%s' to '%s'.\n",
-                                             old.getName(), newText));
+    
+                   
                     
-                    //If scope of old term within user's chosen organisms, delete cvterm and corresponding dbxref
-                    if(selectedTaxons.containsAll(getTermScope(old))){
-                        jdbcTemplate.execute("delete from cvterm where cvterm_id=" + old.getId()); 
-                        jdbcTemplate.update("delete from dbxref where accession=?", new Object[]{old.getName()} );
-                        termsDeleted.add(new Term(old.getId(), old.getName(), type));
-                        logger.info(String.format("Deleted old cvterm '%s' and dbxref.", old.getName()));
-                        message = message.concat(String.format("Deleted old cvterm '%s'. \n", old.getName()));                    
-                    }
-
+                }else{
+                    message = message.concat(String.format("Error: Both the old term and new term are the same (%s). Operation aborted! \n", newText));
                 }
-
-               
-                
-            }else{
-                message = message.concat(String.format("Error: Both the old term and new term are the same (%s). Operation aborted! \n", newText));
             }
+        }else{
+            message = message.concat(String.format("Something went wrong with inserting a new cvterm called %s, process aborted", new_term));
         }
 
-        RationaliserResult rationaliserResult  = new RationaliserResult(message, termsAdded, termsDeleted);
+        RationaliserResult rationaliserResult  = new RationaliserResult(message, termsAddedSpecific, termsDeletedSpecific, 
+                                                                        termsAddedGeneral, termsDeletedGeneral);
+
         return rationaliserResult;
     }
 
     /**
      * This method takes a term and a list of taxons that the user has selected,
      * and returns the list of systematic IDs for this term (within the scope 
-     * prescribed by the taxons)
+     * of the selected taxons)
      */
    public List<String> getSystematicIDs(Term term, List<TaxonNode> selectedTaxons){
 
@@ -243,9 +267,10 @@ public class SqlTermService implements TermService {
     
     
     /**
-     * Returns a term with the given name if it exists or null if it does not
+     * Returns a term with the given name if it exists or 
+     * null if it doesn't
      */
-    public Term getTerm(String name, final String type, boolean ignoreCase){
+    public Term getTerm(String name, final String type){
         
         RowMapper<Term> mapper = new RowMapper<Term>() {
             public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -253,39 +278,66 @@ public class SqlTermService implements TermService {
                 return term;
             }
         };
+        
         int cv_id = getCvIdByCvType(type);
+        Term term;
+        
         try{
-            if(ignoreCase){
-                Term term = (Term)jdbcTemplate.queryForObject(  "select cvterm.cvterm_id," +
-                        		                        "cvterm.name     " +
-                                                                "from cvterm where lower(name)=? and cv_id=? ", 
-                                                                new Object[]{name.toLowerCase(), new Integer(cv_id)},
-                                                                mapper);
-                return term;
-                
-            }else{
-                Term term = (Term)jdbcTemplate.queryForObject(  "select cvterm.cvterm_id," +
-                                                                "cvterm.name     " +
-                                                                "from cvterm where name=? and cv_id=? ", 
-                                                                new Object[]{name, new Integer(cv_id)},
-                                                                mapper);
-                return term;
-                
-            }
-            
-
+           //Does this cvterm exist in this cv?
+           term = (Term)jdbcTemplate.queryForObject(  "select cvterm.cvterm_id," +
+                        		              "cvterm.name     " +
+                                                      "from cvterm where lower(name)=? and cv_id=? ", 
+                                                       new Object[]{name.toLowerCase(), cv_id},
+                                                       mapper);
+           
+           logger.info(String.format("Term %s already exists in cv %s.", name, type));
+           return term;
+  
         }catch(org.springframework.dao.EmptyResultDataAccessException dae){
-            //Grr! wish queryforobject just returned null when no data was found!
+            //Grr! Wish queryforobject just returned null when no data was found!
             return null;
         }
-        
     }
    
     /** PRIVATE HELPER METHODS **/
     
+    private Term addTerm(String name, final String type){
+        
+        RowMapper<Term> mapper = new RowMapper<Term>() {
+            public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), type);
+                return term;
+            }
+        };
+        
+        Term term;
+        int cv_id = getCvIdByCvType(type);
+        int dbxref_id = getDbxrefId(name, type); //Get the dbxref_id for this term or create one if there isn't one            
+        jdbcTemplate.update("insert into cvterm (cv_id, name, dbxref_id) values (?,?,?)", 
+                             new Object[]{cv_id, name, dbxref_id});
+        
+        logger.info(String.format("Created term %s in cv %s.", name, type));
+        
+        try{
+            term = (Term)jdbcTemplate.queryForObject(  "select cvterm.cvterm_id," +
+                    "cvterm.name     " +
+                    "from cvterm where lower(name)=? and cv_id=? ", 
+                     new Object[]{name.toLowerCase(), cv_id},
+                     mapper);
+        }catch(org.springframework.dao.EmptyResultDataAccessException dae){
+        
+            return null;
+        
+        }
+        
+        return term;
+    }
+    
+    
     /**
      * Private helper method to get the taxon scope for a given term. 
-     * Returns the set of taxons that this term is 'connected' to
+     * Returns the set of taxons that have features annotated using this
+     * term.
      */
     private Set<TaxonNode> getTermScope(Term term){
 
@@ -354,6 +406,32 @@ public class SqlTermService implements TermService {
         return cv_id;        
     }
     
+    /**
+     * Returns the dbxref_id given the accession and the cvtype
+     * If it does not exist, a dbxref record is added
+     */
+    private int getDbxrefId(String accession, String cvtype){
+        int db_id = getDbIdByCvType(cvtype);
+        int dbxref_id;
+        try{
+            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id " +
+                                                 "from dbxref where lower(accession)=? and db_id=?", 
+                                                 new Object[]{accession.toLowerCase(), db_id}); 
+        }catch(org.springframework.dao.EmptyResultDataAccessException dae){
+            
+            jdbcTemplate.update("insert into dbxref (db_id, accession) values (?,?)", 
+                                 new Object[]{db_id, accession}); 
+            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id " +
+                                                 "from dbxref where lower(accession)=? and db_id=?", 
+                                                 new Object[]{accession.toLowerCase(), db_id});
+        
+        }
+        return dbxref_id;
+    }
+    
+    /**
+     * Given a cvterm and a set of taxons, get the IDs of the annoated features
+     */
     
 
   
