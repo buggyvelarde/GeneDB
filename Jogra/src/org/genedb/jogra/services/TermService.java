@@ -14,7 +14,7 @@ public interface TermService {
     /* Get all the terms in a given CV */
     List<Term> getAllTerms(String cvName);
    
-    /* Takes the new term, list of old terms and the corrected text (if any) */
+    /* Takes the new term, list of old terms and the corrected text (if any), and rationalise! */
     RationaliserResult rationaliseTerm(List<Term> oldTerms, String correctedText, boolean allOrganisms, List<TaxonNode> selectedTaxons) throws SQLException;
        
     /* Method to retrieve systematic IDs (restricted to selected scope) for a given term */
@@ -23,7 +23,7 @@ public interface TermService {
     /* Method to retrieve evidence codes for a given term */
     List<String> getEvidenceCodes(Term term);
     
-    /* Given a name, get the corresponding Term */
+    /* Given a name and a cv, get the corresponding Term */
     Term getTerm(String name, String type);
  
 }
