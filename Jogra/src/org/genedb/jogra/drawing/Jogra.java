@@ -32,6 +32,7 @@ import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
 import java.awt.Container;
@@ -103,21 +104,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         EventBus.subscribe(OpenWindowEvent.class, this);
 
-//        TimerTask fetchMessage = new TimerTask() {
-//        	@Override
-//        	public void run() {
-//
-//        		String clientName = "dummy"; // FIXME
-//				Collection<Message> messages = messageService.checkMessages(clientName);
-//				if (messages != null) {
-//					for (Message message : messages) {
-//						EventBus.publish(message);
-//					}
-//				}
-//        	}
-//        };
-//        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
-
         EventBus.subscribeStrongly("selection", new EventTopicSubscriber<List<String>>() {
             public void onEvent(String topic, List<String> selection) { 
                 logger.info("What is Jogra getting? " + StringUtils.collectionToCommaDelimitedString(selection));
@@ -150,7 +136,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         mainFrame.setResizable(false);
         // slide.setDirty(false);
-        // updateTitle(); // To make sure title bar is updated even if dirty
+        //updateTitle(); // To make sure title bar is updated even if dirty
         // hasn't changed
 
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -248,7 +234,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         if (check == JOptionPane.NO_OPTION) {
             return;
         }
-        finalShutdown();
+       finalShutdown(); 
     }
 
     private void finalShutdown() {
@@ -304,10 +290,11 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         // Store lucene indices somewhere harmless as they are not needed, but are created automatically
         //System.setProperty("hibernate.search.default.indexBase", System.getProperty("java.io.tmpdir"));
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+        FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext();
         context.addBeanFactoryPostProcessor(configurer);
+        
 
-        context.setConfigLocation("classpath:/applicationContext.xml" );
+        context.setConfigLocation("file:/Users/nds/Documents/workspace/Jogra/conf/applicationContext.xml" );
         context.refresh();
 
         final Jogra application = (Jogra)context.getBean("application", Jogra.class);
