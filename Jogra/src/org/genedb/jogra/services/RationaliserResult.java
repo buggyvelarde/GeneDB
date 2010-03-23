@@ -2,69 +2,86 @@ package org.genedb.jogra.services;
 
 import org.genedb.jogra.domain.Term;
 
-import java.util.ArrayList;
+import org.springframework.util.StringUtils;
+
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
- * RationaliserResult contains the results of the rationalising process
- * 16March2010: We modify this to contain information specific to the
- * two lists. 
+ * RationaliserResult contains all the results of the rationalising
+ * process that need to be communicated to the user. It holds:
+ * 
+ * 1)The terms that were deleted and added.
+ * 2)A message containing explanations of what went on.
+ * 
  */
 
 public class RationaliserResult extends MethodResult {
 
-    //Information for list on left hand side
-    private Set<Term> termsAddedSpecific = new HashSet<Term>();
-    private Set<Term> termsDeletedSpecific = new HashSet<Term>(); 
+    /* We keep track of the terms that were added and deleted
+     * during the rationalising process here because the 2 lists
+     * displayed to the user isn't always refreshed from the
+     * database. The terms added will always be the same for
+     * both lists in the interface. However, the deleted terms
+     * will differ. Most often the terms can be removed from the
+     * organism-specific list but continue to remain in the
+     * more general term list. It's only when a term is actually
+     * deleted that it can be removed from the general list.
+     */
     
-    //Information for list on right hand side
-    //Could have done with one added list, but we leave both in
-    //for symmetry
-    private Set<Term> termsAddedGeneral = new HashSet<Term>();
-    private Set<Term> termsDeletedGeneral = new HashSet<Term>(); 
+    private Set<Term> termsAdded = new HashSet<Term>();
+    private Set<Term> termsDeletedSpecific = new HashSet<Term>();
+    private Set<Term> termsDeletedGeneral = new HashSet<Term>();
     
-    private String message;
+    private String message = ""; //A non-null string
   
 
-    public RationaliserResult(String message) {
-        this.message = message;
+    public RationaliserResult() {
+
     }
-    
-    public RationaliserResult(String message, Set<Term> added, Set<Term> deleted){
-        this.message = message;
-        this.termsAddedSpecific = added;
-        this.termsDeletedSpecific = deleted;
-    }
-    
-    //Constructor used by the Rationaliser
-    public RationaliserResult(String message, Set<Term> addedSpecific, Set<Term> deletedSpecific, 
-                                              Set<Term> addedGeneral, Set<Term> deletedGeneral){
+  
+    //Constructor used by the SQLTermService
+    public RationaliserResult(String message, Set<Term> added, 
+                              Set<Term> deletedSpecific, Set<Term> deletedGeneral){
+        
         this.message = message;
         
-        this.termsAddedSpecific = addedSpecific;
+        this.termsAdded = added;
         this.termsDeletedSpecific = deletedSpecific;
-        this.termsAddedGeneral = addedGeneral;
         this.termsDeletedGeneral = deletedGeneral;
         
     }
+    
+    /* Add a term to one of the sets */
+    public void added(Term t) { this.termsAdded.add(t); }
+    public void deletedSpecific(Term t) { this.termsDeletedSpecific.add(t); }
+    public void deletedGeneral(Term t) { this.termsDeletedGeneral.add(t); }
+    
+    @Override
+    public String toString(){
+        
+        return String.format("Terms added: %s \n" +
+        		     "Terms deleted from specific list: %s \n" +
+        		     "Terms deleted from general list: %s \n" +
+        		     "Message: %s \n",
+        		     StringUtils.collectionToCommaDelimitedString(termsAdded),
+        		     StringUtils.collectionToCommaDelimitedString(termsDeletedSpecific),
+        		     StringUtils.collectionToCommaDelimitedString(termsDeletedGeneral),
+        		     message);
+        
+    }
+   
+    /* Getters and setters */
     
     public String getMessage(){
         return message;
     }
     
     public void setMessage(String message){
-        this.message = message;
+        this.message = this.message.concat(message);
     }
-
-    public Set<Term> getTermsAddedSpecific() {
-        return termsAddedSpecific;
-    }
-
-    public void setTermsAddedSpecific(Set<Term> termsAddedSpecific) {
-        this.termsAddedSpecific = termsAddedSpecific;
-    }
+  
 
     public Set<Term> getTermsDeletedSpecific() {
         return termsDeletedSpecific;
@@ -74,12 +91,12 @@ public class RationaliserResult extends MethodResult {
         this.termsDeletedSpecific = termsDeletedSpecific;
     }
 
-    public Set<Term> getTermsAddedGeneral() {
-        return termsAddedGeneral;
+    public Set<Term> getTermsAdded() {
+        return termsAdded;
     }
 
     public void setTermsAddedGeneral(Set<Term> termsAddedGeneral) {
-        this.termsAddedGeneral = termsAddedGeneral;
+        this.termsAdded = termsAddedGeneral;
     }
 
     public Set<Term> getTermsDeletedGeneral() {
