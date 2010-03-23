@@ -1,32 +1,30 @@
 package org.genedb.jogra.domain;
 
-import org.genedb.db.taxon.TaxonNode;
-
-import org.gmod.schema.mapped.Cv;
-
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import org.genedb.db.taxon.TaxonNode;
 
 /**
- * This class is very similar to the Product class and is here to encapsulate details of 'terms'. These can either be products or other types of cvterms like
- * curation-controlled terms. These terms will be used by the term rationaliser.
+ * This class encapsulates the details of controlled vocabulary terms. These can either
+ * be products or other types of cvterms like curation-controlled terms. These terms will 
+ * be used by the term rationaliser.
  * 
  * @author nds
  *
  */
 
-public class Term implements Serializable, Comparable<Term> {
+public class Term implements Comparable<Term> {
 
     private int id;
     private String name;
-    private List<String> systematicIds; 
-    private List<String> evidenceCodes;
-    private Set<TaxonNode> scope; 
-    private String type; 
-    
-   
-    /* Most useful constructor */
+    private List<String> systematicIds; //The uniquenames of features that are annoted using me
+    private List<String> evidenceCodes; //My evidence codes
+    private Set<TaxonNode> scope; //The organisms that have features annoted using me
+    private String type; //The cv that I come from
+    private boolean seen; //Has someone looked at me since I was loaded?
+
+       
+    /* More useful constructor */
     public Term(int id, String name, String type) {
         this.name = name;
         this.id = id;    
@@ -45,14 +43,6 @@ public class Term implements Serializable, Comparable<Term> {
         return name;
     }
 
-    @Override
-    public int hashCode() {
-        final int PRIME = 31;
-        int result = 1;
-        result = PRIME * result + ((name == null) ? 0 : name.hashCode());
-        result = PRIME * result + id;
-        return result;
-    }
 
     /* equals method used by contains method in list */
     @Override
@@ -91,11 +81,6 @@ public class Term implements Serializable, Comparable<Term> {
         
     }
     
-    /* Colour-code the term according to evidence codes */
-    public void assignColour(){
-        //Look at evidence codes and look at the grouping
-        //Assign colour
-    }
 
     public int getId() {
         return id;
@@ -145,6 +130,13 @@ public class Term implements Serializable, Comparable<Term> {
         this.type = type;
     }
 
+    public void setSeen(boolean seen){
+        this.seen = seen;
+    }
+    
+    public boolean seen(){
+        return this.seen;
+    }
   
 
 }
