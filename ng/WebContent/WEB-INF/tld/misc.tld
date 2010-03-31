@@ -141,5 +141,26 @@
         </attribute>
     </tag>
 
+	<tag>
+		<name>select</name>
+		<tag-class>org.genedb.web.tags.misc.SelectTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>items</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>true</required>
+    	</attribute>
+    	<attribute>
+			<name>selected</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>false</required>
+    	</attribute>
+    	<attribute>
+			<name>change</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>false</required>
+    	</attribute>
+	</tag>
+
 
 </taglib>
