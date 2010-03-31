@@ -52,15 +52,6 @@
 <!-- <li>
 <li><a href="<misc:url value="/Homepage"/>">Home</a>
 </li> -->
-<%--
-<li class="has-sub"><a href="/Homepage">Home</a>
-<ul class="sub-menu">
-<li><a href="">Weebles</a></li>
-<li><a href="">wobble</a></li>
-<li><a href="">but</a></li>
-</ul>
-</li>
---%>
 <li><a href="<misc:url value="/Page/aboutUs"/>">About us</a></li>
 <li class="has-sub"><a href="<misc:url value="/Query" />">Searches</a>
 <ul class="sub-menu">
