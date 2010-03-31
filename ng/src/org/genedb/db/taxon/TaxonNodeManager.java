@@ -28,6 +28,9 @@ import org.gmod.schema.mapped.Phylonode;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -229,5 +232,25 @@ public class TaxonNodeManager implements InitializingBean {
         }
         return new ArrayList<String>(dupes);
     }
+
+	public String getSingleStringVersion(List<String> orgNames) {
+		if (orgNames == null || orgNames.size() > 0) {
+			return "Root";
+		}
+		return StringUtils.collectionToDelimitedString(orgNames, ":");
+	}
+
+	public List<String> getAllOrgNamesUnlessRoot(TaxonNodeList taxonNodeList) {
+		if (taxonNodeList.getNodes().size() == 1 && taxonNodeList.getNodes().get(0).isRoot()) {
+			return null;
+		}
+		List<String> ret = Lists.newArrayList();
+		if (taxonNodeList.getNodes().size() > 0) {
+			for (TaxonNode tn : taxonNodeList.getNodes()) {
+				ret.addAll(tn.getAllChildrenNames());
+			}
+		}
+		return ret;
+	}
 
 }

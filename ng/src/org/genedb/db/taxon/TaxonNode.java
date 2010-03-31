@@ -81,6 +81,9 @@ public class TaxonNode implements Serializable {
 
                 for (PhylonodeProp phylonodeProp : phylonode.getPhylonodeProps()) {
                 	appDetails.put(phylonodeProp.getType().getName(), phylonodeProp.getValue());
+                	if ("app_www_homePage_content".equals(phylonodeProp.getType().getName())) {
+                		webLinkable = true;
+                	}
                 }
             }
         }
