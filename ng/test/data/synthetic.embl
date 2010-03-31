@@ -134,7 +134,7 @@ FT                   /literature="PMID:2551783; Affolter M, et al. Gene 1989 Aug
 ##                   Non-standard features should be archived, along with their qualifiers
 FT   nonstandard     join(600..610,620..630)
 FT                   /madeupqualifier="value"
-## 
+##
 FT   CDS             join(610..620,630..640)
 FT                   /systematic_id="s5"
 FT                   /GO="aspect=component; GOid=GO:0016021; term=integral to
@@ -161,8 +161,8 @@ FT                   /db_xref="SWALL:Q95Z09"
 ## ##                   Duplicate db_xrefs should not cause an error, even if they're superficially different
 ## ##FT                   /db_xref="UniProt:Q95Z09"
 ## ##
-FT                   /GO="aspect=component; term=nucleus; GOid=GO:0005634; evidence=IC;
-FT                   db_xref=GOC:unpublished; from=GO:0006367; date=20060502"
+##FT                   /GO="aspect=component; term=nucleus; GOid=GO:0005634; evidence=IC;
+##FT                   db_xref=GOC:unpublished; from=GO:0006367; date=20060502"
 ##
 FT   gap             1181..1190
 FT                   /note="This is a gap that has a note"
