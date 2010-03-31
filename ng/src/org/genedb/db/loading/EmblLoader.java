@@ -702,6 +702,7 @@ class EmblLoader {
         EmblLocation gapLocation = gapFeature.location;
 
         logger.debug(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
+        System.err.println(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
         Gap gap = topLevelFeature.addGap(gapLocation.getFmin(), gapLocation.getFmax());
         session.persist(gap);
 
