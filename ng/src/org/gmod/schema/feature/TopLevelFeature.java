@@ -68,7 +68,9 @@ public abstract class TopLevelFeature extends Region {
 
     public Gap addGap(int fmin, int fmax) {
         Gap gap = new Gap(getOrganism(), String.format("%s:gap:%d-%d", getUniqueName(), fmin, fmax));
+        System.err.println("The gap created is '"+gap+"'");
         this.addLocatedChild(gap, fmin, fmax, (short)0, 0);
+        System.err.println("Just tried to add it");
         return gap;
     }
 
