@@ -29,8 +29,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +68,7 @@ public class SqlTermService implements TermService {
 
     @Override
     public List<Term> getTerms(List<TaxonNode> selectedTaxons, final String cvType) {
-        
+
         RowMapper<Term> mapper = new RowMapper<Term>() {
             public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), cvType);
@@ -75,7 +78,7 @@ public class SqlTermService implements TermService {
         
         List<Term> terms = new ArrayList<Term>();
         String commaSeparatedNames = this.getTaxonNamesInSQLFormat(selectedTaxons);
-     
+        
         String SQL_TO_GET_TERMS =   "select distinct cvterm.name, cvterm.cvterm_id " +
                                     "from cvterm " +
                                     "join cv on cvterm.cv_id=cv.cv_id " +
@@ -83,11 +86,11 @@ public class SqlTermService implements TermService {
                                     "join feature on feature.feature_id=feature_cvterm.feature_id " +
                                     "join organism on organism.organism_id=feature.organism_id " +
                                     "where cv.name= ? and organism.common_name IN (" + commaSeparatedNames + ");"; //TODO: Bind inside IN doesn't work. Find alternative.
-        
+       
         logger.info(SQL_TO_GET_TERMS);
         
         terms = jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvType) /*, new String(commaSeparatedNames) */}, mapper);
-        
+
         return terms;
     }
     
@@ -129,7 +132,7 @@ public class SqlTermService implements TermService {
      */
    
     public RationaliserResult rationaliseTerm(List<Term> oldTerms, String newText,
-                                              boolean changeAllOrganisms, List<TaxonNode> selectedTaxons) throws SQLException{
+                                              List<TaxonNode> selectedTaxons) throws SQLException{
              
    
         RationaliserResult result = new RationaliserResult();
@@ -175,8 +178,9 @@ public class SqlTermService implements TermService {
                     if(newTerm == null){ 
                           newTerm = addTerm(newText, cvName);
                           result.added(newTerm);
+                          logger.info("Just added term into set in result: " + newTerm.getName());
                           result.setMessage(String.format("Created '%s' in cv. \n", newText));
-                          logger.info(String.format("Created term %s in cv %s", newText, cvName));
+                          
                     }
                      
                      /* Then we get all the annotations within the scope of the 
@@ -231,7 +235,7 @@ public class SqlTermService implements TermService {
                                                
                           }
                     }else{
-                        result.setMessage(String.format("Something went wrong with inserting a new cvterm called %s! Hence, skipped.", newTerm.getName()));
+                        result.setMessage(String.format("Something went wrong with inserting a new cvterm called %s! Hence, skipped. \n", newText));
                     }
                 }
             }else{
@@ -289,7 +293,7 @@ public class SqlTermService implements TermService {
                                      "feature_cvtermprop.feature_cvterm_id=feature_cvterm.feature_cvterm_id and " +
                                      "feature_cvterm.cvterm_id =" + term.getId(); 
 
-        logger.info(SQL_TO_GET_EV_CODES);
+        //logger.info(SQL_TO_GET_EV_CODES);
         List<String> evcList = jdbcTemplate.queryForList(SQL_TO_GET_EV_CODES, String.class);
         return evcList;
      }
@@ -357,15 +361,16 @@ public class SqlTermService implements TermService {
         
         try{
             term = (Term)jdbcTemplate.queryForObject(  "select cvterm.cvterm_id," +
-                    "cvterm.name     " +
-                    "from cvterm where name=? and cv_id=? ", 
-                     new Object[]{name.toLowerCase(), cv_id},
-                     mapper);
+                                                        "cvterm.name     " +
+                                                        "from cvterm where name=? and cv_id=? ", 
+                                                         new Object[]{name, cv_id},
+                                                         mapper);
+            return term;
         }catch(org.springframework.dao.EmptyResultDataAccessException dae){
           //Grr! Wish queryforobject just returned null when no data was found!
             return null;  
         }    
-        return term;
+        
     }
     
     
@@ -438,22 +443,23 @@ public class SqlTermService implements TermService {
     
     /**
      * Returns the dbxref_id given the accession and the cvtype
-     * If it does not exist, a dbxref record is added
+     * If it does not exist, a dbxref record is added and
+     * the new dbxref_id returned
      */
     private int getDbxrefId(String accession, String cvtype){
         int db_id = getDbIdByCvType(cvtype);
         int dbxref_id;
+        String SQL_TO_GET_DBXREF = "select dbxref_id " +
+                                   "from dbxref where accession=? and db_id=?";
+                                   
         try{
-            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id " +
-                                                 "from dbxref where lower(accession)=? and db_id=?", 
-                                                 new Object[]{accession.toLowerCase(), db_id}); 
+            dbxref_id = jdbcTemplate.queryForInt(SQL_TO_GET_DBXREF, new Object[]{accession, db_id});
+            
         }catch(org.springframework.dao.EmptyResultDataAccessException dae){         
             jdbcTemplate.update("insert into dbxref (db_id, accession) values (?,?)", 
-                                 new Object[]{db_id, accession}); 
-            dbxref_id = jdbcTemplate.queryForInt("select dbxref_id " +
-                                                 "from dbxref where accession=? and db_id=?", 
-                                                 new Object[]{accession.toLowerCase(), db_id});
-        
+                                 new Object[]{db_id, accession});
+            dbxref_id = jdbcTemplate.queryForInt(SQL_TO_GET_DBXREF, new Object[]{accession, db_id});
+     
         }
         return dbxref_id;
     }
