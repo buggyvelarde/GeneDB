@@ -962,6 +962,9 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, Integer phase, int locgroup, int rank) {
         FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, strand, phase, locgroup, rank);
 
+        System.err.println(String.format("Adding location for '%s' on '%s' %d-%d strand %d with phase=%s, locgroup=%d, rank=%d",
+                child.getUniqueName(), this.getUniqueName(), fmin, fmax, strand, phase, locgroup, rank));
+
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Adding location for '%s' on '%s' %d-%d strand %d with phase=%s, locgroup=%d, rank=%d",
                 child.getUniqueName(), this.getUniqueName(), fmin, fmax, strand, phase, locgroup, rank));
