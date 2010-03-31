@@ -18,7 +18,7 @@
 <td align="center" valign="top" width="33%">
 <h3>Apicomplexan Protozoa</h3>
 <img src="<misc:url value="/includes/image/dataset-apicomplexan-protozoa.jpg"/>" height="163" width="136" alt="Apicomplexan Protozoa" />
-<db:homepageselect top="Apicomplexa" baseUrl="${base2}" leafOnly="true" />
+<db:homepageselect top="Apicomplexa" baseUrl="${base2}" />
 </td>
 <td align="center" valign="top" width="33%">
 
@@ -59,15 +59,15 @@
 </div><!-- end main content column -left -->
 
 <div id="col-1-2">
-<h2>Sequence searches</h2>
+<h1>Sequence searches</h1>
 <div class="light-grey-top"></div>
 <div class="light-grey">
 <p class="block-para">Blast <br />
 
-&raquo; Single organism <span class="dataset-table"><db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" /></span> <br />
+&raquo; Single organism <span class="dataset-table"><db:homepageselect title="Select an organism" top="Root" baseUrl="/blast/submitblast/GeneDB_" leafOnly="true" alwaysLink="true"/></span> <br />
 
 &raquo; <a href="<misc:url value="/blast/submitblast/GeneDB_proteins/omni" />">Multi-organism (proteins)</a><br />
-&raquo; <a href="<misc:url value="/blast/submitblast/GeneDB_transcripts/omni" />">Multi-organism (transcripts)</a><br />
+&raquo; <a href="<misc:url value="/blast/submitblast/GeneDB_transcripts/omni" />">Multi-organism (transcripts and contigs/chromosomes)</a><br />
 
  </p>
 
@@ -76,17 +76,20 @@
 <div class="light-grey-bot"></div>
 
 
-<h2>New release</h2>
+<h1>News: March 22 2010</h1><br></br>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-<p>Welcome to the latest release of the GeneDB website. A small number of
- features aren't yet released, but are still available on the previous
- version of the site. This is accessible via the "Previous version" link below.
-</p>
+<p>Welcome to the first official release of the GeneDB website. A couple of datasets
+aren't yet available, but are still available on the previous version of the site.
+This is accessible via the "Previous version" link below.</p>
+
+<p>A couple of lesser used features haven't been implemented. If this causes you problems, or you
+have any new feature requests or comments on the site, please contact us via the feedback
+forms at the bottom of the page.</p>
 </div>
 <div class="baby-blue-bot"></div>
 
-<h2>Go to our</h2>
+<h1>Go to our</h1>
 <div class="light-grey-top"></div>
 <div class="light-grey">
 &raquo; <a href="<misc:url value="/Query" />">Query page</a><br />
@@ -97,7 +100,7 @@
 </div>
 <div class="light-grey-bot"></div>
 
-<h2>Information</h2>
+<h1>Information</h1>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
 
