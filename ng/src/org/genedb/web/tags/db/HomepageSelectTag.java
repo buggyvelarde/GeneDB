@@ -19,7 +19,8 @@ public class HomepageSelectTag extends AbstractHomepageTag {
 
     private String baseUrl;
     private boolean leafOnly = false;
-    private String suffix = "";
+    private boolean alwaysLink = false;
+	private String suffix = "";
     private String title = DEFAULT_TITLE;
 
     @Override
@@ -43,7 +44,11 @@ public class HomepageSelectTag extends AbstractHomepageTag {
             out.write(String.format("<option value=\"%s\">%s</option>", "none", title));
         }
         for (TaxonNode node : nodes) {
-            out.write(String.format("<option value=\"%s\">%s</option>", node.getLabel(), node.getName(TaxonNameType.FULL)));
+        	if (node.isWebLinkable() || alwaysLink) {
+        		out.write(String.format("<option value=\"%s\">%s</option>", node.getLabel(), node.getName(TaxonNameType.FULL)));
+        	} else {
+        		out.write(String.format("<option value=\"%s\" disabled=\"disabled\">%s</option>", node.getLabel(), node.getName(TaxonNameType.FULL)));
+        	}
         }
         out.write("</select>");
     }
@@ -78,5 +83,9 @@ public class HomepageSelectTag extends AbstractHomepageTag {
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
+
+    public void setAlwaysLink(boolean alwaysLink) {
+		this.alwaysLink = alwaysLink;
+	}
 
 }

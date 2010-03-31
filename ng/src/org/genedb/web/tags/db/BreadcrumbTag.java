@@ -12,8 +12,11 @@ import org.genedb.web.mvc.controller.WebConstants;
 
 import org.springframework.web.util.WebUtils;
 
+import com.google.common.collect.Maps;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
@@ -21,11 +24,34 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class BreadcrumbTag extends SimpleTagSupport {
-    private static final Logger logger = Logger.getLogger(BreadcrumbTag.class);
+
+	private String selection;
+	private boolean showingHomepage = false;
+	public void setShowingHomepage(boolean showingHomepage) {
+		this.showingHomepage = showingHomepage;
+	}
+
+	private Map<String, String> cache = Maps.newHashMap();
+
+    public void setSelection(String selection) {
+		this.selection = selection;
+	}
+
+	private static final Logger logger = Logger.getLogger(BreadcrumbTag.class);
     String separator = "<small> >> </small>";
 
     @Override
     public void doTag() throws JspException, IOException {
+
+        JspWriter out = getJspContext().getOut();
+
+    	String path = checkCache(selection);
+    	if (path != null) {
+            out.write(path);
+            return;
+    	}
+
+
         TaxonNodeManager tnm = (TaxonNodeManager) getJspContext().getAttribute(TAXON_NODE_MANAGER,
             APPLICATION_SCOPE);
 
@@ -34,14 +60,16 @@ public class BreadcrumbTag extends SimpleTagSupport {
             return;
         }
 
-        TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, REQUEST_SCOPE);
+        TaxonNode taxonNode = tnm.getTaxonNodeForLabel(selection);
+
+        	//(TaxonNode) getJspContext().getAttribute(TAXON_NODE, REQUEST_SCOPE);
         if (taxonNode == null) {
             logger.error("Failed to find TaxonNode in JSP context");
             return;
         }
 
         String prefix = getContextPathFromJspContext(getJspContext());
-        String trail = checkCache(taxonNode);
+        String trail = checkCache(selection);
         if (trail == null) {
             StringBuilder buf = new StringBuilder();
             List<TaxonNode> nodes = tnm.getHierarchy(taxonNode);
@@ -53,7 +81,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
                 if (node.isWebLinkable()) {
                     buf.append("<a href=\"");
                     buf.append(prefix);
-                    buf.append("/Homepage?org=");
+                    buf.append("Homepage/");
                     buf.append(node.getLabel());
                     buf.append("\">");
                 }
@@ -65,12 +93,10 @@ public class BreadcrumbTag extends SimpleTagSupport {
                 first = false;
             }
             trail = buf.toString();
-            // Store in cache
+            setCache(selection, trail);
         }
 
-        trail += separator + getJspContext().getAttribute(WebConstants.CRUMB, REQUEST_SCOPE);
-
-        JspWriter out = getJspContext().getOut();
+        //trail += separator + getJspContext().getAttribute(WebConstants.CRUMB, REQUEST_SCOPE);
         out.write(trail);
     }
 
@@ -83,13 +109,15 @@ public class BreadcrumbTag extends SimpleTagSupport {
         return prefix;
     }
 
-    private String checkCache(TaxonNode tn) {
-        // TODO
+    private String checkCache(String name) {
+        if (cache.containsKey(name)) {
+        	return cache.get(name);
+        }
         return null;
     }
 
-    private void setCache(TaxonNode tn, String path) {
-        // TODO
+    private void setCache(String name, String path) {
+        cache.put(name, path);
     }
 
 }

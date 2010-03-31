@@ -13,7 +13,14 @@ import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
 
-    @Override
+	private String selection;
+
+    public void setSelection(String selection) {
+		this.selection = selection;
+	}
+
+
+	@Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
 
         out.write("\n<select name=\"taxons\">");
@@ -32,9 +39,13 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
             previouslySelectedTaxons = context;
         }
+        context = (String) pageContext.getAttribute("taxonNodeName");
+        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
+            previouslySelectedTaxons = context;
+        }
 
         String indentSpaces = "&nbsp;&nbsp;";
-        displayImmediateChildren(root, out, 0, indentSpaces, previouslySelectedTaxons);
+        displayImmediateChildren(root, out, 0, indentSpaces, selection);
 
         out.write("\n</select>");
     }
@@ -78,13 +89,13 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         if(displayLabel!= null && displayLabel.toLowerCase().equals("root")){
             displayLabel = "All Organisms";
         }
-        // FIXME Use database for these values
-        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei427")) {
-            displayLabel = "Tbrucei brucei 427";
-        }
-        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei927")) {
-            displayLabel = "Tbrucei brucei 927";
-        }
+//        // FIXME Use database for these values
+//        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei427")) {
+//            displayLabel = "Tbrucei brucei 427";
+//        }
+//        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei927")) {
+//            displayLabel = "Tbrucei brucei 927";
+//        }
 
         //Reformat leaf nodes to add a dot and space between first char and the rest of chars
         if(children!= null && children.size()==0){
