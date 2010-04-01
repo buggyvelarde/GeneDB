@@ -144,8 +144,8 @@ FT                   /literature="PMID:2720787"
 FT                   /GO="aspect=component; GOid=GO:0005575;
 FT                   term=cellular_component; evidence=TAS;
 FT                   db_xref=PMID:11447124; date=20031204"
-FT                   /GO="aspect=function; GOid=GO:0003723; term=RNA binding;
-FT                   evidence=TAS; db_xref=PMID:11447124; date=20020604"
+##FT                   /GO="aspect=function; GOid=GO:0003723; term=RNA binding;
+##FT                   evidence=TAS; db_xref=PMID:11447124; date=20020604"
 FT                   /GO="aspect=function; GOid=GO:0008408;
 FT                   term=3'-5'-exodeoxyribonuclease activity; evidence=TAS;
 FT                   db_xref=PMID:11447124; date=20031204"
