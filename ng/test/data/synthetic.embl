@@ -137,18 +137,18 @@ FT                   /madeupqualifier="value"
 ##
 FT   CDS             join(610..620,630..640)
 FT                   /systematic_id="s5"
-FT                   /GO="aspect=component; GOid=GO:0016021; term=integral to
-FT                   outer membrane (sensu Gram-negative Bacteria);
-FT                   evidence=TAS; db_xref=PMID:2720787; date=20040707"
+##FT                   /GO="aspect=component; GOid=GO:0016021; term=integral to
+##FT                   outer membrane (sensu Gram-negative Bacteria);
+##FT                   evidence=TAS; db_xref=PMID:2720787; date=20040707"
 FT                   /literature="PMID:2720787"
 ##FT                   /GO="aspect=component; GOid=GO:0005575;
 ##FT                   term=cellular_component; evidence=TAS;
 ##FT                   db_xref=PMID:11447124; date=20031204"
 ##FT                   /GO="aspect=function; GOid=GO:0003723; term=RNA binding;
 ##FT                   evidence=TAS; db_xref=PMID:11447124; date=20020604"
-FT                   /GO="aspect=function; GOid=GO:0008408;
-FT                   term=3'-5'-exodeoxyribonuclease activity; evidence=TAS;
-FT                   db_xref=PMID:11447124; date=20031204"
+##FT                   /GO="aspect=function; GOid=GO:0008408;
+##FT                   term=3'-5'-exodeoxyribonuclease activity; evidence=TAS;
+##FT                   db_xref=PMID:11447124; date=20031204"
 ##FT                   /GO="aspect=process; GOid=GO:0016072; term=rRNA
 ##FT                   processing; evidence=TAS; db_xref=PMID:11447124;
 ##FT                   date=20020604"
