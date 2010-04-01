@@ -149,9 +149,9 @@ FT                   db_xref=PMID:11447124; date=20031204"
 FT                   /GO="aspect=function; GOid=GO:0008408;
 FT                   term=3'-5'-exodeoxyribonuclease activity; evidence=TAS;
 FT                   db_xref=PMID:11447124; date=20031204"
-FT                   /GO="aspect=process; GOid=GO:0016072; term=rRNA
-FT                   processing; evidence=TAS; db_xref=PMID:11447124;
-FT                   date=20020604"
+##FT                   /GO="aspect=process; GOid=GO:0016072; term=rRNA
+##FT                   processing; evidence=TAS; db_xref=PMID:11447124;
+##FT                   date=20020604"
 ##
 ##                   SWALL dbxrefs should be converted to Uniprot
 FT                   /db_xref="SWALL:Q95Z09"
