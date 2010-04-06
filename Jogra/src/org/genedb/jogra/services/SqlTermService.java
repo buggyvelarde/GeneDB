@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -45,7 +46,14 @@ import javax.sql.DataSource;
  * This class implements the Data Access Layer for the Term Rationaliser. It contains all the SQL needed for 
  * querying, updating and deleting terms. We use the Spring JDBCTemplate here to have more control over the 
  * sql we execute rather than using the existing DAOs which use Hibernate. It also does make db access faster.
- * There isn't any SQL anywhere else in the classes related to the Rationaliser.
+ * There shouldn't any SQL anywhere else in the classes related to the Rationaliser.
+ * 
+ * 31.3.2010: 
+ * Actually, after some experimentation it was discovered that using a plain JDBC connection here
+ * would really speed up the database work (particularly at start-up). Hence, the methods below are being
+ * re-done using a JDBC connection. To start with we get a new connection to the database each time and
+ * close it at the end. This may be replaced with a connection pool system later on. We also throw SQLExceptions
+ * which are meant to be caught at the interface level to notify the user.
  * 
  * @author nds
  */
@@ -56,26 +64,19 @@ public class SqlTermService implements TermService {
 
     /* Configured during runtime */
     private JdbcTemplate jdbcTemplate;
-    private TaxonNodeManager taxonNodeManager; 
+    private TaxonNodeManager taxonNodeManager;
+    private DataSource dataSource;
   
      
     /** 
      * Takes a list of taxonnodes (organisms) and a cv name 
      * and returns all the corresponding terms. This is the
-     * list of terms for the left hand side of the 
-     * rationaliser.
+     * list of terms for the left hand side of the rationaliser.
      **/
 
     @Override
-    public List<Term> getTerms(List<TaxonNode> selectedTaxons, final String cvType) {
+    public List<Term> getTerms(List<TaxonNode> selectedTaxons, final String cvName) throws SQLException {
 
-        RowMapper<Term> mapper = new RowMapper<Term>() {
-            public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), cvType);
-                return term;
-            }
-        };
-        
         List<Term> terms = new ArrayList<Term>();
         String commaSeparatedNames = this.getTaxonNamesInSQLFormat(selectedTaxons);
         
@@ -85,38 +86,43 @@ public class SqlTermService implements TermService {
                                     "join feature_cvterm on feature_cvterm.cvterm_id=cvterm.cvterm_id " +
                                     "join feature on feature.feature_id=feature_cvterm.feature_id " +
                                     "join organism on organism.organism_id=feature.organism_id " +
-                                    "where cv.name= ? and organism.common_name IN (" + commaSeparatedNames + ");"; //TODO: Bind inside IN doesn't work. Find alternative.
+                                    "where cv.name= ? and organism.common_name IN (" + commaSeparatedNames + ");"; 
        
-        logger.info(SQL_TO_GET_TERMS);
-        
-        terms = jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvType) /*, new String(commaSeparatedNames) */}, mapper);
-
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL_TO_GET_TERMS);
+        preparedStatement.setString(1, cvName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        logger.info("Executed : " +  preparedStatement.toString());
+        while(resultSet.next()){           
+            terms.add(new Term(resultSet.getInt("cvterm_id"),resultSet.getString("name"),cvName));;
+        }
+        connection.close();
         return terms;
     }
     
     
     
     /**
-     * Gets all the terms in the cv specified. These are the terms
-     * that will be displayed in the right side of the rationaliser
+     * Gets all the terms in the specified cv. These are the terms
+     * that will be displayed on the right side of the rationaliser
      */    
-    public List<Term> getAllTerms(final String cvName){
+    public List<Term> getAllTerms(final String cvName) throws SQLException{
         List<Term> terms = new ArrayList<Term>();
-        
-        RowMapper<Term> mapper = new RowMapper<Term>() {
-            public Term mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Term term = new Term(rs.getInt("cvterm_id"), rs.getString("name"), cvName);
-                return term;
-            }
-        };
-              
-        String SQL_TO_GET_TERMS =   "select distinct cvterm.name, cvterm.cvterm_id " +
+             
+        String SQL_TO_GET_TERMS =   "select cvterm.name, cvterm.cvterm_id " +
                                     "from cvterm " +
                                     "join cv on cvterm.cv_id=cv.cv_id " +
                                     "where cv.name=? ;"; 
         
-        logger.info(SQL_TO_GET_TERMS);  
-        terms = jdbcTemplate.query(SQL_TO_GET_TERMS, new Object[]{new String(cvName)}, mapper);       
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL_TO_GET_TERMS);
+        preparedStatement.setString(1, cvName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        logger.info("Executed : " +  preparedStatement.toString());
+        while(resultSet.next()){           
+            terms.add(new Term(resultSet.getInt("cvterm_id"),resultSet.getString("name"),cvName));;
+        }
+        connection.close();
         return terms;
     }
     
@@ -434,6 +440,7 @@ public class SqlTermService implements TermService {
      * Takes the cv name like 'genedb_products' and returns the corresponding cv id
      */
     private int getCvIdByCvType(String type){
+        logger.info("Trying to execute: select cv_id from cv where name="+type);
         int cv_id = jdbcTemplate.queryForInt("select cv_id from cv where name=?", 
                                              new Object[]{ type }); //Get cv id
         return cv_id;        
@@ -569,6 +576,7 @@ public class SqlTermService implements TermService {
     /** INJECTED **/
     
     public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
     
