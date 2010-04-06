@@ -25,15 +25,12 @@ import org.springframework.util.StringUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
-import java.util.Vector;
 
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import com.google.common.collect.Maps;
+
 
 /* Helper service for Jogra (and other applications) to get a username & password, and validate them for a given database. It does so by trying to create a
  * JDBC db connection and catching any errors. Sample usage:
