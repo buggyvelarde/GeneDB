@@ -9,13 +9,13 @@ import java.util.List;
 public interface TermService {
     
     /* Accepts multiple organisms and returns a list of corresponding terms */
-    List<Term> getTerms(List<TaxonNode> taxonNode, String termType);
+    List<Term> getTerms(List<TaxonNode> taxonNode, String termType) throws SQLException;
     
     /* Get all the terms in a given CV */
-    List<Term> getAllTerms(String cvName);
+    List<Term> getAllTerms(String cvName) throws SQLException;
    
     /* Takes the new term, list of old terms and the corrected text (if any), and rationalise! */
-    RationaliserResult rationaliseTerm(List<Term> oldTerms, String correctedText, boolean allOrganisms, List<TaxonNode> selectedTaxons) throws SQLException;
+    RationaliserResult rationaliseTerm(List<Term> oldTerms, String correctedText, List<TaxonNode> selectedTaxons) throws SQLException;
        
     /* Method to retrieve systematic IDs (restricted to selected scope) for a given term */
     List<String> getSystematicIDs(Term term, List<TaxonNode> selectedTaxons);
