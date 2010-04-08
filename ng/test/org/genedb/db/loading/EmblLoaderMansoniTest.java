@@ -44,15 +44,15 @@ public class EmblLoaderMansoniTest {
         FeatureTester.GeneTester geneTester = tester.geneTester("Smp_097230")
             .loc(1, 18450, 18693)
             .source("Smp_scaff000604")
-            .transcripts("Smp_097230:mRNA");
+            .transcripts("Smp_097230.1");
 
-        geneTester.transcript("Smp_097230:mRNA")
+        geneTester.transcript("Smp_097230.1")
             .synonyms("synonym", "29646.t000001", "29646.m000185")
 
             // Check that temporary_systematic_id and systematic_id synonyms
             // are NOT being added
             .synonyms("temporary_systematic_id").synonyms("systematic_id")
-            .hasPolypeptide("Smp_097230:pep")
+            .hasPolypeptide("Smp_097230.1:pep")
             .singleExon(1, 18450, 18693);
     }
 
@@ -82,16 +82,16 @@ public class EmblLoaderMansoniTest {
         // (It doesn't really: that has been added for testing so we can
         // test that it works with an explicit /codon_start qualifier/)
         FeatureTester.TranscriptTester tt = tester.geneTester("Smp_097250").phaseIsNull()
-            .transcript("Smp_097250:pseudogenic_transcript").phaseIsNull();
-        tt.exon("Smp_097250:exon:1").phase(1);
-        tt.exon("Smp_097250:exon:2").phase(1);
+            .transcript("Smp_097250.1").phaseIsNull();
+        tt.exon("Smp_097250.1:exon:1").phase(1);
+        tt.exon("Smp_097250.1:exon:2").phase(1);
 
         tt = tester.geneTester("Smp_175570").phaseIsNull()
-            .transcript("Smp_175570:mRNA").phaseIsNull();
-        tt.exon("Smp_175570:exon:1").phase(null);
-        tt.exon("Smp_175570:exon:2").phase(null);
-        tt.exon("Smp_175570:exon:3").phase(null);
-        tt.exon("Smp_175570:exon:4").phase(null);
-        tt.exon("Smp_175570:exon:5").phase(null);
+            .transcript("Smp_175570.1").phaseIsNull();
+        tt.exon("Smp_175570.1:exon:1").phase(null);
+        tt.exon("Smp_175570.1:exon:2").phase(null);
+        tt.exon("Smp_175570.1:exon:3").phase(null);
+        tt.exon("Smp_175570.1:exon:4").phase(null);
+        tt.exon("Smp_175570.1:exon:5").phase(null);
     }
 }
