@@ -81,12 +81,11 @@ class EmblLoader {
     // Constants
 
     /**
-     * Whether or not the transcript type (mRNA, tRNA etc) should be appended
-     * to the uniquename of the transcript feature in the database. We must do this
-     * because Artemis requires each feature to have a globally unique name, and does
+     * A unique number should be appended to the uniquename of the singly
+     * spliced transcript features in the database. We must do this because
+     * Artemis requires each feature to have a globally unique name, and does
      * not work correctly if a transcript has the same uniquename as its gene.
-     * Moreover, this can't be changed without causing serious potential problems
-     * elsewhere, because the GFF3 feature format requires feature names to be
+     * Similarly the GFF3 feature format requires feature names to be
      * globally unique, and we want to be able to export our data in GFF3 format.
      *
      * For alternatively-spliced genes, on the other hand, there is no need to
@@ -94,8 +93,8 @@ class EmblLoader {
      * uniquename (the /systematic_id of the CDS) that is different from the
      * uniquename of the gene (the /shared_id of the CDS).
      */
-    private enum AppendType { ALWAYS, NEVER, SINGLY_SPLICED_ONLY };
-    private static final AppendType APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME = AppendType.SINGLY_SPLICED_ONLY;
+    //private enum AppendType { ALWAYS, NEVER, SINGLY_SPLICED_ONLY };
+    //private static final AppendType APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME = AppendType.SINGLY_SPLICED_ONLY;
 
     // Injected beans
     private CvDao cvDao;
@@ -932,24 +931,28 @@ class EmblLoader {
 
         private void loadTranscript(AbstractGene gene) throws DataError {
             logger.debug(String.format("Creating transcript '%s' for gene '%s'", transcriptUniqueName, gene.getUniqueName()));
+
+            /**
+             * A unique number should be appended to the uniquename of the singly
+             * spliced transcript features in the database. We must do this because
+             * Artemis requires each feature to have a globally unique name, and does
+             * not work correctly if a transcript has the same uniquename as its gene.
+             * Similarly the GFF3 feature format requires feature names to be
+             * globally unique, and we want to be able to export our data in GFF3 format.
+             *
+             * For alternatively-spliced genes, on the other hand, there is no need to
+             * append the transcript type, because the transcript will have an assigned
+             * uniquename (the /systematic_id of the CDS) that is different from the
+             * uniquename of the gene (the /shared_id of the CDS).
+             */
+
             String actualTranscriptUniqueName;
-            switch (APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME) {
-                case ALWAYS:
-                    actualTranscriptUniqueName = String.format("%s:%s", transcriptUniqueName, getTranscriptType());
-                    break;
-                case NEVER:
-                    actualTranscriptUniqueName = transcriptUniqueName;
-                    break;
-                case SINGLY_SPLICED_ONLY:
-                    if (transcriptUniqueName.equals(gene.getUniqueName())) {
-                        actualTranscriptUniqueName = String.format("%s:%s", transcriptUniqueName, getTranscriptType());
-                    } else {
-                        actualTranscriptUniqueName = transcriptUniqueName;
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("The java compiler is not bright enough to realise that this is impossible");
+            if (transcriptUniqueName.equals(gene.getUniqueName())) { // will occur for singly-spliced genes
+                actualTranscriptUniqueName = String.format("%s.1", transcriptUniqueName); //make transcript uniquename differ from gene uniquename
+            } else {
+                actualTranscriptUniqueName = transcriptUniqueName;
             }
+
             this.transcript = gene.makeTranscript(getTranscriptClass(), actualTranscriptUniqueName, location.getFmin(), location.getFmax());
             session.persist(transcript);
 
@@ -962,7 +965,7 @@ class EmblLoader {
             }
 
             transcriptsByUniqueName.put(transcriptUniqueName, transcript);
-            loadExons();
+            loadExons(actualTranscriptUniqueName);
             processTranscriptQualifiers();
         }
 
@@ -1096,13 +1099,21 @@ class EmblLoader {
             session.persist(featureCvTerm);
         }
 
-        private void loadExons() throws DataError {
+        private void loadExons() throws DataError { //if you don't specify the transcriptUniqueName use the existing one taken from EMBL file
+            loadExons(transcriptUniqueName);
+        }
+
+        /*
+         * specifying a transcriptUniquename whe you load the exons allows the modified transcriptUniqueName (with appended .1) to be used
+         * in making the exonUniqueName for singly spliced genes
+         */
+        private void loadExons(String actualTranscriptUniqueName) throws DataError {
             int exonIndex = 0;
             for (EmblLocation exonLocation: location.getParts()) {
                 if (exonLocation instanceof EmblLocation.External) {
                     throw new DataError("Found an external exon (trans-splicing). We can't handle that yet.");
                 }
-                String exonUniqueName = String.format("%s:exon:%d", transcriptUniqueName, ++exonIndex);
+                String exonUniqueName = String.format("%s:exon:%d", actualTranscriptUniqueName, ++exonIndex);
                 logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
                 AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax(), phase);
                 session.persist(exon);
