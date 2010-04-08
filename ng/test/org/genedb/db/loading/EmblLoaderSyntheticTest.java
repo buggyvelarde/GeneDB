@@ -85,8 +85,8 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void rileyClass() {
         tester.geneTester("Tc00.1047053511907.50")
-        .transcript("Tc00.1047053511907.50:mRNA")
-        .polypeptide("Tc00.1047053511907.50:pep")
+        .transcript("Tc00.1047053511907.50.1")
+        .polypeptide("Tc00.1047053511907.50.1:pep")
         .cvtermsCheckingDb("RILEY", "RILEY", "4.1.6");
     }
 
@@ -99,7 +99,7 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void s1TranscriptLocs() {
-        tester.geneTester("s1").transcript("s1:pseudogenic_transcript")
+        tester.geneTester("s1").transcript("s1.1")
             .loc(0, 0, -1, 3, 87)
             .loc(1, 1, -1, 3, 87);
     }
@@ -107,8 +107,8 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void s1PolypeptideLocs() {
         tester.geneTester("s1")
-            .transcript("s1:pseudogenic_transcript")
-            .hasPolypeptide("s1:pseudogenic_transcript:pep")
+            .transcript("s1.1")
+            .hasPolypeptide("s1.1:pep")
             .loc(0, 0, -1, 3, 87)
             .loc(1, 1, -1, 3, 87);
     }
@@ -116,8 +116,8 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void s1EC_number() {
         tester.geneTester("s1")
-            .transcript("s1:pseudogenic_transcript")
-            .polypeptide("s1:pseudogenic_transcript:pep")
+            .transcript("s1.1")
+            .polypeptide("s1.1:pep")
             .property("genedb_misc", "EC_number", "1.3.99.1");
     }
 
@@ -188,7 +188,7 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void s3similarities() {
-        PolypeptideTester s3 = tester.geneTester("s3").transcript("s3:mRNA").polypeptide("s3:pep");
+        PolypeptideTester s3 = tester.geneTester("s3").transcript("s3.1").polypeptide("s3.1:pep");
 
         // /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
         // Trypanosoma brucei brucei; variant-specific antigen;
@@ -218,7 +218,7 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void s4Similarities() {
-        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
+        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4.1").polypeptide("s4.1:pep");
 
         // /similarity="fasta; SWALL:O21243 (EMBL:AF007261,
         // SWALL:COXZ_RECAM); Reclinomonas americana; ; ; length 182
@@ -241,17 +241,17 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void s4_GO() {
-        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
+        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4.1").polypeptide("s4.1:pep");
 
         // TODO test GO term loading
         Collection<CvTerm> process  = s4.getTerms("biological_process", "GO");
         Collection<CvTerm> function = s4.getTerms("molecular_function", "GO");
         Collection<CvTerm> component = s4.getTerms("molecular_function", "GO");
     }
-    
+
     @Test
     public void s5_dbxrefs() {
-        PolypeptideTester s5 = tester.geneTester("s5").transcript("s5:mRNA").polypeptide("s5:pep");
+        PolypeptideTester s5 = tester.geneTester("s5").transcript("s5.1").polypeptide("s5.1:pep");
 
         s5.dbXRefs("UniProt:Q95Z09");
     }
@@ -329,20 +329,20 @@ public class EmblLoaderSyntheticTest {
             .properties("genedb_misc", "colour")
             .properties("feature_property", "comment");
 
-        tRNA1.transcript("super1_tRNA1:tRNA")
+        tRNA1.transcript("super1_tRNA1.1")
             .properties("feature_property", "comment", "/label=tRNA label")
             .properties("genedb_misc", "colour", "12")
             .property("genedb_misc", "EMBL_qualifier", "/invented_qualifier=\"value\"")
-            .dbXRefs("Rfam:RF00230");
+            .dbXRefs("RFAM:RF00230");
     }
 
     @Test
     public void productCaseSensitivity() {
         Collection<CvTerm> s3_products = tester.geneTester("s3")
-            .transcript("s3:mRNA").polypeptide("s3:pep")
+            .transcript("s3.1").polypeptide("s3.1:pep")
             .getTerms("genedb_products");
         Collection<CvTerm> s4_products = tester.geneTester("s4")
-            .transcript("s4:mRNA").polypeptide("s4:pep")
+            .transcript("s4.1").polypeptide("s4.1:pep")
             .getTerms("genedb_products");
         assertEquals(s3_products, s4_products);
     }
