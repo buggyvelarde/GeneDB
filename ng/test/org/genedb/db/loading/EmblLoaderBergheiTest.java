@@ -35,9 +35,9 @@ public class EmblLoaderBergheiTest {
         tester.geneTester("PB400001.00.0")
             .loc(1, 240,312)
             .source("PB_PH0001")
-            .transcripts("PB400001.00.0:mRNA")
-            .transcript("PB400001.00.0:mRNA")
-            .hasPolypeptide("PB400001.00.0:pep")
+            .transcripts("PB400001.00.0.1")
+            .transcript("PB400001.00.0.1")
+            .hasPolypeptide("PB400001.00.0.1:pep")
             .singleExon(1, 240, 312);
     }
 }
