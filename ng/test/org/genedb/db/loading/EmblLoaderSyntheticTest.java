@@ -333,7 +333,7 @@ public class EmblLoaderSyntheticTest {
             .properties("feature_property", "comment", "/label=tRNA label")
             .properties("genedb_misc", "colour", "12")
             .property("genedb_misc", "EMBL_qualifier", "/invented_qualifier=\"value\"")
-            .dbXRefs("RFAM:RF00230");
+            .dbXRefs("Rfam:RF00230");
     }
 
     @Test
