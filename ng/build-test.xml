@@ -152,7 +152,7 @@
     <target name="all-tests"
     	depends="include-properties, file-test,location-test,embl-test,domainloader-test"/>
 	-->
-	<target name="all-tests"
+	<target name="all-tests">
     	depends="include-properties, file-test,location-test,embl-test,ortho-test"/>
 	</target>
 
