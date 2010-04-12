@@ -1,5 +1,7 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.loading.EmblLocation;
+
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
@@ -25,7 +27,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-public abstract class AbstractGene extends Region {
+public abstract class AbstractGene extends TopLevelFeature {
     private static final Logger logger = Logger.getLogger(AbstractGene.class);
 
     AbstractGene() {
@@ -137,39 +139,73 @@ public abstract class AbstractGene extends Region {
      * @param transcriptUniqueName the uniqueName of the transcript to create
      * @param fmin
      * @param fmax
-     * @param phase the phase
      * @return
      */
     public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName,
-                int fmin, int fmax) {
-        logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
-            transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
+            int fmin, int fmax) {
+            T transcript = makeTranscript(transcriptClass, transcriptUniqueName, fmin, fmax, null, null); //don't need to supply the gene and EmblLocation for transcripts located on normal topLevel features
+            return transcript;
+    }
+
+    /**
+     * Create a transcript for this gene, which is assumed to be newly-created
+     * and not to have a transcript yet.
+     *
+     *For transcripts located on topLevel genes the gene and EmblLocation objects
+     *are required for featureLocing
+     *
+     * @param <T>
+     * @param transcriptClass the class of the transcript to create
+     * @param transcriptUniqueName the uniqueName of the transcript to create
+     * @param fmin
+     * @param fmax
+     * @param gene the gene feature if it is a topLevel gene (else null)
+     * @param location the EmblLocation object if the gene is topLevel (else null)
+     * @return
+     */
+
+    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName,
+                int fmin, int fmax, AbstractGene gene, EmblLocation location) {
+
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-
-        if (fmax < fmin) {
-            throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
-        }
-
-        int relativeFmin = fmin - this.getFmin();
-        if (relativeFmin < 0) {
-            logger.trace(String.format("Start of transcript (%d) is before start of gene (%d). Resetting gene start",
-                fmin, this.getFmin()));
-            this.lowerFminTo(fmin);
-        }
-
-        int relativeFmax = fmax - this.getFmin();
-        if (fmax > this.getFmax()) {
-            logger.trace(String.format("End of transcript (%d) is after end of gene (%d). Resetting gene end",
-                fmax, this.getFmax()));
-            this.raiseFmaxTo(fmax);
-        }
-
         T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
         session.persist(transcript);
-        for (FeatureLoc featureLoc: getFeatureLocs()) {
-            featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
-                featureLoc.getFmin() + relativeFmax,
-                featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
+
+        int relativeFmin = 0;
+        int relativeFmax = 0;
+
+        if (gene != null && gene.isTopLevelFeature()) { //gene is topLevel so featureLoc transcript onto gene
+            logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d on a topLevel gene",
+                    transcriptUniqueName, getUniqueName(), fmin, fmax));
+            gene.addLocatedChild(transcript, fmin, fmax, location.getStrand(), null /*phase*/);
+        }
+        else { //normal genes on normal topLevel features
+            logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
+                    transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
+
+            if (fmax < fmin) {
+                throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
+            }
+
+            relativeFmin = fmin - this.getFmin();
+            if (relativeFmin < 0) {
+                logger.trace(String.format("Start of transcript (%d) is before start of gene (%d). Resetting gene start",
+                        fmin, this.getFmin()));
+                this.lowerFminTo(fmin);
+            }
+
+            relativeFmax = fmax - this.getFmin();
+            if (fmax > this.getFmax()) {
+                logger.trace(String.format("End of transcript (%d) is after end of gene (%d). Resetting gene end",
+                        fmax, this.getFmax()));
+                this.raiseFmaxTo(fmax);
+            }
+
+            for (FeatureLoc featureLoc: getFeatureLocs()) {
+                featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
+                        featureLoc.getFmin() + relativeFmax,
+                        featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
+            }
         }
         this.addFeatureRelationship(transcript, "relationship", "part_of");
 
@@ -180,7 +216,7 @@ public abstract class AbstractGene extends Region {
             } else {
                 polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
             }
-            logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
+            logger.debug(String.format("Creating polypeptide '%s' for transcript '%s'",
                 polypeptideUniqueName, getUniqueName()));
             Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
             session.persist(polypeptide);
@@ -190,7 +226,7 @@ public abstract class AbstractGene extends Region {
             }
             ((ProductiveTranscript)transcript).setProtein(polypeptide);
         }
-
+        
         return transcript;
     }
 }
