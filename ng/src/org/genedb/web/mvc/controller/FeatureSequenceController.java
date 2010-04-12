@@ -109,12 +109,12 @@ public class FeatureSequenceController {
 
         	//CDS - exons
         	SortedSet<AbstractExon> exons = transcript.getExons();
-        	StringBuilder sb = new StringBuilder();
+        	String buildup = new String();
         	for (AbstractExon exon : exons) {
         		String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
-        		sb.append(seq);
+        		buildup = seq + buildup;
         	}
-        	model.put("cds", sb.toString());
+        	model.put("cds", buildup);
 
         	//model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
 
@@ -157,6 +157,5 @@ public class FeatureSequenceController {
         public void setName(String name) {
             this.name = name;
         }
-
     }
 }
