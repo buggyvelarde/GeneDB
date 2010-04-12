@@ -895,11 +895,21 @@ class EmblLoader {
         }
 
         private AbstractGene loadOrFetchGene() {
-            if (singlySpliced) {
+
+            if (topLevelFeature.getClass().equals(Gene.class)) {
+                /* If the gene is acting as the topLevelFeature
+                 * don't create a new gene feature here
+                 * Instead return the existing topLevel gene feature
+                 */
+                logger.debug(String.format("The toplevel feature is a gene"));
+                return (AbstractGene) topLevelFeature;
+            }
+            else if (singlySpliced) {
                 AbstractGene gene = createSinglySplicedGene();
                 genesByUniqueName.put(geneUniqueName, gene);
                 return gene;
-            } else {
+            }
+            else {
                 if (genesByUniqueName.containsKey(geneUniqueName)) {
                     logger.debug(String.format("Gene for shared ID '%s' already exists", geneUniqueName));
                     return genesByUniqueName.get(geneUniqueName);
@@ -953,7 +963,7 @@ class EmblLoader {
                 actualTranscriptUniqueName = transcriptUniqueName;
             }
 
-            this.transcript = gene.makeTranscript(getTranscriptClass(), actualTranscriptUniqueName, location.getFmin(), location.getFmax());
+            this.transcript = gene.makeTranscript(getTranscriptClass(), actualTranscriptUniqueName, location.getFmin(), location.getFmax(), gene, location);
             session.persist(transcript);
 
             focalFeature = transcript;
@@ -1966,4 +1976,5 @@ class EmblLoader {
         objectManager.setCvDao(cvDao);
         objectManager.setPubDao(pubDao);
     }
+
 }
