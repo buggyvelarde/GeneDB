@@ -109,10 +109,20 @@ public class FeatureSequenceController {
 
         	//CDS - exons
         	SortedSet<AbstractExon> exons = transcript.getExons();
-        	String buildup = new String();
-        	for (AbstractExon exon : exons) {
-        		String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
-        		buildup = seq + buildup;
+        	String buildup;
+        	if (reverseCompliment) {
+        		buildup = new String();
+        		for (AbstractExon exon : exons) {
+        			String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
+        			buildup = seq + buildup;
+        		}
+        	} else {
+        		StringBuilder sb = new StringBuilder();
+        		for (AbstractExon exon : exons) {
+        			String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax(), reverseCompliment);
+        			sb.append(seq);
+        		}
+        		buildup = sb.toString();
         	}
         	model.put("cds", buildup);
 
