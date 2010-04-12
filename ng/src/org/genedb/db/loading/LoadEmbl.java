@@ -5,6 +5,7 @@ import org.gmod.schema.feature.BACEnd;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
+import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Plasmid;
 import org.gmod.schema.feature.Supercontig;
 
@@ -148,6 +149,8 @@ public class LoadEmbl extends FileProcessor {
             loader.setTopLevelFeatureClass(EST.class);
         } else if (topLevelFeatureType.equals("BAC_end")) {
             loader.setTopLevelFeatureClass(BACEnd.class);
+        } else if (topLevelFeatureType.equals("gene")) {
+            loader.setTopLevelFeatureClass(Gene.class);
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));
