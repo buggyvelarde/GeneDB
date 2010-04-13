@@ -23,13 +23,13 @@
             ${row.numberItems}
         </display:column>
         <display:column title="Download" style="width: 150px;">
-            <a href="<misc:url value="/Download/${row_rowNum}"/>">Download</a>
+            <a href="${base}Download/${row_rowNum}">Download</a>
         </display:column>
         <display:column title="View/Edit" style="width: 150px;">
-            <a href="<misc:url value="/History/${row_rowNum}"/>">Edit</a>
+            <a href="${base}/History/${row_rowNum}">Edit</a>
         </display:column>
         <display:column title="Remove" style="width: 150px;">
-            <form:form method="DELETE" action="<misc:url value="/History?historyItem=${row_rowNum}"/>"><input type="submit" value="Remove"/></form:form>
+            <form:form method="DELETE" action="${base}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
         </display:column>
     </display:table>
 
