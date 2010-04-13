@@ -9,7 +9,7 @@
 
 <div id="col-2-1">
 
-    <display:table name="items" id="row" pagesize="30" requestURI="<misc:url value="/History/View"/>" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
+    <display:table name="items" id="row" pagesize="30" requestURI="${base}/History/View" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
         <display:column title="No." style="width: 100px;">
             ${row_rowNum}
         </display:column>
