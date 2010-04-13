@@ -12,7 +12,7 @@
     <!-- Main content part of page -->
 
 
-<form action="/Download/${historyItem}" method="POST">
+<form action="<misc:url value="/Download/${historyItem}"/>" method="POST">
 
 <center>
 
