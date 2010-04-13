@@ -1592,9 +1592,17 @@ class EmblLoader {
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "previous_systematic_id", true);
 
-            int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
+            int commentRank = processPropertyQualifier("note", "feature_property", "comment");
             for (String name: qualifierProperties) {
                 processPropertyQualifier(name, "genedb_misc", name, uniqueQualifiers.contains(name));
+            }
+
+            for (String translation: feature.getQualifierValues("translation")) {
+                translation = translation.replaceAll("\\s+", "");
+                translation = translation.toUpperCase();
+                logger.debug(String.format("Setting translation to sequence from EMBL file : %s", translation));
+                focalFeature.setResidues(translation);
+                focalFeature.addFeatureProp("Translation loaded from EMBL", "feature_property", "comment", commentRank++);
             }
 
             addColourToExons();
@@ -1844,6 +1852,7 @@ class EmblLoader {
             if (TRNA.class.isAssignableFrom(transcriptClass)) {
                 processPropertyQualifier("anticodon", "feature_property", "anticodon", true);
             }
+
             processPropertyQualifier("colour", "genedb_misc", "colour", true);
             processCvTermQualifier("product", "genedb_products", "PRODUCT", true);
             addColourToExons();
