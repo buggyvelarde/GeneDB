@@ -246,6 +246,12 @@
 				<include name="json-lib-ext-spring-1.0.1.jar"/>
 			</fileset>
 		</copy>
+               <copy todir="${lib-compiletime.dir}">
+                   <fileset dir="lib-repos/misc">
+		         <include name="jgraph.jar"/>	
+		         <include name="jgrapht-jdk1.6.jar"/>	
+                   </fileset>
+               </copy> 
 		<!--
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
