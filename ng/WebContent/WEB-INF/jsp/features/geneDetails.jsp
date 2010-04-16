@@ -60,6 +60,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
   </c:forEach>
 </c:if>
 
+
 <c:if test="${!empty dto.products}">
 <tr><th>Product</th><td>
 <c:forEach items="${dto.products}" var="product">
@@ -82,6 +83,18 @@ should be obtained before publishing analyses of the sequence/open reading frame
 </td></tr>
 </c:if>
 
+
+<c:if test="${!empty dto.proteinSynonymsByTypes}">
+  <c:forEach var="type" items="${dto.proteinSynonymsByTypes}">
+  <tr>
+    <th>${type.key}</th>
+    <td>
+      <misc:listItems collection="${type.value}"/>
+    </td>
+  </tr>
+  </c:forEach>
+</c:if>
+
 <tr>
 <th>Location</th>
 <td>${dto.topLevelFeatureType} ${dto.topLevelFeatureDisplayName}; ${dto.location}</td>
@@ -91,16 +104,17 @@ should be obtained before publishing analyses of the sequence/open reading frame
   <tr>
     <th>See Also</th>
     <td>
+    <ul>
     <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
       <c:if test="${!empty dbxref.urlPrefix}">
         <c:set var="urlSuffix" value=""/>
         <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
           <c:set var="urlSuffix" value=".html"/>
         </c:if>
-        <span><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.dbName}:${dbxref.accession}</a><%--
-        --%><c:if test="${!status.last}">, </c:if></span>
+        <li><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.dbName}"/></a>
       </c:if>
     </c:forEach>
+    </ul>
     </td>
   </tr>
 </c:if>
@@ -121,7 +135,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <div id="col-4-2">
 <div class="main-blue-3-4-top"></div>
 <div class="baby-blue-nopad">
-<%-- <format:addToBasket uniqueName="${dto.uniqueName}" /> --%>
+<format:addToBasket uniqueName="${dto.uniqueName}" />
 <a href="<misc:url value="/featureSeq/"/>${dto.uniqueName}"><img src="<misc:url value="/includes/image/button-view-sequence.gif"/>" height="46" width="144" alt="View Sequence" border="0" /></a>
 <a href="<misc:url value="/ArtemisLaunch/${dto.organismCommonName}/${dto.topLevelFeatureUniqueName}.jnlp?start=${dto.min}&end=${dto.max}"/>"><img src="<misc:url value="/includes/image/button-artemis.gif"/>" height="46" width="144" alt="Launch Artemis" border="0" /></a>
 <%-- The coordinates in the line below rely on JBrowse coping with coordinates off the end of the contig --%>
@@ -285,3 +299,4 @@ ${dto.ims.imageMap}
 
 </c:if>
 
+<p>See this gene in <a href="<misc:url value="/gene/${dto.uniqueName}.xml" />">XML</a> or <a href="<misc:url value="/gene/${dto.uniqueName}.json" />">JSON</a> formats</p>
