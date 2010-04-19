@@ -40,6 +40,7 @@ import com.google.common.collect.Maps;
 public class DbXRefListener implements ServletContextListener {
 
     public static final String DB_URL_MAP = "_DB_URL_MAP";
+    public static final String DB_NAME_MAP = "_DB_NAME_MAP";
 
     //This method is invoked when the Web Application
     //is ready to service requests
@@ -52,13 +53,16 @@ public class DbXRefListener implements ServletContextListener {
         List<Db> dbs = generalDao.getAllDbs();
 
         Map<String, String> dbUrlMap = Maps.newHashMap();
+        Map<String, String> dbNameMap = Maps.newHashMap();
         for (Db db : dbs) {
             if (StringUtils.hasText(db.getUrlPrefix())) {
                 dbUrlMap.put(db.getName(), db.getUrlPrefix());
+                dbNameMap.put(db.getName(), db.getDescription());
             }
         }
 
         context.setAttribute(DB_URL_MAP, dbUrlMap);
+        context.setAttribute(DB_NAME_MAP, dbNameMap);
     }
 
 
