@@ -107,18 +107,18 @@ public class OrthologueLoaderClusteredTest {
 
     @Transactional @Test
     public void testClusters() {
-        cluster("ORTHOMCL32", "SAEMRSA1519860:pep", "SAR0071:pep", "SAR2164:pep", "SAS1981:pep");
-        cluster("ORTHOMCL139", "SAEMRSA1501410:pep", "SAR0177:pep", "SAS0151:pep");
-        cluster("ORTHOMCL290", "SAEMRSA1503120:pep", "SAR0354:pep", "SAS0333:pep");
-        cluster("ORTHOMCL552", "SAEMRSA1505950:pep", "SAR0680:pep", "SAS0634:pep");
-        cluster("ORTHOMCL628", "SAEMRSA1506710:pep", "SAR0799:pep", "SAS0710:pep");
-        cluster("ORTHOMCL990", "SAEMRSA1510490:pep", "SAR1192:pep", "SAS1150:pep");
-        cluster("ORTHOMCL1038", "SAEMRSA1510970:pep", "SAR1240:pep", "SAS1198:pep");
-        cluster("ORTHOMCL1226", "SAEMRSA1513180:pep", "SAR1468:pep", "SAS1400:pep");
-        cluster("ORTHOMCL1274", "SAEMRSA1513730:pep", "SAR1518:pep", "SAS0933:pep");
-        cluster("ORTHOMCL1719", "SAEMRSA1519010:pep", "SAR2076:pep", "SAS0913:pep");
-        cluster("ORTHOMCL1726", "SAEMRSA1519080:pep", "SAR2085:pep", "SAS1906:pep");
-        cluster("ORTHOMCL1744", "SAEMRSA1519390:pep", "SAR2118:pep", "SAS1937:pep");
-        cluster("ORTHOMCL2004", "SAEMRSA1522100:pep", "SAR2396:pep", "SAS2204:pep");
+        cluster("ORTHOMCL32", "SAEMRSA1519860.1:pep", "SAR0071.1:pep", "SAR2164.1:pep", "SAS1981.1:pep");
+        cluster("ORTHOMCL139", "SAEMRSA1501410.1:pep", "SAR0177.1:pep", "SAS0151.1:pep");
+        cluster("ORTHOMCL290", "SAEMRSA1503120.1:pep", "SAR0354.1:pep", "SAS0333.1:pep");
+        cluster("ORTHOMCL552", "SAEMRSA1505950.1:pep", "SAR0680.1:pep", "SAS0634.1:pep");
+        cluster("ORTHOMCL628", "SAEMRSA1506710.1:pep", "SAR0799.1:pep", "SAS0710.1:pep");
+        cluster("ORTHOMCL990", "SAEMRSA1510490.1:pep", "SAR1192.1:pep", "SAS1150.1:pep");
+        cluster("ORTHOMCL1038", "SAEMRSA1510970.1:pep", "SAR1240.1:pep", "SAS1198.1:pep");
+        cluster("ORTHOMCL1226", "SAEMRSA1513180.1:pep", "SAR1468.1:pep", "SAS1400.1:pep");
+        cluster("ORTHOMCL1274", "SAEMRSA1513730.1:pep", "SAR1518.1:pep", "SAS0933.1:pep");
+        cluster("ORTHOMCL1719", "SAEMRSA1519010.1:pep", "SAR2076.1:pep", "SAS0913.1:pep");
+        cluster("ORTHOMCL1726", "SAEMRSA1519080.1:pep", "SAR2085.1:pep", "SAS1906.1:pep");
+        cluster("ORTHOMCL1744", "SAEMRSA1519390.1:pep", "SAR2118.1:pep", "SAS1937.1:pep");
+        cluster("ORTHOMCL2004", "SAEMRSA1522100.1:pep", "SAR2396.1:pep", "SAS2204.1:pep");
     }
 }
