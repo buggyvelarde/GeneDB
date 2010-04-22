@@ -1,153 +1,224 @@
-<project name="Jogra" default="Jogra-run" basedir=".">
+<?xml version="1.0"?>
 
-    <dirname property="imported.basedir.Jogra" file="${ant.file.Jogra}" />
+<project name="Jogra" default="Jogra-run"  basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <import file="../genedb-libs/build.xml" />
-    <import file="../genedb-db/build.xml" />
-    <import file="../genedb-util/build.xml" />
+	<!-- DESCRIPTION
+	     This build file defines the paths, properties and targets needed to run Jogra. It has now been 
+	     modified to suit the new ng/ style of the code base. So, we copy over the ng.jar which already
+	     has a majority of the dependency jars, and then we only have a few more to fetch explicitly
+	     via ivy. There are also separate deploy targets now which create a slighlty different classpath
+	     for the manifest file and copy only the relevant jar files over to pcs4. (26 Feb 2010)
+	     
+	     Note to self: Values such as ant.file.Jogra and java.home are set automatically by ant 
+	-->
+	
+	
+	
+	<!-- PROPERTIES, PATHS AND IMPORTS -->
 
-    <property name="Jogra.jar"
-        value="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar" />
-    <property name="version" value="0.5" />
-
-    <path id="Jogra-classpath">
-        <fileset dir="${imported.basedir.Jogra}/lib">
-            <include name="*.jar" />
+    <import file="../ng/build.xml" />
+  
+	<property name="version" value="0.5" /> <!-- Version of this release; not maintained very well yet -->
+	
+	<dirname property="jogra.dir" file="${ant.file.Jogra}" />
+	<property name="jogra.build.dir" value="${jogra.dir}/ant-build" />
+	<property name="jogra.dist.dir" value="${jogra.build.dir}/dist" />
+	<property name="jogra.src.dir" value="${jogra.dir}/src" />
+	<property name="jogra.classes.dir" value="${jogra.build.dir}/classes" />
+	<property name="jogra.test.classes.dir" value="${jogra.build.dir}/test-classes" />
+	<property name="jogra.lib.dir" value="${jogra.dir}/lib" />
+	<property name="jogra.jar" value="${jogra.dist.dir}/Jogra.jar" />
+	<property name="jogra.signed.jar" value="${jogra.dist.dir}/Jogra-signed.jar" />
+	<property name="nfs.location" value="/nfs/pathdata/jira/httpd-2.2.9/htdocs/Jogra/" />
+     
+    <!-- For the classpath, include everything in lib directory, 
+         javaws and images. We try not to rely on the ng classpath here as we need
+         to fetch the jars anyway to deploy this application -->
+    <path id="Jogra-classpath">  	
+        <fileset dir="${jogra.lib.dir}"> 
+             <include name="*.jar" />
         </fileset>
-         <fileset dir="${imported.basedir.Jogra}/images">
-            <include name="*.png" />
-            <include name="*.gif" />
-            <include name="*.jpg" />
-        </fileset>
-        <pathelement location="${genedb-db.jar}" />
-        <pathelement location="${java.home}/lib/javaws.jar" />
+        <fileset dir="${jogra.dir}/images"> 
+              <include name="*.*" />
+        </fileset> 
+    	<pathelement location="${java.home}/lib/javaws.jar" />   
     </path>
 	
-	<!-- Need to make the util jar file known as cvDao is being used -->
 
-    <target name="Jogra-populate-util" depends="util-fulljar">
-      <copy file="${genedb-util.jar}" todir="${imported.basedir.Jogra}/lib" />
+    <!--  HOUSEKEEPING TARGETS -->
+    
+    <target name="Jogra-init" description="Create initial build structure"> 
+    	<mkdir dir="${jogra.build.dir}" />
+    	<mkdir dir="${jogra.dist.dir}" />
+    	<mkdir dir="${jogra.classes.dir}" />
+    	<mkdir dir="${jogra.test.classes.dir}" />
+    	<mkdir dir="${jogra.lib.dir}" />
+    	<available property="ivy-timestamp-exists" file="${jogra.lib.dir}/ivy.timestamp.txt" />
     </target>
-
-    <target name="Jogra-init">
-        <init-target project="Jogra" />
+	
+    <!--  -->
+    <target name="Jogra-clean" description="Delete all the directories in the build structure">
+        <delete dir="${jogra.build.dir}" includeEmptyDirs="true" />
+         <delete dir="${jogra.lib.dir}" includeEmptyDirs="true" />
+         <delete dir="${jogra.test.classes.dir}"/>
     </target>
-
-    <target name="Jogra-clean">
-        <clean-target project="Jogra" />
-    </target>
-
-    <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate" >
-        <populate directory="Jogra" />
-    	<echo message="${imported.basedir.libs}" />
-        <copy todir="lib">
-            <fileset dir="${imported.basedir.libs}/lib/biojava">
-            	<include name="biojava-1.6.jar"/>
-                <include name="bytecode-0.91.jar"/>
+	
+    <!-- -->
+    <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate" 
+            description="Puts ng.jar and whatever is specified in the ivy file to lib">
+ 	
+       <delete>
+            <fileset dir="${jogra.lib.dir}">
+                <include name="*.jar"/>
+                <include name="license-*.txt"/>
+                <include name="ivy.timestamp.txt"/>
             </fileset>
-            <fileset dir="${imported.basedir.libs}/lib/gui">
-                <include name="myswing.jar"/>
-            </fileset>
-        </copy>
+        </delete>
+    	
+        <mkdir dir="${jogra.lib.dir}" />
+        <antcall target="ivy-retrieve">
+          <param name="ivy.lib.dir"  value="${jogra.lib.dir}"/>
+          <param name="ivy.dep.file" value="ivy.xml"/>
+        </antcall>
+    	
+    	 <copy todir="${jogra.lib.dir}">
+    	     <fileset dir="${ng.directory}/ant-build/dist">
+    	          <include name="*.jar" />
+    	     </fileset>
+    	 </copy> 
+    	<!-- It appears that phylogeny stuff needs biojava -->
+    	 <copy todir="${jogra.lib.dir}">
+    	      <fileset dir="${ng.directory}/lib/biojava">
+    	          <include name="biojava-1.6.jar" />
+    	      </fileset>
+    	 </copy> 
+        <touch file="${jogra.lib.dir}/ivy.timestamp.txt" /> 
     </target>
+	
+	<!-- -->
+	<target name="ivy-retrieve">
+	    <ivy:settings file="${ng.directory}/ivysettings.xml" />
+	    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
+	    <ivy:retrieve conf="default"/>
+	</target>
 
-
-    <target name="check.Jogra-lib-uptodate" depends="Jogra-init" if="Jogra.ivy-timestamp-exists">
+    <!-- -->
+    <target name="check.Jogra-lib-uptodate" depends="Jogra-init" if="Jogra.ivy-timestamp-exists"
+    	    description="Checks if the timestamp in the lib directory is uptodate">
         <uptodate property="Jogra.lib-uptodate" srcfile="${imported.basedir.Jogra}/ivy.xml" targetfile="${imported.basedir.Jogra}/lib/ivy.timestamp.txt" />
     </target>
-
-    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.db-fulljar, Jogra-populate-util">
-        <compile-target project="Jogra" />
-        <copy todir="${imported.basedir.Jogra}/${classes.dir}">
-            <fileset dir="${imported.basedir.Jogra}/conf" />
-        </copy>
-    </target>
-
-    <!-- create .jar -->
 	
-	<path id="Jogra-manifest-classpath">
-		        <fileset dir="${imported.basedir.Jogra}/lib">
-		            <include name="*.jar" />
-		        </fileset>
-				<fileset dir="${imported.basedir.Jogra}/${dist.dir}">
-					<include name="genedb-db.jar" />
-				</fileset>
-			 	<!-- pathelement location="${Jogra.jar}" /-->
-	</path>
+	
+	<!-- COMPILE, MAKE JAR and RUN  -->
+    <!-- -->
+    <target name="Jogra-compile" depends="Jogra-populate-lib"> <!-- Assumes ng.jar has been created --> 
+         <copy todir="${jogra.classes.dir}">
+    	      <fileset dir="${jogra.dir}/conf" />
+    	 </copy>
+    	 <javac srcdir="${jogra.src.dir}" includes="**/*.java" debug="true" source="1.6" target="1.6"
+    	        destdir="${jogra.classes.dir}" classpathref="Jogra-classpath" />
+    </target> 
 		
-	<!-- Create a jar -->
 	
-	 <target name="Jogra-fulljar" depends="Jogra-compile" description="Create an unsigned JAR">
-	        <pathconvert property="classpath-for-manifest" pathsep=" " refid="Jogra-classpath" />
-	        <jar-target project="Jogra" >
-                <fileset dir="${imported.basedir.Jogra}/images">
-                   <include name="*.*" />
-                </fileset>
-	            <manifest>
-	                <attribute name="Implementation-Title" value="Jogra" />
-	                <attribute name="Implementation-Version" value="${version}" />
-	                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
-	                <attribute name="Class-Path" value="${classpath-for-manifest}" />        <!-- "resources.jar" --> 
-	            </manifest>
-	        </jar-target>
-	    </target>
+	<!-- Create a jar suitable for running locally -->
+	 <target name="Jogra-fulljar" depends="Jogra-compile" 
+	 	description="Create an unsigned JAR">
+	 	
+	 	 <copy todir="${jogra.classes.dir}">
+	 	       <fileset dir="${jogra.dir}/images">
+	 	             <include name="*.*" />
+	 	       </fileset>
+	 	 	  <fileset dir="${jogra.dir}/conf">
+	 	 	         <include name="*.*" />
+	 	 	   </fileset>
+	 	 </copy>
+	
+	 	<pathconvert property="classpath-for-manifest" pathsep=" " dirsep="/">
+	 	    <path refid="Jogra-classpath" />
+	 	    <!-- map from="${jogra.lib.dir}/" to=""/ -->
+	 	</pathconvert>
+	 	
+	 	<delete file="${jogra.jar}" />
+	 	<jar jarfile="${jogra.jar}" basedir="${jogra.classes.dir}" excludes="**/*Test.class">
+	 	      <manifest>
+	 	      	   <attribute name="Implementation-Title" value="Jogra" />
+	 	      	   <attribute name="Implementation-Version" value="${version}" />
+	 	      	   <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
+	 	      	   <attribute name="Class-Path" value="${classpath-for-manifest}" />                      
+	 	      </manifest>
+	 	</jar>
+	 </target>
+	
+    <!-- -->
+	<target name="Jogra-run" depends="Jogra-fulljar">
+	        <echo message="Jogra classpath is: ${toString:Jogra-classpath}" />
+	        <java fork="true" jar="${jogra.jar}" classpathref="Jogra-classpath" />
+    </target>
      
-     <!--  target name="create-jar" depends="Jogra-compile" description="Create an unsigned JAR">
-     <jar
-             destfile="${Jogra.jar}"
-             basedir="${imported.basedir.Jogra}"
-             includes="${genedb-db.jar} {java.home}/lib/javaws.jar">
-            <fileset dir="${imported.basedir.Jogra}/lib">
-               <include name="*.jar" />
-            </fileset>
-            <fileset dir="${imported.basedir.Jogra}/images">
-               <include name="*.png" />
-               <include name="*.gif" />
-               <include name="*.jpg" />
-            </fileset>
-            <manifest>
-                 <attribute name="Implementation-Title" value="Jogra" />
-                 <attribute name="Implementation-Version" value="${version}" />
-                 <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
-                 <attribute name="Class-Path" value="${classpath-for-manifest}" />       
-             </manifest>
-      </jar>
-          
-     </target -->
 	
+	<!-- DEPLY JOGRA -->
 	
-	<!-- Sign jar created above -->
-
-    <target name="Jogra-signed-jar" depends="Jogra-fulljar"
+	<!-- We create another jar with a different manifest (to suit how Jogra jars
+	     are stored on pcs4) and sign it -->
+	
+    <target name="Jogra-deployjar" depends="Jogra-compile" 
         description="Create a signed JAR">
-        <signjar jar="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"
-            signedjar="${imported.basedir.Jogra}/${dist.dir}/Jogra-signed.jar"
-            alias="Jogra" storepass="Jogra-pw" keypass="Jogra-pw"/>
-    	
-    </target>
 
-    <target name="Jogra-run" depends="Jogra-fulljar">
-        <echo message="${Jogra-classpath}" />
-        <java fork="true" jar="${Jogra.jar}" classpathref="Jogra-classpath" />
-    </target>
+         <copy todir="${jogra.classes.dir}">
+               <fileset dir="${jogra.dir}/images">
+                     <include name="*.*" />
+               </fileset>
+              <fileset dir="${jogra.dir}/conf">
+                     <include name="*.*" />
+               </fileset>
+         </copy>
+    
+        <pathconvert property="classpath-for-manifest" pathsep=" " dirsep="/">
+            <path refid="Jogra-classpath" />
+            <map from="${jogra.lib.dir}/" to=""/>
+        </pathconvert>
+        
+        <delete file="${jogra.signed.jar}" />
+        <jar jarfile="${jogra.signed.jar}" basedir="${jogra.classes.dir}" excludes="**/*Test.class">
+              <manifest>
+                   <attribute name="Implementation-Title" value="Jogra" />
+                   <attribute name="Implementation-Version" value="${version}" />
+                   <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
+                   <attribute name="Class-Path" value="${classpath-for-manifest}" />                      
+              </manifest>
+        </jar>
+    	<signjar jar="${jogra.signed.jar}"
+    	            signedjar="${jogra.signed.jar}"
+    	            alias="Jogra" storepass="Jogra-pw" keypass="Jogra-pw"/> 
+     </target>
 	
+	 <!-- Signing all the jars inside the lib directory -->
+	 <target name="Jogra-sign-all-jars">  
+	        <signjar alias="Jogra" keypass="Jogra-pw" storepass="Jogra-pw">   
+	        <fileset dir="${jogra.lib.dir}" includes="*.jar" />  
+	    </signjar>  
+	 </target> 
 	
+	<!-- Deploy the necessary files to /nfs -->
+	
+	<!-- Add tasks to generate jnlp file, copy files to pcs4 using a secure
+	password & username system. This target is not complete -->
+	<target name="deploy" depends="Jogra-deployjar, Jogra-sign-all-jars">
+	    
+	        <copy todir="${nfs.location}/jar">
+	        	<fileset dir="${jogra.lib.dir}">
+	        	       <include name="*.*" />
+	        	 </fileset>
+	        </copy>
+	        
+	        <echo message="Copied *.jar files from lib to nfs" />
 		
-	<!-- Putting all the jars Jogra depends on into one jar file. This somehow did not work (i.e., Web start did not work) -->
-	<target name="combine-jars">
-		<jar destfile="resources.jar" >
-		    <zipgroupfileset dir="${imported.basedir.Jogra}/lib" includes="**/*.jar,${genedb-db.jar},${java.home}/lib/javaws.jar" excludes="package.html,LICENSE.*,LICENCE, META-INF,MANIFEST.*" />
-		</jar>
+		    <copy todir="${nfs.location}/jar">
+		         <fileset dir="${jogra.lib.dir}">
+		              <include name="*.*" />
+		         </fileset>
+		     </copy>
+	       
 	</target>
-	
-	<!-- Signing all the jars inside the lib directory -->
-	<target name="sign-jars">  
-		<signjar alias="Jogra" keypass="Jogra-pw" storepass="Jogra-pw">   
-	    <fileset dir="${imported.basedir.Jogra}/lib" includes="**/*.jar" />  
-	</signjar>  
-	</target> 
-	
-	
-	
 
 </project>
