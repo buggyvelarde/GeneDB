@@ -20,6 +20,5 @@
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Volumes/us/db/gv1/code/workspace/ng/WebContent/WEB-INF/lib/com.springsource.javax.servlet.jsp.jstl-1.1.2.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
