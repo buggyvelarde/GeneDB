@@ -335,7 +335,7 @@
     
     	
     <!-- Javadoc ant task -->
-	<target name="doc">
+	<target name="doc" depends="compile-all">
 		<fail message="The 'doc.dir' property must be set, either in your config or on the command line." unless="doc.dir"/>
 	    <javadoc destdir="${doc.dir}" sourcepath="${basedir}/src" packagenames="org.*" >
 	        <classpath><path refid="compile-classpathref"/></classpath>
