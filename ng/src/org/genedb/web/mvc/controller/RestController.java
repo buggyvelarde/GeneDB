@@ -8,6 +8,9 @@ import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
+import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.querying.tmpquery.QuickSearchQuery;
+import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
@@ -68,7 +71,7 @@ public class RestController {
     @Qualifier("sequenceDao")
     SequenceDao sequenceDao;
 
-    private final String viewName = "service:";
+    private final String viewName = "json:";
 
     @RequestMapping(method=RequestMethod.GET, value={"/test", "/test.*"})
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
@@ -310,6 +313,55 @@ public class RestController {
         return mav;
 
     }
+    
+    
+    @RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
+    public ModelAndView search ( @RequestParam("term") String term, @RequestParam("taxon") String taxon, @RequestParam("max") int max ) throws QueryException {
+    	
+    	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
+    	query.setSearchText(term);
+    	
+    	query.setAllNames(true);
+    	query.setProduct(true);
+    	query.setPseudogenes(true);
+    	
+    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
+    	TaxonNode[] taxons = new TaxonNode[] {taxonNode};
+    	
+    	query.setTaxons(taxons);
+    	
+    	QuickSearchQueryResults results = query.getQuickSearchQueryResults();
+    	List<GeneSummary> geneResults = results.getResults();
+    	
+    	int i = 0;
+    	//int max = 5;
+    	
+    	RestResultSet rs = new RestResultSet();
+    	
+    	for (GeneSummary result : geneResults) {
+    		i++;
+    		if (i > max) {
+    			break;
+    		}
+    		
+    		QuickSearchResult qsr = new QuickSearchResult();
+    		qsr.systematicId = result.getSystematicId();
+    		qsr.product = result.getProduct();
+    		qsr.displayId = result.getDisplayId();
+    		qsr.taxonDisplayName = result.getTaxonDisplayName();
+    		qsr.topLevelFeatureName = result.getTopLevelFeatureName();
+    		
+    		rs.addResult(qsr);
+    		
+    	}
+    	
+    	
+        ModelAndView mav = new ModelAndView(viewName);
+        mav.addObject("model", rs);
+        return mav;
+    }
+    
 
     /*
      *
@@ -474,6 +526,37 @@ class RestResultSet extends BaseResult
         results.add(br);
     }
 }
+
+
+@XStreamAlias("search")
+class QuickSearchResult extends RestResultSet
+{
+    @XStreamAlias("systematicId")
+    @XStreamAsAttribute
+    public String systematicId;
+
+    @XStreamAlias("displayId")
+    @XStreamAsAttribute
+    public String displayId;
+
+    @XStreamAlias("taxonDisplayName")
+    @XStreamAsAttribute
+    public String taxonDisplayName;
+    
+    @XStreamAlias("product")
+    @XStreamAsAttribute
+    public String product;
+    
+    @XStreamAlias("topLevelFeatureName")
+    @XStreamAsAttribute
+    public String topLevelFeatureName;
+    
+    @XStreamAlias("left")
+    @XStreamAsAttribute
+    public String left;
+}
+
+
 
 @XStreamAlias("results")
 class ChangedFeatureSetResult extends RestResultSet
