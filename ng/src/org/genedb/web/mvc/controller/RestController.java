@@ -337,11 +337,14 @@ public class RestController {
     	int i = 0;
     	//int max = 5;
     	
-    	RestResultSet rs = new RestResultSet();
+    	QuickSearchResultSet rs = new QuickSearchResultSet();
+    	rs.totalSize = geneResults.size();
+    	rs.term = term;
+    	rs.max = max;
     	
     	for (GeneSummary result : geneResults) {
     		i++;
-    		if (i > max) {
+    		if (i >= max) {
     			break;
     		}
     		
@@ -527,6 +530,21 @@ class RestResultSet extends BaseResult
     }
 }
 
+@XStreamAlias("results")
+class QuickSearchResultSet extends RestResultSet
+{
+	@XStreamAlias("totalSize")
+    @XStreamAsAttribute
+    public int totalSize;
+	
+	@XStreamAlias("term")
+    @XStreamAsAttribute
+    public String term;
+	
+	@XStreamAlias("max")
+    @XStreamAsAttribute
+    public int max;
+}
 
 @XStreamAlias("search")
 class QuickSearchResult extends RestResultSet
