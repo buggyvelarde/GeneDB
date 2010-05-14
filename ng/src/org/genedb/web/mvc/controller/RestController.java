@@ -10,6 +10,7 @@ import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.DateCountQuery;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
+import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
 import org.gmod.schema.mapped.Feature;
@@ -314,7 +315,16 @@ public class RestController {
 
     }
     
-    
+    /**
+     * 
+     * Wraps QuickSearchQuery, and falls back onto a SuggestQuery. 
+     * 
+     * @param term
+     * @param taxon
+     * @param max
+     * @return
+     * @throws QueryException
+     */
     @RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
     public ModelAndView search ( @RequestParam("term") String term, @RequestParam("taxon") String taxon, @RequestParam("max") int max ) throws QueryException {
     	
@@ -335,12 +345,11 @@ public class RestController {
     	List<GeneSummary> geneResults = results.getResults();
     	
     	int i = 0;
-    	//int max = 5;
     	
-    	QuickSearchResultSet rs = new QuickSearchResultSet();
-    	rs.totalSize = geneResults.size();
-    	rs.term = term;
-    	rs.max = max;
+    	QuickSearchResults qsr = new QuickSearchResults();
+    	qsr.term = term;
+    	qsr.max = max;
+    	qsr.totalHits = geneResults.size();
     	
     	for (GeneSummary result : geneResults) {
     		i++;
@@ -348,20 +357,39 @@ public class RestController {
     			break;
     		}
     		
-    		QuickSearchResult qsr = new QuickSearchResult();
-    		qsr.systematicId = result.getSystematicId();
-    		qsr.product = result.getProduct();
-    		qsr.displayId = result.getDisplayId();
-    		qsr.taxonDisplayName = result.getTaxonDisplayName();
-    		qsr.topLevelFeatureName = result.getTopLevelFeatureName();
+    		QuickSearchResult q = new QuickSearchResult();
+    		q.systematicId = result.getSystematicId();
+    		q.product = result.getProduct();
+    		q.displayId = result.getDisplayId();
+    		q.taxonDisplayName = result.getTaxonDisplayName();
+    		q.topLevelFeatureName = result.getTopLevelFeatureName();
     		
-    		rs.addResult(qsr);
+    		qsr.addHit(q);
     		
     	}
     	
+    	if (geneResults.size() == 0) {
+    		
+    		// we have no exact match results
+    		// so we perform an alternative query, looking for suggestions
+    		
+    		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
+        	squery.setSearchText(term);
+        	squery.setTaxons(taxons);
+        	
+        	List sResults = squery.getResults();
+        	
+        	for (Object sResult : sResults) {
+        		logger.debug(sResult);
+        		Suggestion s = new Suggestion();
+        		s.name = (String) sResult;
+        		qsr.addSuggestion(s);
+        		
+        	}
+    	}
     	
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("model", rs);
+        mav.addObject("model", qsr);
         return mav;
     }
     
@@ -531,11 +559,7 @@ class RestResultSet extends BaseResult
 }
 
 @XStreamAlias("results")
-class QuickSearchResultSet extends RestResultSet
-{
-	@XStreamAlias("totalSize")
-    @XStreamAsAttribute
-    public int totalSize;
+class QuickSearchResults extends BaseResult {
 	
 	@XStreamAlias("term")
     @XStreamAsAttribute
@@ -544,10 +568,32 @@ class QuickSearchResultSet extends RestResultSet
 	@XStreamAlias("max")
     @XStreamAsAttribute
     public int max;
+	
+	@XStreamAlias("totalHits")
+    @XStreamAsAttribute
+    public int totalHits;
+	
+    @XStreamImplicit()
+    private List<BaseResult> suggestions = new ArrayList<BaseResult>();
+    public void addSuggestion(BaseResult br)
+    {
+    	suggestions.add(br);
+    }
+    
+    @XStreamImplicit()
+    private List<BaseResult> hits = new ArrayList<BaseResult>();
+    public void addHit(BaseResult br)
+    {
+    	suggestions.add(br);
+    }
+	
 }
 
-@XStreamAlias("search")
-class QuickSearchResult extends RestResultSet
+@XStreamAlias("suggestions")
+class Suggestion extends BaseResult { }
+
+@XStreamAlias("hits")
+class QuickSearchResult extends BaseResult
 {
     @XStreamAlias("systematicId")
     @XStreamAsAttribute
