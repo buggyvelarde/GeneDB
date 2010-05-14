@@ -215,6 +215,8 @@
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
   <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
   <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+  
+  <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
 
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
@@ -246,6 +248,8 @@
             <entry key="go" value-ref="go" />
             <entry key="ec" value-ref="ec" />
             <entry key="pfam" value-ref="pfam" />
+            
+            <entry key="suggest" value-ref="suggest" />
           </map>
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
