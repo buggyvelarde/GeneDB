@@ -368,7 +368,8 @@ public class RestController {
     		
     	}
     	
-    	if (geneResults.size() == 0) {
+    	// currently the SuggestQuery works only on all organisms. It can't filter on taxon. So let's make sure we only suggest when that is the case (for now).
+    	if ((geneResults.size() == 0)  &&  (taxon.equals("Root"))){
     		
     		// we have no exact match results
     		// so we perform an alternative query, looking for suggestions
