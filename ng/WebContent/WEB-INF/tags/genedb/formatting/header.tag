@@ -51,18 +51,27 @@
                       },
         	          success: function(response) {
         	              arr = Array();
-        	              if (response.results.hasOwnProperty("search")) {
-	        	              if (jQuery.isArray(response.results.search)) {
+        	              if (response.results.hasOwnProperty("hits")) {
+	        	              if (jQuery.isArray(response.results.hits)) {
 	        	            	  arr.push({                                     // add a see all results option (same as clicking on search button)
 		        	            	  "label" : "<i>See all " + response.results["@totalSize"] + " hits...</i>",
 		        	            	  "value" : response.results["@term"]
 	        	            	  });
-		        	              for (i in response.results.search) {
-		        	                  resultAppend(arr, response.results.search[i]);
+		        	              for (i in response.results.hits) {
+		        	                  resultAppend(arr, response.results.hits[i]);
 		        	              }
 	        	              } else {
-	        	            	  resultAppend(arr, response.results.search);    // we only have one result
+	        	            	  resultAppend(arr, response.results.hits);    // we only have one result
 	        	              }
+        	              }
+        	              if (response.results.hasOwnProperty("suggestions")) {
+        	            	  for (i in response.results.suggestions) {
+            	            	  result = response.results.suggestions[i]["@name"];
+                                  arr.push({
+                                      "label" : result,
+                                      "value" : result
+                                  });
+                              }
         	              }
         	              callback(arr);
         	          }
