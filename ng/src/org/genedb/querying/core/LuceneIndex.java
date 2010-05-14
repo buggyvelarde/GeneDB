@@ -12,6 +12,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -49,6 +51,7 @@ public class LuceneIndex {
 
     private String indexDirectoryName;
     private String indexName;
+    private Directory directory;
 
     // Effectively disable the clause limit.
     // (Wildcard and range queries are expanded into many clauses.)
@@ -72,11 +75,19 @@ public class LuceneIndex {
         String indexFilename = indexDirectoryName + File.separatorChar + indexName;
         logger.info(String.format("Opening Lucene index at '%s'", indexFilename));
         try {
-            indexReader = IndexReader.open(indexFilename);
+        	
+        	// gv1 - made the reader read-only - this prevents a long (45 minute) dictionary 
+        	// creation step to occur at the start of Tomcat deployment if one hasn't been created
+        	// is there a reason NOT to make it read-only?
+        	
+        	directory = FSDirectory.getDirectory(new File(indexFilename));
+            indexReader = IndexReader.open(directory, true);
+            
         } catch (IOException exp) {
             exp.printStackTrace(System.err);
             throw new RuntimeException(String.format("Failed to open lucene index '%s'", indexFilename), exp);
         }
+        
     }
 
     /**
@@ -144,10 +155,29 @@ public class LuceneIndex {
         this.indexDirectoryName = indexDirectoryName;
         openIndex();
     }
+    
+    public String getIndexDirectoryName() {
+        return indexDirectoryName;
+    }
+    
+    /**
+     * Used by SuggestQuery.
+     * @return
+     */
+    public Directory getDirectory() {
+    	return directory;
+    }
 
     public void setIndexName(String indexName) {
         this.indexName = indexName;
         openIndex();
+    }
+    
+    /**
+     *  Used by SuggestQuery.
+     */
+    public IndexReader getReader() {
+    	return this.indexReader;
     }
 
 
