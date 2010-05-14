@@ -585,7 +585,20 @@
             <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
-
+    
+	<!-- gv1 - added this as a separate ant-task. This needs to be executed after the indices have all been generated. Takes about 45 minutes on my laptop. -->
+    <target name="_LuceneDictionary" >
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneDictionary">
+            <classpath>
+              <path refid="run-classpathref"/>
+              <pathelement path="${ng.directory}/WebContent/WEB-INF"/>
+              <pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="${dir}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+    
     <target name="LuceneIndex" depends="check-config, fulljar, _LuceneIndex" />
 
     <target name="PeriodicUpdater" depends="check-config, fulljar"
