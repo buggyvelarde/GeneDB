@@ -108,17 +108,32 @@ should be obtained before publishing analyses of the sequence/open reading frame
     <ul>
     <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
       <c:if test="${!empty dbxref.urlPrefix}">
-        <c:set var="urlSuffix" value=""/>
-        <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
-          <c:set var="urlSuffix" value=".html"/>
+        <c:if test="${dbxref.urlPrefix != 'http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='}" >
+            <!-- ignoring plasmo DB links, no displayed below like TriTrypDB links -->
+            <c:set var="urlSuffix" value=""/>
+                <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
+                    <c:set var="urlSuffix" value=".html"/>
+                </c:if>
+                <li><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.dbName}"/></a></li>
         </c:if>
-        <li><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.dbName}"/></a>
       </c:if>
     </c:forEach>
     </ul>
     </td>
   </tr>
 </c:if>
+
+<!-- ignored Plasmo DB links introduced here -->
+<c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
+    <c:if test="${!empty dbxref.urlPrefix}">
+        <c:if test="${dbxref.urlPrefix == 'http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='}">
+            <tr>
+                <th>PlasmoDB</th>
+                <td><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.accession}"/></a></td>
+           </tr>
+       </c:if>
+    </c:if>
+</c:forEach>
 
 <c:if test="${dto.organismCommonName=='Lmajor' || dto.organismCommonName=='Linfantum' || dto.organismCommonName=='Lbraziliensis' || dto.organismCommonName=='Tbruceibrucei927' || dto.organismCommonName=='Tbruceibrucei427' || dto.organismCommonName=='Tbruceigambiense' || dto.organismCommonName=='Tvivax' || dto.organismCommonName=='Tcruzi' }">
 <tr>
