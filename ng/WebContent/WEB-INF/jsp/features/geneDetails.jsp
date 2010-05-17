@@ -19,12 +19,13 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
-
+<h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
 <div id="col-4-1">
+
 <div class="main-grey-3-4-top"></div>
 <div class="light-grey">
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
-<h2>General Information</h2>
+<h2>Summary</h2>
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 
 <c:if test="${dto.properGeneName}">
@@ -147,7 +148,12 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br class="clear" /><br />
 
 <c:if test="${dto.proteinCoding}">
-
+<style>
+div.comment {
+    display:list-item;
+    margin-left:20px;
+}
+</style>
 <%-- Merged Notes & Comments Section --%>
 <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments) + fn:length(dto.publications)) > 0}">
   <format:genePageSection>
@@ -171,11 +177,11 @@ should be obtained before publishing analyses of the sequence/open reading frame
   </db:hyperlinkDbs>
   </format:genePageSection>
 </c:if>
-
+<h2 style="padding-top:0px;margin-top:0px;">Curation</h2>
 <%-- Controlled Curation Section --%>
 <c:if test="${fn:length(dto.controlledCurations) > 0}">
   <format:genePageSection id="controlCur">
-  <h2>Controlled Curation</h2>
+  <h2>Phenotype</h2>
   <table width="100%" class="go-section">
     <format:featureCvTerm-section featureCvTerms="${dto.controlledCurations}" organism="${dto.organismCommonName}" cvName="ControlledCuration"/>
   </table>
@@ -195,6 +201,8 @@ should be obtained before publishing analyses of the sequence/open reading frame
   </table>
   </format:genePageSection>
 </c:if>
+
+<h2 style="padding-top:0px;margin-top:0px;">Protein Data</h2>
 
 <c:set var="hasAlgorithmData" value="${fn:length(dto.algorithmData) > 0}"/>
 <c:choose>
