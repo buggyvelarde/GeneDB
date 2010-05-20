@@ -4,9 +4,10 @@ import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
-import org.genedb.querying.core.QueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
+import org.genedb.querying.tmpquery.SuggestQuery;
+import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,6 +107,23 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
             logger.error("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
+            
+        	try {
+        		logger.debug("No result found, trying suggestions.");
+                
+                SuggestQuery squery = (SuggestQuery) queryFactory.retrieveQuery("suggest", NumericQueryVisibility.PRIVATE); 
+            	squery.setSearchText(((QuickSearchQuery) query).getSearchText());
+            	squery.setMax(30);
+            	squery.setTaxons(((TaxonQuery) query).getTaxons());
+            	
+				List sResults = squery.getResults();
+				model.addAttribute("suggestions", sResults);
+				
+			} catch (QueryException e) {
+				logger.error(e.getMessage());
+				logger.error(e.getStackTrace().toString());
+			}
+        	            
             return "search/" + QUERY_NAME;
 
         case SINGLE_RESULT_IN_CURRENT_TAXON:
