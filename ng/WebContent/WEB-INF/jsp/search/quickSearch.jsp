@@ -57,6 +57,9 @@
                                     <td>
                                         Select <a href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
                                     </td>
+                                    
+                                    
+                                    
                                </c:if>
 
                               <c:if test="${fn:length(taxonGroup)>1}">
@@ -95,7 +98,27 @@
         </td>
     </tr>
 </table>
-
+<c:if test="${empty resultsSize && ! empty suggestions}">
+    <table id="row" cellpadding="4" class="ui-widget " cellspacing="0">
+		<tr>
+			<td style="width: 150px;" >Did you mean one of the following terms?</td>
+			 <td> 
+			   <c:forEach items="${suggestions}" var="suggestion">
+				  <div class="did-you-mean-result ui-state-default ui-corner-all" style="float:left; padding:5px;margin:5px;"  >
+				     <a style="width: 150px;" href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${suggestion}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${suggestion}</a>
+				  </div>
+			   </c:forEach>
+             </td>
+		</tr>
+    </table>
+    <script>
+    $('div.did-you-mean-result').mouseover(function() {
+    	$(this).removeClass('ui-state-default').addClass('ui-state-hover');
+    }).mouseout(function() {
+    	$(this).removeClass('ui-state-hover').addClass('ui-state-default');
+    });
+    </script>
+</c:if>
 
 </format:page>
 
