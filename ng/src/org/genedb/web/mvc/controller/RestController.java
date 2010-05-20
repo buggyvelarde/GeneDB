@@ -344,16 +344,15 @@ public class RestController {
     	QuickSearchQueryResults results = query.getQuickSearchQueryResults();
     	List<GeneSummary> geneResults = results.getResults();
     	
-    	int i = 0;
-    	
     	QuickSearchResults qsr = new QuickSearchResults();
     	qsr.term = term;
     	qsr.max = max;
     	qsr.totalHits = geneResults.size();
     	
+    	int i = 0;
     	for (GeneSummary result : geneResults) {
     		i++;
-    		if (i >= max) {
+    		if (i > max) {
     			break;
     		}
     		
@@ -376,6 +375,7 @@ public class RestController {
     		
     		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
         	squery.setSearchText(term);
+        	squery.setMax(max);
         	squery.setTaxons(taxons);
         	
         	List sResults = squery.getResults();
