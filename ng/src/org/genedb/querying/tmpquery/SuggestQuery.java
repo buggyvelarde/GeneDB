@@ -23,6 +23,7 @@ public class SuggestQuery extends OrganismLuceneQuery {
 	
 	private static SpellChecker spellChecker;
 	private String searchText;
+	private int max = 30;
 	
 	@PostConstruct
 	@Override
@@ -80,6 +81,14 @@ public class SuggestQuery extends OrganismLuceneQuery {
     public void setSearchText(String searchText) {
         this.searchText = searchText;
     }
+    
+    public int getMax() {
+    	return max;
+    }
+    
+    public void setMax(int max) {
+    	this.max = max;
+    }
 	
     /**
      * Currently does not do any taxon-filtering.
@@ -88,7 +97,7 @@ public class SuggestQuery extends OrganismLuceneQuery {
 		List results = new ArrayList();
 		logger.info("Searching for " + searchText);
 		try {
-			String[] suggestions = spellChecker.suggestSimilar(searchText, 30);
+			String[] suggestions = spellChecker.suggestSimilar(searchText, max);
 			results = Arrays.asList(suggestions);
 		} catch (IOException e) {
 			e.printStackTrace();
