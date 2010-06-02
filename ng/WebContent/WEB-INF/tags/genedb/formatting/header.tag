@@ -31,7 +31,7 @@
             text-align:right;
         }
     </style>
-    <script type="text/javascript"><!--
+    <script type="text/javascript">
 
 	    var prehit_default = "<div class='ui-autocomplete-info ui-state-error-text ui-corner-all'>Hits</div>";
 	    var presuggest_default = "<div class='ui-autocomplete-info ui-state-error-text ui-corner-all' >Did you mean?</div>";
