@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 
 public class LuceneIndex {
 
-    private static final int DEFAULT_MAX_RESULTS = 1000000;
+    public static final int DEFAULT_MAX_RESULTS = 1000000;
 
     private int maxResults = DEFAULT_MAX_RESULTS;
 
@@ -34,9 +34,7 @@ public class LuceneIndex {
 
 
     public void setMaxResults(int maxResults) {
-        if (maxResults <= 1 || maxResults > Integer.MAX_VALUE - 3) {
-            throw new IllegalArgumentException("The maximum number of results must be a positive integer less than " + (Integer.MAX_VALUE-3)+". Beware of running out of memory well before that");
-        }
+    	sanitizeMaxResults(maxResults);
         this.maxResults = maxResults;
     }
 
@@ -137,6 +135,22 @@ public class LuceneIndex {
      * @return The result of the search
      */
     public TopDocs search(Query query, Sort sort) {
+    	return this.search(query, sort, maxResults);
+    }
+    
+    
+    /**
+     * Perform a Lucene search using a prebuilt Query object, this version allows the caller to explicitly limit the maxResult for this search.
+     *
+     * @param ir A Lucene index, as returned by {@link #openIndex(String)}
+     * @param query The query
+     * @param maxResults the max number of results
+     * @return The result of the search
+     */
+    public TopDocs search(Query query, Sort sort, int maxResults) {
+    	
+    	sanitizeMaxResults(maxResults);
+    	
         IndexSearcher searcher = new IndexSearcher(indexReader);
         logger.debug("searcher is -> " + searcher.toString());
         try {
@@ -148,6 +162,12 @@ public class LuceneIndex {
         } catch (IOException e) {
             throw new RuntimeException(String.format("I/O error during Lucene query '%s'",
                 query), e);
+        }
+    }
+    
+    private void sanitizeMaxResults(int maxResults) {
+    	if (maxResults <= 1 || maxResults > Integer.MAX_VALUE - 3) {
+            throw new IllegalArgumentException("The maximum number of results must be a positive integer less than " + (Integer.MAX_VALUE-3)+". Beware of running out of memory well before that");
         }
     }
 

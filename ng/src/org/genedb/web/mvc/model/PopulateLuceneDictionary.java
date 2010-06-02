@@ -19,7 +19,7 @@ public class PopulateLuceneDictionary {
 	/**
 	 * The fields that will be dictionary-ed.
 	 */
-	public static final String[] fields = new String[] { "product", "uniqueName", "synonym" };
+	public static final String[] fields = new String[] { "expandedProduct", "allNames", "synonym" };
 	
     private static final Logger logger = Logger.getLogger(PopulateLuceneDictionary.class);
     private static final String indexName = "org.gmod.schema.mapped.Feature";

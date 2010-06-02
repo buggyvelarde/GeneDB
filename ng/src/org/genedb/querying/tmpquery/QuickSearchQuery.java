@@ -26,14 +26,13 @@ import java.util.TreeMap;
 
 public class QuickSearchQuery extends OrganismLuceneQuery {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -3007330180211992013L;
 
     private transient Logger logger = Logger.getLogger(QuickSearchQuery.class);
 
     private String searchText;
+    
+    private int maxResults = -1;
 
     @QueryParam(order = 1, title = "Search gene products?")
     private boolean product;
@@ -43,7 +42,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @QueryParam(order = 3, title = "Include pseudogenes")
     private boolean pseudogenes;
-
+    
 
     @Override
     protected String getluceneIndexName() {
@@ -59,6 +58,14 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     protected String[] getParamNames() {
         return new String[] { "searchText", "product", "allNames", "pseudogenes" };
     }
+    
+    public int getMaxResults() {
+    	return maxResults;
+    }
+    
+    public void setMaxResults(int maxResults) {
+    	this.maxResults = maxResults;
+    }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){
@@ -67,6 +74,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         String tokens[] = searchText.trim().split("\\s");
 
         if (allNames) {
+
             if (tokens.length > 1) {
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
@@ -76,6 +84,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             } else {
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
+    		
         }
 
 
@@ -137,8 +146,26 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             if (taxons != null && taxons.length > 0) {
                 currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
-
-            TopDocs topDocs = lookupInLucene();
+            
+            // int oldMaxResults = luceneIndex.getMaxResults();
+            // luceneIndex.setMaxResults(maxResults);
+            
+            TopDocs topDocs;
+            if (maxResults < 0) {
+            	topDocs = lookupInLucene();
+            } else {
+            	// if maxResults is not under 0, then we try to do a search using this value
+            	// this is to allow some quick searches to only return a few hits 
+            	// which is useful to speed up autocomplete
+                List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
+                getQueryTerms(queries);
+            	topDocs = lookupInLucene(queries, maxResults);
+            }
+            
+            quickSearchQueryResults.setTotalHits(topDocs.totalHits);
+            logger.info("Total hits :" + topDocs.totalHits);
+            
+            //luceneIndex.setMaxResults(oldMaxResults);
 
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = fetchDocument(scoreDoc.doc);
@@ -241,6 +268,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         private TreeMap<String, Integer> taxonGroup = new TreeMap<String, Integer>();
         private QuickResultType quickResultType;
         private String singleResultInTaxonGeneId;
+        private int totalHits;
 
         public QuickResultType getQuickResultType() {
             return quickResultType;
@@ -272,6 +300,14 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
         public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
             this.taxonGroup = taxonGroup;
+        }
+        
+        public void setTotalHits(int totalHits) {
+        	this.totalHits = totalHits;
+        }
+        
+        public int getTotalHits() {
+        	return this.totalHits;
         }
     }
 

@@ -25,6 +25,22 @@ public class SuggestQuery extends OrganismLuceneQuery {
 	private String searchText;
 	private int max = 30;
 	
+	public String getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+    }
+    
+    public int getMax() {
+    	return max;
+    }
+    
+    public void setMax(int max) {
+    	this.max = max;
+    }
+	
 	@PostConstruct
 	@Override
     public void afterPropertiesSet() {
@@ -46,22 +62,16 @@ public class SuggestQuery extends OrganismLuceneQuery {
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e);
 		}
 		
     }
 	
-	@Override
-	protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	protected String[] getParamNames() {
-		return new String[] { "searchText" };
+		return new String[] { "searchText", "max" };
 	}
 
 	@Override
@@ -74,21 +84,7 @@ public class SuggestQuery extends OrganismLuceneQuery {
 		return "Did you mean";
 	}
 	
-	public String getSearchText() {
-        return searchText;
-    }
-
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
-    }
-    
-    public int getMax() {
-    	return max;
-    }
-    
-    public void setMax(int max) {
-    	this.max = max;
-    }
+	
 	
     /**
      * Currently does not do any taxon-filtering.
@@ -101,8 +97,15 @@ public class SuggestQuery extends OrganismLuceneQuery {
 			results = Arrays.asList(suggestions);
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return results;
 	}
+
+	@Override
+	protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
+		// TODO Auto-generated method stub
+	}
+
 	
 }
