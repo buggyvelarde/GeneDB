@@ -105,7 +105,7 @@
 			 <td> 
 			   <c:forEach items="${suggestions}" var="suggestion">
 				  <div class="did-you-mean-result ui-state-default ui-corner-all" style="float:left; padding:5px;margin:5px;"  >
-				     <a style="width: 150px;" href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${suggestion}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${suggestion}</a>
+				     <a style="width: 150px;" href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=${suggestion}&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${suggestion}</a>
 				  </div>
 			   </c:forEach>
              </td>
