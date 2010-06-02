@@ -92,8 +92,8 @@ class FeatureTable extends EmblFile.Section {
                     if (uniqueValue == null) {
                         uniqueValue = value;
                     } else if (!uniqueValue.equals(value)) {
-                        throw new DataError(String.format("The qualifier '%s' appears more than once in feature '%s' at line %d (with different values)",
-                            key, type, lineNumber));
+                        throw new DataError(String.format("%s:The qualifier '%s' appears more than once in feature '%s' at line %d (with different values)",
+                            this.getFilePath(),key, type, lineNumber));
                     }
                 }
                 logger.warn(String.format("The qualifier /%s=\"%s\" is repeated in feature '%s' at line %d", key, uniqueValue, type, lineNumber));
