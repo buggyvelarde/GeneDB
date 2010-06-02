@@ -229,29 +229,30 @@
 		</move>
 
 		<copy todir="${lib.dir}">
-			<fileset dir="lib-repos/biojava">
+			<fileset dir="${ng.directory}/lib-repos/biojava">
 				<include name="biojava-1.6.jar"/>
 				<include name="bytecode-0.91.jar"/>
 			</fileset>
-			<fileset dir="lib-repos/misc">
+			<fileset dir="${ng.directory}/lib-repos/misc">
 				<include name="displaytag-1.2.jar"/>
 				<include name="jewelcli-0.53.jar"/>
 			</fileset>
-			<fileset dir="lib-repos/db">
+			<fileset dir="${ng.directory}/lib-repos/db">
 				<include name="je-3.3.75.jar"/>
 			</fileset>
-			<fileset dir="lib-repos/json">
+			<fileset dir="${ng.directory}/lib-repos/json">
 				<include name="ezmorph-1.0.4.jar"/>
 				<include name="json-lib-2.2.1-jdk15.jar"/>
 				<include name="json-lib-ext-spring-1.0.1.jar"/>
 			</fileset>
 		</copy>
-               <copy todir="${lib-compiletime.dir}">
-                   <fileset dir="lib-repos/misc">
-		         <include name="jgraph.jar"/>	
-		         <include name="jgrapht-jdk1.6.jar"/>	
-                   </fileset>
-               </copy> 
+        <copy todir="${lib-compiletime.dir}">
+              <fileset dir="lib-repos/misc">
+		      <include name="jgraph.jar"/>	
+		      <include name="jgrapht-jdk1.6.jar"/>	
+              </fileset>
+        </copy>
+	
 		<!--
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
