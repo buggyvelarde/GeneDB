@@ -34,6 +34,11 @@ public abstract class EmblLocation {
     private static final Pattern externalPattern = Pattern.compile(String.format("(?:(%s)::)?(%s)\\.(\\d+):(.+)", symbol, symbol));
 
     public static EmblLocation parse(String locationString) throws ParsingException {
+        
+        //nds: A trim here gets rid of whitespaces which you cannot see in the embl files
+        //which can cause quite a lot of confusing error messages
+        locationString = locationString.trim();
+        
         if (locationString.startsWith("complement")) {
             return Complement.parse(locationString.substring(11, locationString.length() - 1));
         }
