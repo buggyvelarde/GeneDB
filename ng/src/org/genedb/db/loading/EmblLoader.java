@@ -829,7 +829,7 @@ class EmblLoader {
     private static final Set<String> goQualifiers = new HashSet<String>();
     static {
         Collections.addAll(goQualifiers, "aspect", "GOid", "term", "qualifier",
-            "evidence", "db_xref", "with", "from", "date");
+            "evidence", "db_xref", "with", "from", "date", "autocomment", "attribution");
     }
 
     /**
@@ -1131,6 +1131,9 @@ class EmblLoader {
         }
 
         protected void processGO() throws DataError {
+            
+            String comment = "From EMBL file"; //default value for autocomment
+            
             for (String go: feature.getQualifierValues("GO")) {
                 GoInstance goInstance = new GoInstance();
                 for (String subqualifier: go.split("; ?")) {
@@ -1149,6 +1152,9 @@ class EmblLoader {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"; don't know what to do with %s=%s", go, key, value));
                     }
                     // "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date"
+                    
+                   
+                    
                     if (key.equals("GOid")) {
                         goInstance.setId(value);
                     } else if (key.equals("date")) {
@@ -1171,11 +1177,14 @@ class EmblLoader {
                         goInstance.setResidue(value);
                     } else if (key.equals("db_xref")) {
                         goInstance.setRef(value);
+                    } else if (key.equals("autocomment")){
+                        comment = value;
+                        
                     }
                 }
                 if (goTermErrorsAreNotFatal) {
                     try {
-                        featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
+                        featureUtils.createGoEntries(focalFeature, goInstance, comment /*"From EMBL file"*/, (DbXRef) null);
                     } catch (DataError e) {
                         logger.error("Error loading GO term: " + e.getMessage());
                     }
