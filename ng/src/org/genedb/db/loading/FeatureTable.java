@@ -377,7 +377,7 @@ class FeatureTable extends EmblFile.Section {
         }
     }
 
-    private static final String symbolPattern = "[\\w'*-]*[A-Za-z][\\w'*-]*";
+    private static final String symbolPattern = "[\\w'*-+]*[A-Za-z][\\w'*-+]*";
     static final Pattern qualifierPattern = Pattern.compile("/(" + symbolPattern + ")(?:=(.*))?");
     static final Pattern quotedStringPattern = Pattern.compile("\"((?:[^\"]|\"\")*)\"");
 
