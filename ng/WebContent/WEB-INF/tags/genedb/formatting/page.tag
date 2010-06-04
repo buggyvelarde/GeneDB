@@ -86,12 +86,33 @@
 </ul>
 </li>
 <!-- end sub menu -->
+
 </ul>
+
 </div><!-- end navigation block -->
 <structure:motdMessage />
 <structure:flashMessage />
-
+<style>
+    div.breadcrumb, div.breadcrumb-separator, div.breadcrumb-link {
+        float: left;
+        padding:5px;
+    }
+    div.breadcrumb-container {
+        float:right;
+        padding-top:3px;
+        padding-bottom:0px;
+    }
+</style>
 <db:breadcrumb selection="${taxonNodeName}" showingHomepage="${showingHomepage}" />
+
+<script>
+    $('div.breadcrumb-link').mouseover(function() {
+        $(this).removeClass('ui-state-default').addClass('ui-state-hover');
+    }).mouseout(function() {
+        $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+    });
+</script>
+
 </p>
 
 
