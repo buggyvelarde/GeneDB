@@ -38,6 +38,12 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
     private String allNames;
     private String pseudogenes;
     private String product;
+    
+    private String baseUrl;
+    
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -224,8 +230,9 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
     private String createUrlHref(QuickSearchTaxonNode quickSearchTaxonNode, String contextPath) {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"");
+        sb.append(baseUrl);
         //sb.append(contextPath);
-        sb.append("/QuickSearchQuery");
+        sb.append("QuickSearchQuery");
         //sb.append("?q=quickSearchQuery");
         sb.append("?taxons=");
         sb.append(quickSearchTaxonNode.getLabel());
