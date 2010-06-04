@@ -7,7 +7,9 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletRequest;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
@@ -16,6 +18,7 @@ import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
@@ -26,18 +29,27 @@ public class AbstractGeneDBFormController {
 
     //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
+    
+    private static final Logger logger = Logger.getLogger(AbstractGeneDBFormController.class);
 
     public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
         this.resultsCacheFactory = resultsCacheFactory;
     }
-
-
-//    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
-//        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+    
+//    private ConversionService conversionService;
+//    
+//    public void setConversionService(ConversionService conversionService) {
+//    	this.conversionService = conversionService;
 //    }
+    
+
+    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+    }
+    
 //
 //    //@Autowired
-//    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
+    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
     protected List<GeneSummary> possiblyConvertList(List results) {
         List<GeneSummary> gs;
@@ -101,8 +113,9 @@ public class AbstractGeneDBFormController {
     protected Errors initialiseQueryForm(Query query, ServletRequest request){
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
+        
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        //binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
 
         binder.bind(request);
 
