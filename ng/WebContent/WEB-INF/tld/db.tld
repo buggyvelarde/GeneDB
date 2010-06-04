@@ -126,6 +126,11 @@
    <tag-class>org.genedb.web.tags.db.QuickSearchTaxonomicGraphTag</tag-class>
    <body-content>empty</body-content>
    <attribute>
+       <name>baseUrl</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+   <attribute>
        <name>top</name>
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
