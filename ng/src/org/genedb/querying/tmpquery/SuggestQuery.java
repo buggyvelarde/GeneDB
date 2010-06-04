@@ -8,9 +8,16 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.querying.core.QueryException;
 import org.genedb.web.mvc.model.PopulateLuceneDictionary;
 
@@ -90,11 +97,48 @@ public class SuggestQuery extends OrganismLuceneQuery {
      * Currently does not do any taxon-filtering.
      */
 	public List getResults() throws QueryException {
-		List results = new ArrayList();
+		
+		List<String> results = new ArrayList<String>();
 		logger.info("Searching for " + searchText);
+		
 		try {
-			String[] suggestions = spellChecker.suggestSimilar(searchText, max);
-			results = Arrays.asList(suggestions);
+			String[] suggestions = spellChecker.suggestSimilar(searchText, 50);
+			
+			// logger.info(taxons);
+			
+			if ( (taxons == null ) || (taxons.length == 1 && taxons[0].getLabel().equals("Root")) ) {
+				
+				logger.info(taxons[0].getLabel());
+				results = Arrays.asList(suggestions);
+				results = results.subList(0, max);
+				
+			} else {
+				
+				BooleanQuery organismFilter = new BooleanQuery();
+				
+				List<String> currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
+	            for (String currentTaxonName : currentTaxonNames) {
+	            	TermQuery organismQuery = new TermQuery(new Term("organism.commonName", currentTaxonName));
+	            	organismFilter.add(organismQuery, Occur.SHOULD);
+	            	// logger.info("organism.commonName : " + currentTaxonName);
+	            }
+	            
+	            int count = 0;
+				for (String suggestion : suggestions) {
+					// logger.info(suggestion);
+					if (searchForSuggestion(suggestion, organismFilter) == true) {
+						results.add(suggestion);
+						count++;
+						// logger.info(count);
+					}
+					if (count > max) {
+						break;
+					}
+				}
+			}
+			
+			
+			//results = Arrays.asList(suggestions);
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
@@ -105,6 +149,35 @@ public class SuggestQuery extends OrganismLuceneQuery {
 	@Override
 	protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
 		// TODO Auto-generated method stub
+	}
+	
+	
+	private boolean searchForSuggestion(String suggestion, Query prequery) throws IOException {
+		
+		BooleanQuery bq = new BooleanQuery();
+		
+        bq.add(prequery, Occur.MUST);
+        
+        BooleanQuery fieldQueries = new BooleanQuery();
+		for (String field : PopulateLuceneDictionary.fields) {
+			TermQuery fieldQuery = new TermQuery(new Term(field, suggestion));
+			fieldQueries.add(fieldQuery, Occur.SHOULD);
+			// logger.info(field + " : " + suggestion);
+		}
+		
+		bq.add(fieldQueries, Occur.MUST);
+		
+		IndexSearcher searcher = new IndexSearcher(luceneIndex.getReader());
+		TopDocs docs = searcher.search(bq, 1);
+		
+		// logger.info(docs);
+		// logger.info(docs.totalHits);
+		// logger.info(docs.totalHits > 0);
+		
+		if (docs.totalHits > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	

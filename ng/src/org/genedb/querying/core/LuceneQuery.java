@@ -156,29 +156,17 @@ public abstract class LuceneQuery implements Query {
 
 
     private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries) {
-    	int maxResults = luceneIndex.getMaxResults();
-    	return lookupInLucene(queries, maxResults);
-    }
-    
-    /**
-     * 
-     * Modified to take a maxResults parameter, this allows the caller to set their own max results.
-     * 
-     * @param queries
-     * @param maxResults
-     * @return
-     */
-    protected TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries, int maxResults) {
+
         TopDocs hits = null;
         if (queries.size() > 1) {
             BooleanQuery booleanQuery = new BooleanQuery();
             for (org.apache.lucene.search.Query query : queries) {
                 booleanQuery.add(new BooleanClause(query, Occur.MUST));
             }
-            hits = luceneIndex.search(booleanQuery, null, maxResults);
+            hits = luceneIndex.search(booleanQuery);
             logger.info(String.format("Lucene query is '%s', results size is '%d'", booleanQuery.toString(), hits.totalHits));
         } else {
-            hits = luceneIndex.search(queries.get(0), null, maxResults);
+            hits = luceneIndex.search(queries.get(0));
             logger.info(String.format("Lucene query is '%s', results size is '%d'", queries.get(0).toString(), hits.totalHits));
         }
         return hits;
