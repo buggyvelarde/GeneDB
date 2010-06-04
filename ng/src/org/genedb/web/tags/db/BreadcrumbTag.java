@@ -6,6 +6,7 @@ import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANA
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.web.mvc.controller.WebConstants;
@@ -38,7 +39,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
 	}
 
 	private static final Logger logger = Logger.getLogger(BreadcrumbTag.class);
-    String separator = "<small> >> </small>";
+	String separator = "<div class=\"breadcumb breadcrumb-separator ui-state-disabled ui-corner-all\"  > <span class=\"ui-icon ui-icon-carat-1-e\"></span> </div>";
 
     @Override
     public void doTag() throws JspException, IOException {
@@ -50,8 +51,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
             out.write(path);
             return;
     	}
-
-
+    	
         TaxonNodeManager tnm = (TaxonNodeManager) getJspContext().getAttribute(TAXON_NODE_MANAGER,
             APPLICATION_SCOPE);
 
@@ -59,12 +59,14 @@ public class BreadcrumbTag extends SimpleTagSupport {
             logger.error("Failed to find TaxonNodeManager in JSP context");
             return;
         }
-
+        
+        logger.debug(selection);
+        
         TaxonNode taxonNode = tnm.getTaxonNodeForLabel(selection);
 
         	//(TaxonNode) getJspContext().getAttribute(TAXON_NODE, REQUEST_SCOPE);
         if (taxonNode == null) {
-            logger.error("Failed to find TaxonNode in JSP context");
+            logger.error("Failed to find '" + selection + "' TaxonNode in JSP context");
             return;
         }
 
@@ -74,24 +76,46 @@ public class BreadcrumbTag extends SimpleTagSupport {
             StringBuilder buf = new StringBuilder();
             List<TaxonNode> nodes = tnm.getHierarchy(taxonNode);
             boolean first = true;
+            
+            buf.append("<div class=\"breadcrumb-container\" >");
+            
             for (TaxonNode node : nodes) {
                 if (!first) {
                     buf.append(separator);
                 }
                 if (node.isWebLinkable()) {
+                	buf.append("<div class=\"breadcrumb breadcrumb-link ui-state-default ui-corner-all\"   >");
                     buf.append("<a href=\"");
                     buf.append(prefix);
                     buf.append("Homepage/");
                     buf.append(node.getLabel());
                     buf.append("\">");
+                    
+                } else {
+                	buf.append("<div class=\"breadcrumb ui-state-disabled ui-corner-all\" style=\"float: left; \"  >");
                 }
                 // TODO Don't hyperlink last org if page is homepage
-                buf.append(node.getLabel());
+                
+                String displayLabel = node.getLabel();
+                if (displayLabel.equals("Root")) {
+                	displayLabel = "All Organisms";
+                } else if (node.getName(TaxonNameType.HTML_FULL) != null) {
+                	displayLabel = node.getName(TaxonNameType.HTML_FULL);
+                }
+                
+                
+                buf.append(displayLabel);
+                
                 if (node.isWebLinkable()) {
                     buf.append("</a>");
                 }
+                
+                buf.append("</div>");
                 first = false;
             }
+            
+            buf.append("</div><div style='clear:both;'></div>");
+            
             trail = buf.toString();
             setCache(selection, trail);
         }
