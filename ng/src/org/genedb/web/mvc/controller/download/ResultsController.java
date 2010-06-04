@@ -130,6 +130,10 @@ public class ResultsController {
         if (resultEntry.query != null) {
             model.addAttribute("isMaxResultsReached", Boolean.valueOf(resultEntry.query.isMaxResultsReached()));
         }
+        
+        logger.debug("taxonNodeName : " + taxonNodeName);
+        logger.debug("resultEntry.taxonGroup : " + resultEntry.taxonGroup);
+        
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }
