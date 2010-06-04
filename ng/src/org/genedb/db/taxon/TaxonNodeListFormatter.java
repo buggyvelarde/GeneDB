@@ -23,6 +23,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
                 builder.append(":");
             }
             builder.append(node.getLabel());
+            logger.debug(node.getLabel());
             first = false;
         }
         return builder.toString();
@@ -35,6 +36,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
         if (! StringUtils.hasText(text)) {
             return new TaxonNodeList(taxonNodeManager.getTaxonNodeByString("Root", false));
         }
+        logger.debug("Getting the taxonNodeList");
         String[] parts = text.split(":");
         TaxonNodeList nodeList = new TaxonNodeList();
         for (String part : parts) {
@@ -43,6 +45,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
                 throw new IllegalArgumentException("Can't parse '"+part+"' as a organism identifier");
             }
             nodeList.add(node);
+            logger.debug(node);
         }
         return nodeList;
     }
