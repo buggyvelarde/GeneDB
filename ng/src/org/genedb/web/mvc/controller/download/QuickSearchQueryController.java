@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
@@ -12,6 +14,8 @@ import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +46,9 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
-
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(method = RequestMethod.GET)
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
@@ -52,17 +58,40 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         if (query==null){
             return "redirect:/Query";
         }
-
+        
+    	for (Object key : request.getParameterMap().keySet()) {
+        	StringBuffer sb = new StringBuffer(key.toString() + " = ");
+        	for (String val : (String[]) request.getParameterMap().get(key)) {
+        		sb.append(" " + val);
+        	}
+        	logger.debug(sb.toString());
+        }
+        
         // Initialise model data somehow
         model.addAttribute("query", query);
         logger.error("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
         initialiseQueryForm(query, request);
+        
+        logger.debug("Query taxons: " + query.getTaxons());
 
         if (query != null && StringUtils.isEmpty(query.getSearchText())){
             logger.error("The query isn't null but no search terms. Returning to Query list");
             return "redirect:/Query";
         }
-
+        
+        String taxonLabel = "Root";
+        if (request.getParameterMap().get("taxons") != null) {
+        	taxonLabel = ((String[]) request.getParameterMap().get("taxons"))[0];
+        }
+        
+        TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxonLabel);
+    	TaxonNode[] taxons = new TaxonNode[] {taxonNode};
+        
+        query.setTaxons(taxons);
+        
+        logger.debug("Query taxonsssssss: " + query.getTaxons());
+        
         QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();
 
         // AddTaxonGroupToSession
@@ -101,7 +130,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         logger.error("The number of results is '"+quickSearchQueryResults.getResults().size());
 
-
+        logger.error(taxonName);
 
         switch (quickSearchQueryResults.getQuickResultType()) {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
