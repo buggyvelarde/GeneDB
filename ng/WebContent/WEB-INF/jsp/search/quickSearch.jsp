@@ -17,7 +17,7 @@
                             <table width="100%">
                                 <tr>
                                     <td>Organism:</td>
-                                    <td><db:simpleselect /> <font color="red"><form:errors
+                                    <td><db:simpleselect selection="${taxonNodeName}" /> <font color="red"><form:errors
                                         path="taxons" /></font></td>
                                 </tr>
                                 <tr>
@@ -72,7 +72,9 @@
                                             allNames="${query.allNames}"
                                             product="${query.product}"
                                             pseudogenes="${query.pseudogenes}"
-                                            searchText="${query.searchText}" />
+                                            searchText="${query.searchText}"
+                                            baseUrl="${baseUrl}"
+                                             />
                                         </div>
 
 
