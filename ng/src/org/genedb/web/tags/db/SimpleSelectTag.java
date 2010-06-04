@@ -1,6 +1,7 @@
 package org.genedb.web.tags.db;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNode;
 
 import java.io.IOException;
@@ -12,7 +13,8 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
-
+	
+	private static final Logger logger = Logger.getLogger(SimpleSelectTag.class);
 	private String selection;
 
     public void setSelection(String selection) {
@@ -29,6 +31,10 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         PageContext pageContext = (PageContext) getJspContext();
         String previouslySelectedTaxonsA = pageContext.getRequest().getParameter("taxons");
         String previouslySelectedTaxonsB = pageContext.getRequest().getParameter("taxonNodeName");
+        
+        logger.debug("taxons: " + previouslySelectedTaxonsA);
+        logger.debug("taxonNodeName: " + previouslySelectedTaxonsB);
+        
         String previouslySelectedTaxons = previouslySelectedTaxonsA;
         if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
             previouslySelectedTaxons = previouslySelectedTaxonsB;
