@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,7 +59,9 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
+    	
+    	logger.info("Querying: " + queryName);
+    	
         if (request.getParameterMap().size() > 1) {
             return processForm(queryName, suppress, request, session, model);
         } else {
@@ -71,7 +75,10 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
+    	
+    	
+    	
+    	
         Query query = findQueryType(queryName, session);
         if (query==null){
             return "redirect:/QueryList";
@@ -110,6 +117,9 @@ public class QueryController extends AbstractGeneDBFormController{
         if (errors.hasErrors()) {
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
             logger.debug("Returning due to binding error");
+            for (ObjectError error : errors.getAllErrors()) {
+            	logger.error(error);
+            }
             return "search/"+queryName;
         }
 
@@ -183,6 +193,7 @@ public class QueryController extends AbstractGeneDBFormController{
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+        	logger.debug(entry.getKey() + " / " + entry.getValue());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }
