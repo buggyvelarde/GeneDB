@@ -142,7 +142,7 @@
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
+    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> 
   </bean>
 
   <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >

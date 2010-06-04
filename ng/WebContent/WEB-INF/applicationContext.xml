@@ -60,11 +60,11 @@
         <property name="allowCreate" value="true" />
     </bean>
 
-<!--
+
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
--->
+
 
   <bean name="taxonNodeListFormatter" class="org.genedb.db.taxon.TaxonNodeListFormatter">
   	<property name="taxonNodeManager" ref="taxonNodeManager" />
