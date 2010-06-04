@@ -325,7 +325,7 @@ public class RestController {
      * @return
      * @throws QueryException
      */
-    @RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
+	@RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
     public ModelAndView search ( @RequestParam("term") String term, @RequestParam("taxon") String taxon, @RequestParam("max") int max ) throws QueryException {
     	
     	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
@@ -334,20 +334,15 @@ public class RestController {
     	query.setAllNames(true);
     	query.setProduct(true);
     	query.setPseudogenes(true);
-    	query.setMaxResults(max);
+    	
     	
     	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
     	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
     	TaxonNode[] taxons = new TaxonNode[] {taxonNode};
     	
-    	logger.info("Nodes in " + taxon);
-    	for (TaxonNode tnode : taxons) {
-    		logger.info(tnode);
-    	}
-    	
     	query.setTaxons(taxons);
     	
-    	QuickSearchQueryResults results = query.getQuickSearchQueryResults();
+    	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
     	List<GeneSummary> geneResults = results.getResults();
     	
     	QuickSearchResults qsr = new QuickSearchResults();
@@ -359,9 +354,6 @@ public class RestController {
     	int i = 0;
     	for (GeneSummary result : geneResults) {
     		i++;
-//    		if (i > max) {
-//    			break;
-//    		}
     		
     		QuickSearchResult q = new QuickSearchResult();
     		q.systematicId = result.getSystematicId();
@@ -371,31 +363,24 @@ public class RestController {
     		q.topLevelFeatureName = result.getTopLevelFeatureName();
     		
     		qsr.addHit(q);
-    		
     	}
     	
     	logger.info("Processed " + i + " results");
+    		
+		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
+    	squery.setSearchText(term);
+    	squery.setMax(max);
+    	squery.setTaxons(taxons);
     	
-    	// currently the SuggestQuery works only on all organisms. It can't filter on taxon. So let's make sure we only suggest when that is the case (for now).
-    	if ( /*(geneResults.size() == 0)  &&*/  (taxon.equals("Root"))){
+    	@SuppressWarnings("unchecked")
+    	List<String> sResults = (List<String>) squery.getResults();
+    	
+    	for (Object sResult : sResults) {
+    		// logger.debug(sResult);
+    		Suggestion s = new Suggestion();
+    		s.name = (String) sResult;
+    		qsr.addSuggestion(s);
     		
-    		// we have no exact match results
-    		// so we perform an alternative query, looking for suggestions
-    		
-    		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
-        	squery.setSearchText(term);
-        	squery.setMax(max);
-        	squery.setTaxons(taxons);
-        	
-        	List sResults = squery.getResults();
-        	
-        	for (Object sResult : sResults) {
-        		logger.debug(sResult);
-        		Suggestion s = new Suggestion();
-        		s.name = (String) sResult;
-        		qsr.addSuggestion(s);
-        		
-        	}
     	}
     	
         ModelAndView mav = new ModelAndView(viewName);
