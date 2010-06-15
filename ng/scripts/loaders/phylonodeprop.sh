@@ -19,12 +19,21 @@ HELP
 }
 
 doLoad() {
+    declare -a options
     OPTIND=0
-    while getopts "$stdopts" option; do
-        process_standard_options "$option"
+    while getopts "p:c:t:v:$stdopts" option; do
+        case "$option" in
+            [pctv])
+                options=("${options[@]}" "-$option" "$OPTARG")
+                ;;
+            *)
+                process_standard_options "$option"
+                ;;
+        esac
     done
     shift $[ $OPTIND - 1 ]
-    
-    python -c "from loaders.phylonodeprop_loader import doLoad; doLoad();" $database_properties "$@"
+
+    read_password
+    python -c "from loaders.phylonodeprop_loader import doLoad; doLoad();" $database_properties "${options[@]}"
     
 }
