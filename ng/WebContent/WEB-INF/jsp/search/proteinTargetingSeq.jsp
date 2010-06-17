@@ -17,7 +17,7 @@
                                 <tr>
                 <td>
                      <b>Organism:</b>
-                     <br><db:simpleselect />
+                     <br><db:simpleselect selection="${taxonNodeName}" />
                      <br><font color="red"><form:errors path="taxons" /></font>
                   <td>
                 </tr>

@@ -14,7 +14,7 @@
                     <br><big><b>Protein Number TM Search:</b></big>
                   </td>
                   <td><b>Organism:</b>
-                    <br><db:simpleselect />
+                    <br><db:simpleselect selection="${taxonNodeName}" />
                   </td>
                   <td>
                       <b>Min number of domains:</b>
