@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 /**
  * Command-line entry point for loading EMBL files.
  * The class {@link EmblLoader} is used to do the heavy lifting.
@@ -128,9 +129,16 @@ public class LoadEmbl extends FileProcessor {
         } else {
             throw new RuntimeException("Unrecognised value for load.overwriteExisting: " + overwriteExistingString);
         }
-
+        
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
-
+        
+        // set this to true if you want to find out what the actual database connection is.
+        boolean debug = false;
+        if (debug == true) {
+        	org.apache.commons.dbcp.BasicDataSource ds = applicationContext.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
+            logger.info("Connecting to " + ds.getUrl() + " with username " + ds.getUsername());
+        }
+        
         this.loader = applicationContext.getBean("emblLoader", EmblLoader.class);
         loader.setOrganismCommonName(organismCommonName);
         loader.setOverwriteExisting(overwriteExisting);
