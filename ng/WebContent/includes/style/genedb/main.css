@@ -735,3 +735,37 @@ div#errorMessage {
 	padding-left:1em;
 	margin-left:1em;
 }
+
+
+/* gv1 these for the quick search query results */
+
+div.ui-autocomplete-info {
+    float:right;
+    font-size:0.8em;
+    font-style:italic;
+    border : 1px solid grey;
+    padding-left:1em;
+    padding-right:1em;
+}
+
+
+div.ui-autocomplete-see-all {
+    font-weight:bold;
+    font-style:italic;
+    text-align:right;
+}
+
+/* gv1 these are for the breadcrumbs */
+
+div.breadcrumb, div.breadcrumb-separator, div.breadcrumb-link {
+    float: left;
+    padding:5px;
+}
+
+
+div.breadcrumb-container {
+    float:right;
+    padding-top:3px;
+    padding-bottom:0px;
+}
+

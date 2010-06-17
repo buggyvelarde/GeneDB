@@ -113,13 +113,6 @@
              </td>
 		</tr>
     </table>
-    <script>
-    $('div.did-you-mean-result').mouseover(function() {
-    	$(this).removeClass('ui-state-default').addClass('ui-state-hover');
-    }).mouseout(function() {
-    	$(this).removeClass('ui-state-hover').addClass('ui-state-default');
-    });
-    </script>
 </c:if>
 
 </format:page>

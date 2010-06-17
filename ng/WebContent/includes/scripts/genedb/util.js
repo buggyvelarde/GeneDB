@@ -66,4 +66,18 @@ $(function(){
         },
         delay: 400                                                     // don't want it too frequent, as some queries take time, so account for slow-ish typers
 	});
+	
+	
+	$('div.did-you-mean-result').mouseover(function() {
+    	$(this).removeClass('ui-state-default').addClass('ui-state-hover');
+    }).mouseout(function() {
+    	$(this).removeClass('ui-state-hover').addClass('ui-state-default');
+    });
+	
+    $('div.breadcrumb-link').mouseover(function() {
+        $(this).removeClass('ui-state-default').addClass('ui-state-hover');
+    }).mouseout(function() {
+        $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+    });
+    
 });

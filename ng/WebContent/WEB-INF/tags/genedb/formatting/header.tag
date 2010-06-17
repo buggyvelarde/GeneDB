@@ -16,29 +16,16 @@
     <link rel="stylesheet" href="<misc:url value="/includes/scripts/jquery/jquery-ui-1.8.1.custom/css/smoothness/jquery-ui-1.8.1.custom.css"/>" type="text/css"/>
     
     <script type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery-genePage-combined-new.js"/>"></script>
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/searchUtil.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/util.js"/>"></script>
     
-    <style>
-        div.ui-autocomplete-info {
-            float:right;
-            font-size:0.8em;
-            font-style:italic;
-            border : 1px solid grey;
-            padding-left:1em;
-            padding-right:1em;
-        }
-        div.ui-autocomplete-see-all {
-            font-weight:bold;
-            font-style:italic;
-            text-align:right;
-        }
-    </style>
+
     <script type="text/javascript">
 	    
         $(function(){
           $("#nav > li")
             .mouseover(function(){$(this).addClass("over");})
             .mouseout (function(){$(this).removeClass("over");});
+          
         });
 
         /*
