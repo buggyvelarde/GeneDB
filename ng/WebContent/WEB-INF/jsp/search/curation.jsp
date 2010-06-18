@@ -7,13 +7,18 @@
 
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="/Query/curation" method="GET">
+        <form:form commandName="query" action="${baseUrl}/Query/curation" method="GET">
             <table>
                 <tr>
                     <td colspan="3">
                         <font color="red"><form:errors path="*" /></font>
                     </td>
                 </tr>
+                <td width=180>
+                        <b>Organism:</b>
+                        <br><db:simpleselect selection="${taxonNodeName}" />
+                        <br><font color="red"><form:errors path="taxons" /></font>
+                    </td>
                 <tr>
                   <td>Curation:</td>
                   <td>
@@ -31,5 +36,10 @@
 
         </form:form>
     </format:genePageSection>
+    
+    <format:test-for-no-results />
+    
+    
 </div>
+<br><query:results />
 </format:page>

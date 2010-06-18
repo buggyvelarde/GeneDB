@@ -33,7 +33,7 @@ public class CurationQuery extends OrganismLuceneQuery {
     
     @Override
     public String getQueryName() {
-        return "Curation";
+        return "Curation and Comments";
     }
 
     @Override
@@ -41,20 +41,27 @@ public class CurationQuery extends OrganismLuceneQuery {
 
         BooleanQuery bq = new BooleanQuery();
         if(StringUtils.containsWhitespace(search)) {
+        	BooleanQuery bq_sub = new BooleanQuery();
             for(String term : search.split(" ")) {
-                bq.add(new TermQuery(new Term("curation",term.toLowerCase()
-                    )), Occur.SHOULD);
+            	bq_sub.add(new TermQuery(new Term("allCuration",term.toLowerCase())), Occur.SHOULD);
             }
+            bq.add(bq_sub, Occur.MUST);
         } else {
+        	
             if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("curation",search.toLowerCase())), Occur.SHOULD);
+            	bq.add(new TermQuery(new Term("allCuration",search.toLowerCase())), Occur.MUST);
             } else {
-                bq.add(new WildcardQuery(new Term("curation", search.toLowerCase())), Occur.SHOULD);
+            	bq.add(new WildcardQuery(new Term("allCuration", search.toLowerCase())), Occur.MUST);
             }
+            
         }
-
+        
+        // TODO determine the cvterm id programmatically
+        bq.add(new TermQuery(new Term("type.cvTermId", "191")), Occur.MUST);
+        
         queries.add(bq);
-        queries.add(productiveTranscriptQuery);
+        
+        //queries.add(productiveTranscriptQuery);
 
     }
 
