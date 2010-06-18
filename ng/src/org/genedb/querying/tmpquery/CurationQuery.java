@@ -60,7 +60,6 @@ public class CurationQuery extends OrganismLuceneQuery {
         bq.add(new TermQuery(new Term("type.cvTermId", "191")), Occur.MUST);
         
         queries.add(bq);
-        
         //queries.add(productiveTranscriptQuery);
 
     }
@@ -78,6 +77,11 @@ public class CurationQuery extends OrganismLuceneQuery {
     @Override
     protected String[] getParamNames() {
         return new String[] {"search"};
+    }
+    
+    @Override
+    public String getQueryDescription() {
+    	return "Searches curation and comments.";
     }
 
 }
