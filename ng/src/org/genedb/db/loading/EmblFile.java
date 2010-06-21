@@ -242,7 +242,8 @@ public class EmblFile {
             Matcher matcher = idPattern.matcher(data);
             if (!matcher.matches()) {
                 logger.error("Failed to parse ID line: " + data);
-                accession = data.trim().substring(0, data.indexOf(' '));
+                data = data.trim();
+                accession = data.substring(0, data.indexOf(' '));
                 if (accession.endsWith(";")) {
                     accession = accession.substring(0, accession.length() - 1);
                 }
