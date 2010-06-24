@@ -312,9 +312,10 @@ ${dto.ims.imageMap}
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
-    <c:forEach items="${dto.orthologueNames}" var="orthologueName">
-      <a href="<misc:url value="/gene/"/>${orthologueName}">${orthologueName}</a>
-    </c:forEach>
+    
+    <misc:url value="/gene/" var="geneBaseUrl" />
+    <db:orthologueFilter baseUrl="${geneBaseUrl}" sequenceDao="${sequenceDao}" dto="${dto}" />
+    
     </td></tr>
   </table>
   </format:genePageSection>

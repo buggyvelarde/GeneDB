@@ -180,12 +180,16 @@ public class TranscriptFeatureController {
             logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
         }
-
+        
+        ModelAndView mav;
         if (StringUtils.hasLength(extension)) {
-            return new ModelAndView(extension + ":", "model", dto);
+            mav = new ModelAndView(extension + ":", "dto", dto);
+        } else {
+        	mav = new ModelAndView(viewName, model);
         }
-
-        return new ModelAndView(viewName, model);
+        
+        mav.addObject("sequenceDao", sequenceDao);
+        return mav;
     }
 
     /**

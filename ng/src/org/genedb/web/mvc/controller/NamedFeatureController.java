@@ -129,6 +129,9 @@ public class NamedFeatureController {
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 
         TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
+        
+        
+        
 
         if (dto == null) {
             cacheMiss++;
@@ -176,12 +179,16 @@ public class NamedFeatureController {
             logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
         }
-
+        
+        ModelAndView mav;
         if (StringUtils.hasLength(extension)) {
-            return new ModelAndView(extension + ":", "dto", dto);
+            mav = new ModelAndView(extension + ":", "dto", dto);
+        } else {
+        	mav = new ModelAndView(viewName, model);
         }
-
-        return new ModelAndView(viewName, model);
+        
+        mav.addObject("sequenceDao", sequenceDao);
+        return mav;
     }
 
     /**

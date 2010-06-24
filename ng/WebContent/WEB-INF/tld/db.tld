@@ -37,6 +37,26 @@
     </attribute>
  </tag>
 
+<tag>
+    <name>orthologueFilter</name>
+    <tag-class>org.genedb.web.tags.db.OrthologueFilterTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>baseUrl</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>dto</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>sequenceDao</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+</tag>
 
 <tag>
    <name>filtered-loop</name>
