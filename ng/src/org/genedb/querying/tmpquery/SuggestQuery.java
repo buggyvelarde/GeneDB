@@ -104,13 +104,13 @@ public class SuggestQuery extends OrganismLuceneQuery {
 		try {
 			String[] suggestions = spellChecker.suggestSimilar(searchText, 50);
 			
-			// logger.info(taxons);
-			
 			if ( (taxons == null ) || (taxons.length == 1 && taxons[0].getLabel().equals("Root")) ) {
 				
-				logger.info(taxons[0].getLabel());
-				results = Arrays.asList(suggestions);
-				results = results.subList(0, max);
+				for (int i =0; i<= max; i++) {
+					if (suggestions.length > i) {
+						results.add(suggestions[i]);
+					}
+				}
 				
 			} else {
 				
