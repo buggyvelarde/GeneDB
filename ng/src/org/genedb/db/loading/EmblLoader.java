@@ -580,11 +580,8 @@ class EmblLoader {
         else if (featureType.equals("snoRNA")) {
             focalFeature = loadNcRNA(SnoRNA.class, featureType, feature);
         }
-        else if (featureType.equals("misc_RNA")) {
+        else if (featureType.equals("misc_RNA") || featureType.equals("ncRNA")) {
             focalFeature = loadNcRNA(NcRNA.class, featureType, feature);
-        }
-        else if (featureType.equals("ncRNA")){
-            focalFeature = loadNcRNA(NcRNA.class, featureType, feature);            
         }
         else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
             utrs.add(feature);
@@ -1149,25 +1146,36 @@ class EmblLoader {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"", go));
                     }
 
-                    String key = subqualifier.substring(0, equalsIndex);                   
-                    /*nds (24.6.2010):It is rare but sometimes in our EMBL files the key is
-                     * split over two lines and hence acquires an unnecessary space.
+                    String key = subqualifier.substring(0, equalsIndex); 
+                    String value = subqualifier.substring(equalsIndex + 1);
+                    
+                    /* nds (24.6.2010):It is rare but sometimes the key here
+                     * has acquired an unnecessary space either by data errors
+                     * in Chado or in the EMBL file.
                      * Example: au tocomment="From EMBL file"
                      * The replace below was put in place to deal with this problem.
                      */
-                    key = key.replaceAll("\\W","").trim();
+                    key = key.replaceAll("\\s","").trim();
                     
-                    logger.info("Key is after replace '" + key + "'");
-                    
-                    String value = subqualifier.substring(equalsIndex + 1);
+                                       
                     if (!goQualifiers.contains(key)) {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"; don't know what to do with %s=%s", go, key, value));
                     }
                     // "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date", "attribution", "residue", "autocomment"
+          
+                    /* nds (25.6.2010): Sometimes the values have the same
+                     * problem as above but a replace cannot be applied for
+                     * all the values. I've commented out the replace below 
+                     * as it's possible this was a problem specific for
+                     * Plasmodium reichenowi.
+                     */
+//                    if(!key.equals("autocomment")){
+//                        value = value.replaceAll("\\s","").trim();
+//                    }
                        
                     if (key.equals("GOid")) {
                         goInstance.setId(value);
-                    } else if (key.equals("date")) {
+                    } else if (key.equals("date")) {                        
                         goInstance.setDate(value);
                     } else if (key.equals("evidence")) {
                         GoEvidenceCode evidenceCode = GoEvidenceCode.parse(value);
@@ -1187,13 +1195,12 @@ class EmblLoader {
                         goInstance.setResidue(value);
                     } else if (key.equals("db_xref")) {
                         goInstance.setRef(value);
-                        /* Temp fix to avoid duplicate pubdbxref entries, fix properly later using the object manager: nds*/
+                        /* TODO: Temp fix to avoid duplicate pubdbxref entries, 
+                         * fix properly later using the object manager: nds*/
                         Pattern DBXREF_PATTERN = Pattern.compile("\\S+:(\\S+)");
                         Matcher matcher = DBXREF_PATTERN.matcher(value);
-                        if(matcher.matches()){
-                            logger.trace(String.format("Pattern matched, so adding %s to seenpubs", matcher.group(1)));
-                            seenPubAccessions.add(matcher.group(1));
-                            
+                        if(matcher.matches()){                           
+                            seenPubAccessions.add(matcher.group(1));                           
                         }
                     } else if (key.equals("autocomment")){
                         comment = value;
@@ -1927,43 +1934,39 @@ class EmblLoader {
         logger.debug(String.format("Loading %s for '%s' at %s", utrType, uniqueName, utrLocation));
 
         Transcript transcript = transcriptsByUniqueName.get(uniqueName);
-        
-//        if (transcript == null) {
-//            throw new DataError(String.format("Could not find transcript '%s' for %s", uniqueName, utrType));
-//        }
+
+        if (transcript == null) {
+            throw new DataError(String.format("Could not find transcript '%s' for %s", uniqueName, utrType));
+        }
+
         List<UTR> utrs = new ArrayList<UTR>();
-        
-        if (transcript == null){ //remove after reichenowi (here, some utrs got transferred without genes)
-            
-            logger.info(String.format("NOTE:Could not load %s on transcript %s ", utrType, uniqueName));
-            
-        }else {
-            Class<? extends UTR> utrClass;
-            if (utrType.equals("3'UTR")) {
-                utrClass = ThreePrimeUTR.class;
-            } else if (utrType.equals("5'UTR")) {
-                utrClass = FivePrimeUTR.class;
-            } else {
-                throw new RuntimeException(String.format("Unrecognised UTR feature type '%s'", utrType));
+
+        Class<? extends UTR> utrClass;
+        if (utrType.equals("3'UTR")) {
+            utrClass = ThreePrimeUTR.class;
+        } else if (utrType.equals("5'UTR")) {
+            utrClass = FivePrimeUTR.class;
+        } else {
+            throw new RuntimeException(String.format("Unrecognised UTR feature type '%s'", utrType));
+        }
+
+        int part = 1;
+        List<EmblLocation> utrParts = utrLocation.getParts();
+        for (EmblLocation utrPartLocation: utrParts) {
+            String utrUniqueName = String.format("%s:%dutr", uniqueName, utrClass == ThreePrimeUTR.class ? 3 : 5);
+            if (utrParts.size() > 1) {
+                utrUniqueName += ":" + part;
             }
-    
-            int part = 1;
-            List<EmblLocation> utrParts = utrLocation.getParts();
-            //List<UTR> utrs = new ArrayList<UTR>();
-            for (EmblLocation utrPartLocation: utrParts) {
-                String utrUniqueName = String.format("%s:%dutr", uniqueName, utrClass == ThreePrimeUTR.class ? 3 : 5);
-                if (utrParts.size() > 1) {
-                    utrUniqueName += ":" + part;
-                }
-    
-                logger.debug(String.format("Creating %s feature '%s' at %d-%d",
+
+            logger.debug(String.format("Creating %s feature '%s' at %d-%d",
                     utrType, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax()));
-    
-                UTR utr = transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
-                utrs.add(utr);
-                session.persist(utr);
-                ++ part;
-            }
+
+            UTR utr = transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
+            utrs.add(utr);
+            session.persist(utr);
+            ++ part;
+
+
         }
 
         return utrs;
