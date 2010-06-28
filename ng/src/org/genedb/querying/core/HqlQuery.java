@@ -19,6 +19,7 @@
 
 package org.genedb.querying.core;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 //import org.hibernate.validator.ClassValidator;
@@ -36,9 +37,11 @@ import java.util.Map;
 
 @Configurable
 public abstract class HqlQuery implements Query {
-
+	
+	private static final Logger logger = Logger.getLogger(HqlQuery.class);
+	
     @Autowired
-    private SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
     protected String name;
     private int order;
 
@@ -48,11 +51,13 @@ public abstract class HqlQuery implements Query {
     /**
      * Size of result retrieved
      */
-    private boolean isActualResultSizeSameAsMax;
+    protected boolean isActualResultSizeSameAsMax;
 
     protected static final String RESTRICT_TO_TRANSCRIPTS_ONLY = " and f.type.name in ('mRNA', 'rRNA', 'scRNA', 'snoRNA', 'snRNA', 'snRNA', 'transcript', 'tRNA')";
 
     protected static final String RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES = " and f.type.name in ('mRNA', 'rRNA', 'scRNA', 'snoRNA', 'snRNA', 'snRNA', 'transcript', 'tRNA', 'pseudogenic_transcript')";
+    
+    protected static final String RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES_AND_POLYPEPTIDES = " and f.type.name in ('mRNA', 'rRNA', 'scRNA', 'snoRNA', 'snRNA', 'snRNA', 'transcript', 'tRNA', 'pseudogenic_transcript', 'polypeptide')";
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
@@ -65,8 +70,11 @@ public abstract class HqlQuery implements Query {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
         String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
+        
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
+        
+        logger.debug(query.getQueryString());
 
         //Set max result to prevent max memory error
         query.setMaxResults(maxResults);
@@ -87,7 +95,7 @@ public abstract class HqlQuery implements Query {
         return isActualResultSizeSameAsMax;
     }
 
-    private String restrictQueryByOrganism(String hql, String organismClause) {
+    protected String restrictQueryByOrganism(String hql, String organismClause) {
         if (!StringUtils.hasLength(organismClause)) {
             return hql.replace("@ORGANISM@", "");
         }

@@ -68,6 +68,7 @@
 <li><a href="<misc:url value="/Query/ec"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">EC number</a></li>
 <li><a href="<misc:url value="/Query/pfam"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Pfam ID or keyword</a></li>
 <li><a href="<misc:url value="/Query/curation"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Curation and Comments</a></li>
+<li><a href="<misc:url value="/Query/dbxref"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Dbxrefs</a></li>
 </ul>
 <!-- end sub menu -->
 </li>
