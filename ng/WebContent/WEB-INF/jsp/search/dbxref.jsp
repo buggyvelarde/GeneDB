@@ -8,7 +8,7 @@
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form commandName="query" action="${baseUrl}Query/dbxref" method="GET">
-        <input type="hidden" name="q" value="date" />
+        <input type="hidden" />
             <table>
                 <tr>
                     <td colspan="3">
