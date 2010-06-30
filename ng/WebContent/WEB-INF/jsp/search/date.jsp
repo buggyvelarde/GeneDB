@@ -8,7 +8,6 @@
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="${baseUrl}Query/date" method="GET">
-        <input type="hidden" name="q" value="date" />
             <table>
                 <tr>
                     <td colspan="3">
