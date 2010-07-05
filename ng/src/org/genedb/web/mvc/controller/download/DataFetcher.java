@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface DataFetcher <T> {
 
-    TroubleTrackingIterator<DataRow> iterator(List<T> ids, String fieldDelim);
+    TroubleTrackingIterator<String> iterator(List<T> ids, String expression, String fieldDelim);
 
 }
