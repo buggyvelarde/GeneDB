@@ -132,8 +132,8 @@ public class DownloadController {
         case CSV:
         case TAB:
         {
-            response.setContentType("application/x-download");
-            response.setHeader("Content-Disposition", "attachment; filename=results.txt");
+            prepareResponse(response, "text/plain", true);
+            response.setContentType("text/plain");
             CsvOutputFormatter csv = new CsvOutputFormatter(out);
             String expression = csv.prepareExpression(outputOptions);
             TroubleTrackingIterator<String> iterator = dataFetcher.iterator(featureIds, expression, fieldSeperator);
@@ -147,7 +147,7 @@ public class DownloadController {
 
         case HTML:
         {
-            response.setContentType("text/html");
+            prepareResponse(response, "text/html", true);
             HtmlOutputFormatter html = new HtmlOutputFormatter(out);
             String expression = html.prepareExpression(outputOptions);
             logger.error("Expression is '"+expression+"'");
@@ -182,6 +182,16 @@ public class DownloadController {
         return null;
     }
 
+
+
+    private void prepareResponse(HttpServletResponse response, String type, boolean toPage) {
+        if (toPage) {
+            response.setContentType(type);
+        } else {
+            response.setContentType("application/x-download");
+            response.setHeader("Content-Disposition", "attachment; filename=results.txt");
+        }
+    }
 
 
     private void logProblems(TroubleTrackingIterator<String> iterator) {
