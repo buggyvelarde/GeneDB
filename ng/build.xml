@@ -35,7 +35,7 @@
 
 	<path id="run-classpathref">
 		<pathelement location="${ng.jar}"/>
-		<path refid="compile-classpathref"/>	
+		<path refid="compile-classpathref"/>
 	</path>
 
 
@@ -245,14 +245,12 @@
 				<include name="json-lib-2.2.1-jdk15.jar"/>
 				<include name="json-lib-ext-spring-1.0.1.jar"/>
 			</fileset>
-		</copy>
-        <copy todir="${lib-compiletime.dir}">
-              <fileset dir="lib-repos/misc">
-		      <include name="jgraph.jar"/>	
-		      <include name="jgrapht-jdk1.6.jar"/>	
+            <fileset dir="${ng.directory}/lib-repos/misc">
+		      <include name="jgraph.jar"/>
+		      <include name="jgrapht-jdk1.6.jar"/>
               </fileset>
         </copy>
-	
+
 		<!--
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
 		<delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
@@ -333,8 +331,8 @@
 			<fileset dir="${installDir}/bin"/>
 		</chmod>
 	</target>
-    
-    	
+
+
     <!-- Javadoc ant task -->
 	<target name="doc" depends="compile-all">
 		<fail message="The 'doc.dir' property must be set, either in your config or on the command line." unless="doc.dir"/>
