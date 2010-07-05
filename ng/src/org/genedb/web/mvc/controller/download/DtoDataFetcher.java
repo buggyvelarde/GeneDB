@@ -1,19 +1,17 @@
 package org.genedb.web.mvc.controller.download;
 
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.domain.objects.PolypeptideRegion;
-import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
-import org.genedb.web.mvc.model.DbXRefDTO;
-import org.genedb.web.mvc.model.FeatureCvTermDTO;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.apache.log4j.Logger;
-import org.springframework.util.StringUtils;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
 
@@ -23,18 +21,19 @@ public class DtoDataFetcher implements DataFetcher<Integer> {
 
     private BerkeleyMapFactory bmf;
 
-    public TroubleTrackingIterator<DataRow> iterator(List<Integer> ids, String fieldDelim) {
-        return new DtoDataRowIterator(ids, bmf, fieldDelim); // FIXME convert to transcript ids
+    public TroubleTrackingIterator<String> iterator(List<Integer> ids, String expression, String fieldDelim) {
+        return new DtoDataRowIterator(ids, bmf, expression, fieldDelim);
     }
 
     public void setBmf(BerkeleyMapFactory bmf) {
         this.bmf = bmf;
     }
-
 }
 
 
-class DtoDataRowIterator implements TroubleTrackingIterator<DataRow> {
+class DtoDataRowIterator implements TroubleTrackingIterator<String> {
+
+    private static final ExpressionParser parser = new SpelExpressionParser();
 
     private Logger logger = Logger.getLogger(DtoDataRowIterator.class);
 
@@ -46,12 +45,15 @@ class DtoDataRowIterator implements TroubleTrackingIterator<DataRow> {
 
     private TranscriptDTO nextDTO;
 
+    private Expression expression;
+
     private List<Integer> problems = Lists.newArrayList();
 
-    public DtoDataRowIterator(List<Integer> ids, BerkeleyMapFactory bmf, String fieldDelim) {
+    public DtoDataRowIterator(List<Integer> ids, BerkeleyMapFactory bmf, String expressionString, String fieldDelim) {
         this.it = ids.iterator();
         this.bmf = bmf;
         this.fieldDelim = fieldDelim;
+        this.expression = createExpression(expressionString);
     }
 
     @Override
@@ -69,11 +71,14 @@ class DtoDataRowIterator implements TroubleTrackingIterator<DataRow> {
     }
 
     @Override
-    public DataRow next() {
+    public String next() {
         //Integer id = it.next();
         // Need to convert name to featureId
-        //TranscriptDTO dto = bmf.getDtoMap().get(id);
-        return new DtoDataRow(nextDTO, fieldDelim);
+        return getDescription(nextDTO, expression);
+    }
+
+    public TranscriptDTO peek() {
+    	return nextDTO;
     }
 
     @Override
@@ -85,120 +90,24 @@ class DtoDataRowIterator implements TroubleTrackingIterator<DataRow> {
         return problems;
     }
 
-}
-
-
-class DtoDataRow implements DataRow {
-
-    private static final Logger logger = Logger.getLogger(DtoDataRow.class);
-
-    private TranscriptDTO dto;
-
-    private String fieldDelim;
-
-    public DtoDataRow(TranscriptDTO dto, String fieldDelim) {
-        this.dto = dto;
-        this.fieldDelim = fieldDelim;
+    public Expression createExpression(String expression) {
+        return parser.parseExpression(expression, new TemplatedParserContext());
     }
 
-    @Override
-    public String getValue(OutputOption oo) {
+//    public String getDescription(TranscriptDTO dto, String expression) {
+//        Expression exp = createExpression(expression);
+//        return getDescription(dto, exp);
+//    }
 
-        Map<String, List<String>> mapping = dto.getSynonymsByTypes();
-        logger.error("The mapping is '" + mapping + "'");
+    public String getDescription(TranscriptDTO dto, Expression expression) {
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        context.setVariable("row", dto);
 
-        // Get the data from the DTO
-        switch (oo) {
-            case EC_NUMBERS:
-                List<String> xrefs = Lists.newArrayList();
-                for (DbXRefDTO dbxref : dto.getDbXRefDTOs()) {
-                    xrefs.add(dbxref.getDbName() + ":" + dbxref.getAccession());
-                }
-                return StringUtils.collectionToDelimitedString(xrefs, fieldDelim);
+        TranscriptDTOAdaptor dta = new TranscriptDTOAdaptor(dto, fieldDelim);
+        context.setRootObject(dta);
 
-            case GO_IDS:
-                List<FeatureCvTermDTO> goFeatureCvTerms = Lists.newArrayList();
-                goFeatureCvTerms.addAll(dto.getGoBiologicalProcesses());
-                goFeatureCvTerms.addAll(dto.getGoCellularComponents());
-                goFeatureCvTerms.addAll(dto.getGoMolecularFunctions());
-                List<String> ids = Lists.newArrayList();
-                for (FeatureCvTermDTO fctDTO : goFeatureCvTerms) {
-                    ids.add("GO:" + fctDTO.getTypeAccession());
-                }
-                return StringUtils.collectionToDelimitedString(goFeatureCvTerms, fieldDelim);
-
-            case INTERPRO_IDS:
-                List<String> accessions = Lists.newArrayList();
-                List<PolypeptideRegionGroup> regions = dto.getDomainInformation();
-                for (PolypeptideRegionGroup region : regions) {
-                    accessions.add(region.getUniqueName());
-                    for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
-                        accessions.add(polypeptideRegion.getUniqueName());
-                    }
-
-                }
-                return StringUtils.collectionToDelimitedString(accessions, fieldDelim);
-
-            case PFAM_IDS:
-                List<String> accessions2 = Lists.newArrayList();
-                List<PolypeptideRegionGroup> regions2 = dto.getDomainInformation();
-                for (PolypeptideRegionGroup region : regions2) {
-                    accessions2.add(region.getUniqueName());
-                    for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
-                        accessions2.add(polypeptideRegion.getUniqueName());
-                    }
-
-                }
-                return StringUtils.collectionToDelimitedString(accessions2, fieldDelim);
-
-            case PREV_SYS_ID:
-                return StringUtils.collectionToDelimitedString(mapping.get("Previous systematic id"), fieldDelim);
-
-            case SYNONYMS:
-                return StringUtils.collectionToDelimitedString(mapping.get("Synonym"), fieldDelim);
-
-            case ORGANISM:
-                return dto.getOrganismCommonName();
-
-            case GPI_ANCHOR:
-                return dto.getAlgorithmData().get("DGPI").toString();
-
-            case GENE_TYPE:
-                return dto.getTypeDescription();
-
-            case ISOELECTRIC_POINT:
-                return dto.getPolypeptideProperties().getIsoelectricPoint();
-
-            case LOCATION:
-                return dto.getLocation();
-
-            case MOL_WEIGHT:
-                return dto.getPolypeptideProperties().getMass();
-
-            case NUM_TM_DOMAINS:
-                return (String) dto.getAlgorithmData().get("TMHMM");
-
-            case PRIMARY_NAME:
-                return dto.getGeneName();
-
-            case PRODUCT:
-                List<String> list = Lists.newArrayList();
-                for (FeatureCvTermDTO fct : dto.getProducts()) {
-                    list.add(fct.getTypeName());
-                }
-                return StringUtils.collectionToDelimitedString(list, fieldDelim);
-
-            case SIG_P:
-                return dto.getAlgorithmData().containsKey("SignalP") ? "true" : "";
-
-            case CHROMOSOME:
-                return dto.getTopLevelFeatureDisplayName();
-
-            case SYS_ID:
-                return dto.getUniqueName();
-        }
-        return "";
+        return expression.getValue(context, String.class);
     }
 
-
 }
+

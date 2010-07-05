@@ -19,10 +19,6 @@ public class HtmlOutputFormatter implements OutputFormatter {
 
     private List<OutputOption> outputOptions;
 
-    public void setOutputOptions(List<OutputOption> outputOptions) {
-        this.outputOptions = outputOptions;
-    }
-
     public HtmlOutputFormatter(Writer writer) {
         this.writer = writer;
     }
@@ -44,17 +40,23 @@ public class HtmlOutputFormatter implements OutputFormatter {
         }
     }
 
-    public void writeBody(Iterator<DataRow> it) throws IOException {
+    public void writeBody(Iterator<String> it) throws IOException {
         logger.error("About to fetch a new row");
         while (it.hasNext()) {
-            DataRow row = it.next();
+            String row = it.next();
             writer.write("<tr>");
             for (OutputOption outputOption : outputOptions) {
                 logger.error("About to write value for "+outputOption);
-                writer.write("<td>"+row.getValue(outputOption)+"</td>");
+                writer.write("<td>"+row+"</td>");
             }
             writer.write("</tr>");
         }
     }
+
+	@Override
+	public String prepareExpression(List<OutputOption> outputOptions) {
+		this.outputOptions = outputOptions;
+		return OutputFormatterUtils.prepareExpression(outputOptions, "<tr>", "</tr>", "<td>","</td>");
+	}
 
 }
