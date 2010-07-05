@@ -10,8 +10,8 @@ public interface OutputFormatter {
 
     public void writeFooter() throws IOException;
 
-    public void writeBody(Iterator<DataRow> iterator) throws IOException;
+    public String prepareExpression(List<OutputOption> outputOptions);
 
-    public void setOutputOptions(List<OutputOption> outputOptions);
+    public void writeBody(Iterator<String> iterator) throws IOException;
 
 }
