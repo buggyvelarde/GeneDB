@@ -8,6 +8,7 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -174,6 +175,69 @@ public class DownloadUtils {
 
         return sequence;
     }
+
+
+    public static String getSequence(Transcript t,SequenceType sequenceType, int prime3, int prime5) {
+    	String sequence = null;
+    	ProductiveTranscript transcript = null;
+
+    	if (t instanceof ProductiveTranscript) {
+    		transcript = (ProductiveTranscript) t;
+    	}
+
+    	if (transcript!=null) {
+    		switch (sequenceType) {
+    		case SPLICED_DNA:
+    			if (transcript.getResidues() != null) {
+    				return new String(transcript.getResidues());
+    			}
+    			//break;
+    		case UNSPLICED_DNA:
+    			return new String(transcript.getGene().getResidues());
+    			//break;
+    		case PROTEIN:
+    			return new String(transcript.getProtein().getResidues());
+    			//break;
+    		case INTRON:
+    			Object[] exons = transcript.getExons().toArray();
+    			if (exons.length > 1) {
+    				sequence = new String();
+    				for(int i=0;i<exons.length - 1;i++) {
+    					AbstractExon exon = (AbstractExon) exons[i];
+    					int start = exon.getStart();
+    					int stop = exon.getStop();
+    					String str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature()
+    							.getResidues(start, stop));
+    					sequence = sequence.concat(str);
+    				}
+    			}
+    			return sequence;
+
+    		case INTERGENIC_3:
+    			return fetchParentSequence(t, prime3, 0);
+
+    		case INTERGENIC_5:
+    			return fetchParentSequence(t, 0, prime5);
+
+    		case INTERGENIC_3and5:
+    			return fetchParentSequence(t, prime3, prime5);
+
+    		}
+    	}
+    	return sequence;
+    }
+
+
+	private static String fetchParentSequence(Transcript t, int prime3, int prime5) {
+		FeatureLoc fl = t.getRankZeroFeatureLoc();
+		int start = fl.getFmin() - prime3;
+		int end = fl.getFmax() + prime5;
+
+		Feature parent = fl.getSourceFeature();
+		return new String(parent.getResidues(start, end, fl.getStrand()==1));
+	}
+
+
 }
 
 //public class FastaUtils {
