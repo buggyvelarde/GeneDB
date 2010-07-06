@@ -29,13 +29,11 @@ USAGE
 doLoad() {
     organism=''
     reload=false
-    debug=false
+    
 
     OPTIND=0
     while getopts "do:r$stdopts" option; do
         case "$option" in
-        d)  debug=true
-            ;;
         o)  organism="$OPTARG"
             ;;
         r)  reload=true
@@ -60,12 +58,13 @@ doLoad() {
     fi
     
     if $reload; then
-        echo "reload"
-       # java -Xmx256m $database_properties -Dlog4j.configuration=log4j.loader.properties \
-       #     org.genedb.db.loading.auxiliary.ClearDGPI "$organism"
+        echo "Deleting any existing GPI anchors for $organism"
+        java -Xmx256m $database_properties -Dlog4j.configuration=log4j.loader.properties \
+            org.genedb.db.loading.auxiliary.ClearDGPI "$organism"
     fi
-
-    #java $database_properties -Dlog4j.configuration=log4j.loader.properties \
-    #    org.genedb.db.loading.auxiliary.Load dgpiloader \
-    #    "$@"
+    
+    echo "Adding the new GPI anchors for $organism"
+    java $database_properties -Dlog4j.configuration=log4j.loader.properties \
+        org.genedb.db.loading.auxiliary.Load dgpiloader \
+        "$@"
 }
