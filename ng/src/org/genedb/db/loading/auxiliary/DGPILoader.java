@@ -17,28 +17,29 @@ import org.apache.log4j.Logger;
 import org.gmod.schema.feature.Polypeptide;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+
 
 public class DGPILoader extends Loader {
     private static final Logger logger = Logger.getLogger(DGPILoader.class);
 
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
-        Transaction transaction = session.getTransaction();
+        //Transaction transaction = session.getTransaction();
 
         DGPIFile file = new DGPIFile(inputStream);
         int n=1;
         for (String key: file.keys()) {
-            logger.info(String.format("[%d/%d] Loading DGPI results for key '%s'", n++, file.keys().size(), key));
-            Polypeptide polypeptide = getPolypeptideByMangledName(key);
+             logger.info(String.format("[%d/%d] Loading DGPI results for key '%s'", n++, file.keys().size(), key));
+             
+             Polypeptide polypeptide = getPolypeptideByMangledName(key);
             if (polypeptide == null) {
                 logger.error(String.format("Could not find polypeptide '%s'", key));
                 continue;
             }
 
-            transaction.begin();
+            //transaction.begin(); 
             loadResult(polypeptide, file.resultForKey(key));
-            transaction.commit();
+            //transaction.commit();
             /*
              * If the session isn't cleared out every so often, it
              * starts to get pretty slow after a while if we're loading
@@ -82,23 +83,28 @@ class DGPIFile {
         String line, key = null;
         List<String> resultLines = new ArrayList<String>();
         while (null != (line = reader.readLine())) {
+           
             if (line.startsWith(">")) {
+                
                 if (key != null) {
                     DGPIResult result = DGPIResult.parseLines(resultLines);
-                    if (result != null)
-                        resultsByKey.put(key.substring(1), result);
+                    if (result != null) {
+                        resultsByKey.put((key.substring(1)).trim(), result);
+                    }
                 }
 
                 key = line;
                 resultLines = new ArrayList<String>();
             }
-            else
+            else {
                 resultLines.add(line);
+            }
         }
         // Don't forget the last one!
         DGPIResult result = DGPIResult.parseLines(resultLines);
-        if (result != null)
-            resultsByKey.put(key, result);
+        if (result != null) {
+            resultsByKey.put((key.substring(1)).trim(), result);
+        }
     }
 
     public Collection<String> keys() {
@@ -115,13 +121,13 @@ class DGPIResult {
     private String cleavageSiteScore;
 
     private static final Pattern CLEAVAGE_SITE_PATTERN
-        = Pattern.compile("  There's a potential cleavage site at (\\d+) \\(score=(\\d+\\.\\d+)\\).*");
+        = Pattern.compile("\\s*There's a potential cleavage site at (\\d+) \\(score=(\\d+\\.\\d+)\\).*");
 
     private static final Pattern BEST_CLEAVAGE_SITE_PATTERN
-        = Pattern.compile("  The best cleavage site is (\\d+)");
+        = Pattern.compile("\\s*The best cleavage site is (\\d+)");
 
     private static final Pattern IS_GPI_ANCHORED_PATTERN
-        = Pattern.compile("  This protein is GPI-anchored.*");
+        = Pattern.compile("\\s*This protein is GPI-anchored.*");
 
 
     private enum State {NONE, CLEAVAGE_SITE, CONCLUSION};
@@ -179,5 +185,10 @@ class DGPIResult {
     }
     public String getCleavageSiteScore() {
         return cleavageSiteScore;
+    }
+    @Override
+    public String toString(){
+        return "Cleavage site at " + getBestCleavageSite() + " with a score of " + getCleavageSiteScore() + " GPI anchored: " + isAnchored();
+    
     }
 }
