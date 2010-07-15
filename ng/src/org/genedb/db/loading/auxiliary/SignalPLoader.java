@@ -76,11 +76,12 @@ public class SignalPLoader extends Loader {
         }
     }
 
-    private CvTerm predictionTerm, peptideProbabilityTerm, anchorProbabilityTerm;
+    private CvTerm predictionTerm, peptideProbabilityTerm, anchorProbabilityTerm, plasmoAPScoreTerm;
     private void loadTerms() {
         predictionTerm = cvDao.getCvTermByNameAndCvName("SignalP_prediction", "genedb_misc");
         peptideProbabilityTerm = cvDao.getCvTermByNameAndCvName("signal_peptide_probability", "genedb_misc");
         anchorProbabilityTerm = cvDao.getCvTermByNameAndCvName("signal_anchor_probability", "genedb_misc");
+        plasmoAPScoreTerm = cvDao.getCvTermByNameAndCvName("PlasmoAP_score", "genedb_misc");
     }
 
     private void loadHit(SignalPHit hit) {
@@ -103,6 +104,13 @@ public class SignalPLoader extends Loader {
             SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(),
                     hit.getCleavageSiteProbability(), analysis);
             sequenceDao.persist(signalPeptide);
+        }
+        
+        /* Add the plasmoAP score (if available) */
+        System.out.println("The plasmoAP score for this is " + hit.getPlasmoAP_score());
+        if (hit.getPlasmoAP_score()!=null){
+            
+            sequenceDao.persist(new FeatureProp(polypeptide, plasmoAPScoreTerm, hit.getPlasmoAP_score(), 0));            
         }
     }
 }
@@ -146,8 +154,9 @@ class SignalPFile {
             "Prediction: (Non-secretory protein|Signal peptide|Signal anchor)\n"+
             "Signal peptide probability: (\\d\\.\\d{3})\n"+
             "(?:Signal anchor probability: (\\d\\.\\d{3})\n)?"+
-            "Max cleavage site probability: (\\d\\.\\d{3}) between pos\\. (-1|\\d+) and  ?(\\d+)\n"
-    );
+            "Max cleavage site probability: (\\d\\.\\d{3}) between pos\\. (-1|\\d+) and  ?(\\d+)\n" +
+            "(?:PlasmoAP_score:\\s+(\\d+)\n)?" 
+            );
     private void parseSummary(CharSequence summary) {
         Matcher matcher = SUMMARY_PATTERN.matcher(summary);
         if (matcher.matches()) {
@@ -161,8 +170,10 @@ class SignalPFile {
             String anchorProbability  = matcher.group(4);
             String cleavageSiteProbability = matcher.group(5);
             int cleavageSiteAfter = Integer.parseInt(matcher.group(7));
+            /* PlasmoAP score will be available if signalp was run with the -s option */
+            String plasmoAP_score = matcher.group(8); 
 
-            hits.add(new SignalPHit(key, type, peptideProbability, anchorProbability, cleavageSiteProbability,
+            hits.add(new SignalPHit(key, type, peptideProbability, anchorProbability, cleavageSiteProbability,  plasmoAP_score,
                     cleavageSiteAfter));
         }
         else {
@@ -172,18 +183,19 @@ class SignalPFile {
 }
 
 class SignalPHit {
-    private String key, type, peptideProbability, anchorProbability, cleavageSiteProbability;
+    private String key, type, peptideProbability, anchorProbability, cleavageSiteProbability, plasmoAP_score;
     int cleavageSiteAfter;
 
     public SignalPHit(String key, String type,
             String peptideProbability, String anchorProbability,
-            String cleavageSiteProbability, int cleavageSiteAfter) {
+            String cleavageSiteProbability, String plasmoAP_score, int cleavageSiteAfter) {
         this.key = key;
         this.type = type;
         this.peptideProbability = peptideProbability;
         this.anchorProbability = anchorProbability;
         this.cleavageSiteProbability = cleavageSiteProbability;
         this.cleavageSiteAfter = cleavageSiteAfter;
+        this.plasmoAP_score = plasmoAP_score;
     }
 
     public String getKey() {
@@ -208,5 +220,9 @@ class SignalPHit {
 
     public int getCleavageSiteAfter() {
         return cleavageSiteAfter;
+    }
+    
+    public String getPlasmoAP_score(){
+        return plasmoAP_score;
     }
 }
