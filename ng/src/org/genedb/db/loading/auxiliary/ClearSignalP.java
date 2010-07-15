@@ -22,6 +22,7 @@ public class ClearSignalP extends Clear {
         +"       'SignalP_prediction'"
         +"     , 'signal_peptide_probability'"
         +"     , 'signal_anchor_probability'"
+        +"     , 'PlasmoAP_score'" 
         +" )"
         +" and organism.common_name = ?";
 
