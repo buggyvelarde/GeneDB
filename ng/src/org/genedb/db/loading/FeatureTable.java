@@ -174,17 +174,16 @@ class FeatureTable extends EmblFile.Section {
             String featName = this.getQualifierValue("FEAT_NAME");
             String locusTag = this.getQualifierValue("locus_tag");
 
-            //When these wrap lines in the EMBL file a space is introduced
-            systematicId = systematicId.replaceAll("\\s","").trim();
-            temporarySystematicId = temporarySystematicId.replaceAll("\\s","").trim();
-
             if (temporarySystematicId != null && systematicId != null) {
                 throw new DataError(
                     String.format("%s feature has both /systematic_id and /temporary_systematic_id", this.type));
             }
             else if (temporarySystematicId != null) {
+                temporarySystematicId = temporarySystematicId.replaceAll("\\s","").trim();
                 return temporarySystematicId;
             } else if (systematicId != null) {
+                //When systematic_ids wrap lines in the EMBL file a space is introduced
+                systematicId = systematicId.replaceAll("\\s","").trim();
                 return systematicId;
             } else if (featName != null) {
                 logger.warn(
