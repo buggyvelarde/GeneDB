@@ -1131,9 +1131,9 @@ class EmblLoader {
         }
 
         protected void processGO() throws DataError {
-            
+
             String comment = "From EMBL file"; //default value for autocomment
-            
+
             for (String go: feature.getQualifierValues("GO")) {
                 GoInstance goInstance = new GoInstance();
                 for (String subqualifier: go.split("; ?")) {
@@ -1146,9 +1146,9 @@ class EmblLoader {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"", go));
                     }
 
-                    String key = subqualifier.substring(0, equalsIndex); 
+                    String key = subqualifier.substring(0, equalsIndex);
                     String value = subqualifier.substring(equalsIndex + 1);
-                    
+
                     /* nds (24.6.2010):It is rare but sometimes the key here
                      * has acquired an unnecessary space either by data errors
                      * in Chado or in the EMBL file.
@@ -1156,26 +1156,26 @@ class EmblLoader {
                      * The replace below was put in place to deal with this problem.
                      */
                     key = key.replaceAll("\\s","").trim();
-                    
-                                       
+
+
                     if (!goQualifiers.contains(key)) {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"; don't know what to do with %s=%s", go, key, value));
                     }
                     // "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date", "attribution", "residue", "autocomment"
-          
+
                     /* nds (25.6.2010): Sometimes the values have the same
                      * problem as above but a replace cannot be applied for
-                     * all the values. I've commented out the replace below 
+                     * all the values. I've commented out the replace below
                      * as it's possible this was a problem specific for
                      * Plasmodium reichenowi.
                      */
 //                    if(!key.equals("autocomment")){
 //                        value = value.replaceAll("\\s","").trim();
 //                    }
-                       
+
                     if (key.equals("GOid")) {
                         goInstance.setId(value);
-                    } else if (key.equals("date")) {                        
+                    } else if (key.equals("date")) {
                         goInstance.setDate(value);
                     } else if (key.equals("evidence")) {
                         GoEvidenceCode evidenceCode = GoEvidenceCode.parse(value);
@@ -1195,16 +1195,16 @@ class EmblLoader {
                         goInstance.setResidue(value);
                     } else if (key.equals("db_xref")) {
                         goInstance.setRef(value);
-                        /* TODO: Temp fix to avoid duplicate pubdbxref entries, 
+                        /* TODO: Temp fix to avoid duplicate pubdbxref entries,
                          * fix properly later using the object manager: nds*/
                         Pattern DBXREF_PATTERN = Pattern.compile("\\S+:(\\S+)");
                         Matcher matcher = DBXREF_PATTERN.matcher(value);
-                        if(matcher.matches()){                           
-                            seenPubAccessions.add(matcher.group(1));                           
+                        if(matcher.matches()){
+                            seenPubAccessions.add(matcher.group(1));
                         }
                     } else if (key.equals("autocomment")){
                         comment = value;
-                        
+
                     }
                 }
                 if (goTermErrorsAreNotFatal) {
@@ -1563,7 +1563,7 @@ class EmblLoader {
                     dbName, accession));
             }
             if (dbName.equals("PMID")) {
-                // PMID is a special case; these are stored as FeaturePubs              
+                // PMID is a special case; these are stored as FeaturePubs
                 addPub(target, accession, dbXRef);
             }
             else {
@@ -1575,7 +1575,7 @@ class EmblLoader {
             logger.trace(String.format("Adding publication id '%s' to %s",
                 accession, target.toString()));
             Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
-            session.persist(pub.addDbXRef(dbXRef, true));     
+            session.persist(pub.addDbXRef(dbXRef, true));
             session.persist(target.addPub(pub));
         }
 
@@ -1590,7 +1590,7 @@ class EmblLoader {
             DbXRef dbXRef = objectManager.getDbXRef("PMID", accession);
             addPub(focalFeature, accession, dbXRef);
             seenPubAccessions.add(accession);
-            
+
         }
 
         private Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)(?:;.*)?");
@@ -1912,6 +1912,7 @@ class EmblLoader {
             }
 
             processCuration();
+            processLiterature();
         }
 
         @Override
