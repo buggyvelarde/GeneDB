@@ -12,9 +12,9 @@ public class AllNamesAnalyzer extends Analyzer {
     public TokenStream tokenStream(String fieldName, Reader reader) {
         return new AllNamesTokenizer(reader);
     }
-    
-    private class AllNamesTokenizer extends WhitespaceTokenizer{
-        public AllNamesTokenizer(Reader in){
+
+    private class AllNamesTokenizer extends WhitespaceTokenizer {
+        public AllNamesTokenizer(Reader in) {
             super(in);
         }
         @Override
