@@ -575,6 +575,8 @@
     </target>
 
     <target name="_LuceneIndex">
+        <fail message="The 'dir' property must be set" unless="dir"/> 
+        <fail message="The 'organism' property must be set" unless="organism"/> 
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="run-classpathref"/>
