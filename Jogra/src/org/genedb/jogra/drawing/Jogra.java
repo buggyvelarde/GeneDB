@@ -23,7 +23,6 @@ package org.genedb.jogra.drawing;
 import org.genedb.jogra.domain.GeneDBMessage;
 import org.genedb.jogra.drawing.JograProgressBar.Position;
 import org.genedb.jogra.services.DatabaseLogin;
-import org.genedb.jogra.services.MessageService;
 import org.genedb.jogra.services.DatabaseLogin.AbortException;
 
 import org.apache.log4j.Logger;
@@ -32,8 +31,6 @@ import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.util.StringUtils;
 
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -62,6 +59,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
@@ -93,25 +91,20 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         });
 
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //Not available on macs for now
-           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //Not available on macs for now
+             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            
         } catch (final Exception exp) {
-            logger.debug("Unable to set Nimbus L&F", exp);
+            logger.debug("Unable to set look and feel to system look and feel", exp);
         }
-
-        // EventBus.subscribe(ApplicationClosingEvent.class, new
-        // VetoEventListener {});
 
         EventBus.subscribe(OpenWindowEvent.class, this);
 
         EventBus.subscribeStrongly("selection", new EventTopicSubscriber<List<String>>() {
             public void onEvent(String topic, List<String> selection) { 
-                logger.info("What is Jogra getting? " + StringUtils.collectionToCommaDelimitedString(selection));
                 setSelectedOrganismNames(selection);
-                logger.info("JOGRA: Picked up " + selection.toString());
+                logger.info("Jogra picked up " + selection.toString());
             }
-
-
         });
 
     }
@@ -133,10 +126,10 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
     /* Construct main frame with a list of possible plugins */
     public void makeMain() {
-
+  
         mainFrame.setResizable(false);
         // slide.setDirty(false);
-        //updateTitle(); // To make sure title bar is updated even if dirty
+        // updateTitle(); // To make sure title bar is updated even if dirty
         // hasn't changed
 
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -193,7 +186,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public void onEvent(final OpenWindowEvent event) {
-        System.err.println("Open event received");
+
+//        logger.info("Am I in the EDT just before the invokeLater() " + SwingUtilities.isEventDispatchThread());
+        
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 // TODO Auto-generated method stub
@@ -205,7 +200,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                     frame.setVisible(true);
                 } else {
                     // frame.pack();
-                    // windowList.add(frame);
+                    //windowList.add(frame);
                     frame.toFront();
                 }
             }
@@ -290,11 +285,12 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         // Store lucene indices somewhere harmless as they are not needed, but are created automatically
         //System.setProperty("hibernate.search.default.indexBase", System.getProperty("java.io.tmpdir"));
 
-        FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext();
-        context.addBeanFactoryPostProcessor(configurer);
         
+//        
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+        context.addBeanFactoryPostProcessor(configurer);
 
-        context.setConfigLocation("file:/Users/nds/Documents/workspace/Jogra/conf/applicationContext.xml" );
+        context.setConfigLocation("classpath:/applicationContext.xml" );
         context.refresh();
 
         final Jogra application = (Jogra)context.getBean("application", Jogra.class);
@@ -392,6 +388,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         } catch (AbortException exp) {
             System.exit(65);
         }
+        
+        //logger.info("Jogra main method Is this the EDT?" + SwingUtilities.isEventDispatchThread());
+               
         JograProgressBar jpb = new JograProgressBar("Loading Jogra...", Position.CENTRE); //Progress bar added for better user information
         Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword(), dblogin.getDBUrl());
         application.testTransactions();
