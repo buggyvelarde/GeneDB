@@ -35,6 +35,10 @@ public class Term implements Comparable<Term> {
         this.name = name;
         this.id = id;     
     }
+    
+    public Term(String name){
+        this.name = name;
+    }
  
   
     @Override
