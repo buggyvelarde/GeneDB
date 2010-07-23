@@ -328,65 +328,82 @@ public class RestController {
      */
 	@RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
     public ModelAndView search ( @RequestParam("term") String term, @RequestParam("taxon") String taxon, @RequestParam("max") int max ) throws QueryException {
-
-    	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
-    	query.setSearchText(term);
-
-    	query.setAllNames(true);
-    	query.setProduct(true);
-    	query.setPseudogenes(true);
-
-
-    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
-    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
-    	TaxonNodeList taxons = new TaxonNodeList(taxonNode);
-
-    	query.setTaxons(taxons);
-
-    	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
-    	List<GeneSummary> geneResults = results.getResults();
-
-    	QuickSearchResults qsr = new QuickSearchResults();
-    	qsr.term = term;
-    	qsr.max = max;
-    	qsr.totalHits = results.getTotalHits();
-
-
-    	int i = 0;
-    	for (GeneSummary result : geneResults) {
-    		i++;
-
-    		QuickSearchResult q = new QuickSearchResult();
-    		q.systematicId = result.getSystematicId();
-    		q.product = result.getProduct();
-    		q.displayId = result.getDisplayId();
-    		q.taxonDisplayName = result.getTaxonDisplayName();
-    		q.topLevelFeatureName = result.getTopLevelFeatureName();
-
-    		qsr.addHit(q);
-    	}
-
-    	logger.info("Processed " + i + " results");
-
-		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
-    	squery.setSearchText(term);
-    	squery.setMax(max);
-    	squery.setTaxons(taxons);
-
-    	@SuppressWarnings("unchecked")
-    	List<String> sResults = (List<String>) squery.getResults();
-
-    	for (Object sResult : sResults) {
-    		// logger.debug(sResult);
-    		Suggestion s = new Suggestion();
-    		s.name = (String) sResult;
-    		qsr.addSuggestion(s);
-
-    	}
-
-        ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("model", qsr);
-        return mav;
+		
+		logger.info(String.format("Searching %s for %s : ", taxon, term));
+		ModelAndView mav = new ModelAndView(viewName);
+		
+		try {
+		
+	    	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
+	    	query.setSearchText(term);
+	
+	    	query.setAllNames(true);
+	    	query.setProduct(true);
+	    	query.setPseudogenes(true);
+	
+	
+	    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+	    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
+	    	
+	    	logger.info(taxonNode);
+	    	
+	    	TaxonNodeList taxons = new TaxonNodeList(taxonNode);
+	
+	    	query.setTaxons(taxons);
+	
+	    	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
+	    	List<GeneSummary> geneResults = results.getResults();
+	
+	    	QuickSearchResults qsr = new QuickSearchResults();
+	    	qsr.term = term;
+	    	qsr.max = max;
+	    	qsr.totalHits = results.getTotalHits();
+	
+	
+	    	int i = 0;
+	    	for (GeneSummary result : geneResults) {
+	    		i++;
+	
+	    		QuickSearchResult q = new QuickSearchResult();
+	    		q.systematicId = result.getSystematicId();
+	    		q.product = result.getProduct();
+	    		q.displayId = result.getDisplayId();
+	    		q.taxonDisplayName = result.getTaxonDisplayName();
+	    		q.topLevelFeatureName = result.getTopLevelFeatureName();
+	
+	    		qsr.addHit(q);
+	    	}
+	
+	    	logger.info("Processed " + i + " results");
+	
+			SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
+	    	squery.setSearchText(term);
+	    	squery.setMax(max);
+	    	squery.setTaxons(taxons);
+	
+	    	@SuppressWarnings("unchecked")
+	    	List<String> sResults = (List<String>) squery.getResults();
+	
+	    	for (Object sResult : sResults) {
+	    		// logger.debug(sResult);
+	    		Suggestion s = new Suggestion();
+	    		s.name = (String) sResult;
+	    		qsr.addSuggestion(s);
+	
+	    	}
+	
+	        
+	        mav.addObject("model", qsr);
+	        
+	        
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			
+			mav = new ErrorReport("Woops", ErrorType.QUERY_FAILURE , new String[] {e.getMessage()});
+			
+		}
+		return mav;
     }
 
 
