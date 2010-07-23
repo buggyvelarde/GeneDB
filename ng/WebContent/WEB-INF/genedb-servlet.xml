@@ -145,13 +145,9 @@
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-<<<<<<< .working
-    <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
-=======
     <!--<property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />-->
     <property name="hmFactory" ref="historyManagerFactory" />
     <property name="conversionService" ref="conversionService" />
->>>>>>> .merge-right.r14293
   </bean>
 
   <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" >
@@ -168,10 +164,6 @@
   <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
     <property name="historyManagerFactory" ref="historyManagerFactory" />
     <property name="sequenceDao" ref="sequenceDao" />
-<<<<<<< .working
-=======
-    <!-- <property name="downloadView" value="download/download" /> -->
->>>>>>> .merge-right.r14293
     <property name="dataFetcher" ref="dtoDataFetcher" />
   </bean>
 
@@ -219,11 +211,6 @@
   <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
   <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" />
   <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />
-<<<<<<< .working
-
-
-=======
->>>>>>> .merge-right.r14293
   <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
   <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
   <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
@@ -238,10 +225,6 @@
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
   <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
   <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
-<<<<<<< .working
-
-=======
->>>>>>> .merge-right.r14293
   <bean name="curation" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
   <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
@@ -275,10 +258,6 @@
             <entry key="go" value-ref="go" />
             <entry key="ec" value-ref="ec" />
             <entry key="pfam" value-ref="pfam" />
-<<<<<<< .working
-
-=======
->>>>>>> .merge-right.r14293
             <entry key="curation" value-ref="curation" />
             <entry key="dbxref" value-ref="dbxref" />
           </map>
@@ -290,10 +269,6 @@
             <entry key="quickSearch" value-ref="quickSearch" />
             <entry key="dateCount" value-ref="dateCount" />
             <entry key="geneByDb" value-ref="geneByDb" />
-<<<<<<< .working
-
-=======
->>>>>>> .merge-right.r14293
             <entry key="suggest" value-ref="suggest" />
           </map>
         </entry>
