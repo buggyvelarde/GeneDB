@@ -221,13 +221,14 @@ public class TaxonNodeManager implements InitializingBean {
         this.phylogenyDao = phylogenyDao;
     }
 
-
-    public List<String> getNamesListForTaxons(TaxonNode[] taxons) {
-        if (taxons == null || taxons.length == 0) {
+    public List<String> getNamesListForTaxons(TaxonNodeList taxons) {
+        if (taxons == null || taxons.getNodeCount() == 0) {
             return Collections.emptyList();
         }
         Set<String> dupes = new HashSet<String>();
-        for (TaxonNode taxonNode : taxons) {
+        logger.error("The size of taxon array is '"+taxons.getNodeCount()+"'");
+        for (TaxonNode taxonNode : taxons.getNodes()) {
+            logger.error("taxonNode: "+taxonNode);
             dupes.addAll(taxonNode.getAllChildrenNames());
         }
         return new ArrayList<String>(dupes);

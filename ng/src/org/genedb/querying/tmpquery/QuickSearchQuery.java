@@ -40,7 +40,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @QueryParam(order = 3, title = "Include pseudogenes")
     private boolean pseudogenes;
-    
+
 
     @Override
     protected String getluceneIndexName() {
@@ -56,7 +56,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     protected String[] getParamNames() {
         return new String[] { "searchText", "product", "allNames", "pseudogenes" };
     }
-    
+
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){
@@ -75,7 +75,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             } else {
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
-    		
+
         }
 
 
@@ -118,7 +118,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     public List getResults() throws QueryException {
         throw new QueryException(new Exception("Method Not Implemented"));
     }
-    
+
     /**
      * Get all the results for the quick query
      *
@@ -129,45 +129,45 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
         QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();
         List<GeneSummary> geneSummaries = quickSearchQueryResults.getResults();
-        
+
         try {
             // taxn name
             List<String> currentTaxonNames = null;
-            if (taxons != null && taxons.length > 0) {
+            if (taxons != null && taxons.getNodeCount() > 0) {
                 currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
-            
+
             TopDocs topDocs = lookupInLucene();
             int currentResult = 0;
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            	
+
                 Document document = fetchDocument(scoreDoc.doc);
 
                 // Get the current taxon name from document
                 String taxonName = document.get("organism.commonName");
 
                 boolean isNoTaxonMatch = currentTaxonNames != null && !currentTaxonNames.contains(taxonName);
-                
+
                 if (isNoTaxonMatch) {
                 	continue;
                 }
-                
+
                 // only populate if we are under the max
                 if (currentResult < maxResults) {
                 	populateGeneSummaries(geneSummaries, document);
                 }
-                
+
                 // we want the total number of hits, even if we don't return them all
                 currentResult++;
 
             }
             Collections.sort(geneSummaries);
-            
+
             logger.info("Total returned hits :" + geneSummaries.size());
             logger.info("Total unreturned hits :" + currentResult);
-            
+
             quickSearchQueryResults.setTotalHits(currentResult);
-            
+
             if(luceneIndex.getMaxResults() == geneSummaries.size()){
                 isActualResultSizeSameAsMax = true;
             }
@@ -192,7 +192,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         }
         return quickSearchQueryResults;
     }
-    
+
     /**
      * Get all the results for the quick query
      *
@@ -208,15 +208,15 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         try {
             // taxn name
             List<String> currentTaxonNames = null;
-            if (taxons != null && taxons.length > 0) {
+            if (taxons != null && taxons.getNodeCount() > 0) {
                 currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
-            
-            
+
+
             TopDocs topDocs = lookupInLucene();
-            
+
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            	
+
                 Document document = fetchDocument(scoreDoc.doc);
 
                 // Get the current taxon name from document
@@ -242,10 +242,10 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
             }
             Collections.sort(geneSummaries);
-            
+
             logger.info("Total geneSummaries hits :" + geneSummaries.size());
             quickSearchQueryResults.setTotalHits(geneSummaries.size());
-            
+
             if(luceneIndex.getMaxResults() == geneSummaries.size()){
                 isActualResultSizeSameAsMax = true;
             }
@@ -353,11 +353,11 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
             this.taxonGroup = taxonGroup;
         }
-        
+
         public void setTotalHits(int totalHits) {
         	this.totalHits = totalHits;
         }
-        
+
         public int getTotalHits() {
         	return this.totalHits;
         }

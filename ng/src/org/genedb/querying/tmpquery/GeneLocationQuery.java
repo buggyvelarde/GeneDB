@@ -37,12 +37,12 @@ public class GeneLocationQuery extends OrganismHqlQuery {
 
     @QueryParam(order = 4, title = "Include pseudogenes")
     private boolean pseudogenes = true;
-    
+
     @Override
     public String getQueryDescription() {
     	return "Search for a gene by specifing its location on a chromosome, contig or other top level feature.";
     }
-    
+
     @Override
     public String getQueryName() {
         return "Location";
@@ -57,9 +57,9 @@ public class GeneLocationQuery extends OrganismHqlQuery {
         sb.append("and fl.fmin >= :min ");
         sb.append("and fl.fmax <= :max @ORGANISM@ ");
 
-        if(pseudogenes){
+        if (pseudogenes) {
             sb.append(RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES);
-        }else{
+        } else {
             sb.append(RESTRICT_TO_TRANSCRIPTS_ONLY);
         }
         sb.append(" order by f.organism, f.uniqueName");

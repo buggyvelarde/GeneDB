@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class QueryFactory<T extends QueryVisibility> {
 
     private Map<String, T> nameVisibility;
 
-    public void setQueryNameMap(Map<T, Map<String, Query>> queryNameMap) {
+    public void setQueryNameMap(LinkedHashMap<T, Map<String, Query>> queryNameMap) {
 
         this.visibilityQueryDetails = Maps.newHashMapWithExpectedSize(queryNameMap.size());
         this.nameVisibility = Maps.newHashMap();

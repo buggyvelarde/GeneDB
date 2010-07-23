@@ -462,8 +462,8 @@ public class SequenceDao extends BaseDao {
      */
     public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
         List<Feature> features = performQuery(Feature.class,
-                        "select f.feature from FeatureCvTerm f where f.type.name like :cvTermName"
-                        +" and f.type.cv.name like :cvName",
+                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName"
+                        +" and f.cvTerm.cv.name like :cvName",
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;
@@ -1088,4 +1088,15 @@ public class SequenceDao extends BaseDao {
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
+
+	public List<Feature> getFeaturesByPreviousSystematicId(String id) {
+        List<Feature> features = performQuery(Feature.class,
+        		"select fs.feature from FeatureSynonym fs" +
+        		" where fs.synonym.type.name='previous_systematic_id'" +
+        		" and fs.synonym.name=:id",
+                new String[] { "id" },
+                new Object[] { id });
+
+        return features;
+	}
 }

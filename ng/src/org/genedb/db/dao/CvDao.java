@@ -432,18 +432,19 @@ public class CvDao extends BaseDao {
     public List<CountedName> getCountedNamesByCvNamePatternAndOrganism(String cvNamePattern,
             Collection<String> orgs, boolean justPolypeptides) {
         StringBuilder orgNames = new StringBuilder();
-        boolean first = true;
-        for (String orgName : orgs) {
-            if (!first) {
-                orgNames.append(", ");
-            }
-            first = false;
-            orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
-        }
 
         String orgQuery = "";
-        if (orgs.size() > 0) {
-            orgQuery = " fct.feature.organism.commonName in (" + orgNames + ") and";
+        if (orgs != null && orgs.size() > 0) {
+
+        	boolean first = true;
+        	for (String orgName : orgs) {
+        		if (!first) {
+        			orgNames.append(", ");
+        		}
+        		first = false;
+        		orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
+        	}
+        	orgQuery = " fct.feature.organism.commonName in (" + orgNames + ") and";
         }
 
         String typeQuery= "";
@@ -576,7 +577,7 @@ public class CvDao extends BaseDao {
             return cvTermsByClass.get(annotatedClass);
         }
 
-        org.gmod.schema.cfg.FeatureType featureType = FeatureTypeUtils.getFeatureTypeForClass(annotatedClass);
+        FeatureType featureType = FeatureTypeUtils.getFeatureTypeForClass(annotatedClass);
         if (featureType == null) {
             throw new IllegalArgumentException(String.format("The class '%s' has no @FeatureType annotation", annotatedClass.getName()));
         }
@@ -588,8 +589,7 @@ public class CvDao extends BaseDao {
     private CvTerm getCvTermForFeatureType(FeatureType featureType) {
         if (!"".equals(featureType.term())) {
             return this.getCvTermByNameAndCvName(featureType.term(), featureType.cv());
-        }
-        else {
+        } else {
             return this.getCvTermByAccessionAndCvName(featureType.accession(), featureType.cv());
         }
     }

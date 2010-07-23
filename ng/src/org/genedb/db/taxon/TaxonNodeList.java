@@ -1,6 +1,7 @@
 package org.genedb.db.taxon;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,9 +9,9 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.collect.Lists;
 
-public class TaxonNodeList {
-	
-	private static final Logger logger = Logger.getLogger(TaxonNodeList.class);
+public class TaxonNodeList implements Serializable {
+
+    private static final Logger logger = Logger.getLogger(TaxonNodeList.class);
     private List<TaxonNode> nodes;
 
     public TaxonNodeList() {
@@ -35,6 +36,10 @@ public class TaxonNodeList {
 
     public String toString() {
     	return StringUtils.collectionToCommaDelimitedString(nodes);
+    }
+
+    public int getNodeCount() {
+        return nodes.size();
     }
 
 }

@@ -1,6 +1,7 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.QueryParam;
@@ -47,7 +48,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
             order=3,
             title="Organism restriction"
     )
-    protected TaxonNode[] taxons;
+    protected TaxonNodeList taxons;
 
     @Autowired
     public void setOrganismHeirachy(OrganismHeirachy organismHeirachy) {
@@ -61,7 +62,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     /* (non-Javadoc)
      * @see org.genedb.querying.tmpquery.TaxonQuery#getTaxons()
      */
-    public TaxonNode[] getTaxons() {
+    public TaxonNodeList getTaxons() {
         return taxons;
     }
 
@@ -69,7 +70,8 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     /* (non-Javadoc)
      * @see org.genedb.querying.tmpquery.TaxonQuery#setTaxons(org.genedb.db.taxon.TaxonNode[])
      */
-    public void setTaxons(TaxonNode[] taxons) {
+    public void setTaxons(TaxonNodeList taxons) {
+        System.err.println("The taxons in setTaxons is '"+taxons.getNodes().get(0)+"'");
         this.taxons = taxons;
     }
 
@@ -78,6 +80,9 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     @Override
     protected void getQueryTerms(List<Query> queries) {
         getQueryTermsWithoutOrganisms(queries);
+        if (taxons==null) {
+            throw new NullPointerException();
+        }
         makeQueryForOrganisms(taxons, queries);
     }
 
@@ -85,8 +90,8 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     abstract protected void getQueryTermsWithoutOrganisms(List<Query> queries);
 
 
-    private void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
-
+    private void makeQueryForOrganisms(TaxonNodeList taxons, List<org.apache.lucene.search.Query> queries) {
+        System.err.println("The taxons in makeQueryFO is '"+taxons.getNodes().get(0)+"'");
         List<String> taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
         if (taxonNames.size() == 0) {
             return;

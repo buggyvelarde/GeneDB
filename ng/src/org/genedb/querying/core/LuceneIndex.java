@@ -75,20 +75,30 @@ public class LuceneIndex {
         String indexFilename = indexDirectoryName + File.separatorChar + indexName;
         logger.info(String.format("Opening Lucene index at '%s'", indexFilename));
         try {
-        	
         	// gv1 - made the reader read-only - this prevents a long (45 minute) dictionary 
         	// creation step to occur at the start of Tomcat deployment if one hasn't been created
         	// is there a reason NOT to make it read-only?
-        	
         	directory = FSDirectory.getDirectory(new File(indexFilename));
             indexReader = IndexReader.open(directory, true);
-            
+
         } catch (IOException exp) {
             exp.printStackTrace(System.err);
             throw new RuntimeException(String.format("Failed to open lucene index '%s'", indexFilename), exp);
         }
-        
     }
+
+//    public void close() {
+//        if (indexReader != null) {
+//            try {
+//                indexReader.flush();
+//                indexReader.close();
+//                indexReader = null;
+//            }
+//            catch (IOException exp) {
+//                throw new RuntimeException(String.format("Failed to close lucene index '%s'", exp.getMessage()));
+//            }
+//        }
+//    }
 
     /**
      * Perform a Lucene search
@@ -155,14 +165,13 @@ public class LuceneIndex {
         this.indexDirectoryName = indexDirectoryName;
         openIndex();
     }
-    
+
     public String getIndexDirectoryName() {
         return indexDirectoryName;
     }
-    
+
     /**
-     * Used by SuggestQuery.
-     * @return
+     *  Used by SuggestQuery.
      */
     public Directory getDirectory() {
     	return directory;

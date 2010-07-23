@@ -1,6 +1,7 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
@@ -22,23 +23,23 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
             order=1,
             title="Organism(s) to search"
     )
-    protected TaxonNode[] taxons;
+    protected TaxonNodeList taxons;
 
 
     @Override
     protected String getOrganismHql() {
-        if (taxons==null || taxons.length==0) {
+        if (taxons==null || taxons.getNodeCount()==0) {
             return null;
         }
         return "and f.organism.abbreviation in (:organismList)";
     }
 
 
-    public void setTaxons(TaxonNode[] taxons) {
+    public void setTaxons(TaxonNodeList taxons) {
         this.taxons = taxons;
     }
 
-    public TaxonNode[] getTaxons() {
+    public TaxonNodeList getTaxons() {
         return taxons;
     }
 
@@ -49,9 +50,9 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
-        if (taxons != null && taxons.length > 0) {
+        if (taxons != null && taxons.getNodeCount() > 0) {
             Set<String> names = new HashSet<String>();
-            for (TaxonNode node : taxons) {
+            for (TaxonNode node : taxons.getNodes()) {
                 names.addAll(node.getAllChildrenNames());
             }
             query.setParameterList("organismList", names);

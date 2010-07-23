@@ -13,7 +13,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
-	
+
 	private static final Logger logger = Logger.getLogger(SimpleSelectTag.class);
 	private String selection;
 
@@ -26,29 +26,6 @@ public class SimpleSelectTag extends AbstractHomepageTag {
     protected void display(TaxonNode root, JspWriter out) throws IOException {
 
         out.write("\n<select name=\"taxons\">");
-
-        //Find the previously selected taxons if any in Request
-        PageContext pageContext = (PageContext) getJspContext();
-        String previouslySelectedTaxonsA = pageContext.getRequest().getParameter("taxons");
-        String previouslySelectedTaxonsB = pageContext.getRequest().getParameter("taxonNodeName");
-        
-        logger.debug("taxons: " + previouslySelectedTaxonsA);
-        logger.debug("taxonNodeName: " + previouslySelectedTaxonsB);
-        
-        String previouslySelectedTaxons = previouslySelectedTaxonsA;
-        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
-            previouslySelectedTaxons = previouslySelectedTaxonsB;
-        }
-
-        // Pre-launch hack
-        String context = (String) pageContext.getAttribute("organismContext");
-        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
-            previouslySelectedTaxons = context;
-        }
-        context = (String) pageContext.getAttribute("taxonNodeName");
-        if ( !org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
-            previouslySelectedTaxons = context;
-        }
 
         String indentSpaces = "&nbsp;&nbsp;";
         displayImmediateChildren(root, out, 0, indentSpaces, selection);
@@ -67,6 +44,8 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      */
     private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String indentSpaces, String previouslySelectedTaxons) throws IOException {
 
+        System.err.println("The selection is '"+previouslySelectedTaxons+"'");
+
         out.write("\n<option ");
         out.write(" class=\"");
         out.write("Level");
@@ -77,7 +56,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         out.write(node.getLabel());
         out.write("\"");
 
-        if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())){
+        if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())) {
             out.write(" selected ");
         }
         out.write(">");

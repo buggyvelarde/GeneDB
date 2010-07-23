@@ -34,6 +34,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
     	System.err.println("The input text is '"+text+"'");
     	logger.error("The input text is '"+text+"'");
         if (! StringUtils.hasText(text)) {
+            logger.error("Returning root");
             return new TaxonNodeList(taxonNodeManager.getTaxonNodeByString("Root", false));
         }
         logger.debug("Getting the taxonNodeList");
@@ -44,6 +45,7 @@ public class TaxonNodeListFormatter implements Formatter<TaxonNodeList> {
             if (node == null) {
                 throw new IllegalArgumentException("Can't parse '"+part+"' as a organism identifier");
             }
+            logger.error("Adding node of '"+node+"'");
             nodeList.add(node);
             logger.debug(node);
         }
