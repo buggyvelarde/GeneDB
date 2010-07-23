@@ -167,17 +167,6 @@
     <property name="dataFetcher" ref="dtoDataFetcher" />
   </bean>
 
-<!--
-  <bean id="luceneDataFetcher" class="org.genedb.web.mvc.controller.download.LuceneDataFetcher">
-    <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-  </bean>
-<<<<<<< .working
--->
-=======
-  -->
-
->>>>>>> .merge-right.r14293
-
   <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
     <!--
