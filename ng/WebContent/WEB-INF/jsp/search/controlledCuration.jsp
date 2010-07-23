@@ -14,5 +14,4 @@
 
 <format:test-for-no-results />
 
-<format:footer />
 </format:page>
