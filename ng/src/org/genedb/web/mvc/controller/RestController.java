@@ -391,18 +391,24 @@ public class RestController {
 	    		qsr.addSuggestion(s);
 	
 	    	}
-	
-	        
+	    	
 	        mav.addObject("model", qsr);
-	        
 	        
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			
-			mav = new ErrorReport("Woops", ErrorType.QUERY_FAILURE , new String[] {e.getMessage()});
+			ErrorModel emo = new ErrorModel();
+			emo.addMessage(e.getMessage());
+			emo.code = ErrorType.QUERY_FAILURE.ordinal();
+			emo.type = ErrorType.QUERY_FAILURE.toString();
+			
+			mav.addObject("model", emo);
 			
 		}
+		
+		logger.info("returning " + mav);
+		
 		return mav;
     }
 
