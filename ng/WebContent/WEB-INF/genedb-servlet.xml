@@ -145,7 +145,6 @@
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <!--<property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />-->
     <property name="hmFactory" ref="historyManagerFactory" />
     <property name="conversionService" ref="conversionService" />
   </bean>
@@ -351,7 +350,9 @@
     <!-- <property name="webBindingInitializer" ref="genedbWebBindingInitializer" /> -->
   </bean>
 
-
+    <bean id="baseController" abstract="true">
+        <property name="conversionService" ref="conversionService" />
+    </bean>
 
 
   <!--
@@ -363,6 +364,7 @@
     <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" /> -->
     <property name="cvDao" ref="cvDao" />
     <property name="taxonNodeManager" ref="taxonNodeManager" />
+    <property name="conversionService" ref="conversionService" />
   </bean>
 
   <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
