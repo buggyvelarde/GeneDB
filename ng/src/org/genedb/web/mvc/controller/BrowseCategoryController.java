@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2007 Genome Research Limited.
+ * Copyright (c) 2006-2010 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -19,36 +19,26 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeList;
-import org.genedb.db.taxon.TaxonNodeListFormatter;
-import org.genedb.querying.tmpquery.BrowseCategory;
+import java.util.List;
 
-import org.gmod.schema.utils.CountedName;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.taxon.TaxonNodeList;
+import org.genedb.db.taxon.TaxonNodeManager;
+import org.genedb.querying.tmpquery.BrowseCategory;
+import org.gmod.schema.utils.CountedName;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.xml.MarshallingView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import com.google.common.collect.Lists;
 
 /**
  * Returns cvterms based on a particular cv
@@ -60,114 +50,131 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/category")
 public class BrowseCategoryController extends BaseController {
 
-    private String formView;
-    private String successView;
-
     private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
-    private static final String RESULTS_ATTR = "results";
 
+    private String formView = "jsp:search/browseCategory";
+    private String successView = "jsp:list/categories";
+
+    private TaxonNodeManager taxonNodeManager;
     private CvDao cvDao;
 
-
-
-
-
     @RequestMapping(method = RequestMethod.GET)
-    public String setUpForm(Model model) {
-        logger.warn("called method 1");
-        model.addAttribute("categories", BrowseCategory.values());
-        BrowseCategoryBean bc = new BrowseCategoryController.BrowseCategoryBean();
-        model.addAttribute("browseCategory", bc);
-        return formView;
+    public ModelAndView setUpForm() {
+    	ModelAndView mav = new ModelAndView(formView);
+    	populateMav(mav);
+        return mav;
     }
+
 
     @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
     public ModelAndView listCategory(HttpSession session,
-            @PathVariable BrowseCategory category,
-            @RequestParam("taxons") TaxonNodeList taxons,
-            Model model) {
-        BrowseCategoryController.BrowseCategoryBean bean = new BrowseCategoryBean();
-        bean.setCategory(category);
-        bean.setTaxons(taxons);
+        @PathVariable BrowseCategory category,
+        @RequestParam("taxons") TaxonNodeList taxons,
+        String format) {
 
-        return setUpForm(bean, session, model);
-    }
+        List<String> orgNames = taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
+        String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
 
-
-    @RequestMapping(method = RequestMethod.GET, params = {"category","taxons"})
-    public ModelAndView setUpForm(
-            BrowseCategoryController.BrowseCategoryBean bean,
-            HttpSession session,
-            Model model) {
-        logger.warn("Called method 2");
-
-        model.addAttribute("categories", BrowseCategory.values());
-        model.addAttribute("browseCategory", bean);
-
-        //Clear session of any search result
-        session.removeAttribute(RESULTS_ATTR);
-
-        //-------------------------------------------------------------------------------
-        //Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());
-        //Collection<String> orgNames = Arrays.asList(new String[] {"Pfalciparum"});
-        /* This is to include all the cvs starting with CC. In future when the other cvs have more terms in,
-         * this can be removed and the other cvs starting with CC can be added to BrowseCategory
-         */
-        TaxonNodeList taxons = bean.getTaxons();
-        String orgName = "Root";
-        List<String> orgNames = new ArrayList<String>();
-        if (taxons.getNodes().size() > 0) {
-            orgName = taxons.getNodes().get(0).getLabel();
-            for (TaxonNode tn : taxons.getNodes()) {
-                orgNames.addAll(tn.getAllChildrenNames());
-            }
-        }
-        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames, true);
+        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames, true);
 
         if (results.isEmpty()) {
             logger.info("result is null");
-            model.addAttribute("noResultFound", true);
 
-            return new ModelAndView("jsp:search/browseCategory", "browseCategory", bean);
+            ModelAndView mav = new ModelAndView(formView);
+            populateMav(mav);
+            mav.addObject("noResultFound", true);
+            mav.addObject("category", category.name());
+            mav.addObject("taxons", displayName);
+            return mav;
         }
-        logger.debug(results.get(0));
 
         // Go to list results page
-        ModelAndView mav = new ModelAndView("jsp:list/categories");
+        ModelAndView mav = new ModelAndView(successView);
+        populateMav(mav);
+        //mav.addObject("categories", BrowseCategory.values());
         mav.addObject("results", results);
-        mav.addObject("category", bean.getCategory());
-        mav.addObject("taxons", orgName);
+        mav.addObject("category", category.name());
+        mav.addObject("taxons", displayName);
+        mav.addObject("orgNames", orgNames);
         return mav;
-        //-------------------------------------------------------------------------------
     }
 
-    protected Map<String,BrowseCategory[]> referenceData(HttpServletRequest request) throws Exception {
-        Map<String,BrowseCategory[]> reference = new HashMap<String,BrowseCategory[]>();
-        reference.put("categories", BrowseCategory.values());
-        return reference;
+
+    @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
+    public ModelAndView listCategoryAsHtml(HttpSession session,
+        @PathVariable BrowseCategory category,
+        @RequestParam("taxons") TaxonNodeList taxons) {
+
+    	return listCategory(session, category, taxons, "jsp");
     }
 
-    public void setCvDao(CvDao cvDao) {
+
+    @RequestMapping(method= RequestMethod.GET, value="/{category}.json", params="taxons")
+    public ModelAndView listCategoryAsJson(HttpSession session,
+        @PathVariable BrowseCategory category,
+        @RequestParam("taxons") TaxonNodeList taxons) {
+
+    	return listCategory(session, category, taxons, "json");
+    }
+
+
+    @RequestMapping(method= RequestMethod.GET, value="/{category}.xml", params="taxons")
+    public ModelAndView listCategoryAsXml(HttpSession session,
+        @PathVariable BrowseCategory category,
+        @RequestParam("taxons") TaxonNodeList taxons) {
+
+    	return listCategory(session, category, taxons, "xml");
+    }
+
+
+//    @RequestMapping(method= RequestMethod.GET, value="/{category}/{cvterm}", params="taxons")
+//    public ModelAndView listGenesForCvTerm(HttpSession session,
+//        @PathVariable BrowseCategory category,
+//        @PathVariable String cvTerm,
+//        @RequestParam("taxons") TaxonNodeList taxons) {
+//
+//        List<String> orgNames = taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
+//        String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
+//
+//        SequenceDao sequenceDao;
+//        sequenceDao.getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(cvNamePattern, cvTermName, orgs);
+//
+//        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames, true);
+//
+//        if (results.isEmpty()) {
+//            logger.info("result is null");
+//
+//            ModelAndView mav = new ModelAndView(formView);
+//            populateMav(mav);
+//            mav.addObject("noResultFound", true);
+//            mav.addObject("category", category.name());
+//            mav.addObject("taxons", displayName);
+//            return mav;
+//        }
+//
+//        // Go to list results page
+//        ModelAndView mav = new ModelAndView(successView);
+//        populateMav(mav);
+//        //mav.addObject("categories", BrowseCategory.values());
+//        mav.addObject("results", results);
+//        mav.addObject("category", category.name());
+//        mav.addObject("taxons", displayName);
+//        mav.addObject("orgNames", orgNames);
+//        return mav;
+//        //-------------------------------------------------------------------------------
+//    }
+
+    private void populateMav(ModelAndView mav) {
+    	List<String> names = Lists.newArrayList();
+		for (BrowseCategory bc : BrowseCategory.values()) {
+			names.add(bc.name());
+		}
+        mav.addObject("categories", names);
+	}
+
+
+	public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
-    }
-
-    public static class BrowseCategoryBean {
-
-        private BrowseCategory category;
-        private TaxonNodeList taxons;
-
-        public TaxonNodeList getTaxons() {
-            return taxons;
-        }
-        public void setTaxons(TaxonNodeList taxons) {
-            this.taxons = taxons;
-        }
-        public BrowseCategory getCategory() {
-            return this.category;
-        }
-        public void setCategory(BrowseCategory category) {
-            this.category = category;
-        }
     }
 
     public void setFormView(String formView) {
@@ -177,5 +184,10 @@ public class BrowseCategoryController extends BaseController {
     public void setSuccessView(String successView) {
         this.successView = successView;
     }
+
+
+	public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
+		this.taxonNodeManager = taxonNodeManager;
+	}
 
 }
