@@ -1,1 +1,0 @@
-This directory contains cleanup scripts that are no longer needed, because the relevant changes were made at source and Artemis no longer (or never did) allows users to create the "unclean" version.

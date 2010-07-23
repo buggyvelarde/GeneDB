@@ -1,3 +1,0 @@
-# dbhost, dbport, dbname, dbuser and dbpassword are intentionally not specified here
-installDir=/software/pathogen/projects/genedb
-indexDir=/tmp
