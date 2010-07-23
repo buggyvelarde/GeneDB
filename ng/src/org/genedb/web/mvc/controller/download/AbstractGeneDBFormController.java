@@ -8,8 +8,10 @@ import java.util.TreeMap;
 import javax.servlet.ServletRequest;
 
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
+import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
@@ -19,37 +21,44 @@ import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.collect.Lists;
 import com.sleepycat.collections.StoredMap;
 
 public class AbstractGeneDBFormController {
 
+    private Logger logger = Logger.getLogger(AbstractGeneDBFormController.class);
+
     //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
-    
-    private static final Logger logger = Logger.getLogger(AbstractGeneDBFormController.class);
+
+    private ConversionService conversionService;
+
+    //private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
     public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
         this.resultsCacheFactory = resultsCacheFactory;
     }
-    
-//    private ConversionService conversionService;
-//    
-//    public void setConversionService(ConversionService conversionService) {
-//    	this.conversionService = conversionService;
-//    }
-    
 
-    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
-        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setConversionService(conversionService);
+        //binder.setValidator(new FooValidator());
     }
-    
+
+
+
+//    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+//        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+//    }
 //
 //    //@Autowired
-    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
+//    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
     protected List<GeneSummary> possiblyConvertList(List results) {
         List<GeneSummary> gs;
@@ -99,27 +108,39 @@ public class AbstractGeneDBFormController {
         return key;
     }
 
-    protected String findTaxonName(Query query){
+    protected String findTaxonName(Query query) {
         String taxonName = null;
         if (query instanceof TaxonQuery) {
-            TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
-            if (nodes != null && nodes.length > 0) {
-                taxonName = nodes[0].getLabel();
+            System.err.println("query is a TaxonQuery");
+            TaxonNodeList nodes = ((TaxonQuery) query).getTaxons();
+            if (nodes != null && nodes.getNodeCount() > 0) {
+                TaxonNode tn = nodes.getNodes().get(0);
+                System.err.println("Got a TaxonNodeList out tn="+tn);
+                taxonName = tn.getLabel();
             } // FIXME
         }
+        System.err.println("Returning a name of '"+taxonName+"'");
         return taxonName;
     }
 
     protected Errors initialiseQueryForm(Query query, ServletRequest request){
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
-        
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-
+        //binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
+        //binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+        //ConversionService conversionService;
+        binder.setConversionService(conversionService);
+        //logger.error("About to start binder");
         binder.bind(request);
+        //logger.error("Should have finished binder");
 
-        return binder.getBindingResult();
+        BindingResult br = binder.getBindingResult();
+
+        return br;
+    }
+
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
     }
 
 }

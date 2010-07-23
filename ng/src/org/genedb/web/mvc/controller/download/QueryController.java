@@ -4,9 +4,12 @@ import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.core.NumericQueryVisibility;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.util.MutableInteger;
-import org.genedb.web.mvc.controller.WebConstants;
+import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -23,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 
@@ -39,6 +42,14 @@ public class QueryController extends AbstractGeneDBFormController{
 
     //@Autowired
     private QueryFactory queryFactory;
+
+    private HistoryManagerFactory hmFactory;
+
+
+
+    public void setHmFactory(HistoryManagerFactory hmFactory) {
+        this.hmFactory = hmFactory;
+    }
 
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -59,9 +70,7 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-    	
-    	logger.info("Querying: " + queryName);
-    	
+
         if (request.getParameterMap().size() > 1) {
             return processForm(queryName, suppress, request, session, model);
         } else {
@@ -75,12 +84,10 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-    	
-    	
-    	
-    	
+
         Query query = findQueryType(queryName, session);
         if (query==null){
+        	//return "jsp:debug/debug";
             return "redirect:/QueryList";
         }
 
@@ -99,6 +106,8 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
+
+        System.err.println("Entering processForm");
 
         //Find query for request
         Query query = findQueryType(queryName, session);
@@ -163,10 +172,14 @@ public class QueryController extends AbstractGeneDBFormController{
     private String findDestinationView(
             String queryName, Query query, Model model, List<Object> results, HttpSession session){
 
+        System.err.println("Got into findDestinationView");
+        logger.error("Got into findDestinationView");
+
         //Get the current taxon name
         String taxonName = findTaxonName(query);
         String resultsKey = null;
 
+        logger.error("TaxonNodeName is '"+taxonName+"'");
         switch (results.size()) {
         case 0:
             logger.debug("No results found for query");
@@ -177,11 +190,23 @@ public class QueryController extends AbstractGeneDBFormController{
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
             resultsKey = cacheResults(gs, query, queryName, session.getId());
+            HistoryManager hm = hmFactory.getHistoryManager(session);
+            logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
+            System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
+            hm.addHistoryItem("query"+resultsKey, HistoryType.QUERY, gs.get(0).getSystematicId());
             return "redirect:/gene/" + gs.get(0).getSystematicId();
 
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
             resultsKey = cacheResults(gs2, query, queryName, session.getId());
+            HistoryManager hm2 = hmFactory.getHistoryManager(session);
+            List<String> ids = Lists.newArrayList();
+            for (GeneSummary geneSummary : gs2) {
+                ids.add(geneSummary.getSystematicId());
+            }
+            logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
+            System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
+            hm2.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids);
             //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '"+gs2.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
@@ -193,18 +218,20 @@ public class QueryController extends AbstractGeneDBFormController{
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
-        	logger.debug(entry.getKey() + " / " + entry.getValue());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }
 
     protected Query findQueryType(String queryName, HttpSession session){
         if (!StringUtils.hasText(queryName)) {
-               session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+        	WebUtils.setFlashMessage("Unable to identify which query to use", session);
+        	logger.error("Unable to identify which query to use");
+        	return null;
         }
         Query query = queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC);
         if (query == null) {
-            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
+        	WebUtils.setFlashMessage("Unable to find query called '" + queryName + "'", session);
+        	logger.error("Unable to find query called '" + queryName + "'");
         }
         return query;
     }
