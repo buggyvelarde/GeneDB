@@ -27,11 +27,14 @@ import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.tmpquery.BrowseCategory;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,6 +61,11 @@ public class BrowseCategoryController extends BaseController {
     private TaxonNodeManager taxonNodeManager;
     private CvDao cvDao;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setConversionService(conversionService);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView setUpForm() {
     	ModelAndView mav = new ModelAndView(formView);
@@ -66,12 +74,15 @@ public class BrowseCategoryController extends BaseController {
     }
 
 
-    @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
     public ModelAndView listCategory(HttpSession session,
         @PathVariable BrowseCategory category,
         @RequestParam("taxons") TaxonNodeList taxons,
         String format) {
 
+        if (taxons==null) {
+            TaxonNode root = taxonNodeManager.getTaxonNodeForLabel("Root");
+            taxons = new TaxonNodeList(root);
+        }
         List<String> orgNames = taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
         String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
 
@@ -129,15 +140,15 @@ public class BrowseCategoryController extends BaseController {
 
 //    @RequestMapping(method= RequestMethod.GET, value="/{category}/{cvterm}", params="taxons")
 //    public ModelAndView listGenesForCvTerm(HttpSession session,
-//        @PathVariable BrowseCategory category,
-//        @PathVariable String cvTerm,
+//        @PathVariable(value="category") BrowseCategory category,
+//        @PathVariable(value="cvterm") String cvTerm,
 //        @RequestParam("taxons") TaxonNodeList taxons) {
 //
 //        List<String> orgNames = taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
 //        String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
 //
 //        SequenceDao sequenceDao;
-//        sequenceDao.getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(cvNamePattern, cvTermName, orgs);
+//        sequenceDao.getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(cvNamePattern, cvTerm, orgs);
 //
 //        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames, true);
 //
