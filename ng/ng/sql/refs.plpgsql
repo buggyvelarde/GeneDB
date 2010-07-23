@@ -1,0 +1,34 @@
+create or replace function refs(
+    IN "tnam" varchar, IN "idval" integer
+) returns integer as $$
+    declare
+        c integer;
+        t integer := 0;
+        r record;
+        plural_s varchar(1) := '';
+    begin
+        for r in (
+            select source.table_name, source.column_name, source.constraint_name
+            from information_schema.referential_constraints
+            join information_schema.key_column_usage source
+                using (constraint_catalog, constraint_schema, constraint_name)
+            join information_schema.constraint_column_usage target
+                on (
+                    referential_constraints.unique_constraint_catalog = target.constraint_catalog
+                and referential_constraints.unique_constraint_schema  = target.constraint_schema
+                and referential_constraints.unique_constraint_name    = target.constraint_name
+                )
+            where target.table_name = $1 and target.column_name = $1 || '_id'
+        ) loop
+            execute 'select * from ' || quote_ident(r.table_name)
+                 || ' where ' || quote_ident(r.column_name) || ' = ' || quote_literal($2);
+            get diagnostics c = ROW_COUNT;
+            if c > 0 then
+                if c > 1 then plural_s := 's'; else plural_s := ''; end if;
+                raise info 'Table % contains % row% with % = %', r.table_name, c, plural_s, r.column_name, $2;
+            end if;
+            t := t + c;
+        end loop;
+        return t;
+    end;
+$$ language 'plpgsql';

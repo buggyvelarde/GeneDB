@@ -1,0 +1,805 @@
+<?xml version="1.0"?>
+
+<project name="build-apps" basedir=".">
+
+    <!-- This build file contains the targets for loading, re-loading and deleting data contained in various file formats -->
+
+    <import file="build.xml"/>
+
+    <!-- GENERAL HOUSEKEEPING: Set properties and make sure they are where they ought to be -->
+
+    <property file="property-file.${config}" />
+    <property name="userMsg" value=" : the connection property is not set. Usually you should set the property 'config'
+	                                   to refer to a property file property-file.${config}" />
+
+    <target name="replace">
+      <fail message="The 'config' property must be set" unless="config"/>
+      <fail message="The file property-file.${config} does not exist">
+          <condition>
+              <not>
+                  <available file="${ng.directory}/property-file.${config}"/>
+              </not>
+          </condition>
+      </fail>
+        <!-- Copy property-file.${config} to resources/project.properties, if and only if they're different.
+             The reason we don't want to copy the file needlessly is that it would force a recompile,
+             because the copy would be newer than the timestamp.
+          -->
+      <copy overwrite="true" todir="${ng.directory}/resources/classpath">
+          <fileset dir="${ng.directory}">
+              <different targetdir="${ng.directory}/resources/classpath" ignoreFileTimes="true">
+                  <mapper type="glob" from="property-file.${config}" to="project.properties"/>
+              </different>
+          </fileset>
+          <mapper type="glob" from="property-file.${config}" to="project.properties"/>
+      </copy>
+    </target>
+
+    <target name="check-properties">
+        <fail message="'dbhost' ${userMsg}" unless="dbhost"/>
+        <fail message="'dbport' ${userMsg}" unless="dbport"/>
+        <fail message="'dbname' ${userMsg}" unless="dbname"/>
+        <fail message="'dbuser' ${userMsg}" unless="dbuser"/>
+    </target>
+
+
+	<!-- LOADERS -->
+
+	<!-- embl -->
+    <target name="load-embl" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadEmbl">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx1G"/>
+        </java>
+        <antcall target="fix-residues-on-load">
+            <param name="organism" value="${organism}"/>
+        </antcall>
+    </target>
+
+
+    <target name="delete-organism" depends="fulljar, replace">
+
+        <fail message="Can't delete organism with overwriteExisting set to MERGE">
+           <condition>
+               <equals arg1="${load.overwriteExisting}" arg2="MERGE" casesensitive="false"/>
+           </condition>
+       </fail>
+
+       <sql driver="org.postgresql.Driver"
+           url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
+           userid="${dbuser}" password="${dbpassword}">
+
+           <classpath>
+              <pathelement location="${imported.basedir.access}/lib/postgresql-8.3-603.jdbc4.jar"/>
+           </classpath>
+
+           delete from feature where organism_id in (
+               select organism_id from organism where common_name = '${organism}'
+           );
+
+           delete from synonym where synonym_id in (
+             select synonym_id from synonym
+             except (
+                 select synonym_id from feature_synonym
+                 union
+                 select synonym_id from library_synonym
+             )
+           );
+        </sql>
+    </target>
+
+    <target name="reload-embl" depends="delete-organism,load-embl"/>
+
+
+
+	<!-- fasta -->
+    <target name="load-fasta" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadFasta">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx350M"/>
+        </java>
+    </target>
+
+
+
+	<!-- agp -->
+    <target name="load-agp" depends="fulljar, replace">
+         <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadAGP">
+             <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.AGPFile" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+             </syspropertyset>
+             <jvmarg line="-Xmx1G"/>
+         </java>
+    </target>
+
+
+
+    <!-- orthologues -->
+    <target name="load-orthologues" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadOrthologues">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+
+    <target name="delete-orthologues" depends="fulljar, replace">
+
+        <fail message="Manual orthologue predictions can't be deleted. (Are you using reload-orthologues not load-orthologues?)">
+         <condition>
+             <and>
+                 <isset property="load.orthologues.manual"/>
+             </and>
+         </condition>
+        </fail>
+
+       <fail message="The properties load.dataset and load.analysis.algorithm must be specified">
+        <condition>
+          <not>
+            <and>
+                <isset property="load.dataset"/>
+                <isset property="load.analysis.algorithm"/>
+            </and>
+          </not>
+        </condition>
+       </fail>
+
+       <sql driver="org.postgresql.Driver"
+           url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
+           userid="${dbuser}" password="${dbpassword}">
+
+           <classpath>
+              <pathelement location="${imported.basedir.access}/lib/postgresql-8.3-603.jdbc4.jar"/>
+           </classpath>
+
+            delete
+            from feature
+            using analysisfeature join analysis using (analysis_id)
+            , organism
+            where analysisfeature.feature_id = feature.feature_id
+            and feature.organism_id = organism.organism_id
+            and organism.common_name = 'dummy'
+            and feature.type_id = (
+              select cvterm_id
+              from cvterm join cv using (cv_id)
+              where cv.name = 'sequence' and cvterm.name = 'protein_match'
+            )
+            and feature.uniquename like '${load.dataset}:%'
+            and analysis.algorithm = '${load.analysis.algorithm}'
+            ;
+        </sql>
+    </target>
+
+    <target name="reload-orthologues" depends="delete-orthologues,load-orthologues"/>
+
+
+	<!-- SNPs -->
+	<target name="load-SNPs" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadSNPs">
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <sysproperty key="load.fileNamePattern" value="${filepattern}"/>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+
+
+	<!-- pileups -->
+    <target name="load-Pileups" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadPileups">
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <sysproperty key="load.fileNamePattern" value="${filepattern}"/>
+            <jvmarg line="-Xmx512M"/>
+        </java>
+    </target>
+
+
+    <!-- vulgar -->
+    <target name="load-vulgar" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.LoadVulgar">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx768M"/>
+        </java>
+    </target>
+
+
+    <!-- pfam -->
+    <target name="load-pfam" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="pfam_scan"/>
+		</antcall>
+
+	  	<antcall target="load-domain-polypeptide-ids">
+	    	<param name="program" value="pfam_scan"/>
+	 	</antcall>
+	</target>
+
+    <target name="clear-pfam">
+        <antcall target="clear-domains">
+            <param name="program" value="pfam_scan"/>
+        </antcall>
+    </target>
+
+	<target name="reload-pfam" depends="clear-pfam, load-pfam"/>
+
+
+    <!-- prosite -->
+	<target name="load-prosite" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="prosite"/>
+		</antcall>
+		<antcall target="load-domain-polypeptide-ids">
+			<param name="program" value="prosite"/>
+		</antcall>
+	</target>
+
+	<target name="clear-prosite">
+	        <antcall target="clear-domains">
+	            <param name="program" value="prosite"/>
+	        </antcall>
+	</target>
+
+	<target name="reload-prosite" depends="clear-prosite, load-prosite"/>
+
+
+	<!-- interpro -->
+    <target name="load-interpro" depends="check-domain-properties">
+		<antcall target="load-domain-gene-ids">
+			<param name="program" value="iprscan"/>
+		</antcall>
+		<antcall target="load-domain-polypeptide-ids">
+			<param name="program" value="iprscan"/>
+		</antcall>
+	</target>
+
+    <target name="clear-interpro">
+    	<antcall target="clear-domains">
+    		<param name="program" value="iprscan"/>
+    	</antcall>
+    </target>
+
+	<target name="reload-interpro" depends="clear-interpro, load-interpro"/>
+
+
+	<!-- domainloader -->
+    <target name="check-domain-properties">
+        <fail unless="load.analysis.programVersion" message="The property load.analysis.programVersion must be specified"/>
+    </target>
+
+    <target name="load-domain-polypeptide-ids" depends="fulljar" unless="load.domain.gene-ids">
+        <condition property="notFoundNotFatal" else="false">
+              <isset property="notFoundNotFatal"/>
+        </condition>
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="domainloader --key-type=polypeptide --program=${program} --program-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
+           <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="load-domain-gene-ids" depends="fulljar" if="load.domain.gene-ids">
+        <condition property="notFoundNotFatal" else="false">
+       		<isset property="notFoundNotFatal"/>
+    	</condition>
+
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <arg line="domainloader --key-type=gene --program=${program} --program-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
+           <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-domains" depends="fulljar">
+        <fail unless="program" message="The property --program must be specified"/>
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearDomains">
+            <arg line="${organism} ${program}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+
+    <!-- tmhmm -->
+    <target name="load-tmhmm" depends="fulljar, replace">
+        <condition property="notFoundNotFatal" else="false">
+            <isset property="notFoundNotFatal"/>
+        </condition>
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="tmhmmloader --tmhmm-version=${load.analysis.programVersion} --not-found-not-fatal=${notFoundNotFatal} ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-tmhmm" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearTMHMM">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
+
+
+    <!-- dgpi -->
+    <target name="load-dgpi" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="dgpiloader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+    <target name="clear-dgpi" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearDGPI">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+    <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
+
+
+    <!-- rfam -->
+    <target name="load-rfam" depends="fulljar, replace">
+         <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+              <arg line="rfamloader --rfam-version=${load.analysis.programVersion} ${organism} ${file}" />
+             <jvmarg line="-server -Xmx256m"/>
+         </java>
+    </target>
+
+    <target name="clear-rfam" depends="fulljar, replace">
+          <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearRfam">
+             <arg line="${organism}"/>
+             <jvmarg line="-server -Xmx256m"/>
+          </java>
+    </target>
+
+    <target name="reload-rfam" depends="clear-rfam,load-rfam"/>
+
+
+    <!-- helix turn helix features -->
+    <target name="load-hth" depends="fulljar, replace">
+         <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+             <arg line="hthloader ${file}" />
+             <jvmarg line="-server -Xmx256m"/>
+          </java>
+    </target>
+
+    <target name="clear-hth" depends="fulljar">
+          <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearHTH">
+             <arg line="${organism}"/>
+             <jvmarg line="-server -Xmx256m"/>
+          </java>
+    </target>
+
+    <target name="reload-hth" depends="clear-hth,load-hth"/>
+
+
+
+    <!-- signal p features -->
+    <target name="load-signalp" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="signalploader --signalp-version=${load.analysis.programVersion}  ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+     </target>
+
+    <target name="clear-signalp" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearSignalP">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
+
+
+    <!-- plasmoap -->
+    <target name="load-plasmoap" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="plasmoaploader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-plasmoap" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearPlasmoAP">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-plasmoap" depends="clear-plasmoap,load-plasmoap"/>
+
+
+    <!-- GOALoader -->
+    <target name="goaloader" depends="fulljar, replace">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+            <arg line="goaloader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+        <antcall target="delete-redundant-go"/>
+    </target>
+
+
+    <target name="delete-redundant-go" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
+    </target>
+
+    <target name="delete-duplicate-go" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.DeleteDuplicateGOTerms"/>
+    </target>
+
+	<!-- opi references -->
+	   <target name="load-opi-references" depends="fulljar, replace">
+	        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+	            <arg line="opi-referencesloader"/>
+	        </java>
+	    </target>
+
+	    <target name="clear-opi-references" depends="fulljar">
+	        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.ClearOPIReferences"/>
+	    </target>
+
+	    <target name="reload-opi-references" depends="clear-opi-references,load-opi-references"/>
+
+
+	<!-- add feature props -->
+    <target name="add-featprops" depends="fulljar, replace">
+        <fail unless="load.propType" message="The property load.propType must be specified. Eg private, curation"/>
+        <fail unless="load.propValue" message="The property load.propValue must be specified, enlcosed in quotes"/>
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.loading.auxiliary.Load">
+             <arg line="featproploader --featureType=${load.featureType} --propType=${load.propType} --errorsAreNotFatal=${load.errorsAreNotFatal}"/>
+             <arg value="--propValue=${load.propValue}"/>
+             <arg value="${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+       </java>
+    </target>
+
+
+	<!-- fix residues -->
+	<target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
+
+    <target name="fix-residues-verbose" depends="fulljar" if="verbose">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResidues">
+            <arg value="--verbose" />
+            <arg line="${organism}"/>
+        </java>
+    </target>
+    <target name="fix-residues-nonverbose" depends="fulljar" unless="verbose">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResidues">
+            <arg line="${organism}"/>
+        </java>
+    </target>
+
+    <target name="fix-residues-on-load" unless="load.noFixResidues">
+        <antcall target="fix-residues"/>
+    </target>
+
+	<target name="fix-residues-with-selenocysteine" depends="fix-residues-with-selenocysteine-verbose, fix-residues-with-selenocysteine-nonverbose" />
+    <target name="fix-residues-with-selenocysteine-verbose" depends="fulljar">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResiduesWithSelenocysteine">
+            <arg value="--verbose" />
+        </java>
+    </target>
+    <target name="fix-residues-with-selenocysteine-nonverbose" depends="fulljar" unless="verbose">
+        <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResiduesWithSelenocysteine" />
+    </target>
+
+
+    <!-- Note: does not force a recompile; use "ant access-fulljar adhoc-query" for that -->
+    <target name="adhoc-query" depends="adhoc-query-verbose, adhoc-query-nonverbose"/>
+
+    <target name="adhoc-query-verbose" if="verbose">
+        <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="run-classpathref">
+            <arg value="--verbose"/>
+        </java>
+    </target>
+
+    <target name="adhoc-query-nonverbose" unless="verbose">
+        <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="run-classpathref"/>
+    </target>
+
+
+	<!-- Old genedb-web targets -->
+
+  <target name="genedb-web-tests" depends="fulljar">
+    <tests-target project="web"/>
+  </target>
+
+  <target name="check-config">
+    <fail message="The 'config' property must be set" unless="config"/>
+    <available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
+    <fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
+    <copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+  </target>
+
+    <target name="synchronise-caches" depends="check-config, fulljar" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
+      <java fork="true" classname="org.genedb.web.mvc.model.CacheSynchroniser">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx1024m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+
+    <target name="populate-caches" depends="check-config, fulljar" description="Populate the Berkeley DB with TranscriptDTO and images">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
+        <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
+        <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
+        <arg line="-o Pfalciparum"/>
+        <!-- <arg line="-ncm" /> -->
+      </java>
+    </target>
+
+
+    <target name="_PopulateCaches">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="run-classpathref"/>
+          <pathelement location="${ng.directory}/WebContent/WEB-INF"/>
+          <pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="-o ${organism} --globalFileRoot ${dir}"/>
+      </java>
+    </target>
+
+    <target name="_LuceneIndex">
+        <fail message="The 'dir' property must be set" unless="dir"/> 
+        <fail message="The 'organism' property must be set" unless="organism"/> 
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+            <classpath>
+              <path refid="run-classpathref"/>
+              <pathelement path="${ng.directory}/WebContent/WEB-INF"/>
+              <pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-o ${organism} -i ${dir} ${dbname}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+    
+	<!-- gv1 - added this as a separate ant-task. This needs to be executed after the indices have all been generated. Takes about 45 minutes on my laptop. -->
+    <target name="_LuceneDictionary" >
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneDictionary">
+            <classpath>
+              <path refid="run-classpathref"/>
+              <pathelement path="${ng.directory}/WebContent/WEB-INF"/>
+              <pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="${dir}"/>
+            <jvmarg line="-server -Djava.awt.headless=true" />
+        </java>
+    </target>
+    
+    <target name="LuceneIndex" depends="check-config, fulljar, _LuceneIndex" />
+
+    <target name="PeriodicUpdater" depends="check-config, fulljar"
+        description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
+      <java fork="true" classname="org.genedb.web.mvc.model.PeriodicUpdater">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx1024m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+    <target name="test-periodic-updater" depends="check-config, fulljar" description="Run tests">
+       <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+              PeriodicUpdaterTest failed
+           </fail>
+       </target>
+
+    <target name="check-updater-db-exists">
+       <available property="periodic-updater-db-exists" file="${imported.basedir.web}/test/data/hsqldb/pfalciparum.data"/>
+    </target>
+
+    <!-- <target name="test-index-synchroniser" depends="init-periodic-updater-db, check-config, fulljar" description="Run tests" > -->
+    <target name="test-index-synchroniser" depends="check-config, fulljar" description="Run tests" >
+       <javac srcdir="${imported.basedir.web}/test" includes="**/IndexSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.IndexSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+           	IndexSynchroniserTest failed
+           </fail>
+       </target>
+
+    <target name="test-cache-synchroniser" depends="check-config, fulljar" description="Run tests" >
+       <javac srcdir="${imported.basedir.web}/test" includes="**/CacheSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.CacheSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+            CacheSynchroniserTest failed
+           </fail>
+       </target>
+
+
+
+    <target name="martinHack" depends="check-config, fulljar">
+      <java fork="true" classname="org.genedb.web.utils.MartinHack">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/nfs/team81/art/workspace/workspace-Jul9/genedb-web/martin/merops.file"/>
+      </java>
+    </target>
+
+
+    <target name="runTranscriptAnalyzer" depends="fulljar">
+      <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg value="/nfs/pathdb/genedb/${indexSet}/cache" />
+      </java>
+    </target>
+
+
+    <target name="runTranscriptAnalyzer2" depends="fulljar">
+      <java fork="true" classname="org.genedb.web.mvc.model.TranscriptDTOAnalyzer2">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/Users/art/Documents/more-workspaces/tomcat-workspace/cache Pchabaudi" />
+      </java>
+    </target>
+
+    <target name="runMergeIndices" depends="check-config, fulljar">
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
+        <classpath>
+          <path refid="run-classpathref"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx2048m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="-r /tmp/destination /nfs/pathdb/genedb/nightly/bulk/DTO/output"/>
+      </java>
+    </target>
+
+
+    <target name="runMergeLuceneIndices" depends="check-config, fulljar">
+      <deltree dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <mkdir dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
+        <classpath>
+          <path refid="run-classpathref"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination /nfs/pathdb/genedb/nightly/bulk/Lucene/output"/>
+      </java>
+    </target>
+
+
+    <target name="compare-lucene-indices" >
+        <compile-target project="web"/>
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.LuceneIndicesComparison">
+            <classpath refid="web-tests-classpath"/>
+            <arg value="/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/lucene"/>
+            <arg value="/Users/sangerinstitute/Downloads/lucene"/>
+        </java>
+    </target>
+
+
+    <target name="load-transcript-cache" depends="fulljar">
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.load.TranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="load-simple-transcript-cache" depends="fulljar">
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.simple.SimpleTranscriptLoader">
+            <classpath>
+                <path refid="web-tests-classpath"/>
+                <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+                <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>
+

@@ -1,0 +1,27 @@
+# robots.txt file to block indexing of some URLs
+
+User-agent: Teleport Pro/1.29
+Disallow: /
+
+User-agent: WebZIP/2.46 (http://www.spidersoft.com)
+Disallow: /
+
+User-agent: *
+
+# cgi applications
+Disallow: /jbrowse/
+Disallow: /amigo/
+Disallow: /gfx/
+Disallow: /cgi-bin/
+Disallow: /testservice/
+Disallow: /Ldonovani/
+Disallow: /LdonovaniChr/
+Disallow: /gusapp/
+
+# GeneDB webapp
+# Exclude all static images and stylesheets and scripts
+Disallow: /includes/
+# Dynamic images
+Disallow: /Image/
+# Disallow searches, but keep browseable lists
+Disallow: /Query/

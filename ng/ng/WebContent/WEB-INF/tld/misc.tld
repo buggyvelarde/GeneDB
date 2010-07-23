@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>misc</short-name>
+    <uri>misc</uri>
+
+    <tag>
+        <name>debug</name>
+        <tag-class>org.genedb.web.tags.misc.DebugTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+
+    <tag>
+        <name>history</name>
+        <tag-class>org.genedb.web.tags.misc.HistoryTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+
+    <tag>
+        <name>luceneFields</name>
+        <tag-class>org.genedb.web.tags.misc.LuceneFieldsTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+
+    <tag>
+        <name>format-sequence</name>
+        <tag-class>org.genedb.web.tags.misc.FormatSequenceTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>sequence</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>includeSpaces</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+    </tag>
+
+
+    <tag>
+        <name>formatSystematicName</name>
+        <tag-class>org.genedb.web.tags.misc.SystematicNameFormatTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+
+
+    <tag>
+        <name>displayDate</name>
+        <tag-class>org.genedb.web.tags.misc.DisplayDateTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>message</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>time</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+
+
+    <tag>
+        <name>listItems</name>
+        <tag-class>org.genedb.web.tags.misc.ListItemsTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>seperator</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>collection</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>URL tag based on the JSTL c:url tag.  This variant is fully
+        backwards compatible with the standard tag.  Enhancements include support
+        for URL template parameters.</description>
+        <name>url</name>
+        <tag-class>org.genedb.web.tags.misc.UrlTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <description>The URL to build.  This value can include template place holders
+            that are replaced with the URL encoded value of the named parameter.  Parameters
+            must be defined using the param tag inside the body of this tag.</description>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Specifies a remote application context.  The default is the
+            current application context.</description>
+            <name>context</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>The name of the variable to export the URL value to.</description>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            </attribute>
+        <attribute>
+            <description>The scope for the var.  'application', 'session', 'request' and
+            'page' scopes are supported.  Defaults to page scope.  This attribute has no
+            effect unless the var attribute is also defined.</description>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            </attribute>
+        <attribute>
+            <description>Set HTML escaping for this tag, as boolean value. Overrides the
+            default HTML escaping setting for the current page.</description>
+            <name>htmlEscape</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Set JavaScript escaping for this tag, as boolean value.
+            Default is false.</description>
+            <name>javaScriptEscape</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+	<tag>
+		<name>select</name>
+		<tag-class>org.genedb.web.tags.misc.SelectTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>items</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>true</required>
+    	</attribute>
+    	<attribute>
+			<name>selected</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>false</required>
+    	</attribute>
+    	<attribute>
+			<name>change</name>
+			<rtexprvalue>true</rtexprvalue>
+			<required>false</required>
+    	</attribute>
+	</tag>
+
+
+</taglib>
