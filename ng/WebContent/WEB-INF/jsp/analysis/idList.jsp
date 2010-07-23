@@ -11,15 +11,13 @@
 
 <sp:form action="IdList" method="post" enctype="multipart/form-data">
 
-<p>Please enter your ids either:
-<ul>
-<li>as database cross-references (eg in the form GeneDB_Spombe:SPAC1002.09c).</li>
-<li>or you can just use the <b>systematic IDs</b> eg (Tb927.1.710) <b>but</b> in this case you must also set the default organism.
-</ul>
+<br />
+<p>Please enter your transcript ids:<br>
 
-<textarea name="idList" rows="20" cols="70">
+<textarea name="idList" rows="20" cols="70">${idList}
 </textarea>
-</p>
+
+&nbsp;</p>&nbsp;</p>
 
 <p>Or upload a file</p>
 <input type="file" name="ids"/>

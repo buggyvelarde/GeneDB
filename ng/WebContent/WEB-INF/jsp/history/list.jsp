@@ -9,7 +9,7 @@
 
 <div id="col-2-1">
 
-    <display:table name="items" id="row" pagesize="30" requestURI="${base}/History/View" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
+    <display:table name="items" id="row" pagesize="30" requestURI="${baseUrl}/History/View" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
         <display:column title="No." style="width: 100px;">
             ${row_rowNum}
         </display:column>
@@ -23,13 +23,13 @@
             ${row.numberItems}
         </display:column>
         <display:column title="Download" style="width: 150px;">
-            <a href="${base}Download/${row_rowNum}">Download</a>
+            <a href="${baseUrl}Download/${row_rowNum}">Download</a>
         </display:column>
         <display:column title="View/Edit" style="width: 150px;">
-            <a href="${base}/History/${row_rowNum}">Edit</a>
+            <a href="${baseUrl}/History/${row_rowNum}">Edit</a>
         </display:column>
         <display:column title="Remove" style="width: 150px;">
-            <form:form method="DELETE" action="${base}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
+            <form:form method="DELETE" action="${baseUrl}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
         </display:column>
     </display:table>
 

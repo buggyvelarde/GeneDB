@@ -16,12 +16,12 @@
          </security>
          <resources>
            <j2se version="1.5+" initial-heap-size="32m" max-heap-size="512m"/>
-             <jar href="artemis.jar"/>
+             <jar href="sartemis.jar"/>
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis" />
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
            <property name="ibatis" value="" />
-           <property name="chado" value="pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro" />
+           <property name="chado" value="genedb-db.sanger.ac.uk:5432/snapshot?genedb_ro" />
            <property name="jdbc.drivers" value="org.postgresql.Driver" />
            <property name="apple.laf.useScreenMenuBar" value="true" />
            <property name="offset" value="${start}" />
