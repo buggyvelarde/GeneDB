@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
@@ -218,9 +219,9 @@ public class WsQueryController implements ApplicationContextAware {
     protected String findTaxonName(Query query){
         String taxonName = null;
         if (query instanceof TaxonQuery) {
-            TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
-            if (nodes != null && nodes.length > 0) {
-                taxonName = nodes[0].getLabel();
+            TaxonNodeList nodes = ((TaxonQuery) query).getTaxons();
+            if (nodes != null && nodes.getNodeCount() > 0) {
+                taxonName = nodes.getNodes().get(0).getLabel();
             } // FIXME
         }
         return taxonName;

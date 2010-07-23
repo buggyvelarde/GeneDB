@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class IdListController {
     }
 
     @RequestMapping(method=RequestMethod.POST)
-    public String processImageUpload(
+    public ModelAndView processImageUpload(
             HttpSession session,
             @RequestParam("idList") String idList,
             //@RequestParam("oldIds") boolean useOldIds,
@@ -59,7 +60,7 @@ public class IdListController {
             }
             catch (IOException exp) {
                 exp.printStackTrace();
-                return "redirect:internalError";
+                return new ModelAndView("redirect:internalError");
             }
         }
 
@@ -72,12 +73,6 @@ public class IdListController {
         List<String> ambiguousIds = Lists.newArrayList();
         List<String> badIds = Lists.newArrayList();
         validateIds(ids, okIds, oldIds, ambiguousIds, badIds);
-
-        if (badIds.size() > 0) {
-            // Don't recognize all the ids
-
-            return "redirect:warnUser";
-        }
 
         HistoryManager hm = hmFactory.getHistoryManager(session);
 
@@ -92,9 +87,43 @@ public class IdListController {
         for (String string : okIds) {
             logger.error("The list of ok ids includes '"+string+"'");
         }
+
+        if (ambiguousIds.size() > 0 || badIds.size() > 0) {
+        	// A problem, some of the submitted ids are wrong
+        	ModelAndView mav = new ModelAndView();
+        	mav.setViewName("analysis/idList");
+
+        	StringBuilder message = new StringBuilder();
+
+        	if (badIds.size() > 0) {
+        		message.append("Unrecognized ids\n");
+                for (String badId : badIds) {
+                	message.append(badId);
+                	message.append('\n');
+                }
+                message.append("\n\n\n");
+        	}
+
+        	if (ambiguousIds.size() > 0) {
+        		message.append("Ambiguous ids\n");
+                for (String ambiguousId : ambiguousIds) {
+                	message.append(ambiguousId);
+                	message.append('\n');
+                }
+                message.append("\n\n\n");
+        	}
+
+            for (String okId : okIds) {
+            	message.append(okId);
+            	message.append('\n');
+            }
+        	mav.addObject("idList", message.toString());
+        	return mav;
+        }
+
         hm.addHistoryItem(historyName, HistoryType.MANUAL, okIds);
 
-        return "redirect:/History";
+        return new ModelAndView("redirect:/History");
     }
 
 
@@ -108,7 +137,7 @@ public class IdListController {
                 logger.error("Found '"+realId+"'");
                 continue;
             }
-            if (validateSecondaryId(id, oldIds, ambiguousIds)) {
+            if (validateSecondaryId(id, okIds, oldIds, ambiguousIds)) {
                 continue;
             }
             logger.error("Missed '"+id+"'");
@@ -117,8 +146,21 @@ public class IdListController {
     }
 
 
-    private boolean validateSecondaryId(String id, List<String> oldIds, List<String> ambiguousIds) {
-        List<Feature> lf = sequenceDao.getFeaturesByAnyCurrentName(id); // TODO Is logic right
+    private boolean validateSecondaryId(String id, List<String> okIds, List<String> oldIds, List<String> ambiguousIds) {
+
+    	// First check previous systematic ids
+        List<Feature> lf = sequenceDao.getFeaturesByPreviousSystematicId(id);
+        if (lf.size() > 1) {
+            ambiguousIds.add(id);
+            return true;
+        }
+        if (lf.size() == 1) {
+            okIds.add(lf.get(0).getUniqueName());
+            return true;
+        }
+
+    	// If no match, try all current names
+        lf = sequenceDao.getFeaturesByAnyCurrentName(id);
         if (lf.size() == 0) {
             return false;
         }
@@ -126,7 +168,7 @@ public class IdListController {
             ambiguousIds.add(id);
             return true;
         }
-        oldIds.add(id);
+        okIds.add(id);
         return true;
     }
 
@@ -146,8 +188,8 @@ public class IdListController {
 
 
     private void addIds(List<String> ids, String idList) {
-        String[] split= idList.split("\\n");
-        ids.addAll(Arrays.asList(split));
+        String[] lines = idList.split("[\\r]?\\n");
+        ids.addAll(Arrays.asList(lines));
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {

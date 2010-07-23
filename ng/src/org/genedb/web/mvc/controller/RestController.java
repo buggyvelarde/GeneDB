@@ -4,6 +4,7 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
@@ -121,7 +122,7 @@ public class RestController {
 
             logger.debug(taxon);
 
-            TaxonNode[] taxons = {taxon};
+            TaxonNodeList taxons = new TaxonNodeList(taxon);
             dateCountQuery.setTaxons( taxons );
 
 
@@ -314,11 +315,11 @@ public class RestController {
         return mav;
 
     }
-    
+
     /**
-     * 
-     * Wraps QuickSearchQuery, and falls back onto a SuggestQuery. 
-     * 
+     *
+     * Wraps QuickSearchQuery, and falls back onto a SuggestQuery.
+     *
      * @param term
      * @param taxon
      * @param max
@@ -327,67 +328,67 @@ public class RestController {
      */
 	@RequestMapping(method=RequestMethod.GET, value={"/search", "/search.*"})
     public ModelAndView search ( @RequestParam("term") String term, @RequestParam("taxon") String taxon, @RequestParam("max") int max ) throws QueryException {
-    	
+
     	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
     	query.setSearchText(term);
-    	
+
     	query.setAllNames(true);
     	query.setProduct(true);
     	query.setPseudogenes(true);
-    	
-    	
+
+
     	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
     	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
-    	TaxonNode[] taxons = new TaxonNode[] {taxonNode};
-    	
+    	TaxonNodeList taxons = new TaxonNodeList(taxonNode);
+
     	query.setTaxons(taxons);
-    	
+
     	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
     	List<GeneSummary> geneResults = results.getResults();
-    	
+
     	QuickSearchResults qsr = new QuickSearchResults();
     	qsr.term = term;
     	qsr.max = max;
     	qsr.totalHits = results.getTotalHits();
-    	
-    	
+
+
     	int i = 0;
     	for (GeneSummary result : geneResults) {
     		i++;
-    		
+
     		QuickSearchResult q = new QuickSearchResult();
     		q.systematicId = result.getSystematicId();
     		q.product = result.getProduct();
     		q.displayId = result.getDisplayId();
     		q.taxonDisplayName = result.getTaxonDisplayName();
     		q.topLevelFeatureName = result.getTopLevelFeatureName();
-    		
+
     		qsr.addHit(q);
     	}
-    	
+
     	logger.info("Processed " + i + " results");
-    		
+
 		SuggestQuery squery = (SuggestQuery) applicationContext.getBean("suggest", SuggestQuery.class);
     	squery.setSearchText(term);
     	squery.setMax(max);
     	squery.setTaxons(taxons);
-    	
+
     	@SuppressWarnings("unchecked")
     	List<String> sResults = (List<String>) squery.getResults();
-    	
+
     	for (Object sResult : sResults) {
     		// logger.debug(sResult);
     		Suggestion s = new Suggestion();
     		s.name = (String) sResult;
     		qsr.addSuggestion(s);
-    		
+
     	}
-    	
+
         ModelAndView mav = new ModelAndView(viewName);
         mav.addObject("model", qsr);
         return mav;
     }
-    
+
 
     /*
      *
@@ -555,33 +556,33 @@ class RestResultSet extends BaseResult
 
 @XStreamAlias("results")
 class QuickSearchResults extends BaseResult {
-	
+
 	@XStreamAlias("term")
     @XStreamAsAttribute
     public String term;
-	
+
 	@XStreamAlias("max")
     @XStreamAsAttribute
     public int max;
-	
+
 	@XStreamAlias("totalHits")
     @XStreamAsAttribute
     public int totalHits;
-	
+
     @XStreamImplicit()
     private List<BaseResult> suggestions = new ArrayList<BaseResult>();
     public void addSuggestion(BaseResult br)
     {
     	suggestions.add(br);
     }
-    
+
     @XStreamImplicit()
     private List<BaseResult> hits = new ArrayList<BaseResult>();
     public void addHit(BaseResult br)
     {
     	suggestions.add(br);
     }
-	
+
 }
 
 @XStreamAlias("suggestions")
@@ -601,15 +602,15 @@ class QuickSearchResult extends BaseResult
     @XStreamAlias("taxonDisplayName")
     @XStreamAsAttribute
     public String taxonDisplayName;
-    
+
     @XStreamAlias("product")
     @XStreamAsAttribute
     public String product;
-    
+
     @XStreamAlias("topLevelFeatureName")
     @XStreamAsAttribute
     public String topLevelFeatureName;
-    
+
     @XStreamAlias("left")
     @XStreamAsAttribute
     public String left;

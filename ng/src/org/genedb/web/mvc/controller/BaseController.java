@@ -5,6 +5,7 @@ import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.util.Pair;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
@@ -16,7 +17,12 @@ public class BaseController {
 
     protected Logger logger = Logger.getLogger(BaseController.class);
 
-    private TaxonNodeListFormatter taxonNodeListFormatter;
+    //private TaxonNodeListFormatter taxonNodeListFormatter;
+    protected ConversionService conversionService;
+
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 
     private TaxonNodeManager taxonNodeManager;
 
@@ -38,16 +44,10 @@ public class BaseController {
         return null;
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        //binder.getFormatterRegistry().addFormatterByType(taxonNodeListFormatter); //TODO
-    }
 
-
-
-    public void setTaxonNodeListFormatter(TaxonNodeListFormatter taxonNodeListFormatter) {
-        this.taxonNodeListFormatter = taxonNodeListFormatter;
-    }
+//    public void setTaxonNodeListFormatter(TaxonNodeListFormatter taxonNodeListFormatter) {
+//        this.taxonNodeListFormatter = taxonNodeListFormatter;
+//    }
 
     public void setValidExtensions(Set<String> validExtensions) {
         this.validExtensions = validExtensions;

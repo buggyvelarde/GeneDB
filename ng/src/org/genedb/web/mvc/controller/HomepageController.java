@@ -8,6 +8,8 @@ import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,7 +36,13 @@ public class HomepageController extends BaseController {
 
     private static final String APP_PREFIX = "app_www_homePage_";
 
-    protected final Logger logger = Logger.getLogger(HomepageController.class);
+    protected final Logger logger = Logger.getLogger(this.getClass());
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setConversionService(conversionService);
+        //binder.getFormatterRegistry().addFormatterByType(taxonNodeListFormatter); //TODO
+    }
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -52,7 +60,7 @@ public class HomepageController extends BaseController {
         }
 
         TaxonNode node = originalOrg.getNodes().get(0); // Ignore more than one taxon request and use the first
-        
+
         Map<String, String> map = Maps.newHashMap();
 
         for (Map.Entry<String, String> entry : node.getAppDetails().entrySet()) {
@@ -60,7 +68,7 @@ public class HomepageController extends BaseController {
                 map.put(entry.getKey().substring(APP_PREFIX.length()), entry.getValue());
             }
         }
-        
+
         // gv1
         // using the context path to replace "${baseUrl}" occurances in the home page text.
         // these modifications need to done before instantiating the ModelAndView
@@ -75,6 +83,7 @@ public class HomepageController extends BaseController {
         ModelAndView mav = new ModelAndView(DEFAULT_GROUP, map);
         mav.addObject("organismContext", node.getLabel());
         mav.addObject("taxonNodeName", node.getLabel());
+        mav.addObject("showingHomepage", true);
 
         if (node.isRoot()) {
             return new ModelAndView(DEFAULT_HOMEPAGE);
@@ -85,10 +94,18 @@ public class HomepageController extends BaseController {
             mav.addObject("node", node);
             mav.addObject("label", node.getName(TaxonNameType.LABEL));
             mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));
-            
+
+            if (map.containsKey("app_www_homePage_content")) {
+                mav.addObject("content", map.get("app_www_homePage_content"));
+            }
+            if (map.containsKey("app_www_homePage_links")) {
+                mav.addObject("links", map.get("app_www_homePage_links"));
+            }
+
             return mav;
         }
-        
+
+        //mav.addObject("label", node.getLabel());
         return mav;
     }
 
