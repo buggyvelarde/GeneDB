@@ -12,10 +12,10 @@ import com.google.common.collect.Lists;
 public class TaxonNodeList implements Serializable {
 
     private static final Logger logger = Logger.getLogger(TaxonNodeList.class);
-    private List<TaxonNode> nodes;
+    private List<TaxonNode> nodes = Lists.newArrayList();
 
     public TaxonNodeList() {
-        nodes = Lists.newArrayList();
+        //
     }
 
     public TaxonNodeList(TaxonNode node) {
