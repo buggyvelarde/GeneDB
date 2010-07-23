@@ -8,16 +8,11 @@ import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
-import org.genedb.querying.tmpquery.DateCountQuery;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
-import org.gmod.schema.mapped.Feature;
-import org.gmod.schema.mapped.FeatureCvTerm;
-import org.gmod.schema.mapped.FeatureCvTermProp;
-import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -37,7 +32,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +51,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  *
  */
 @Controller
-@RequestMapping("/service/")
+@RequestMapping("/service")
 public class RestController {
 
     private static final Logger logger = Logger.getLogger(RestController.class);
@@ -79,73 +73,7 @@ public class RestController {
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
     {
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("hello", "world");
-        return mav;
-    }
-
-
-
-    /**
-     * Returns a list of genomes, with the number of changed features for each one.
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @RequestMapping(method=RequestMethod.GET, value={"/genomes/changes", "/genomes/changes.*"})
-    public ModelAndView getGenomesStatus(@RequestParam("since") String since)
-    {
-        DateCountQuery dateCountQuery = (DateCountQuery) applicationContext.getBean("dateCount", DateCountQuery.class);
-
-        Date sinceDate = Calendar.getInstance().getTime();
-        try {
-            sinceDate = getDateFromString(since);
-        } catch (ParseException e) {
-            return new ErrorReport("serviceView", ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
-        }
-
-        dateCountQuery.setDate(sinceDate);
-        dateCountQuery.setAfter(true);
-        dateCountQuery.setCreated(false);
-
-        List<TaxonNode> taxonList = getAllTaxons();
-
-        ChangedOrganismSetResult rs = new ChangedOrganismSetResult();
-        rs.since = sinceDate.toString();
-        rs.name = "genomes/changes";
-
-        for (TaxonNode taxon : taxonList)
-        {
-            if (! taxon.isOrganism())
-                continue;
-
-            logger.debug(taxon);
-
-            TaxonNodeList taxons = new TaxonNodeList(taxon);
-            dateCountQuery.setTaxons( taxons );
-
-
-            List<Object> results = new ArrayList<Object>();
-            try {
-                results = (List<Object>) dateCountQuery.getResults();
-            } catch (QueryException e) {
-                return new ErrorReport(viewName, ErrorType.QUERY_FAILURE, "The query for " + taxon.getLabel()  + " has failed.");
-            }
-
-            String taxonomyID = taxon.getTaxonId();
-
-            OrganismStatus os = new OrganismStatus();
-            os.features_changed = Integer.parseInt(results.get(0).toString());
-            os.name = taxon.getName(TaxonNameType.FULL);
-            os.taxonomyID = taxonomyID;
-
-            rs.addResult(os);
-
-        }
-
-        ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(rs);
+        mav.addObject("model", "hello world");
         return mav;
     }
 
@@ -153,169 +81,93 @@ public class RestController {
     /**
      * Returns all features changed since a certain date, as determined by the DateQuery.
      *
-     * @param request
-     * @param response
+     * @param since
+     * @param since
      * @return
      */
-
-    @RequestMapping(method=RequestMethod.GET, value={"/genome/changes", "/genome/changes.*"})
-    public ModelAndView genomeStatusByTaxonomyID(@RequestParam("since") String since,  @RequestParam("taxonomyID") String taxonomyID)
+    @RequestMapping(method=RequestMethod.GET, value={"/changes"})
+    public ModelAndView changes(@RequestParam("since") String since,  @RequestParam("taxon") String taxon, @RequestParam(value="type", required=false) String type)
     {
-
-        if ((taxonomyID == null) || (taxonomyID.length() == 0 ))
-            return new ErrorReport(viewName, ErrorType.MISSING_PARAMETER, "please supply a taxonomyID");
-
-        TaxonNode taxon = getTaxonFromTaxonomyID(taxonomyID);
-        if (taxon == null)
-            return new ErrorReport(viewName, ErrorType.NO_RESULT, "The taxonomyID " + taxonomyID + " does not match any organism.");
-
-        TaxonNode[] taxons = {taxon};
-
-
-        Date sinceDate = Calendar.getInstance().getTime();
-        try {
-            sinceDate = getDateFromString(since);
-        } catch (ParseException e) {
-            return new ErrorReport(viewName, ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
-        }
-
-        Organism o = organismDao.getOrganismByCommonName(taxons[0].getLabel());
-
-        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
-        changedGeneFeaturesQuery.setDate(sinceDate);
-        changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
-
-        final ChangedFeatureSetResult organismSetResult = new ChangedFeatureSetResult();
-        organismSetResult.since = sinceDate.toString();
-        organismSetResult.name = "genome/changes";
-        organismSetResult.taxonomyID = taxonomyID;
-        organismSetResult.count = 0;
-
-
-        changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
-            public void processRow(ResultSet rs) throws SQLException {
-                FeatureStatus fs = new FeatureStatus();
-
-                fs.id = rs.getObject("id").toString();
-                fs.uniquename = rs.getObject("uniquename").toString();
-                fs.type = rs.getObject("type").toString();
-                fs.timelastmodified = rs.getObject("time").toString();
-                fs.rootID = rs.getObject("rootid").toString();
-                fs.rootUniquename = rs.getObject("rootname").toString();
-                fs.rootType = rs.getObject("roottype").toString();
-
-                organismSetResult.addResult(fs);
-                organismSetResult.count += 1;
-            }
-        });
-
-
-        ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(organismSetResult);
-        return mav;
+    	logger.info(String.format("Searching for changes in %s since %s : ", taxon, since));
+    	ModelAndView mav = new ModelAndView(viewName);
+    	
+    	try {
+    		
+    		
+	        TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+	    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
+	    	
+	    	if (taxonNode == null) {
+	    		throw new RestException(ErrorType.INVALID_PARAMETER, "Could not find a taxonNode for taxon " + taxon );
+	    	}
+	    	
+	    	logger.info(taxonNode);
+	    	
+	    	Organism o = organismDao.getOrganismByCommonName(taxonNode.getLabel());
+	        
+	        if (o == null) {
+	        	throw new RestException(ErrorType.INVALID_PARAMETER, String.format("Could not identify an organism for %s '.", taxon));
+	        }
+	    	
+	        Date sinceDate = Calendar.getInstance().getTime();
+	        try {
+	            sinceDate = getDateFromString(since);
+	        } catch (ParseException e) {
+	            throw new RestException(ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
+	        }
+	        
+	        
+	        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
+	        changedGeneFeaturesQuery.setDate(sinceDate);
+	        changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
+	        
+	        if (type != null) {
+	        	changedGeneFeaturesQuery.setType(type);
+	        }
+	        
+	        final ChangedFeatureSetResult organismSetResult = new ChangedFeatureSetResult();
+	        organismSetResult.since = sinceDate.toString();
+	        organismSetResult.name = "genome/changes";
+	        organismSetResult.taxonomyID = taxonNode.getTaxonId();
+	        organismSetResult.count = 0;
+	        
+	
+	        changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
+	            public void processRow(ResultSet rs) throws SQLException {
+	                FeatureStatus fs = new FeatureStatus();
+	
+	                fs.type = rs.getString("type");
+	                fs.changedetail = rs.getString("changedetail");
+	                fs.changedate = rs.getString("changedate");
+	                fs.geneuniquename = rs.getString("geneuniquename");
+	                fs.mrnauniquename = rs.getString("mrnauniquename");
+	                fs.transcriptuniquename = rs.getString("transcriptuniquename");
+	                
+	                logger.info(fs);
+	                
+	                organismSetResult.addResult(fs);
+	                organismSetResult.count += 1;
+	            }
+	        });
+	
+	        
+	        
+	        mav.addObject("model", organismSetResult);
+	    
+    	} catch (RestException re) {
+    		mav.addObject("model", re.model);
+	    } catch (Exception e) {
+	    	logger.error(e.getMessage());
+			e.printStackTrace();
+			mav.addObject("model", new ErrorModel(e.getMessage()));
+			
+		}
+	    return mav;
+	    
     }
+    
 
-
-    /**
-     *
-     * Returns a some details for a feature.
-     *
-     * @param request
-     * @param response
-     * @param uniqueName
-     * @return
-     */
-    @RequestMapping(value={"/feature/", "/feature.*" })
-    public ModelAndView getFeature( @RequestParam("uniqueName") String uniqueName )
-    {
-
-        RestResultSet result = new RestResultSet();
-        result.name = "/feature";
-
-        Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);
-
-        Organism org = feature.getOrganism();
-
-        Collection<FeatureCvTerm> fcv = feature.getFeatureCvTerms();
-
-        FeatureSummary fsum = new FeatureSummary();
-
-        result.addResult(fsum);
-
-        OrganismSummary osum = new OrganismSummary();
-        osum.genus = org.getGenus();
-        osum.abbreviation = org.getAbbreviation();
-        osum.commonName = org.getCommonName();
-        osum.species = org.getSpecies();
-        osum.taxonomyID = org.getPropertyValue("genedb_misc", "taxonId");
-
-        fsum.isAnalysis = feature.isAnalysis();
-        fsum.isObsolete = feature.isObsolete();
-        fsum.id = Integer.toString(feature.getFeatureId());
-        fsum.uniquename = feature.getUniqueName();
-        fsum.organism = osum;
-
-        Date timelastaccessioned = feature.getTimeAccessioned();
-        Date timelastmodified = feature.getTimeLastModified();
-
-        if (timelastaccessioned != null)
-            fsum.timelastaccessioned = timelastaccessioned.toString();
-
-        if (timelastmodified != null)
-            fsum.timelastmodified = timelastmodified.toString();
-
-        fsum.type = feature.getType().getName();
-
-        for (FeatureRelationship relationship : feature.getFeatureRelationshipsForSubjectId())
-        {
-            Feature child = relationship.getObjectFeature();
-            LinkedFeatureSummary csum = new LinkedFeatureSummary();
-            csum.id = Integer.toString(child.getFeatureId());
-            csum.uniquename = child.getUniqueName();
-            csum.type = child.getType().getName();
-            csum.relationship = relationship.getType().getName();
-            fsum.parents.add(csum);
-        }
-
-        for (FeatureRelationship relationship : feature.getFeatureRelationshipsForObjectId())
-        {
-            Feature parent = relationship.getSubjectFeature();
-            LinkedFeatureSummary psum = new LinkedFeatureSummary();
-            psum.id = Integer.toString(parent.getFeatureId());
-            psum.uniquename = parent.getUniqueName();
-            psum.type = parent.getType().getName();
-            psum.relationship = relationship.getType().getName();
-            fsum.children.add(psum);
-        }
-
-        for (FeatureCvTerm  cv : fcv)
-        {
-
-            List<FeatureCvTermProp> props = cv.getFeatureCvTermProps();
-            CVTermSummary csum = new CVTermSummary();
-
-            for (FeatureCvTermProp prop : props)
-            {
-                String type = prop.getType().getName();
-                String value = prop.getValue();
-
-                CVTermPropSummary psum = new CVTermPropSummary();
-                psum.type = type;
-                psum.value = value;
-
-                csum.props.add(psum);
-            }
-
-            csum.name = cv.getCvTerm().getName();
-            fsum.cvterms.add(csum);
-        }
-
-        ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(result);
-        return mav;
-
-    }
-
+    
     /**
      *
      * Wraps QuickSearchQuery, and falls back onto a SuggestQuery.
@@ -333,17 +185,20 @@ public class RestController {
 		ModelAndView mav = new ModelAndView(viewName);
 		
 		try {
-		
+			
 	    	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
 	    	query.setSearchText(term);
-	
+	    	
 	    	query.setAllNames(true);
 	    	query.setProduct(true);
 	    	query.setPseudogenes(true);
-	
-	
+	    	
 	    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
 	    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
+	    	
+	    	if (taxonNode == null) {
+	    		throw new RestException(ErrorType.INVALID_PARAMETER, "Could not find a taxonNode for taxon " + taxon );
+	    	}
 	    	
 	    	logger.info(taxonNode);
 	    	
@@ -393,17 +248,13 @@ public class RestController {
 	    	}
 	    	
 	        mav.addObject("model", qsr);
-	        
+		
+		} catch (RestException re) {
+    		mav.addObject("model", re.model);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			
-			ErrorModel emo = new ErrorModel();
-			emo.addMessage(e.getMessage());
-			emo.code = ErrorType.QUERY_FAILURE.ordinal();
-			emo.type = ErrorType.QUERY_FAILURE.toString();
-			
-			mav.addObject("model", emo);
+			mav.addObject("model", new ErrorModel(e.getMessage()));
 			
 		}
 		
@@ -518,37 +369,11 @@ enum ErrorType
     MISSING_PARAMETER,
     INVALID_PARAMETER,
     NO_RESULT,
-    QUERY_FAILURE
+    QUERY_FAILURE,
+    MISC
 }
 
 
-/**
- *
- * Extends ModelAndView for generating a friendly error message.
- *
- * @author gv1
- *
- */
-class ErrorReport extends ModelAndView {
-
-    public ErrorReport(String viewName, ErrorType errorType, String[] messages)
-    {
-        super(viewName);
-        ErrorModel em = new ErrorModel();
-        em.type = errorType.toString().toLowerCase();
-        em.code = errorType.ordinal() + 1;
-        for (String message : messages)
-        {
-            em.addMessage(message);
-        }
-        addObject(em);
-    }
-
-    public ErrorReport(String viewName, ErrorType errorType, String message)
-    {
-        this(viewName, errorType, new String[] {message});
-    }
-}
 
 
 /*
@@ -641,6 +466,7 @@ class QuickSearchResult extends BaseResult
 
 
 
+
 @XStreamAlias("results")
 class ChangedFeatureSetResult extends RestResultSet
 {
@@ -658,29 +484,6 @@ class ChangedFeatureSetResult extends RestResultSet
 }
 
 
-@XStreamAlias("results")
-class ChangedOrganismSetResult extends RestResultSet
-{
-
-
-    @XStreamAlias("since")
-    @XStreamAsAttribute
-    public String since;
-}
-
-@XStreamAlias("organism")
-class OrganismStatus extends BaseResult
-{
-    @XStreamAlias("changed")
-    @XStreamAsAttribute
-    public int features_changed;
-
-    @XStreamAlias("taxonomyID")
-    @XStreamAsAttribute
-    public String taxonomyID;
-
-}
-
 
 @XStreamAlias("feature")
 class FeatureStatus extends BaseResult
@@ -688,146 +491,29 @@ class FeatureStatus extends BaseResult
     @XStreamAlias("type")
     @XStreamAsAttribute
     public String type;
-
-    @XStreamAlias("id")
+    
+    @XStreamAlias("geneuniquename")
     @XStreamAsAttribute
-    public String id;
-
-    @XStreamAlias("uniquename")
+    public String geneuniquename;
+    
+    @XStreamAlias("mrnauniquename")
     @XStreamAsAttribute
-    public String uniquename;
-
-    @XStreamAlias("rootUniquename")
+    public String mrnauniquename;
+    
+    @XStreamAlias("transcriptuniquename")
     @XStreamAsAttribute
-    public String rootUniquename;
+    public String transcriptuniquename;
 
-    @XStreamAlias("rootID")
+    @XStreamAlias("changedate")
     @XStreamAsAttribute
-    public String rootID;
-
-    @XStreamAlias("rootType")
+    public String changedate;
+    
+    @XStreamAlias("changedetail")
     @XStreamAsAttribute
-    public String rootType;
-
-    @XStreamAlias("timelastmodified")
-    @XStreamAsAttribute
-    public String timelastmodified;
+    public String changedetail;
 
 }
 
-
-
-@XStreamAlias("feature")
-class FeatureSummary extends BaseResult
-{
-    @XStreamAlias("type")
-    @XStreamAsAttribute
-    public String type;
-
-    @XStreamAlias("id")
-    @XStreamAsAttribute
-    public String id;
-
-    @XStreamAlias("uniquename")
-    @XStreamAsAttribute
-    public String uniquename;
-
-    @XStreamAlias("timelastmodified")
-    @XStreamAsAttribute
-    public String timelastmodified;
-
-    @XStreamAlias("timelastaccessioned")
-    @XStreamAsAttribute
-    public String timelastaccessioned;
-
-    @XStreamAlias("residues")
-    public String residues;
-
-    @XStreamAlias("isAnalysis")
-    @XStreamAsAttribute
-    public boolean isAnalysis;
-
-    @XStreamAlias("isObsolete")
-    @XStreamAsAttribute
-    public boolean isObsolete;
-
-    @XStreamAlias("organism")
-    public OrganismSummary organism;
-
-    @XStreamAlias("children")
-    public List<LinkedFeatureSummary> children = new ArrayList<LinkedFeatureSummary>();
-
-    @XStreamAlias("parents")
-    public List<LinkedFeatureSummary> parents = new ArrayList<LinkedFeatureSummary>();
-
-    @XStreamAlias("cvterms")
-    public List<CVTermSummary> cvterms = new ArrayList<CVTermSummary>();
-
-}
-
-@XStreamAlias("feature")
-class LinkedFeatureSummary extends BaseResult
-{
-    @XStreamAlias("type")
-    @XStreamAsAttribute
-    public String type;
-
-    @XStreamAlias("id")
-    @XStreamAsAttribute
-    public String id;
-
-    @XStreamAlias("uniquename")
-    @XStreamAsAttribute
-    public String uniquename;
-
-    @XStreamAlias("relationship")
-    @XStreamAsAttribute
-    public String relationship;
-}
-
-@XStreamAlias("cvterm")
-class CVTermSummary extends BaseResult
-{
-
-    @XStreamAlias("props")
-    public List<CVTermPropSummary> props = new ArrayList<CVTermPropSummary>();
-}
-
-@XStreamAlias("cvtermprop")
-class CVTermPropSummary extends BaseResult
-{
-    @XStreamAlias("type")
-    @XStreamAsAttribute
-    public String type;
-
-    @XStreamAlias("value")
-    @XStreamAsAttribute
-    public String value;
-}
-
-@XStreamAlias("organism")
-class OrganismSummary extends BaseResult
-{
-    @XStreamAlias("abbreviation")
-    @XStreamAsAttribute
-    public String abbreviation;
-
-    @XStreamAlias("genus")
-    @XStreamAsAttribute
-    public String genus;
-
-    @XStreamAlias("species")
-    @XStreamAsAttribute
-    public String species;
-
-    @XStreamAlias("commonName")
-    @XStreamAsAttribute
-    public String commonName;
-
-    @XStreamAlias("taxonomyID")
-    @XStreamAsAttribute
-    public String taxonomyID;
-}
 
 
 
@@ -836,18 +522,47 @@ class ErrorModel
 {
     @XStreamAlias("type")
     @XStreamAsAttribute
-    public String type;
+    public String type = ErrorType.MISC.toString();
 
     @XStreamAlias("code")
     @XStreamAsAttribute
-    public int code;
-
+    public int code = ErrorType.MISC.ordinal();
+    
     @XStreamImplicit(itemFieldName="message")
     private List<String> msgs = new ArrayList<String>();
-
+    
+    public ErrorModel() {
+    	//
+    }
+    
+    public ErrorModel(String message) {
+    	addMessage(message);
+    }
+    
     public void addMessage(String msg)
     {
         msgs.add(msg);
     }
+}
+
+class RestException extends Exception {
+	
+	public ErrorModel model = new ErrorModel();;
+	
+	public RestException(ErrorType type, String[] messages) {
+		
+		model.type = type.toString();
+		model.code = type.ordinal() + 1;
+		for (String message : messages) {
+			model.addMessage(message);
+		}
+	}
+	
+	public RestException(ErrorType type, String message) {
+		model.type = type.toString();
+		model.code = type.ordinal() + 1;
+		model.addMessage(message);
+	}
+	
 }
 

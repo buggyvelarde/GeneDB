@@ -117,6 +117,14 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
 		logger.debug(sql);
 		jt.query(sql, args, callBack);
 	}
+	
+	public void processCallBack(String _sql, Object[] _args, RowCallbackHandler callBack)
+	{
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		logger.debug(_args);
+		logger.debug(_sql);
+		jt.query(_sql, _args, callBack);
+	}
 
 
 //    @Override

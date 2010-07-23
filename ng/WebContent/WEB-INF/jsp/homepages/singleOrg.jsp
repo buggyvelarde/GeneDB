@@ -15,8 +15,50 @@
     <div class="readableText">
         <h1>${full}</h1>
         <div id="readableContent">${content}</div>
+        
+        <!-- new annotations -->
+        <h1 id="readableActivityTitle" ></h1>
+        <div style="font-size:small;" id="readableActivity"></div>
     </div>
 </div>
+
+<script>
+
+$(function(){
+	var d = new Date();
+	d.setDate(d.getDate() - 28);
+    var since = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+    var baseHREF = getBaseURL() + "gene/";
+     $.ajax({
+         url: getBaseURL() + "service/changes",
+         type: 'GET',
+         dataType: 'json',
+         data: {
+             'since' : since,
+             'taxon' : "${node.label}",
+             'type' : 'annotation'
+         },
+         success: function(response) {
+             if (response.results.hasOwnProperty("feature")) {
+            	 var s = "<table cellpadding=10 cellspacing=10><tr><th>gene</th><th>details</th><th>date</th></tr>";
+                 if (jQuery.isArray(response.results.feature)) {
+                     for (var i in response.results.feature) {
+                    	 console.log(response.results.feature[i]);
+                    	 var a = "<tr><td><a href='" + baseHREF + response.results.feature[i]["@geneuniquename"] + "' >" + response.results.feature[i]["@geneuniquename"] + "</a></td><td>" + response.results.feature[i]["@changedate"] + "</td><td>" + response.results.feature[i]["@changedetail"] +  "</td></tr>" ;
+                    	 s += a;
+                     }
+                     $('#readableActivityTitle').append("Recent annotation activity (28 days)");
+                 }
+                 s += "</table>";
+                 console.log(s);
+                 $('#readableActivity').append(s); 
+             }
+             
+         }
+     });
+});
+        
+</script>
   
 
 <div id="col-1-2">

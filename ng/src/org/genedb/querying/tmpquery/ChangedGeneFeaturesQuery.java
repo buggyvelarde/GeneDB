@@ -1,7 +1,10 @@
 package org.genedb.querying.tmpquery;
 
 import java.util.Date;
+
+import org.apache.log4j.Logger;
 import org.genedb.query.sql.SqlQuery;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 /**
@@ -15,7 +18,8 @@ public class ChangedGeneFeaturesQuery extends SqlQuery {
 	
 	private Date date;
 	private int organismId;
-	
+	private String type;
+	private static final Logger logger = Logger.getLogger(ChangedGeneFeaturesQuery.class);
 	
 	public void setDate(Date date)
 	{
@@ -27,79 +31,61 @@ public class ChangedGeneFeaturesQuery extends SqlQuery {
 		this.organismId = organismId;
 	}
 	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	public ChangedGeneFeaturesQuery()
 	{
-		/*
-		 	SELECT feature_id as id, uniquename as uniquename, c1.name as type, timelastmodified as time, feature_id as rootID, uniquename as rootName, c1.name as rootType
-			FROM feature, cvterm c1
-			WHERE timelastmodified >= DATE '2009-06-01' 
-			AND organism_id = 14 
-			AND feature.type_id IN ('792', '423')
-			AND c1.cvterm_id = feature.type_id
-			UNION 
-			SELECT f1.feature_id as id, f1.uniquename as uniquename, c1.name as type, f1.timelastmodified as time, f2.feature_id as rootID, f2.uniquename as rootName, c2.name as rootType
-			FROM feature f1, feature f2, feature_relationship fr, cvterm c1, cvterm c2
-			WHERE f1.timelastmodified >= DATE '2009-06-01' 
-			AND f1.organism_id = 14 
-			AND f2.type_id in ('792', '423')
-			AND fr.subject_id = f1.feature_id
-			AND fr.object_id = f2.feature_id
-			AND c1.cvterm_id = f1.type_id
-			AND c2.cvterm_id = f2.type_id
-			UNION
-			SELECT f1.feature_id as id, f1.uniquename as uniquename, c1.name as type, f1.timelastmodified as time, f3.feature_id as rootID, f3.uniquename as rootName, c2.name as rootType
-			FROM feature f1, feature f2, feature f3, feature_relationship fr, feature_relationship fr2, cvterm c1, cvterm c2
-			WHERE f1.timelastmodified >= DATE '2009-06-01' 
-			AND f1.organism_id = 14 
-			AND f3.type_id in ('792', '423')
-			AND fr.subject_id = f1.feature_id
-			AND fr.object_id = f2.feature_id
-			AND fr2.subject_id = f2.feature_id
-			AND fr2.object_id = f3.feature_id
-			AND c1.cvterm_id = f1.type_id
-			AND c2.cvterm_id = f3.type_id
-		 */
 		
-		StringBuffer q = new StringBuffer();
+		String queryString = " SELECT " +
+			" f.uniquename as transcriptuniquename, " +
+			" fctype.name as type, " +
+			" mrna.uniquename as mrnauniquename, " +
+			" gene.uniquename as geneuniquename, " +
+			" fcp_detail.value as changedetail, " +
+			" to_date (fcp_date.value, 'YYYYMMDD' ) as changedate, " +
+			" fcp_user.value as changeuser " +
+			
+			" FROM feature f " +
+			" JOIN feature_cvterm fc ON f.feature_id = fc.feature_id " + 
+			" JOIN cvterm ctype ON f.type_id = ctype.cvterm_id AND ctype.name = 'polypeptide' " +
+			
+			" JOIN cvterm fctype ON fc.cvterm_id = fctype.cvterm_id  " +
+			" JOIN cv fctypecv ON fctypecv.cv_id = fctype.cv_id AND fctypecv.name = 'annotation_change' " +
+			
+			" JOIN feature_cvtermprop fcp_date ON fc.feature_cvterm_id = fcp_date.feature_cvterm_id AND fcp_date.type_id = (select cvterm.cvterm_id from cvterm join cv on cv.cv_id = cvterm.cv_id and cv.name = 'feature_property' where cvterm.name = 'date' )  " +
+			" JOIN feature_cvtermprop fcp_detail ON fc.feature_cvterm_id = fcp_detail.feature_cvterm_id AND fcp_detail.type_id = (select cvterm.cvterm_id from cvterm join cv on cv.cv_id = cvterm.cv_id and cv.name = 'genedb_misc' where cvterm.name = 'qualifier' )  " +
+			" JOIN feature_cvtermprop fcp_user ON fc.feature_cvterm_id = fcp_user.feature_cvterm_id AND fcp_user.type_id = (select cvterm.cvterm_id from cvterm join cv on cv.cv_id = cvterm.cv_id and cv.name = 'genedb_misc' where cvterm.name = 'curatorName' ) " +
+			
+			" LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id and fr.type_id IN (42, 69) " +
+			" LEFT JOIN feature mrna ON fr.object_id = mrna.feature_id " +
+			
+			" LEFT JOIN feature_relationship fr2 ON fr2.subject_id = fr.object_id and fr2.type_id IN (42, 69) " +
+			" LEFT JOIN feature gene ON fr2.object_id = gene.feature_id AND gene.type_id IN ('792', '423') " +
+			
+			" WHERE f.organism_id = ?  " +
+			" AND to_date (fcp_date.value, 'YYYYMMDD' ) >= ? " ;
 		
-		q.append(" SELECT feature_id as id, uniquename as uniquename, c1.name as type, timelastmodified as time, feature_id as rootID, uniquename as rootName, c1.name as rootType ");
-		q.append(" FROM feature, cvterm c1 ");
-		q.append(" WHERE timelastmodified >= ? ");
-		q.append(" AND organism_id = ? ");
-		q.append(" AND feature.type_id IN ('792', '423') ");
-		q.append(" AND c1.cvterm_id = feature.type_id ");
-		q.append(" UNION ");
-		q.append(" SELECT f1.feature_id as id, f1.uniquename as uniquename, c1.name as type, f1.timelastmodified as time, f2.feature_id as rootID, f2.uniquename as rootName, c2.name as rootType ");
-		q.append(" FROM feature f1, feature f2, feature_relationship fr, cvterm c1, cvterm c2 ");
-		q.append(" WHERE f1.timelastmodified >= ? ");
-		q.append(" AND f1.organism_id = ? ");
-		q.append(" AND f2.type_id in ('792', '423') ");
-		q.append(" AND fr.subject_id = f1.feature_id ");
-		q.append(" AND fr.object_id = f2.feature_id ");
-		q.append(" AND c1.cvterm_id = f1.type_id ");
-		q.append(" AND c2.cvterm_id = f2.type_id ");
-		q.append(" UNION ");
-		q.append(" SELECT f1.feature_id as id, f1.uniquename as uniquename, c1.name as type, f1.timelastmodified as time, f3.feature_id as rootID, f3.uniquename as rootName, c2.name as rootType ");
-		q.append(" FROM feature f1, feature f2, feature f3, feature_relationship fr, feature_relationship fr2, cvterm c1, cvterm c2 ");
-		q.append(" WHERE f1.timelastmodified >= ? ");
-		q.append(" AND f1.organism_id = ? ");
-		q.append(" AND f3.type_id in ('792', '423') ");
-		q.append(" AND fr.subject_id = f1.feature_id ");
-		q.append(" AND fr.object_id = f2.feature_id ");
-		q.append(" AND fr2.subject_id = f2.feature_id ");
-		q.append(" AND fr2.object_id = f3.feature_id ");
-		q.append(" AND c1.cvterm_id = f1.type_id ");
-		q.append(" AND c2.cvterm_id = f3.type_id ");
+		this.setSql(queryString);
 		
-		this.setSql(q.toString());
+	
 	}
 	
 	@Override
 	public void processCallBack(RowCallbackHandler callBack) 
 	{
-		// must setup the args object before calling the query...
-		args = new Object [] { date, organismId, date, organismId, date, organismId };
-		super.processCallBack(callBack);
+		String the_sql = sql;
+		
+		if (type == null) {
+			args = new Object [] { organismId, date };
+		} else {
+			the_sql += " AND fctype.name = ? ";
+			args = new Object [] { organismId, date, type };
+		}
+		
+		super.processCallBack(the_sql, args, callBack);
+		
 	}
 	
 	
