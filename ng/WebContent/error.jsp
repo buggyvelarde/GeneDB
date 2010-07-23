@@ -171,7 +171,7 @@
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td valign="top" align="left">
-<p>&copy; 2009 and hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></p>
+<p>&copy; 2009-2010 and hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></p>
 </td>
 
 <td valign="top" align="right">
