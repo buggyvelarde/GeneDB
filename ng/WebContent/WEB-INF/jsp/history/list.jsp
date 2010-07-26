@@ -25,9 +25,11 @@
         <display:column title="Download" style="width: 150px;">
             <a href="${baseUrl}Download/${row_rowNum}">Download</a>
         </display:column>
+        <!--
         <display:column title="View/Edit" style="width: 150px;">
             <a href="${baseUrl}/History/${row_rowNum}">Edit</a>
         </display:column>
+        -->
         <!--
         <display:column title="Remove" style="width: 150px;">
             <form:form method="DELETE" action="${baseUrl}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
