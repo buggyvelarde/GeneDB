@@ -36,11 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
@@ -161,27 +157,30 @@ public class DownloadController {
         }
 
         case FASTA:
-            String expression = "";
-            TroubleTrackingIterator<String> iterator = dataFetcher.iterator(featureIds, expression, fieldSeperator);
-            output = createFasta(dataFetcher,iterator,file,outputOptions,sequenceType, prime3, prime5);
+            prepareResponse(response, "text/plain", true);
+            String expression = OutputFormatterUtils.prepareExpression(outputOptions, "", "", " ", "");
+            String output2 = createFasta(dataFetcher,featureIds, expression, fieldSeperator, file,outputOptions,sequenceType, prime3, prime5);
             //response.setContentType("application/x-download");
             //response.setHeader("Content-Disposition", "attachment");
             //response.setHeader("filename", output.getName());
 
-            FileInputStream fis = new FileInputStream(output);
-            char c;
-            while ((c=(char) fis.read())!= -1) {
-                out.write(c);
-            }
-            fis.close();
-            if (!output.delete()) {
-                logger.error(String.format("Unable to delete temp file '%s'", output.getAbsolutePath()));
-            }
-            logProblems(iterator);
+//            FileInputStream fis = new FileInputStream(output);
+//            char c;
+//            while ((c=(char) fis.read())!= -1) {
+//                out.write(c);
+//            }
+//            fis.close();
+//            if (!output.delete()) {
+//                logger.error(String.format("Unable to delete temp file '%s'", output.getAbsolutePath()));
+//            }
+//            logProblems(iterator);
+
+            logger.error("The output sequence is "+output2);
+            out.write(output2);
+
         }
         return null;
     }
-
 
 
     private void prepareResponse(HttpServletResponse response, String type, boolean toPage) {
@@ -202,8 +201,6 @@ public class DownloadController {
     }
 
 
-
-
     private List<Integer> convertUniquenamesToFeatureIds(List<String> uniqueNames) {
         List<Integer> ret = Lists.newArrayList();
         for (String name : uniqueNames) {
@@ -219,8 +216,10 @@ public class DownloadController {
 
 
 
-    private File createFasta(DataFetcher<Integer> df,
-            TroubleTrackingIterator<String> iterator,
+    private String createFasta(DataFetcher<Integer> df,
+            List<Integer> ids,
+            String realExpression,
+            String fieldDelim,
             String file,
             List<OutputOption> outputOptions,
             SequenceType sequenceType,
@@ -231,8 +230,11 @@ public class DownloadController {
         //StringBuilder row = new StringBuilder();
 
         //add data
-        while (iterator.hasNext()) {
-            String dataRow = iterator.next();
+        String uniqueNameExpression = "${id}";
+        TroubleTrackingIterator<String> tti = df.iterator(ids, uniqueNameExpression, fieldDelim);
+        while (tti.hasNext()) {
+            String uniqueName = tti.next().trim();
+            Transcript transcript = (Transcript) sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
             //String id = dataRow.getValue(OutputOption.SYS_ID);
             //String row = dataRow.getValue(outputOptions);
             //String row = id;
@@ -255,43 +257,47 @@ public class DownloadController {
 //			}
 //			row.deleteCharAt(row.length()-1);
             //CharSequence row;
-            Transcript transcript =  (Transcript)sequenceDao.getFeatureByUniqueName(dataRow, Feature.class);
-            logger.info(String.format(" Gene %s Type %s",dataRow, transcript.getType().getName() ));
+            //Transcript transcript =  (Transcript) sequenceDao.getFeatureByUniqueName(dataRow, Feature.class);
+            if (transcript == null) {
+                logger.error(String.format("Didn't get a transcript of name '%s'", uniqueName));
+                continue;
+            }
+            logger.info(String.format("Gene '%s', Type '%s'", transcript.getType().getName(), transcript.getType()));
             String sequence = DownloadUtils.getSequence(transcript, sequenceType, prime3, prime5);
             String entry;
             if (sequence != null) {
-                entry = DownloadUtils.writeFasta(dataRow, sequence);
+                entry = DownloadUtils.writeFasta(uniqueName, sequence);
             } else {
-                entry = String.format("%s \n Alternately spliced or sequence not attached ", dataRow);
+                entry = String.format("%s \n Alternately spliced or sequence not attached ", uniqueName);
             }
 
             whole.append(entry);
-            whole.append("\n\n");
+            whole.append("\n");
         }
 
 
-
-        BufferedWriter out = null;
-        File outFile = null;
-        try {
-            outFile = File.createTempFile("download", "txt"); //getServletContext().getRealPath("/" + file));
-            out = new BufferedWriter(new FileWriter(outFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (out != null) {
-                out.write(whole.toString());
-                out.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return outFile;
+//        BufferedWriter out = null;
+//        File outFile = null;
+//        try {
+//            outFile = File.createTempFile("download", "txt"); //getServletContext().getRealPath("/" + file));
+//            out = new BufferedWriter(new FileWriter(outFile));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (IllegalStateException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            if (out != null) {
+//                out.write(whole.toString());
+//                out.close();
+//            }
+//        } catch (IOException exp) {
+//            exp.printStackTrace();
+//        }
+//
+//        return outFile;
+        return whole.toString();
     }
 
 
