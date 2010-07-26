@@ -76,16 +76,12 @@
 <div class="light-grey-bot"></div>
 
 
-<h1>News: March 22 2010</h1><br></br>
+<h1>New Mailing List</h1><br></br>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-<p>Welcome to the first official release of the GeneDB website. A couple of datasets
-aren't yet available, but are still available on the previous version of the site.
-This is accessible via the "Previous version" link below.</p>
-
-<p>A couple of lesser used features haven't been implemented. If this causes you problems, or you
-have any new feature requests or comments on the site, please contact us via the feedback
-forms at the bottom of the page.</p>
+<p>There's a mailing list for announcing new releases of the GeneDB
+website, service interruptions etc. To subscribe please see <br>
+<a href="http://lists.sanger.ac.uk/mailman/listinfo/genedb-info">http://lists.sanger.ac.uk/mailman/listinfo/genedb-info</a></p>
 </div>
 <div class="baby-blue-bot"></div>
 
