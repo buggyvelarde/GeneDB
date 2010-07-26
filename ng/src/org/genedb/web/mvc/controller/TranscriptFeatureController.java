@@ -188,6 +188,7 @@ public class TranscriptFeatureController {
         	mav = new ModelAndView(viewName, model);
         }
         
+        // FIXME Shouldn't be injecting db access code into view
         mav.addObject("sequenceDao", sequenceDao);
         return mav;
     }
