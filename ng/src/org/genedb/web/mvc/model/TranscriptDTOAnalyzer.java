@@ -18,7 +18,7 @@ public class TranscriptDTOAnalyzer {
         TranscriptDTOAnalyzer tda = new TranscriptDTOAnalyzer(args[0]);
         String[] arguments = args;
         if (arguments.length <= 1) {
-            arguments = new String[]{"PF07_0048"};
+            arguments = new String[]{"PF11_0282"};
         }
         tda.startConsole(arguments);
     }
