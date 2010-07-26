@@ -1,0 +1,17 @@
+finaldest.webapps=/nfs/pathdb/genedb/beta/webapps/ROOT
+webAppRootKey=genedb.beta.root
+
+dbhost=pgsrv2
+dbport=5432
+dbname=nightly
+dbuser=genedb
+dbpassword=genedb
+
+lucene.indexDirectory=/nfs/pathdb/genedb/beta/lucene
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+cacheDirectory=/nfs/pathdb/genedb/beta/cache
+resultsCacheDirectory=/tmp/results_beta
+
+diagram.fontFile=/nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
+
