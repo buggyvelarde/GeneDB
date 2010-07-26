@@ -177,7 +177,7 @@ public class DownloadUtils {
     }
 
 
-    public static String getSequence(Transcript t,SequenceType sequenceType, int prime3, int prime5) {
+    public static String getSequence(Transcript t, SequenceType sequenceType, int prime3, int prime5) {
     	String sequence = null;
     	ProductiveTranscript transcript = null;
 
@@ -214,26 +214,50 @@ public class DownloadUtils {
     			return sequence;
 
     		case INTERGENIC_3:
-    			return fetchParentSequence(t, prime3, 0);
+    			return fetchParentSequence(t, false, prime3, 0);
 
     		case INTERGENIC_5:
-    			return fetchParentSequence(t, 0, prime5);
+    			return fetchParentSequence(t, false, 0, prime5);
 
     		case INTERGENIC_3and5:
-    			return fetchParentSequence(t, prime3, prime5);
+    			return fetchParentSequence(t, true, prime3, prime5);
 
     		}
     	}
     	return sequence;
     }
 
-
-	private static String fetchParentSequence(Transcript t, int prime3, int prime5) {
+    // TODO Check off by one
+	private static String fetchParentSequence(Transcript t, boolean includeTranscript, int prime3, int prime5) {
+	    if (prime3>0 && prime5 > 0 && !includeTranscript) {
+	        throw new IllegalArgumentException("Can't fetch sequence from both sides of a transcript but not include the transcript");
+	    }
+	    if (prime3<0 || prime5 < 0) {
+	        throw new IllegalArgumentException("Can't use -ve sequence offsets");
+	    }
 		FeatureLoc fl = t.getRankZeroFeatureLoc();
-		int start = fl.getFmin() - prime3;
-		int end = fl.getFmax() + prime5;
+		int start;
+		int end;
+		if (includeTranscript) {
+		      start = fl.getFmin() - prime3;
+		      end = fl.getFmax() + prime5;
+		} else {
+		    if (prime3 > 0) {
+		        start = fl.getFmin() - prime3;
+		        end = fl.getFmin();
+		    } else {
+		        // Prime 5 end
+		        start = fl.getFmax();
+		        end = fl.getFmax() + prime5;
+		    }
+		}
 
 		Feature parent = fl.getSourceFeature();
+		if (start > end) {
+		    int tmp = start;
+		    start = end;
+		    end = tmp;
+		}
 		return new String(parent.getResidues(start, end, fl.getStrand()==1));
 	}
 
