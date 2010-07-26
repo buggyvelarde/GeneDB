@@ -129,9 +129,6 @@ public class NamedFeatureController {
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 
         TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
-        
-        
-        
 
         if (dto == null) {
             cacheMiss++;
@@ -186,7 +183,7 @@ public class NamedFeatureController {
         } else {
         	mav = new ModelAndView(viewName, model);
         }
-        
+        // FIXME Should need to inject DAO into view
         mav.addObject("sequenceDao", sequenceDao);
         return mav;
     }
