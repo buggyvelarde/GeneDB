@@ -24,14 +24,14 @@ import java.io.Writer;
 
 public class GoAssociationUtils {
 
-    public void exportGoAssociation(Writer w, Taxon t, boolean strict) throws IOException {
-        // Find all proteins (or genes?) and loop over, extracting GO terms
-        
-    }
+//    public void exportGoAssociation(Writer w, Taxon t, boolean strict) throws IOException {
+//        // Find all proteins (or genes?) and loop over, extracting GO terms
+//
+//    }
 
     private void pln(Writer w, String line) throws IOException {
         w.write(line);
         w.write('\n');
     }
-    
+
 }
