@@ -44,8 +44,6 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      */
     private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String indentSpaces, String previouslySelectedTaxons) throws IOException {
 
-        System.err.println("The selection is '"+previouslySelectedTaxons+"'");
-
         out.write("\n<option ");
         out.write(" class=\"");
         out.write("Level");
