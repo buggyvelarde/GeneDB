@@ -38,6 +38,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.taxon.TaxonUtils;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryItem;
