@@ -9,7 +9,6 @@ import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
-import org.genedb.web.mvc.controller.WebConstants;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
@@ -72,7 +71,7 @@ public class ResultsController {
         // TODO Do we want form submission via GET?
 
         if (!StringUtils.hasText(key)) {
-            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+        	WebUtils.setFlashMessage("Unable to identify which query to use", session);
             return "redirect:/QueryList";
         }
 
@@ -90,7 +89,7 @@ public class ResultsController {
         int end = start + DEFAULT_LENGTH;
 
         if (!resultsCacheFactory.getResultsCacheMap().containsKey(key)) {
-            session.setAttribute(WebConstants.FLASH_MSG, "Unable to retrieve results for this key");
+        	WebUtils.setFlashMessage("Unable to retrieve results for this key", session);
             logger.error("Unable to retrieve results for key '"+key+"'");
             return "redirect:/QueryList";
         }
@@ -130,10 +129,6 @@ public class ResultsController {
         if (resultEntry.query != null) {
             model.addAttribute("isMaxResultsReached", Boolean.valueOf(resultEntry.query.isMaxResultsReached()));
         }
-        
-        logger.debug("taxonNodeName : " + taxonNodeName);
-        logger.debug("resultEntry.taxonGroup : " + resultEntry.taxonGroup);
-        
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }
