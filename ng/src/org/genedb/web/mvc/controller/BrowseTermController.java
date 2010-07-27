@@ -91,7 +91,7 @@ public class BrowseTermController {
             return new ModelAndView(successView,model);
         }
 
-        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
+        String orgNames = btb.getOrganism().replaceAll(":", " ");
 
         String category = btb.getCategory().toString();
 
