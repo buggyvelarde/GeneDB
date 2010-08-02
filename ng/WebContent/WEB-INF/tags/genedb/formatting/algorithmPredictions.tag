@@ -42,7 +42,7 @@
         <td>
           <c:if test="${algData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
           <c:if test="${!algData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
-          <c:if test="${algData.DGPI.location != null}">Predicted cleavage site at ${algData.DGPI.location} with score ${aData.DGPI.score}.</c:if>
+          <c:if test="${algData.DGPI.location != null}">Predicted cleavage site at ${algData.DGPI.location} with score ${algData.DGPI.score}.</c:if>
         </td>
       </tr>
     </c:if>
