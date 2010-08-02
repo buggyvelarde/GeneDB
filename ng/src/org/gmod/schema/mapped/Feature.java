@@ -585,6 +585,9 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
             featureCvTerms.add(featureCvTerm);
         }
     }
+    
+    @Transient
+    private Object featurePropsLock = new Object();
 
     public Collection<FeatureProp> getFeatureProps() {
         return (featureProps = CollectionUtils.safeGetter(featureProps));
@@ -593,6 +596,21 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     public void addFeatureProp(FeatureProp featureProp) {
         featureProp.setFeature(this);
         getFeatureProps().add(featureProp);
+    }
+    
+    public void removeFeatureProp(String cv, String term){              
+        synchronized (featurePropsLock) {
+                Iterator<FeatureProp> it = getFeatureProps().iterator();              
+                while (it.hasNext()) {
+                    FeatureProp current = it.next();
+                    if ((current.getType().getName().equals(term)) && (current.getType().getCv().getName()).equals(cv)) {
+                        logger.trace(String.format("Removing FeatureProp (ID %d) from feature '%s'",
+                            current.getFeaturePropId(), getUniqueName()));
+                        it.remove();
+                    }
+                }
+            }
+ 
     }
 
     @Transient
