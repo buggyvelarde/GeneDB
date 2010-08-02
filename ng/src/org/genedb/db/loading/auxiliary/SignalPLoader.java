@@ -107,7 +107,7 @@ public class SignalPLoader extends Loader {
         }
         
         /* Add the plasmoAP score (if available) */
-        System.out.println("The plasmoAP score for this is " + hit.getPlasmoAP_score());
+
         if (hit.getPlasmoAP_score()!=null){
             
             sequenceDao.persist(new FeatureProp(polypeptide, plasmoAPScoreTerm, hit.getPlasmoAP_score(), 0));            
