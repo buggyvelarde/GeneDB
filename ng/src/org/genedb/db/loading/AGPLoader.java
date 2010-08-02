@@ -126,7 +126,7 @@ public class AGPLoader {
         String residue = new String();
        
         for (AGPLine line : agpFile.lines() ) {
-            
+                      
             String currentTopLevelName = line.getTopLevelName();
        
             if (!currentTopLevelName.equals(prevTopLevelName) || agpFile.isLastLine(linesRead)) { //Start of a new topLevelFeature or end of file
@@ -146,7 +146,7 @@ public class AGPLoader {
                     residue="";
                     for(AGPLine entry: agpLines){
                         Feature entryFeature;
-                        if(!entry.getEntryType().equals("N")){ //Contig
+                        if(!entry.getEntryType().equals("N") && !entry.getEntryType().equals("U")){ //Contig
                             entryFeature = processContigFeature(entry, topLevelFeature);  
                             contigsByStart.put(new Integer(entryFeature.getStart()), entryFeature);
                             residue = residue.concat(entryFeature.getResidues());
@@ -297,7 +297,11 @@ public class AGPLoader {
             }
             FeatureLoc floc = contig.getFeatureLoc(0, 0);
             if(floc==null || floc.getSourceFeature()==null || floc.getSourceFeature().getFeatureId()!=topLevelFeature.getFeatureId()){ //This test works for Tcruzi & Congolense. But need to may be 'set' properties instead of adding a new featureloc
-                topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0); 
+                topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0);
+                String toplevel = contig.getFeatureProp("genedb_misc", "top_level_seq");
+                if(toplevel!=null && toplevel.equals("true")){
+                    contig.removeFeatureProp("genedb_misc", "top_level_seq");
+                }
                 logger.info("Found contig " + contig.getUniqueName());
             }else{
                 logger.warn(String.format("Contig %s exists but featureloc (locgroup=0, rank=0) is not null or not as expected. Check.", uniqueName ));
@@ -749,7 +753,7 @@ class AGPFile {
 
         String line;
         int lineNumber = 0;
-        while (null != (line = reader.readLine())) { //While not end of file
+        while (null != (line = reader.readLine())) { //While not end of file            
             lineNumber++;
             AGPLine newLine = new AGPLine(lineNumber, line);
             lines.add(newLine);   
@@ -779,15 +783,20 @@ class AGPLine {
     private int topLevelStart, topLevelEnd, entryStart, entryEnd;
 
     public AGPLine(int lineNumber, String line){
-
-       final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)"); 
-       final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t");
+        
+       final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([ADFGOPW])\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)"); 
+       final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([UN])\\t(\\S+)\\t(\\S+)\\t(\\S+)");
 
         Matcher matcher_contig = CONTIG_PATTERN.matcher(line);
         Matcher matcher_gap = GAP_PATTERN.matcher(line);
- 
-        if (matcher_contig.matches() && matcher_contig.group(5).equals("D")) { //Making sure it's a contig line
-  
+
+        //It appears that apart from U and N, all other letters in this fifth field
+        //can be considered and stored as contigs. 
+        //http://www.ncbi.nlm.nih.gov/projects/genome/assembly/agp/AGP_Specification.shtml#FORMAT
+        
+        if (matcher_contig.matches()){ /*&& (matcher_contig.group(5).equals("D") ||
+                                         matcher_contig.group(5).equals("A"))) { //Making sure it's a contig line */
+                   
             this.topLevelName = matcher_contig.group(1);
             this.topLevelStart = Integer.parseInt(matcher_contig.group(2))-1;//subtract 1 to convert to interbase coordinates
             this.topLevelEnd = Integer.parseInt(matcher_contig.group(3)); 
@@ -797,7 +806,7 @@ class AGPLine {
             this.entryEnd = Integer.parseInt(matcher_contig.group(8));
             this.entryStrand = matcher_contig.group(9);
  
-        }else if (matcher_gap.matches() && matcher_gap.group(5).equals("N")){ //Making sure it's a gap line
+        }else if (matcher_gap.matches() ){ //Making sure it's a gap line
  
             this.topLevelName = matcher_gap.group(1);
             this.topLevelStart = (Integer.parseInt(matcher_gap.group(2)))-1;//subtract 1 to convert to interbase coordinates //imt
@@ -807,6 +816,7 @@ class AGPLine {
             this.gapLinkage = matcher_gap.group(8);
 
         }else{
+
             logger.error(String.format("Unable to parse line %d: %s", lineNumber, line));
         }
 
