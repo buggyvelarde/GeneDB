@@ -19,12 +19,9 @@ import java.sql.SQLException;
 /**
  * Retrieves and validates the arguments sent into the AGPLoader and calls the load method 
  * 
- * @author 
+ * @author nds
  *
  */
-
-//We extend FileProcessor here even though we do not need any recursive file processing
-//action since we find the getRequiredProperty methods useful to extract system properties.
 
 public class LoadAGP extends FileProcessor{
 
@@ -67,11 +64,13 @@ public class LoadAGP extends FileProcessor{
         String mode = getPropertyWithDefault("load.mode", "1");
         String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "chromosome").toLowerCase();
         String createMissingContigs = getPropertyWithDefault("load.createMissingContigs", "no");
-        String inputAGPFileName = getRequiredProperty("load.AGPFile");
+        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.(agp)(?:\\.gz)?");
+        String inputDirectory = getRequiredProperty("load.inputDirectory");
         
-        logger.info(String.format("Options: organismCommonName=%s, mode=%s, topLevel=%s, AGPFile=%s", organismCommonName, mode, topLevelFeatureType, inputAGPFileName));
+        logger.info(String.format("Options: organismCommonName=%s, mode=%s, topLevel=%s, inputDirectory=%s", organismCommonName, mode, topLevelFeatureType, inputDirectory));
 
-        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, createMissingContigs, inputAGPFileName);
+        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, createMissingContigs);
+        loadAGP.processFileOrDirectory(inputDirectory, fileNamePattern);
       
     }
 
@@ -85,7 +84,7 @@ public class LoadAGP extends FileProcessor{
      * @param topLevelFeatureType
      * @param inputAGPFileName
      */
-    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String createMissingContigs, String inputAGPFileName) throws IOException{
+    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String createMissingContigs) throws IOException{
         
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
         this.loader = applicationContext.getBean("agpLoader", AGPLoader.class);
@@ -115,12 +114,6 @@ public class LoadAGP extends FileProcessor{
         }else{
             throw new RuntimeException(String.format("Unrecognised value for load.createMissingContigs: %s", createMissingContigs));
         }
-        
-        //Call the load method with a reader for the AGP file
-        File AGPFile = new File(inputAGPFileName);
-        InputStream inputStream = new FileInputStream(AGPFile);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        loader.load(new AGPFile(bufferedReader));
       
 
     }
@@ -128,7 +121,8 @@ public class LoadAGP extends FileProcessor{
 
     @Override
     protected void processFile(File inputFile, Reader reader)throws IOException, ParsingException {
-        //We have to implement this because we extend FileProcessor  
+         loader.load(new AGPFile(new BufferedReader(reader)));
+        
     }
 
 	
