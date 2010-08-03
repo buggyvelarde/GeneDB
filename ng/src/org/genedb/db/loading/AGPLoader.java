@@ -131,6 +131,10 @@ public class AGPLoader {
        
             if (!currentTopLevelName.equals(prevTopLevelName) || agpFile.isLastLine(linesRead)) { //Start of a new topLevelFeature or end of file
                 
+                if(agpFile.hasOnlyOneLine()){ //special case
+                    agpLines.add(line);
+                }
+                
                 if(agpLines.size()>0){
                     
                     /* Deal with the toplevel feature */
@@ -770,6 +774,12 @@ class AGPFile {
         }
         return false;
     }
+    
+    public boolean hasOnlyOneLine(){
+        if (this.lines().size()==1) {return true;}
+        return false;
+        
+    }
 
 }       
 
@@ -783,7 +793,7 @@ class AGPLine {
     private int topLevelStart, topLevelEnd, entryStart, entryEnd;
 
     public AGPLine(int lineNumber, String line){
-        
+ 
        final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([ADFGOPW])\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)"); 
        final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([UN])\\t(\\S+)\\t(\\S+)\\t(\\S+)");
 
