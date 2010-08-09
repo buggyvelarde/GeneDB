@@ -1,7 +1,9 @@
 package org.genedb.db.domain.objects;
 
+import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.springframework.util.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -76,8 +78,16 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
             return null;
         }
 
+        String score = region.getScore(); // FIXME
+        if (!StringUtils.hasLength(score)) {
+            AnalysisFeature af = region.getAnalysisFeature();
+            if (af != null) {
+                score = Double.toString(af.getRawScore());
+            }
+        }
+
         return new DatabasePolypeptideRegion(dbxref.getDb().getName(), dbxref.getAccession(), dbxref.getDescription(),
-            dbxref.getUrl(), region.getScore(), domainLoc.getFmin(), domainLoc.getFmax());
+            dbxref.getUrl(), score, domainLoc.getFmin(), domainLoc.getFmax());
     }
 
     String getDatabase() {
