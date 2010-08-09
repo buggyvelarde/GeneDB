@@ -25,7 +25,7 @@ public class SystematicNameFormatTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
-        String[] suffixes = {":pep", ":mRNA", ":pseudogenic_transcript"};
+        String[] suffixes = {":pep", ":mRNA", ":pseudogenic_transcript", ":rRNA", ":snRNA", ":snoRNA", ":tRNA"};
         name = removeSuffixes(name, suffixes);
         out.print(name);
     }
