@@ -96,6 +96,13 @@ import javax.persistence.Transient;
  * This decision should be kept under review.
  *
  * -rh11, 2009-05-06
+ *
+ * Note that some methods are synchronized on internal locks. However most of the
+ * code base assumes a single-threading model. So it's safer to synchronize externally
+ * if necessary.
+ *
+ *
+ *
  */
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
@@ -585,7 +592,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
             featureCvTerms.add(featureCvTerm);
         }
     }
-    
+
     @Transient
     private Object featurePropsLock = new Object();
 
@@ -597,10 +604,10 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         featureProp.setFeature(this);
         getFeatureProps().add(featureProp);
     }
-    
-    public void removeFeatureProp(String cv, String term){              
+
+    public void removeFeatureProp(String cv, String term){
         synchronized (featurePropsLock) {
-                Iterator<FeatureProp> it = getFeatureProps().iterator();              
+                Iterator<FeatureProp> it = getFeatureProps().iterator();
                 while (it.hasNext()) {
                     FeatureProp current = it.next();
                     if ((current.getType().getName().equals(term)) && (current.getType().getCv().getName()).equals(cv)) {
@@ -610,7 +617,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
                     }
                 }
             }
- 
+
     }
 
     @Transient
