@@ -1,10 +1,5 @@
 package org.genedb.web.mvc.controller.download;
 
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Iterator;
 import java.util.List;
 
 public class OutputFormatterUtils {
