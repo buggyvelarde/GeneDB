@@ -20,54 +20,75 @@
     </div>
 </div>
 
-<!-- #class="ui-state-default ui-corner-all" style="position:absolute; left:100px;top:200px;display:none; height:500px;width:800px;  background:#fff; overflow-y: scroll ;"
- -->
-<div id="activities" >
+
+<div id="activities" style="display:none;" class="ui-state-default ui-corner-all">
+<div style="text-align:right">Change date: <input type="text" id="datepicker" ></div>
 <!-- new annotations -->
-<h1 id="readableActivityTitle" ></h1>
 <div style="font-size:small;" id="readableActivity"></div>
 </div>
 
 <script>
 
 $(function(){
+
+	var defaultDateOffset = -328;
+	
 	var d = new Date();
 	d.setDate(d.getDate() - 328);
-    var since = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+	var since = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
     var baseHREF = getBaseURL() + "gene/";
+    
+    
+    function getAllStatistics(sincedate) {
 
-    function getAllStatistics() {
+    	var thissince = sincedate.getFullYear() + "-" + sincedate.getMonth() + "-" + sincedate.getDate();
+        
 	    $.ajax({
 	         url: getBaseURL() + "service/changes",
 	         type: 'GET',
 	         dataType: 'json',
 	         data: {
-	             'since' : since,
+	             'since' : thissince,
 	             'taxon' : "${node.label}"
 	         },
 	         success: function(response) {
+	        	 var s = "<table cellpadding=10 cellspacing=10><tr><th>gene</th><th>type</th><th>details</th><th>date</th></tr>";
 	             if (response.results.hasOwnProperty("feature")) {
-	            	 var s = "<table cellpadding=10 cellspacing=10><tr><th>gene</th><th>type</th><th>details</th><th>date</th></tr>";
+	            	 
 	                 if (jQuery.isArray(response.results.feature)) {
 	                     for (var i in response.results.feature) {
 	                    	 //console.log(response.results.feature[i]);
-	                    	 var a = "<tr><td><a href='" + baseHREF + response.results.feature[i]["@geneuniquename"] + "' >" + response.results.feature[i]["@geneuniquename"] + "</a></td><td>" + response.results.feature[i]["@type"] + "</td><td>" + response.results.feature[i]["@changedetail"] + "</td><td>" + response.results.feature[i]["@changedate"] +  "</td></tr>" ;
+	                    	 var a = "<tr><td><a style='text-decoration:underline;' href='" + baseHREF + response.results.feature[i]["@geneuniquename"] + "' >" + response.results.feature[i]["@geneuniquename"] + "</a></td><td>" + response.results.feature[i]["@type"] + "</td><td>" + response.results.feature[i]["@changedetail"] + "</td><td>" + response.results.feature[i]["@changedate"] +  "</td></tr>" ;
 	                    	 s += a;
 	                     }
 	                     
 	                 }
-	                 s += "</table>";
-	                 
-	                 $('#readableActivity').html(s); 
+	                
 	             }
-	             $("#activities").dialog({ width: 700, height: 530 , title :  "Recent annotation activity (28 days)" });
-	             
+	             s += "</table>";
+                 $('#readableActivity').html(s);
+                  
+	             $("#activities").dialog({ width: 700, height: 530 , title :  "Recent annotation activity (since " + thissince + " , count " + response.results["@count"] + ")" });
+	             $("#datepicker").datepicker({
+	            	    maxDate: '+0D', 
+	            	    dateFormat: 'yy-mm-dd',  
+	            	    defaultDate: sincedate, 
+	            	    onSelect: function(dateText, inst) {
+	            	        console.log(dateText);
+	            	        var newDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
+	            	        console.log(newDate);
+	            	        //console.log(inst);
+	            	        getAllStatistics(newDate);
+	            	    } 
+		         });
 	         }
 	     });
     }
 
     
     $.ajax({
+        
+        
          url: getBaseURL() + "service/changesummary",
          type: 'GET',
          dataType: 'json',
@@ -82,6 +103,7 @@ $(function(){
                  s+= "<h2>Annotation Statistics</h2>"  
                  s+= "<div class=\"light-grey-top\"></div>"
                  s+= "<div class=\"light-grey\" >"
+                 s+="Since " + since + "<br>";
                  
                  if (response.results.count == 0) {
                 	 return;
@@ -99,7 +121,9 @@ $(function(){
                  s += "<div class=\"light-grey-bot\"></div>";
                  
                  $('#col-1-2').append(s);
-                 $('#showstats').click(getAllStatistics);
+                 $('#showstats').click(function () {
+                     getAllStatistics(d);
+                 });
              }
              
          }
