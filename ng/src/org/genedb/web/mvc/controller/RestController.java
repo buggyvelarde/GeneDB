@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +77,92 @@ public class RestController {
         mav.addObject("model", "hello world");
         return mav;
     }
-
+    
+    @RequestMapping(method=RequestMethod.GET, value={"/changesummary", "/changesummary.*"})
+    public ModelAndView changesSummary(@RequestParam("since") String since,  @RequestParam("taxon") String taxon)
+    {
+    	
+    	ModelAndView mav = new ModelAndView(viewName);
+    	
+    	try {
+    		TaxonNode taxonNode = getTaxonNode(taxon);
+	    	Organism o = getOrganism(taxonNode);
+	    	Date sinceDate = getSinceDate(since);
+	    	
+	    	ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
+	        changedGeneFeaturesQuery.setDate(sinceDate);
+	        changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
+	    	
+	        final ChangedFeatureSetResultSummary organismSetResultSummary = new ChangedFeatureSetResultSummary();
+	        organismSetResultSummary.since = sinceDate.toString();
+	        organismSetResultSummary.name = "genome/changes";
+	        organismSetResultSummary.taxonomyID = taxonNode.getTaxonId();
+	        organismSetResultSummary.count = 0;
+	        
+	        final Hashtable<String,Integer> statistics = new Hashtable<String,Integer>(); 
+	        
+	        
+	        
+	    	changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
+	            public void processRow(ResultSet rs) throws SQLException {
+	            	String type = rs.getString("type");
+	            	
+	            	if (! statistics.containsKey(type)) {
+	            		statistics.put(type, 0);
+	            	}
+	            	statistics.put(type, statistics.get(type) + 1);
+	            	
+	            	organismSetResultSummary.count += 1;
+	            }
+	    	});
+	    	
+	    	for (String key : statistics.keySet()) {
+	    		ChangedFeatureSetResultSummaryStatistic statistic = new ChangedFeatureSetResultSummaryStatistic();
+	    		statistic.annotation = key; 
+	    		statistic.count = statistics.get(key);
+	    		organismSetResultSummary.statistics.add(statistic);
+	    		
+	    		logger.info(key + " " + statistics.get(key));
+	    	}
+	    	
+	    	
+	    	mav.addObject("model", organismSetResultSummary);
+    		
+    	} catch (RestException re) {
+    		mav.addObject("model", re.model);
+	    } catch (Exception e) {
+	    	logger.error(e.getMessage());
+			e.printStackTrace();
+			mav.addObject("model", new ErrorModel(e.getMessage()));
+			
+		}
+	    
+	    return mav;
+	    
+    }
+    
+    private Organism getOrganism(TaxonNode taxonNode) throws RestException {
+    	return organismDao.getOrganismByCommonName(taxonNode.getLabel());
+    }
+    
+    private TaxonNode getTaxonNode(String taxon) throws RestException {
+    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
+    	if (taxonNode == null) {
+    		throw new RestException(ErrorType.INVALID_PARAMETER, "Could not find a taxonNode for taxon " + taxon );
+    	}
+    	logger.info(taxonNode);
+    	return taxonNode;
+    }
+    
+    private Date getSinceDate(String since) throws RestException {
+    	Date sinceDate = Calendar.getInstance().getTime();
+        try {
+            return getDateFromString(since);
+        } catch (ParseException e) {
+            throw new RestException(ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
+        }
+    }
 
     /**
      * Returns all features changed since a certain date, as determined by the DateQuery.
@@ -92,30 +178,9 @@ public class RestController {
     	ModelAndView mav = new ModelAndView(viewName);
     	
     	try {
-    		
-    		
-	        TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
-	    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(taxon);
-	    	
-	    	if (taxonNode == null) {
-	    		throw new RestException(ErrorType.INVALID_PARAMETER, "Could not find a taxonNode for taxon " + taxon );
-	    	}
-	    	
-	    	logger.info(taxonNode);
-	    	
-	    	Organism o = organismDao.getOrganismByCommonName(taxonNode.getLabel());
-	        
-	        if (o == null) {
-	        	throw new RestException(ErrorType.INVALID_PARAMETER, String.format("Could not identify an organism for %s '.", taxon));
-	        }
-	    	
-	        Date sinceDate = Calendar.getInstance().getTime();
-	        try {
-	            sinceDate = getDateFromString(since);
-	        } catch (ParseException e) {
-	            throw new RestException(ErrorType.MISSING_PARAMETER, "Please supply a date as 'yyyy-mm-dd'.");
-	        }
-	        
+    		TaxonNode taxonNode = getTaxonNode(taxon);
+	    	Organism o = getOrganism(taxonNode);
+	    	Date sinceDate = getSinceDate(since);
 	        
 	        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
 	        changedGeneFeaturesQuery.setDate(sinceDate);
@@ -480,6 +545,24 @@ class ChangedFeatureSetResult extends RestResultSet
 
     @XStreamAlias("count")
     @XStreamAsAttribute
+    public int count;
+}
+
+@XStreamAlias("results")
+class ChangedFeatureSetResultSummary extends ChangedFeatureSetResult {
+	
+	@XStreamAlias("summary")
+	public List<ChangedFeatureSetResultSummaryStatistic> statistics = new ArrayList<ChangedFeatureSetResultSummaryStatistic>();
+	
+}
+
+@XStreamAlias("statistics")
+class ChangedFeatureSetResultSummaryStatistic  {
+	
+	@XStreamAlias("Annotation type")
+    public String annotation;
+	
+	@XStreamAlias("Count")
     public int count;
 }
 
