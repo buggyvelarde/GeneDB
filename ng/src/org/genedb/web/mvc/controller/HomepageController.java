@@ -91,6 +91,9 @@ public class HomepageController extends BaseController {
 
         if (node.isLeaf()) {
             mav.setViewName(DEFAULT_SINGLE);
+            
+            mav.addObject("fulltext", node.getName(TaxonNameType.FULL));
+            
             mav.addObject("node", node);
             mav.addObject("label", node.getName(TaxonNameType.LABEL));
             mav.addObject("full", node.getName(TaxonNameType.HTML_FULL));

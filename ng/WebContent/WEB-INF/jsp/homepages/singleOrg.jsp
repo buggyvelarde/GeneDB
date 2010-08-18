@@ -3,7 +3,7 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:header title="${full} Homepage" />
+<format:header title="Homepage for ${fulltext}" />
 <format:page>
 <br>
 
@@ -31,7 +31,7 @@
 
 $(function(){
 
-	var defaultDateOffset = -28;
+	var defaultDateOffset = 28;
 	
 	var d = new Date();
 	d.setDate(d.getDate() - defaultDateOffset);
@@ -72,7 +72,7 @@ $(function(){
 	             $("#datepicker").datepicker({
 	            	    maxDate: '+0D', 
 	            	    dateFormat: 'yy-mm-dd',  
-	            	    defaultDate: sincedate, 
+	            	    selectedDate: sincedate,
 	            	    onSelect: function(dateText, inst) {
 	            	        console.log(dateText);
 	            	        var newDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
@@ -81,6 +81,7 @@ $(function(){
 	            	        getAllStatistics(newDate);
 	            	    } 
 		         });
+	             $("#datepicker").val(thissince);
 	         }
 	     });
     }
