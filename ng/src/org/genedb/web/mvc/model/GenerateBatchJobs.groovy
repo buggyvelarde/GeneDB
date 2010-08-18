@@ -34,7 +34,7 @@ unset DISPLAY
 
 '''
 
-boilerPlate += 'cd "' +  sourceHome + '"'  
+boilerPlate += 'cd "' +  sourceHome + '"\n'  
 
 def queueName = "yesterday";
 
