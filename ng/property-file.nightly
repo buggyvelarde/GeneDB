@@ -13,4 +13,4 @@ emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 resultsCacheDirectory=/tmp/results_staging.nightly
 
-diagram.fontFile=file:///nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
+diagram.fontFile=file:///nfs/pathdb/f011004t.ttf
