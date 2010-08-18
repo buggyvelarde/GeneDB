@@ -127,7 +127,7 @@ done
 
 JOINED=""
 
-if [[ ALL_ORGANISMS == 0 ]]; then
+if [[ ALL_ORGANISMS -eq 0 ]]; then
     echo "Joining organism list"
     for organism in $ORGANISMS
     do
