@@ -146,7 +146,7 @@ echo "Groovy Orgs List: $ORGANISMS_JOINED"
 mkdir -p $TMPDIR/bulk/Lucene/scripts
 GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 echo $GENERATE_LUCENE
-$GENERATE_LUCENE
+eval $GENERATE_LUCENE
 
 
 LUCENE_ERRORS=`cat $TMPDIR/bulk/Lucene/scripts/*.err`
