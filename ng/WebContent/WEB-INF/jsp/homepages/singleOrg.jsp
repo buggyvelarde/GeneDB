@@ -31,10 +31,10 @@
 
 $(function(){
 
-	var defaultDateOffset = -328;
+	var defaultDateOffset = -28;
 	
 	var d = new Date();
-	d.setDate(d.getDate() - 328);
+	d.setDate(d.getDate() - defaultDateOffset);
 	var since = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
     var baseHREF = getBaseURL() + "gene/";
     
