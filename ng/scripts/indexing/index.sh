@@ -145,7 +145,7 @@ echo "Groovy Orgs List: $ORGANISMS_JOINED"
 
 mkdir -p $TMPDIR/Lucene/scripts
 GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-#echo $GENERATE_LUCENE
+echo $GENERATE_LUCENE
 eval $GENERATE_LUCENE
 
 
@@ -165,39 +165,41 @@ fi
 #
 
 cd $SOURCE_HOME
-rm -fr $TMPDIR/Lucene/destination
+rm -fr $TMPDIR/Lucene/merged
 
 # gv1 - tested on laptop:
 # ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
 
 
-MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/Lucene/destination -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
-#echo $MERGE_LUCENE
+MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
+echo $MERGE_LUCENE
 eval $MERGE_LUCENE
+
+
+#
+# Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
+#
+
+MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/lucene/merged _LuceneDictionary"
+echo $MAKE_DICTIONARY_LUCENE
+eval $MAKE_DICTIONARY_LUCENE
 
 
 
 for OUTDIR in $OUTDIRS
 do
-    echo "Copying merged lucenes to $OUTDIR/lucene"
+    echo "Copying merged lucenes from $TMPDIR/lucene/merged to $OUTDIR/lucene"
     rm -fr $OUTDIR/lucene
     mkdir -p $OUTDIR/lucene
-    cp -r  $TMPDIR/Lucene/destination  $OUTDIR/lucene
+    cp -r  $TMPDIR/Lucene/merged  $OUTDIR/lucene
 done
+
+
+
+
 
 # gv1 - hardcoded exit for testing
 exit
-
-#
-# Generate the lucene dictionary on the final merged indices.
-#
-
-MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$OUTDIR/lucene _LuceneDictionary"
-echo MAKE_DICTIONARY_LUCENE $MAKE_DICTIONARY_LUCENE
-###${MAKE_DICTIONARY_LUCENE}
-
-
-
 
 #
 # Generate DTO caches and check for errors.
@@ -223,12 +225,12 @@ fi
 # Merge the DTO caches into place. Sshing into a BIG MEM machine to do this. 
 #
 
-###rm -fr $TMPDIR/DTO/destination
+rm -fr $TMPDIR/DTO/merged
 
 # gv1 - tested on laptop:
 # ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 
-MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/destination -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
 echo $MERGE_DTO
 ###ssh pcs4s "$MERGE_DTO"
 
@@ -236,10 +238,10 @@ echo $MERGE_DTO
 
 for OUTDIR in $OUTDIRS
 do
-    echo "Copying merged indices from $TMPDIR/DTO/destination to $OUTDIR/cache"
+    echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
     rm -fr $OUTDIR/cache;
     mkdir -p $OUTDIR/cache
-    cp -r $TMPDIR/DTO/destination $OUTDIR/cache;
+    cp -r $TMPDIR/DTO/merged $OUTDIR/cache;
 done
 
 
