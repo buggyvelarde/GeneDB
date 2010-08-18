@@ -47,7 +47,7 @@ done
 
 if [[ -z $OUTDIRS ]] || [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]]
 then
-    echo "You must supply a tempdir (-t) and outdir (-o) parameters"
+    echo "You must supply a tempdir (-t) and outdir (-o) and postgres driver (-p) parameters"
     usage
     exit 1
 fi
