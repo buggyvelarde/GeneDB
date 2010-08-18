@@ -131,9 +131,9 @@ if [[ ALL_ORGANISMS -eq 0 ]]; then
     echo "Joining organism list"
     for organism in $ORGANISMS
     do
-        JOINED="$ORGANISMS_JOINED:${organism}"
+        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism}"
     done
-    JOINED="${ORGANISMS_JOINED:1}"
+    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
     
 fi
 
