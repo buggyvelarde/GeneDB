@@ -1,6 +1,7 @@
 #!/bin/bash
 
-function usage {
+usage() {
+cat <<OPTIONS
 Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [options]
 Options:
  -o OUTDIRS dir1,dir2,dir3
@@ -17,6 +18,7 @@ Options:
     Copy the pathogens to nightly, and cleans up. 
  -c COPY_DB_TO_STAGING
     Copy the nightly to staging at the end of the process.
+OPTIONS
 }
 
 VERSION=0.1
