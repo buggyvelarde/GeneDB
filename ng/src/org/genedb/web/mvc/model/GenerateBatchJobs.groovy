@@ -117,7 +117,7 @@ boolean worked = true
 def scriptDir = new File(baseDir, "scripts")
 def originalJobListSize = jobList.size()
 while (jobList.size() > 0) {
-    sleep 300000; // 5 *60*1000
+    sleep 30000; // 5 *60*1000
 
     List finishedJobs = new ArrayList()
     List failedJobs = new ArrayList()
