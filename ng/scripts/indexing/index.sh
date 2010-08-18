@@ -145,7 +145,7 @@ echo "Groovy Orgs List: $ORGANISMS_JOINED"
 
 mkdir -p $TMPDIR/bulk/Lucene/scripts
 GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-echo $GENERATE_LUCENE
+#echo $GENERATE_LUCENE
 eval $GENERATE_LUCENE
 
 
@@ -158,31 +158,32 @@ else
     echo "Found no errors in Lucene"
 fi
 
-# gv1 - hardcoded exit for testing
-exit
+
 
 #
 # Merge the lucene indices and copy them into place.
 #
 
 cd $SOURCE_HOME
-###rm -fr $TMPDIR/bulk/Lucene/destination
+rm -fr $TMPDIR/bulk/Lucene/destination
 
 # gv1 - tested on laptop:
 # ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
 
 
-MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/bulk/Lucene/destination -Dmerge.lucene.origin=$TMPDIR/bulk/Lucene/destination runMergeLuceneIndices"
-echo MERGE_LUCENE $MERGE_LUCENE
-###${MERGE_LUCENE}
+MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/bulk/Lucene/destination -Dmerge.lucene.origin=$TMPDIR/bulk/Lucene/output runMergeLuceneIndices"
+#echo $MERGE_LUCENE
+eval $MERGE_LUCENE
+
 for OUTDIR in $OUTDIRS
 do
     echo "Copying merged lucenes to $OUTDIR/lucene"
-    ###rm -fr $OUTDIR/lucene
-    ###cp -r  $TMPDIR/bulk/Lucene/destination  $OUTDIR/lucene
+    rm -fr $OUTDIR/lucene
+    cp -r  $TMPDIR/bulk/Lucene/destination  $OUTDIR/lucene
 done
 
-
+# gv1 - hardcoded exit for testing
+exit
 
 #
 # Generate the lucene dictionary on the final merged indices.
@@ -200,7 +201,7 @@ echo MAKE_DICTIONARY_LUCENE $MAKE_DICTIONARY_LUCENE
 #
 
 mkdir -p $TMPDIR/bulk/DTO/scripts
-GENERATE_DTO="groovy -cp $POSTGRES_DRIVER src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 echo GENERATE_DTO $GENERATE_DTO
 ###${GENERATE_DTO}
 
@@ -224,7 +225,7 @@ fi
 # gv1 - tested on laptop:
 # ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 
-MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/bulk/DTO/destination -Dmerge.indices.origin=$TMPDIR/bulk/DTO/destination runMergeIndices"
+MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/bulk/DTO/destination -Dmerge.indices.origin=$TMPDIR/bulk/DTO/output runMergeIndices"
 echo $MERGE_DTO
 ###ssh pcs4s "$MERGE_DTO"
 
