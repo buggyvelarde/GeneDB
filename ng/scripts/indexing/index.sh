@@ -175,12 +175,13 @@ MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=
 #echo $MERGE_LUCENE
 eval $MERGE_LUCENE
 
-mkdir -p $OUTDIR/lucene
+
 
 for OUTDIR in $OUTDIRS
 do
     echo "Copying merged lucenes to $OUTDIR/lucene"
     rm -fr $OUTDIR/lucene
+    mkdir -p $OUTDIR/lucene
     cp -r  $TMPDIR/Lucene/destination  $OUTDIR/lucene
 done
 
@@ -231,13 +232,14 @@ MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.de
 echo $MERGE_DTO
 ###ssh pcs4s "$MERGE_DTO"
 
-mkdir -p $OUTDIR/cache
+
 
 for OUTDIR in $OUTDIRS
 do
     echo "Copying merged indices from $TMPDIR/DTO/destination to $OUTDIR/cache"
-    ###rm -fr $OUTDIR/cache;
-    ###cp -r $TMPDIR/DTO/destination $OUTDIR/cache;
+    rm -fr $OUTDIR/cache;
+    mkdir -p $OUTDIR/cache
+    cp -r $TMPDIR/DTO/destination $OUTDIR/cache;
 done
 
 
