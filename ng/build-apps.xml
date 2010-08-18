@@ -574,9 +574,11 @@
       </java>
     </target>
 
-    <target name="_LuceneIndex">
+    <target name="_LuceneIndex"  >
         <fail message="The 'dir' property must be set" unless="dir"/> 
-        <fail message="The 'organism' property must be set" unless="organism"/> 
+    	<echo>${dir}</echo>
+        <fail message="The 'organism' property must be set" unless="organism"/>
+    	<echo>${organism}</echo>
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="run-classpathref"/>
@@ -592,6 +594,8 @@
 
 	<!-- gv1 - added this as a separate ant-task. This needs to be executed after the indices have all been generated. Takes about 45 minutes on my laptop. -->
     <target name="_LuceneDictionary" >
+    	<fail message="The 'dir' property must be set" unless="dir"/> 
+        <echo>${dir}</echo>
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneDictionary">
             <classpath>
               <path refid="run-classpathref"/>
@@ -604,6 +608,8 @@
     </target>
     
     <target name="LuceneIndex" depends="check-config, fulljar, _LuceneIndex" />
+	
+	<target name="PopulateCaches" depends="check-config, fulljar, _PopulateCaches" />
 
     <target name="PeriodicUpdater" depends="check-config, fulljar"
         description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
@@ -738,6 +744,9 @@
     </target>
 
     <target name="runMergeIndices" depends="check-config, fulljar">
+      <fail unless="merge.indices.destination" message="The property merge.indices.destination must be specified"/>
+      <fail unless="merge.indices.origin" message="The property merge.indices.origin must be specified"/>
+      
       <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
         <classpath>
           <path refid="run-classpathref"/>
@@ -747,14 +756,18 @@
         </classpath>
         <jvmarg value="-Xmx2048m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <arg line="-r /tmp/destination /nfs/pathdb/genedb/nightly/bulk/DTO/output"/>
+        <arg line="-r ${merge.indices.destination} ${merge.indices.origin}"/>
       </java>
     </target>
 
 
     <target name="runMergeLuceneIndices" depends="check-config, fulljar">
-      <deltree dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
-      <mkdir dir="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination" />
+      <fail unless="merge.lucene.destination" message="The property merge.lucene.destination must be specified"/>
+      <fail unless="merge.lucene.origin" message="The property merge.lucene.origin must be specified"/>
+    	
+      <delete dir="${merge.lucene.destination}" />
+      <mkdir dir="${merge.lucene.destination}" />
+        
       <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
         <classpath>
           <path refid="run-classpathref"/>
@@ -764,7 +777,7 @@
         </classpath>
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <arg line="/nfs/pathdb/genedb/nightly/bulk/Lucene/destination /nfs/pathdb/genedb/nightly/bulk/Lucene/output"/>
+        <arg line="${merge.lucene.destination} ${merge.lucene.origin}"/>
       </java>
     </target>
 

@@ -141,7 +141,7 @@ fi
 #
 
 mkdir -p $TMPDIR/bulk/Lucene/scripts
-GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $ORGANISMS_JOINED $SOURCE_HOME $TMPDIR"
+GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 echo $GENERATE_LUCENE
 ###${GENERATE_LUCENE}
 
@@ -163,6 +163,11 @@ fi
 
 cd $SOURCE_HOME
 ###rm -fr $TMPDIR/bulk/Lucene/destination
+
+# gv1 - tested on laptop:
+# ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
+
+
 MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/bulk/Lucene/destination -Dmerge.lucene.origin=$TMPDIR/bulk/Lucene/destination runMergeLuceneIndices"
 echo MERGE_LUCENE $MERGE_LUCENE
 ###${MERGE_LUCENE}
@@ -191,7 +196,7 @@ echo MAKE_DICTIONARY_LUCENE $MAKE_DICTIONARY_LUCENE
 #
 
 mkdir -p $TMPDIR/bulk/DTO/scripts
-GENERATE_DTO="groovy -cp $POSTGRES_DRIVER src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $ORGANISMS_JOINED $SOURCE_HOME $TMPDIR"
+GENERATE_DTO="groovy -cp $POSTGRES_DRIVER src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 echo GENERATE_DTO $GENERATE_DTO
 ###${GENERATE_DTO}
 
@@ -211,6 +216,9 @@ fi
 #
 
 ###rm -fr $TMPDIR/bulk/DTO/destination
+
+# gv1 - tested on laptop:
+# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 
 MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/bulk/DTO/destination -Dmerge.indices.origin=$TMPDIR/bulk/DTO/destination runMergeIndices"
 echo $MERGE_DTO

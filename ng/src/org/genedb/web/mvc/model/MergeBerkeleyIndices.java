@@ -20,13 +20,21 @@ public class MergeBerkeleyIndices {
 
         BerkeleyMapFactory destination = new BerkeleyMapFactory();
         destination.setRootDirectory(args[startArgs]);
+        System.out.println("destination: " + args[startArgs]);
         destination.setReadOnly(false);
 
         File sourceDir = new File(args[startArgs+1]);
+        System.out.println("source:" + sourceDir);
 
         if (mbi.isRecurse()) {
             File[] dirs = sourceDir.listFiles();
             for (File dir : dirs) {
+            	
+            	// gv1 - skip files which are not directories... e.g. ".DS_Store"
+            	if (! dir.isDirectory()) {
+            		continue;
+            	}
+            	
                 mbi.merge(dir, destination);
             }
         } else {
@@ -42,7 +50,9 @@ public class MergeBerkeleyIndices {
         BerkeleyMapFactory source = new BerkeleyMapFactory();
         source.setRootDirectory(sourceDir.getAbsolutePath());
         source.setReadOnly(true);
-
+        
+        //System.out.println("Merging : " + source.getRootDirectory() + " to destination  berkley db" + destination.getRootDirectory());
+        
         destination.getDtoMap().putAll(source.getDtoMap());
         destination.getContextMapMap().putAll(source.getContextMapMap());
         destination.getImageMap().putAll(source.getImageMap());
