@@ -180,7 +180,7 @@ eval $MERGE_LUCENE
 # Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
 #
 
-MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/lucene/merged _LuceneDictionary"
+MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
 echo $MAKE_DICTIONARY_LUCENE
 eval $MAKE_DICTIONARY_LUCENE
 
@@ -188,10 +188,10 @@ eval $MAKE_DICTIONARY_LUCENE
 
 for OUTDIR in $OUTDIRS
 do
-    echo "Copying merged lucenes from $TMPDIR/lucene/merged to $OUTDIR/lucene"
+    echo "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
     rm -fr $OUTDIR/lucene
     mkdir -p $OUTDIR/lucene
-    cp -r  $TMPDIR/Lucene/merged  $OUTDIR/lucene
+    cp -r  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
 done
 
 
@@ -241,7 +241,7 @@ do
     echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
     rm -fr $OUTDIR/cache;
     mkdir -p $OUTDIR/cache
-    cp -r $TMPDIR/DTO/merged $OUTDIR/cache;
+    cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
 done
 
 
