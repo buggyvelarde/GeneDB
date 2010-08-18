@@ -114,10 +114,10 @@ fi
 for organism in $ORGANISMS
 do
     echo "Cleaning up " $organism;
-    ###rm -fr $TMPDIR/Lucene/output/$organism
-    ###rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
-    ###rm -fr $TMPDIR/DTO/output/$organism
-    ###rm -fr $TMPDIR/DTO/scripts/${organism}.script*
+    rm -fr $TMPDIR/Lucene/output/$organism
+    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
+    rm -fr $TMPDIR/DTO/output/$organism
+    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
 done
 
 
