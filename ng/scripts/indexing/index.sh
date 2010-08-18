@@ -125,18 +125,19 @@ done
 # The groovy scripts below use ":" separated organism lists as arguments.
 #
 
-JOINED=""
+ORGANISMS_JOINED=""
 
 if [[ ALL_ORGANISMS -eq 0 ]]; then
     echo "Joining organism list"
     for organism in $ORGANISMS
     do
-        JOINED="$JOINED:${organism}"
+        JOINED="$ORGANISMS_JOINED:${organism}"
     done
-    JOINED="${JOINED:1}"
-    echo $JOINED
+    JOINED="${ORGANISMS_JOINED:1}"
+    
 fi
 
+echo "Groovy Orgs List: $ORGANISMS_JOINED"
 
 #
 # Generate lucene indicces and check for any errors.
