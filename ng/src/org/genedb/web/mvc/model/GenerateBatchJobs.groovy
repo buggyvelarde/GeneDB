@@ -15,7 +15,7 @@ def usage () {
 	println "		a colon separated list of organisms"
 }
 
-if (args.length < 1) { {
+if (args.length < 4) { {
 	usage()
 	System.exit(101)
 }
