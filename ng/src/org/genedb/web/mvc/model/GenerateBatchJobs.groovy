@@ -31,8 +31,10 @@ export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
-cd ${sourceHome}
+
 '''
+
+boilerPlate += 'cd "' +  sourceHome + '"'  
 
 def queueName = "yesterday";
 
