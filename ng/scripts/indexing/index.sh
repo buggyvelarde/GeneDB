@@ -107,116 +107,124 @@ if [[ -z $ORGANISMS ]]; then
 fi
 
 
-#
-# Clean up tmp directories for the organisms to be indexed. 
-#
+DO_INDEXING=0
 
-for organism in $ORGANISMS
-do
-    echo "Cleaning up " $organism;
-    rm -fr $TMPDIR/Lucene/output/$organism
-    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
-    rm -fr $TMPDIR/DTO/output/$organism
-    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
-done
+if [[ $DO_INDEXING ]]; then
+	
+	#
+	# Clean up tmp directories for the organisms to be indexed. 
+	#
+	
+	for organism in $ORGANISMS
+	do
+	    echo "Cleaning up " $organism;
+	    rm -fr $TMPDIR/Lucene/output/$organism
+	    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
+	    rm -fr $TMPDIR/DTO/output/$organism
+	    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
+	done
+	
+	
+	#
+	# The groovy scripts below use ":" separated organism lists as arguments.
+	#
+	
+	ORGANISMS_JOINED=""
+	
+	if [[ ALL_ORGANISMS -eq 0 ]]; then
+	    echo "Joining organism list"
+	    for organism in $ORGANISMS
+	    do
+	        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism}"
+	    done
+	    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
+	    
+	fi
+	
+	echo "Groovy Orgs List: $ORGANISMS_JOINED"
+	
+	#
+	# Generate lucene indicces and check for any errors.
+	#
+	
+	mkdir -p $TMPDIR/Lucene/scripts
+	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	echo $GENERATE_LUCENE
+	eval $GENERATE_LUCENE
+	
+	
+	LUCENE_ERRORS=`cat $TMPDIR/Lucene/scripts/*.err`
+	LEN_LUCENE_ERRORS=${#VAR}
+	if [[ $LUCENE_ERRORS > 0 ]]; then
+	    echo "Found errors in Lucene"
+	    exit 1
+	else
+	    echo "Found no errors in Lucene"
+	fi
+	
+	
+	
+	#
+	# Merge the lucene indices and copy them into place.
+	#
+	
+	cd $SOURCE_HOME
+	rm -fr $TMPDIR/Lucene/merged
+	
+	# gv1 - tested on laptop:
+	# ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
+	
+	
+	MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
+	echo $MERGE_LUCENE
+	eval $MERGE_LUCENE
+	
+	
+	#
+	# Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
+	#
+	
+	MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
+	echo $MAKE_DICTIONARY_LUCENE
+	eval $MAKE_DICTIONARY_LUCENE
+	
+	
+	
+	for OUTDIR in $OUTDIRS
+	do
+	    echo "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
+	    rm -fr $OUTDIR/lucene
+	    mkdir -p $OUTDIR/lucene
+	    cp -r  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
+	done
+	
+	
+	
+	
+	
+	
+	#
+	# Generate DTO caches and check for errors.
+	#
+	
+	mkdir -p $TMPDIR/DTO/scripts
+	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	echo $GENERATE_DTO
+	eval $GENERATE_DTO
+	
+	
+	DTO_ERRORS=`cat $TMPDIR/DTO/scripts/*.err`
+	LEN_DTO_ERRORS=${#VAR}
+	if [[ $LEN_DTO_ERRORS > 0 ]]; then
+	    echo "Found errors in DTO"
+	    exit 1
+	else
+	    echo "Found no errors in DTO"
+	fi
+
+fi	
 
 
-#
-# The groovy scripts below use ":" separated organism lists as arguments.
-#
-
-ORGANISMS_JOINED=""
-
-if [[ ALL_ORGANISMS -eq 0 ]]; then
-    echo "Joining organism list"
-    for organism in $ORGANISMS
-    do
-        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism}"
-    done
-    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
-    
-fi
-
-echo "Groovy Orgs List: $ORGANISMS_JOINED"
-
-#
-# Generate lucene indicces and check for any errors.
-#
-
-mkdir -p $TMPDIR/Lucene/scripts
-GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-echo $GENERATE_LUCENE
-eval $GENERATE_LUCENE
-
-
-LUCENE_ERRORS=`cat $TMPDIR/Lucene/scripts/*.err`
-LEN_LUCENE_ERRORS=${#VAR}
-if [[ $LUCENE_ERRORS > 0 ]]; then
-    echo "Found errors in Lucene"
-    exit 1
-else
-    echo "Found no errors in Lucene"
-fi
-
-
-
-#
-# Merge the lucene indices and copy them into place.
-#
-
-cd $SOURCE_HOME
-rm -fr $TMPDIR/Lucene/merged
-
-# gv1 - tested on laptop:
-# ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
-
-
-MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
-echo $MERGE_LUCENE
-eval $MERGE_LUCENE
-
-
-#
-# Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
-#
-
-MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
-echo $MAKE_DICTIONARY_LUCENE
-eval $MAKE_DICTIONARY_LUCENE
-
-
-
-for OUTDIR in $OUTDIRS
-do
-    echo "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
-    rm -fr $OUTDIR/lucene
-    mkdir -p $OUTDIR/lucene
-    cp -r  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
-done
-
-
-
-
-
-
-#
-# Generate DTO caches and check for errors.
-#
-
-mkdir -p $TMPDIR/DTO/scripts
-GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-echo $GENERATE_DTO
-eval $GENERATE_DTO
-
-
-DTO_ERRORS=`cat $TMPDIR/DTO/scripts/*.err`
-LEN_DTO_ERRORS=${#VAR}
-if [[ $LEN_DTO_ERRORS > 0 ]]; then
-    echo "Found errors in DTO"
-    exit 1
-else
-    echo "Found no errors in DTO"
-fi
 
 
 #
@@ -228,7 +236,7 @@ rm -fr $TMPDIR/DTO/merged
 # gv1 - tested on laptop:
 # ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 
-MERGE_DTO="ant -f $SOURCE_HOME/ant-build.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
 echo $MERGE_DTO
 ssh pcs4s "$MERGE_DTO"
 
@@ -240,6 +248,9 @@ do
     mkdir -p $OUTDIR/cache
     cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
 done
+
+
+
 
 
 # gv1 - hardcoded exit for testing
