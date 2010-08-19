@@ -109,7 +109,7 @@ fi
 
 DO_INDEXING=0
 
-if [[ $DO_INDEXING -eq 0 ]]; then
+if [[ $DO_INDEXING -eq 1 ]]; then
 	
 	#
 	# Clean up tmp directories for the organisms to be indexed. 
@@ -221,9 +221,10 @@ if [[ $DO_INDEXING -eq 0 ]]; then
 	else
 	    echo "Found no errors in DTO"
 	fi
-
-fi	
-
+	
+	
+	
+fi
 
 
 
@@ -241,6 +242,12 @@ echo $MERGE_DTO
 ssh pcs4s "$MERGE_DTO"
 
 
+
+echo Sleeping for 60 seconds to give NFS time to catch up with whats been happening...
+sleep 60
+echo Awake!
+
+
 for OUTDIR in $OUTDIRS
 do
     echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
@@ -248,9 +255,6 @@ do
     mkdir -p $OUTDIR/cache
     cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
 done
-
-
-
 
 
 # gv1 - hardcoded exit for testing
