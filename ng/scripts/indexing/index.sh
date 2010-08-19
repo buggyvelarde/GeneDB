@@ -133,7 +133,7 @@ if [[ $DO_INDEXING ]]; then
 	
 	for organism in $ORGANISMS
 	do
-	    echo "Cleaning up " $organism;
+		echo "Cleaning up " $organism;
 	    rm -fr $TMPDIR/Lucene/output/$organism
 	    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
 	    rm -fr $TMPDIR/DTO/output/$organism
@@ -163,7 +163,6 @@ if [[ $DO_INDEXING ]]; then
 	
 	echo "Groovy Orgs List: $ORGANISMS_JOINED"
 	
-	exit 1
 	
 	#
 	# Generate lucene indicces and check for any errors.
