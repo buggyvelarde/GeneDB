@@ -77,8 +77,11 @@ SCRIPT_DIRECTORY=`dirname $(readlink -f $0)`
 echo SCRIPT_DIRECTORY $SCRIPT_DIRECTORY
 
 SOURCE_HOME=`dirname $(readlink -f "${SCRIPT_DIRECTORY}/../")`
-cd SOURCE_HOME $SOURCE_HOME
+echo SOURCE_HOME $SOURCE_HOME
+cd $SOURCE_HOME
 echo Executing indexing at $SOURCE_HOME 
+
+exit 1
 
 ORIGINAL_IFS=$IFS
 IFS=$'\n'
