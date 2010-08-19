@@ -151,8 +151,11 @@ if [[ $DO_INDEXING ]]; then
 	    echo "Joining organism list"
 	    for organism in $ORGANISMS
 	    do
-	    	#regex / / to trim white spaces
-	        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism/ /}"
+		    #regex / / to trim white spaces
+	    	organism=${organism/ /} 
+	    	if [[ -z $organism -eq 'dummy' ]]; then
+		        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism/ /}"
+	        fi
 	    done
 	    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
 	    
