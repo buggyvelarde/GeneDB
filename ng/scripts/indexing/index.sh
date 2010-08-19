@@ -109,7 +109,7 @@ fi
 
 DO_INDEXING=0
 
-if [[ $DO_INDEXING -eq 1 ]]; then
+if [[ $DO_INDEXING -eq 0 ]]; then
 	
 	#
 	# Clean up tmp directories for the organisms to be indexed. 
