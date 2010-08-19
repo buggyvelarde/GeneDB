@@ -118,6 +118,8 @@ if [[ -z $ORGANISMS ]]; then
     echo ${GET_ORGANISMS_SQL}
     ORGANISMS=`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c "${GET_ORGANISMS_SQL}" pathogens`
     
+    
+    
 fi
 
 
@@ -149,13 +151,18 @@ if [[ $DO_INDEXING ]]; then
 	    echo "Joining organism list"
 	    for organism in $ORGANISMS
 	    do
-	        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism}"
+	    	#regex / / to trim white spaces
+	        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism/ /}"
 	    done
 	    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
+	    
+	    
 	    
 	fi
 	
 	echo "Groovy Orgs List: $ORGANISMS_JOINED"
+	
+	exit 1
 	
 	#
 	# Generate lucene indicces and check for any errors.
