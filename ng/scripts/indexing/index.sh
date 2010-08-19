@@ -4,20 +4,31 @@ usage() {
 cat <<OPTIONS
 Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [options]
 Options:
- -o OUTDIRS dir1,dir2,dir3
+
+ -o OUTDIRS 			dir1,dir2,dir3
     A comma-separated list of output folders.
- -t TMPDIR
+
+ -t TMPDIR				tmpfolder
     The path to a temp folder.
- -r ORGANISMS org1,org2,org3
+
+ -p POSTGRES_DRIVER		/path/to/psql-driver.jar
+    The path to the jdbc postgres driver jar. 
+
+ -r ORGANISMS 			org1,org2,org3
     A comma-separated list of organisms. Do not run with -s flag. Not specifying either of -r or -s will default to all organisms being indexed.
- -s SINCE
+
+ -s SINCE 				2010-08-10
     All organisms changed since this date. Do not run with -r flag. Not specifying either of -r or -s will default to all organisms being indexed.
- -p POSTGRES_DRIVER
-    The path to the jdbc postgres driver jar
+
+ -i DO_INDEXING
+ 	Run the indexing operations (generating and merging the lucene and DTOs). Off by default.
+
  -d DUMP_AND_CLEANUP_DB
-    Copy the pathogens to nightly, and cleans up. 
+    Copy the pathogens to nightly, and cleans up. Off by default.
+
  -c COPY_DB_TO_STAGING
-    Copy the nightly to staging at the end of the process.
+    Copy the nightly to staging at the end of the process. Off by default.
+
 OPTIONS
 }
 
@@ -37,6 +48,7 @@ while getopts "s:r:o:t:p:bcdv" o ; do
         t ) TMPDIR=$OPTARG;;
         p ) POSTGRES_DRIVER=$OPTARG;;
         d ) DUMP_AND_CLEANUP_DB=1;;
+        i ) DO_INDEXING=1;;
         c ) COPY_DB_TO_STAGING=1;;
         v ) echo $VERSION  
             exit 0;;
@@ -44,6 +56,7 @@ while getopts "s:r:o:t:p:bcdv" o ; do
                 exit;;
     esac
 done
+
 
 if [[ -z $OUTDIRS ]] || [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]]
 then
@@ -61,10 +74,10 @@ fi
 
 
 SCRIPT_DIRECTORY=`dirname $(readlink -f $0)`
-echo $SCRIPT_DIRECTORY
+echo SCRIPT_DIRECTORY $SCRIPT_DIRECTORY
 
 SOURCE_HOME=`dirname $(readlink -f "${SCRIPT_DIRECTORY}/../")`
-cd $SOURCE_HOME
+cd SOURCE_HOME $SOURCE_HOME
 echo Executing indexing at $SOURCE_HOME 
 
 ORIGINAL_IFS=$IFS
@@ -73,15 +86,15 @@ IFS=$'\n'
 
 if [[ $DUMP_AND_CLEANUP_DB ]]; then
     echo Backing up db
-    ###genedb-web-control ci-web stop
-    ###dropdb -h pgsrv2 nightly
-    ###createdb -h pgsrv2 -E SQL-ASCII nightly
-    ###pg_dump -Naudit -Naudit_backup -Ngraphs -h pgsrv1 pathogens | psql -h pgsrv2 nightly
+    genedb-web-control ci-web stop
+    dropdb -h pgsrv2 nightly
+    createdb -h pgsrv2 -E SQL-ASCII nightly
+    pg_dump -Naudit -Naudit_backup -Ngraphs -h pgsrv1 pathogens | psql -h pgsrv2 nightly
     
     for sqlfile in $SOURCE_HOME/sql/cleanup/*.sql
     do
         echo "Processing SQL cleanup file? " $sqlfile
-        ###psql -h pgsrv2 nightly < $sqlfile
+        psql -h pgsrv2 nightly < $sqlfile
     done
     
     cd $SOURCE_HOME
@@ -107,9 +120,9 @@ if [[ -z $ORGANISMS ]]; then
 fi
 
 
-DO_INDEXING=0
 
-if [[ $DO_INDEXING -eq 1 ]]; then
+
+if [[ $DO_INDEXING ]]; then
 	
 	#
 	# Clean up tmp directories for the organisms to be indexed. 
@@ -224,41 +237,42 @@ if [[ $DO_INDEXING -eq 1 ]]; then
 	
 	
 	
+	
+	#
+	# Merge the DTO caches into place. Sshing into a BIG MEM machine to do this. 
+	#
+	
+	rm -fr $TMPDIR/DTO/merged
+	
+	# gv1 - tested on laptop:
+	# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
+	
+	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+	echo $MERGE_DTO
+	ssh pcs4s "$MERGE_DTO"
+	
+	
+	
+	
+	echo Sleeping for 60 seconds to give NFS time to catch up with whats been happening...
+	sleep 60
+	echo Awake!
+	
+	
+	
+	
+	for OUTDIR in $OUTDIRS
+	do
+	    echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
+	    rm -fr $OUTDIR/cache;
+	    mkdir -p $OUTDIR/cache
+	    cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
+	done
+	
+	
+
+	
 fi
-
-
-
-#
-# Merge the DTO caches into place. Sshing into a BIG MEM machine to do this. 
-#
-
-rm -fr $TMPDIR/DTO/merged
-
-# gv1 - tested on laptop:
-# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
-
-MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
-echo $MERGE_DTO
-ssh pcs4s "$MERGE_DTO"
-
-
-
-echo Sleeping for 60 seconds to give NFS time to catch up with whats been happening...
-sleep 60
-echo Awake!
-
-
-for OUTDIR in $OUTDIRS
-do
-    echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
-    rm -fr $OUTDIR/cache;
-    mkdir -p $OUTDIR/cache
-    cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
-done
-
-
-# gv1 - hardcoded exit for testing
-exit
 
 
 
@@ -268,9 +282,9 @@ exit
 
 if [[ $COPY_DB_TO_STAGING ]]; then
     echo Copying db to staging
-    ###dropdb -h genedb-db snapshot-old
-    ###createdb -h genedb-db staging
-    ###pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
+    dropdb -h genedb-db snapshot-old
+    createdb -h genedb-db staging
+    pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
 fi
 
 
