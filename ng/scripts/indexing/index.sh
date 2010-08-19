@@ -153,13 +153,11 @@ if [[ $DO_INDEXING ]]; then
 	    do
 		    #regex / / to trim white spaces
 	    	organism=${organism/ /} 
-	    	if [[ -z $organism -eq 'dummy' ]]; then
+	    	if [[ $organism -ne 'dummy' ]]; then
 		        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism/ /}"
 	        fi
 	    done
 	    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
-	    
-	    
 	    
 	fi
 	
