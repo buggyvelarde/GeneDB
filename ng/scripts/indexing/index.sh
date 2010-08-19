@@ -250,7 +250,7 @@ if [[ $DO_INDEXING ]]; then
 	
 	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
 	echo $MERGE_DTO
-	ssh pcs4s "$MERGE_DTO"
+	ssh pcs4m "$MERGE_DTO"
 	
 	
 	
