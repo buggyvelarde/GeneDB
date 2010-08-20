@@ -2,7 +2,17 @@
 
 usage() {
 cat <<OPTIONS
-Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [options]
+Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [-r org1,org2 | -s 2010-08-10] [-1] [-2] [-3] [-4]
+
+You can choose to specify a list of organisms (-r) or a date (-s), if you specify neither then all organisms will be used. There are several actions in the workflow that you can call: 
+
+ 1. dump to nightly and cleanup 
+ 2. lucene indexing 
+ 3. berkley dto caching 
+ 4. copying nightly to staging 
+
+You can ommit any one or more of these actions (they are all off by default). However they will always be called in the same order.
+
 Options:
 
  -o OUTDIRS 			dir1,dir2,dir3
@@ -20,14 +30,17 @@ Options:
  -s SINCE 				2010-08-10
     All organisms changed since this date. Do not run with -r flag. Not specifying either of -r or -s will default to all organisms being indexed.
 
- -i DO_INDEXING
- 	Run the indexing operations (generating and merging the lucene and DTOs). Off by default.
+ -1 DUMP_AND_CLEANUP_DB
+    Copy the pathogens to nightly, and cleans up. Off by default. Stage 1.
 
- -d DUMP_AND_CLEANUP_DB
-    Copy the pathogens to nightly, and cleans up. Off by default.
+ -2 DO_INDEXING
+ 	Run the lucene indexing operations. Off by default. Stage 2. 
 
- -c COPY_DB_TO_STAGING
-    Copy the nightly to staging at the end of the process. Off by default.
+ -3 DO_BERKLEY_CACHE
+ 	Run the berkley cache (DTO) indexing operations. Off by default. Stage 3. 
+
+ -4 COPY_DB_TO_STAGING
+    Copy the nightly to staging at the end of the process. Off by default. Stage 4.
 
 OPTIONS
 }
@@ -36,7 +49,7 @@ VERSION=0.1
 HST="pathdbsrv1a"
 
 if [ `uname -n` != ${HST} ]; then
-    echo "This normally runs on ${HST}. Not proceeding."
+    echo "This only runs on ${HST}. Not proceeding."
     exit 1
 fi
 
@@ -47,9 +60,10 @@ while getopts "s:r:o:t:p:bcdiv" o ; do
         o ) OUTDIRS=$(echo $OPTARG | tr "," "\n" );;
         t ) TMPDIR=$OPTARG;;
         p ) POSTGRES_DRIVER=$OPTARG;;
-        d ) DUMP_AND_CLEANUP_DB=1;;
-        i ) DO_INDEXING=1;;
-        c ) COPY_DB_TO_STAGING=1;;
+        1 ) DUMP_AND_CLEANUP_DB=1;;
+        2 ) DO_INDEXING=1;;
+        3 ) DO_BERKLEY_CACHE=1;;
+        4 ) COPY_DB_TO_STAGING=1;;
         v ) echo $VERSION  
             exit 0;;
         ?) usage
@@ -86,6 +100,7 @@ IFS=$'\n'
 
 
 if [[ $DUMP_AND_CLEANUP_DB ]]; then
+	echo "Stage 1"
     echo Backing up db
     genedb-web-control ci-web stop
     dropdb -h pgsrv2 nightly
@@ -102,15 +117,19 @@ if [[ $DUMP_AND_CLEANUP_DB ]]; then
     echo "Backed up db"
 fi
 
+# a flag to indicate if all organisms should be indexed
 ALL_ORGANISMS=0;
 
+# if no organisms (-r) have been supplied
 if [[ -z $ORGANISMS ]]; then
     
     GET_ORGANISMS_SQL=""
     
+    # if a since (-s) has been supplied
     if [[ $SINCE ]]; then
         GET_ORGANISMS_SQL="select common_name from organism where organism_id in (select distinct(organism_id) from feature where timelastmodified >= '${SINCE}');"
     else
+    	# get everything
         GET_ORGANISMS_SQL="select common_name from organism"
         ALL_ORGANISMS=1;
     fi
@@ -118,32 +137,15 @@ if [[ -z $ORGANISMS ]]; then
     echo ${GET_ORGANISMS_SQL}
     ORGANISMS=`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c "${GET_ORGANISMS_SQL}" pathogens`
     
-    
-    
 fi
 
 
 
-
-if [[ $DO_INDEXING ]]; then
-	
-	#
-	# Clean up tmp directories for the organisms to be indexed. 
-	#
-	
-	for organism in $ORGANISMS
-	do
-		echo "Cleaning up " $organism;
-	    rm -fr $TMPDIR/Lucene/output/$organism
-	    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
-	    rm -fr $TMPDIR/DTO/output/$organism
-	    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
-	done
-	
-	
-	#
-	# The groovy scripts below use ":" separated organism lists as arguments.
-	#
+#
+# Here we make a big string of ":" separated organisms, because the groovy scripts below require this.
+#
+if [[ $DO_INDEXING ]] || [[ $DO_BERKLEY_CACHE ]]
+then
 	
 	ORGANISMS_JOINED=""
 	
@@ -163,7 +165,26 @@ if [[ $DO_INDEXING ]]; then
 	
 	echo "Groovy Orgs List: $ORGANISMS_JOINED"
 	
+fi
+
+
+if [[ $DO_INDEXING ]]; then
 	
+	echo "Stage 2"
+	
+	#
+	# Clean up tmp directories for the organisms to be indexed. 
+	#
+	
+	for organism in $ORGANISMS
+	do
+		echo "Cleaning up lucene: " $organism;
+	    rm -fr $TMPDIR/Lucene/output/$organism
+	    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
+	done
+	
+	
+		
 	#
 	# Generate lucene indicces and check for any errors.
 	#
@@ -175,7 +196,7 @@ if [[ $DO_INDEXING ]]; then
 	
 	
 	LUCENE_ERRORS=`cat $TMPDIR/Lucene/scripts/*.err`
-	LEN_LUCENE_ERRORS=${#VAR}
+	LEN_LUCENE_ERRORS=${#LUCENE_ERRORS}
 	if [[ $LUCENE_ERRORS > 0 ]]; then
 	    echo "Found errors in Lucene"
 	    exit 1
@@ -221,8 +242,22 @@ if [[ $DO_INDEXING ]]; then
 	
 	
 	
+fi
+
+if [[ $DO_BERKLEY_CACHE	]];then
 	
+	echo "Stage 3"
 	
+	#
+	# Clean up tmp directories for the organisms to be indexed. 
+	#
+	
+	for organism in $ORGANISMS
+	do
+		echo "Cleaning up DTO: " $organism;
+	    rm -fr $TMPDIR/DTO/output/$organism
+	    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
+	done
 	
 	#
 	# Generate DTO caches and check for errors.
@@ -235,7 +270,7 @@ if [[ $DO_INDEXING ]]; then
 	
 	
 	DTO_ERRORS=`cat $TMPDIR/DTO/scripts/*.err`
-	LEN_DTO_ERRORS=${#VAR}
+	LEN_DTO_ERRORS=${#DTO_ERRORS}
 	if [[ $LEN_DTO_ERRORS > 0 ]]; then
 	    echo "Found errors in DTO"
 	    exit 1
@@ -289,6 +324,7 @@ fi
 #
 
 if [[ $COPY_DB_TO_STAGING ]]; then
+	echo "Stage 4"
     echo Copying db to staging
     dropdb -h genedb-db snapshot-old
     createdb -h genedb-db staging
