@@ -82,7 +82,9 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
         if (!StringUtils.hasLength(score)) {
             AnalysisFeature af = region.getAnalysisFeature();
             if (af != null) {
-                score = Double.toString(af.getRawScore());
+            	if (af.getRawScore() != null) {
+            		score = Double.toString(af.getRawScore());
+            	}
             }
         }
 
