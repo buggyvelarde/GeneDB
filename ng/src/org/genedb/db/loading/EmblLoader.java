@@ -296,7 +296,15 @@ class EmblLoader {
 
         doLoad(emblFile, topLevelFeature);
 
-        if (reportUnusedQualifiers) {
+        /* Unused qualifiers can only be reported if there is a featuretable.
+         * In some of our embl files, there are no features (E.g., Etenella
+         * contigs) and this causes the loader to fail as it tries to look 
+         * in the featuretable for unused qualifiers. Hence, the if clause
+         * below was modified to check if the featretable is null (the
+         * reportUnusedQualifiers is true by default)
+         * nds 26 august 2010
+         */
+        if (reportUnusedQualifiers && emblFile.getFeatureTable()!=null) { 
             reportUnusedQualifiers(emblFile.getFeatureTable());
         } else {
             logger.debug("Not reporting on unused qualifiers");
