@@ -20,10 +20,10 @@ should be obtained before publishing analyses of the sequence/open reading frame
 </c:if>
 
 
-<p style="text-align:right"><span style="color: #8b031b">New!</span> View in : 
+<p style="text-align:right"><span style="color: #8b031b">New!</span> View in :
 <span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
-<a target="web-artemis" href="http://pcs-genedb1.internal.sanger.ac.uk:18080/web-artemis/?src=${dto.topLevelFeatureUniqueName}&base=${dto.min-100}&bases=${dto.max-dto.min +200}">Web-Artemis (alpha)</a>
-</span> 
+<a target="web-artemis" href="http://www.genedb.org/web-artemis/?src=${dto.topLevelFeatureUniqueName}&base=${dto.min-100}&bases=${dto.max-dto.min +200}">Web-Artemis (alpha)</a>
+</span>
 </p>
 
 
@@ -320,10 +320,10 @@ ${dto.ims.imageMap}
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
-    
+
     <misc:url value="/gene/" var="geneBaseUrl" />
     <db:orthologueFilter baseUrl="${geneBaseUrl}" sequenceDao="${sequenceDao}" dto="${dto}" />
-    
+
     </td></tr>
   </table>
   </format:genePageSection>
