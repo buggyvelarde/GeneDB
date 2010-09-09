@@ -179,18 +179,19 @@ class FeatureTable extends EmblFile.Section {
                     String.format("%s feature has both /systematic_id and /temporary_systematic_id", this.type));
             }
             else if (temporarySystematicId != null) {
-                temporarySystematicId = temporarySystematicId.replaceAll("\\s","").trim();
+                temporarySystematicId = temporarySystematicId.replaceAll("\\s","").trim(); //When ids wrap lines in the EMBL file a space is introduced
                 return temporarySystematicId;
             } else if (systematicId != null) {
-                //When systematic_ids wrap lines in the EMBL file a space is introduced
-                systematicId = systematicId.replaceAll("\\s","").trim();
+                systematicId = systematicId.replaceAll("\\s","").trim(); //When ids wrap lines in the EMBL file a space is introduced
                 return systematicId;
             } else if (featName != null) {
+                featName = featName.replaceAll("\\s","").trim(); //When ids wrap lines in the EMBL file a space is introduced
                 logger.warn(
                     String.format("%s feature has neither /systematic_id nor /temporary_systematic_id; " +
                                   "using /FEAT_NAME=\"%s\"", this.type, featName));
                 return featName;
             } else if (locusTag != null) {
+                locusTag = locusTag.replaceAll("\\s","").trim(); //When ids wrap lines in the EMBL file a space is introduced
                 logger.warn(
                     String.format("%s feature has no /systematic_id or /FEAT_NAME; using /locus_tag=\"%s\"",
                         this.type, locusTag));
