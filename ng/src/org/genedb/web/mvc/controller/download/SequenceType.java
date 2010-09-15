@@ -4,7 +4,7 @@ public enum SequenceType {
     UNSPLICED_DNA,
     SPLICED_DNA,
     PROTEIN,
-    INTRON,
+    INTRON_AND_EXON,
     INTERGENIC_5,
     INTERGENIC_3,
     CDS_RNA,

@@ -1,6 +1,7 @@
 package org.genedb.web.utils;
 
-import org.genedb.web.mvc.controller.Strand;
+
+import org.apache.log4j.Logger;
 import org.genedb.web.mvc.controller.download.SequenceType;
 
 import org.gmod.schema.feature.AbstractExon;
@@ -10,16 +11,17 @@ import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+
 
 public class DownloadUtils {
 
+	private static Logger logger = Logger.getLogger(DownloadUtils.class);
+	
     private static int FEATURE_PREFIX_WIDTH = 22;
     private static int MAX_FEATURE_WIDTH = 18;
     private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
@@ -156,26 +158,87 @@ public class DownloadUtils {
                         sequence = new String(transcript.getProtein().getResidues());
                     }
                     break;
-                case INTRON:
-                    Object[] exons = transcript.getExons().toArray();
-                    if(exons.length > 1) {
-                        sequence = new String();
-                        for(int i=0;i<exons.length - 1;i++) {
-                            AbstractExon exon = (AbstractExon) exons[i];
-                            int start = exon.getStart();
-                            int stop = exon.getStop();
-                            String str = new String(gene.getRankZeroFeatureLoc().getSourceFeature()
-                                    .getResidues(start, stop));
-                            sequence = sequence.concat(str);
-                        }
-                    }
+                case INTRON_AND_EXON:
+                	sequence = getIntronsAndExons(transcript);
                     break;
             }
         }
 
         return sequence;
     }
-
+    
+    
+    private static class Position {
+    	public int start;
+    	public int stop;
+    	public boolean upper = false;
+    }
+    
+    
+    /**
+     * Retrieves the entire sequence of the transcript, with the exons capitalized. 
+     * 
+     * @param transcript
+     * @return
+     */
+    private static String getIntronsAndExons(ProductiveTranscript transcript) {
+    	String sequence = new String();
+    	
+    	List<Position> positions = new ArrayList<Position>(); 
+    	
+    	int lastPoint = -1;
+    	
+    	for (AbstractExon exon : transcript.getExons()) {
+    		
+    		int exonStart = exon.getStart();
+    		
+    		if (lastPoint == -1) {
+    			lastPoint = exonStart;
+    		}
+    		
+    		int intronStart = exonStart - lastPoint;
+    		
+    		if (intronStart > 0) {
+    			Position intronPosition = new Position();
+    			intronPosition.start = lastPoint;
+    			intronPosition.stop = exonStart;
+    			positions.add(intronPosition);
+    			logger.debug(intronPosition.start + " ... " + intronPosition.stop);    			
+    		}
+    		
+    		logger.debug(exon.getStart() + " <...> " + exon.getStop());
+    		
+    		Position exonPosition = new Position();
+    		exonPosition.start = exon.getStart();
+    		exonPosition.stop = exon.getStop();
+    		exonPosition.upper = true;
+			positions.add(exonPosition);
+    		
+    		lastPoint = exon.getStop();
+    		
+    	}
+    	
+    	for (Position p : positions) {
+    		
+    		String str;
+    		if (p.upper) {
+    			str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature().getResidues(p.start, p.stop).toUpperCase() );
+    		} else {
+    			str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature().getResidues(p.start, p.stop) );
+    		}
+    		
+    		sequence = sequence.concat(str);
+    	}
+		
+		
+		//    	for (AbstractExon exon : transcript.getExons()) {
+		//			int start = exon.getStart();
+		//			int stop = exon.getStop();
+		//			String str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature().getResidues(start, stop));
+		//			sequence = sequence.concat(str);
+		//		}
+		return sequence;
+    }
 
     public static String getSequence(Transcript t, SequenceType sequenceType, int prime3, int prime5) {
     	String sequence = null;
@@ -198,21 +261,9 @@ public class DownloadUtils {
     		case PROTEIN:
     			return new String(transcript.getProtein().getResidues());
     			//break;
-    		case INTRON:
-    			Object[] exons = transcript.getExons().toArray();
-    			if (exons.length > 1) {
-    				sequence = new String();
-    				for(int i=0;i<exons.length - 1;i++) {
-    					AbstractExon exon = (AbstractExon) exons[i];
-    					int start = exon.getStart();
-    					int stop = exon.getStop();
-    					String str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature()
-    							.getResidues(start, stop));
-    					sequence = sequence.concat(str);
-    				}
-    			}
-    			return sequence;
-
+    		case INTRON_AND_EXON:
+    			return getIntronsAndExons(transcript);
+    			
     		case INTERGENIC_3:
     			return fetchParentSequence(t, false, prime3, 0);
 

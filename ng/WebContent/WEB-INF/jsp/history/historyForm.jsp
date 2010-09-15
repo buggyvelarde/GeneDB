@@ -103,7 +103,7 @@
 <table width="100%" cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 <tr><td colspan="2"><INPUT TYPE=RADIO NAME="sequenceType" checked VALUE="UNSPLICED_DNA"> DNA (Unspliced sequence of CDS) or sequenced EST</td></tr>
 <tr><td colspan="2"><INPUT TYPE=RADIO NAME="sequenceType" VALUE="SPLICED_DNA"> DNA (Spliced sequence)</td></tr>
-<tr><td colspan="2"><INPUT TYPE=RADIO NAME="sequenceType" VALUE="INTRON"> Intron sequence</td></tr>
+<tr><td colspan="2"><INPUT TYPE=RADIO NAME="sequenceType" VALUE="INTRON_AND_EXON"> Exon and intron sequence (exons capitalized)</td></tr>
 <tr><td colspan="2"><INPUT TYPE=RADIO NAME="sequenceType" VALUE="PROTEIN"> Protein sequence</td></tr>
 <tr><td><INPUT TYPE=RADIO NAME="sequenceType" VALUE="INTERGENIC_5"> Intergenic Sequence (5'&nbsp;)</td>
 <td rowspan="2" align="left">
