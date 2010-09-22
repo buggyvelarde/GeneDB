@@ -17,8 +17,7 @@
   <property name="dist.dir" value="${build.dir}/dist" />
   <property name="ng.jar" value="${build.dir}/dist/ng.jar" />
   <property name="test-classes.dir" value="${build.dir}/test-classes" />
-
-
+    
   <!-- Classpaths -->
   <path id="aspect.path">
     <pathelement location="${lib.dir}/*.jar"/>
@@ -104,7 +103,21 @@
       </copy>
       -->
   </target>
-
+    
+	
+	<target name="stop-tomcat" >
+		<fail unless="finaldest.server.bin" message="The property --finaldest.server.bin must be specified"/>
+		<exec executable="${finaldest.server.bin}/shutdown.sh" />
+	</target>
+	
+	<target name="start-tomcat" >
+		<fail unless="finaldest.server.bin" message="The property --finaldest.server.bin must be specified"/>
+        <exec executable="${finaldest.server.bin}/startup.sh" />
+    </target>
+	
+	<!-- gv1 - I use this for quick redeployments on test environments -->
+	<target name="restart-and-deploy" depends="stop-tomcat,final-deploy,start-tomcat" />
+	
 
 
   <target name="check-config">
@@ -141,8 +154,7 @@
     </jar>
   </target>
 
-  <property name="host" value="http://developer.genedb.org"/>
-  <property name="prefix" value="ci-web/"/>
+
   <!-- Include trailing slash -->
 
   <target name="test-deployment">
