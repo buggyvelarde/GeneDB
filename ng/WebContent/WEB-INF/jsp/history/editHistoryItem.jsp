@@ -19,8 +19,7 @@
 <display:table name="items"  id="row" pagesize="30" requestURI="/Results" class="search-data-table" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${fn:length(items)}">
     <display:column title="Delete"><input type="checkbox" name="item${row_rowNum}"></display:column>
     <display:column title="Systematic ids" style="width: 100px;">
-        <%--<a href="<misc:url value="/ResultsNavigator"/>?index=${row_rowNum+firstResultIndex-1}&resultsLength=${fn:length(results)-1}&key=${key}">${row}</a>--%>
-        ${row}
+        <a href="<misc:url value="/gene/"/>${row}">${row}</a>
     </display:column>
 </display:table>
 
