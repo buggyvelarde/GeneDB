@@ -4,6 +4,7 @@ import org.genedb.querying.core.Query;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HistoryItem implements Serializable {
@@ -118,4 +119,7 @@ public class HistoryItem implements Serializable {
     public void removeNum(int index) {
         ids.remove(index);
     }
+    
+    
+    
 }

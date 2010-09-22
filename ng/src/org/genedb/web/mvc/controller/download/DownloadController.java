@@ -23,9 +23,9 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
-import org.genedb.web.utils.DownloadUtils;
+import org.genedb.web.mvc.model.BerkeleyMapFactory;
+import org.genedb.web.mvc.model.TranscriptDTO;
 
-import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
@@ -36,8 +36,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
+
+import java.io.OutputStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,7 @@ import com.google.common.collect.Lists;
  *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
+ * @author Giles Velarde (gv1)
  */
 @Controller
 @RequestMapping("/Download")
@@ -61,9 +64,12 @@ public class DownloadController {
 
     private SequenceDao sequenceDao;
     private HistoryManagerFactory historyManagerFactory;
-    private DataFetcher<Integer> dataFetcher;
-
-
+    
+    private BerkeleyMapFactory bmf;
+    
+    public void setBmf(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
+    }
 
     @RequestMapping(method=RequestMethod.GET, value="/{historyItem}")
     public ModelAndView displayForm(
@@ -82,16 +88,17 @@ public class DownloadController {
             @RequestParam("output_dest") OutputDestination outputDestination,
             @RequestParam(value="sequenceType", required=false) SequenceType sequenceType,
             @RequestParam("cust_header") boolean includeHeader,
-            @RequestParam("field_sep") String fieldSeperator,
+            @RequestParam("field_sep") String fieldSeparator,
             @RequestParam("field_blank") String blankField,
-            @RequestParam("field_intsep") String fieldInternalSeperator,
+            @RequestParam("field_intsep") String fieldInternalSeparator,
             @RequestParam("prime3") int prime3,
             @RequestParam("prime5") int prime5,
             HttpServletRequest request,
-            HttpServletResponse response,
-            Writer out
+            HttpServletResponse response
     ) throws Exception {
-
+    	
+    	
+    	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
         if (historyItem > historyItems.size()) {
@@ -107,81 +114,130 @@ public class DownloadController {
         HistoryItem hItem = historyItems.get(historyItem-1);
         List<String> uniqueNames = hItem.getIds();
         List<Integer> featureIds = convertUniquenamesToFeatureIds(uniqueNames);
-
-        String file = request.getSession().getId();
-        //        String columns[] = null;
-        //        if (request.getParameter("columns") != null) {
-        //            columns = request.getParameter("columns").split(",");
-        //        }
-
-        File output = null;
+        
+        fieldSeparator = determineFieldSeparator(fieldSeparator, outputFormat);
+        
+        if (blankField.equals("blank")) {
+        	blankField = "";
+        }
+        
+        List<TranscriptDTO> transcriptDTOs = new ArrayList<TranscriptDTO>();
+        
+        for (int id : featureIds) {
+        	TranscriptDTO dto = bmf.getDtoMap().get(id);
+        	transcriptDTOs.add(dto);
+        }
 
         switch (outputFormat) {
         case EXCEL:
-            //OutputStream outStream = response.getOutputStream();
-            //response.setContentType("application/vnd.ms-excel");
-            //response.setHeader("Content-Disposition", "attachment; filename=results.xls");
-            ExportExcel excel = new ExportExcel();
-            //createExcel(topDocs,file,columns, outStream);
-            return null;
+        	
+        	OutputStream outStream = response.getOutputStream();
+        	response.setContentType("application/vnd.ms-excel");
+        	response.setHeader("Content-Disposition", "attachment; filename=results.xls");
+        	
+        	FormatExcel excelFormatter = new FormatExcel();
+        	
+        	excelFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+        	excelFormatter.setOutputOptions(outputOptions);
+        	
+        	excelFormatter.setOutputStream(outStream);
+        	
+        	excelFormatter.format(transcriptDTOs.iterator());
+            
+            break;
 
         case CSV:
         case TAB:
         {
+        	Writer out = response.getWriter();
+        	
+        	if (fieldSeparator == "default") {
+            	fieldSeparator = "\t";
+            }
+        	
             prepareResponse(response, "text/plain", true);
             response.setContentType("text/plain");
-            CsvOutputFormatter csv = new CsvOutputFormatter(out);
-            String expression = csv.prepareExpression(outputOptions);
-            TroubleTrackingIterator<String> iterator = dataFetcher.iterator(featureIds, expression, fieldSeperator);
-            csv.setHeader(true);
-            csv.writeHeader();
-            csv.writeBody(iterator);
-            csv.writeFooter();
-            logProblems(iterator);
-            return null;
+            
+            FormatCSV csvFormatter = new FormatCSV();
+            
+            csvFormatter.setBlankField(blankField);
+            csvFormatter.setHeader(includeHeader);
+            csvFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+            csvFormatter.setFieldSeparator(fieldSeparator);
+            csvFormatter.setOutputOptions(outputOptions);
+            csvFormatter.setWriter(out);
+            
+            csvFormatter.format(transcriptDTOs.iterator());
+            
+            break;
         }
 
         case HTML:
         {
+        	Writer out = response.getWriter();
+        	
             prepareResponse(response, "text/html", true);
-            HtmlOutputFormatter html = new HtmlOutputFormatter(out);
-            String expression = html.prepareExpression(outputOptions);
-            logger.error("Expression is '"+expression+"'");
-            TroubleTrackingIterator<String> iterator = dataFetcher.iterator(featureIds, expression, fieldSeperator);
-            html.setHeader(true);
-            html.writeHeader();
-            html.writeBody(iterator);
-            html.writeFooter();
-            logProblems(iterator);
-            return null;
+            
+            FormatHTML htmlFormatter = new FormatHTML();
+            htmlFormatter.setBlankField(blankField);
+            htmlFormatter.setHeader(includeHeader);
+            htmlFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+            htmlFormatter.setOutputOptions(outputOptions);
+            htmlFormatter.setWriter(out);
+            
+            htmlFormatter.format(transcriptDTOs.iterator());
+
+            break;
         }
 
         case FASTA:
+        	
+        	Writer out = response.getWriter();
+        	
             prepareResponse(response, "text/plain", true);
-            String expression = OutputFormatterUtils.prepareExpression(outputOptions, "", "", " ", "");
-            String output2 = createFasta(dataFetcher,featureIds, expression, fieldSeperator, file,outputOptions,sequenceType, prime3, prime5);
-            //response.setContentType("application/x-download");
-            //response.setHeader("Content-Disposition", "attachment");
-            //response.setHeader("filename", output.getName());
+            
+            FormatFASTA fastaFormatter = new FormatFASTA();
+            
 
-//            FileInputStream fis = new FileInputStream(output);
-//            char c;
-//            while ((c=(char) fis.read())!= -1) {
-//                out.write(c);
-//            }
-//            fis.close();
-//            if (!output.delete()) {
-//                logger.error(String.format("Unable to delete temp file '%s'", output.getAbsolutePath()));
-//            }
-//            logProblems(iterator);
-
-            logger.error("The output sequence is "+output2);
-            out.write(output2);
-
+            fastaFormatter.setBlankField(blankField);
+            fastaFormatter.setHeader(includeHeader);
+            fastaFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+            fastaFormatter.setFieldSeparator(fieldSeparator);
+            fastaFormatter.setOutputOptions(outputOptions);
+            fastaFormatter.setWriter(out);
+            
+            fastaFormatter.setPrime3(prime3);
+            fastaFormatter.setPrime5(prime5);
+            fastaFormatter.setSequenceType(sequenceType);
+            fastaFormatter.setSequenceDao(sequenceDao);
+            
+            fastaFormatter.format(transcriptDTOs.iterator());
+            
+            break;
+            
         }
         return null;
     }
-
+    
+    private String determineFieldSeparator(String fieldSeparator, OutputFormat outputFormat) {
+    	
+    	if (fieldSeparator.equals("default")) {
+    		switch (outputFormat) {
+	        case CSV:
+	        case TAB:
+	            	fieldSeparator = "\t";
+	        	break;
+	        case FASTA:
+        		fieldSeparator = "|";
+        		break;
+	        }
+    	}
+    	else if (fieldSeparator.equals("tab")) {
+        	fieldSeparator = "\t";
+        }
+        
+        return fieldSeparator;
+    }
 
     private void prepareResponse(HttpServletResponse response, String type, boolean toPage) {
         if (toPage) {
@@ -192,13 +248,7 @@ public class DownloadController {
         }
     }
 
-
-    private void logProblems(TroubleTrackingIterator<String> iterator) {
-        List<Integer> problems = iterator.getProblems();
-        for (Integer problem : problems) {
-            logger.error("Unable to retrieve details for '"+problem+"'");
-        }
-    }
+    
 
 
     private List<Integer> convertUniquenamesToFeatureIds(List<String> uniqueNames) {
@@ -212,113 +262,7 @@ public class DownloadController {
 
         return ret;
     }
-
-
-
-
-    private String createFasta(DataFetcher<Integer> df,
-            List<Integer> ids,
-            String realExpression,
-            String fieldDelim,
-            String file,
-            List<OutputOption> outputOptions,
-            SequenceType sequenceType,
-            int prime3,
-            int prime5) {
-
-        StringBuilder whole = new StringBuilder();
-        //StringBuilder row = new StringBuilder();
-
-        //add data
-        String uniqueNameExpression = "${id}";
-        TroubleTrackingIterator<String> tti = df.iterator(ids, uniqueNameExpression, fieldDelim);
-        while (tti.hasNext()) {
-            String uniqueName = tti.next().trim();
-            Transcript transcript = (Transcript) sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
-            //String id = dataRow.getValue(OutputOption.SYS_ID);
-            //String row = dataRow.getValue(outputOptions);
-            //String row = id;
-//		}
-//		for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-//			row = new StringBuilder();
-//			Document doc = null;
-//			try {
-//				doc = fetchDocument(scoreDoc.doc);
-//			} catch (CorruptIndexException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			for (OutputOption outputOption: outputOptions) {
-//				String column = outputOption.name();
-//				if(!column.equals("sequence")) {
-//					row.append(fetcher.getValue(column) + ";");
-//				}
-//			}
-//			row.deleteCharAt(row.length()-1);
-            //CharSequence row;
-            //Transcript transcript =  (Transcript) sequenceDao.getFeatureByUniqueName(dataRow, Feature.class);
-            if (transcript == null) {
-                logger.error(String.format("Didn't get a transcript of name '%s'", uniqueName));
-                continue;
-            }
-            logger.info(String.format("Gene '%s', Type '%s'", transcript.getType().getName(), transcript.getType()));
-            String sequence = DownloadUtils.getSequence(transcript, sequenceType, prime3, prime5);
-            String entry;
-            if (sequence != null) {
-                entry = DownloadUtils.writeFasta(uniqueName, sequence);
-            } else {
-                entry = String.format("%s \n Alternately spliced or sequence not attached ", uniqueName);
-            }
-
-            whole.append(entry);
-            whole.append("\n");
-        }
-
-
-//        BufferedWriter out = null;
-//        File outFile = null;
-//        try {
-//            outFile = File.createTempFile("download", "txt"); //getServletContext().getRealPath("/" + file));
-//            out = new BufferedWriter(new FileWriter(outFile));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (IllegalStateException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            if (out != null) {
-//                out.write(whole.toString());
-//                out.close();
-//            }
-//        } catch (IOException exp) {
-//            exp.printStackTrace();
-//        }
-//
-//        return outFile;
-        return whole.toString();
-    }
-
-
-    //        BufferedWriter out = null;
-    //        File outFile = new File(getServletContext().getRealPath("/" + file));
-    //        try {
-    //            out = new BufferedWriter(new FileWriter(outFile));
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        } catch (IllegalStateException e) {
-    //            e.printStackTrace();
-    //        }
-    //
-    //        try {
-    //            out.write(whole.toString());
-    //            out.close();
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        }
-
-
+    
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
@@ -327,10 +271,6 @@ public class DownloadController {
     public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
         this.historyManagerFactory = historyManagerFactory;
     }
-
-    public void setDataFetcher(DataFetcher<Integer> dataFetcher) {
-        this.dataFetcher = dataFetcher;
-    }
-
+    
 }
 

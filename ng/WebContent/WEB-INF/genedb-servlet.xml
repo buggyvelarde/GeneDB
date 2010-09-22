@@ -163,15 +163,17 @@
   <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
     <property name="historyManagerFactory" ref="historyManagerFactory" />
     <property name="sequenceDao" ref="sequenceDao" />
-    <property name="dataFetcher" ref="dtoDataFetcher" />
+    <!--<property name="dataFetcher" ref="dtoDataFetcher" />-->
+    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+    
   </bean>
 
-  <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
-    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+  <!-- <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
+    <property name="bmf" ref="berkeleyReadOnlyMapFactory" /> -->
     <!--
       <property name=""> <bean class="org.genedb.web.mvc.controller.download.DtoDataRowMapper" /> </property>
     -->
-  </bean>
+  <!--  </bean> -->
 
 
   <!--
@@ -477,21 +479,21 @@
   </bean>
 
 
-  <bean id="FeatureDownloadController" class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
-    <!--
+  <!--<bean id="FeatureDownloadController" class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
+    --><!--
       <property name="sessionForm" value="true" /> <property name="commandName" value="featureDownload" /> <property
       name="commandClass" value="org.genedb.web.mvc.controller.download.FeatureDownloadController$FeatureDownloadBean"
       />
     -->
-    <property name="sequenceDao" ref="sequenceDao" />
+    <!--<property name="sequenceDao" ref="sequenceDao" />
     <property name="sequenceView" value="download/featureDownload" />
-    <!-- <property name="formView" value="search/featureDownload" /> -->
+    --><!-- <property name="formView" value="search/featureDownload" /> -->
     <!-- <property name="bindOnNewForm" value="true" /> -->
     <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
     <!-- <property name="cacheSeconds" value="86400" /> -->
-  </bean>
+  <!--</bean>
 
-  <bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
+  --><bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
     <property name="sequenceDao" ref="sequenceDao" />
     <property name="listResultsView" value="list/results2" />
     <property name="genePage" value="redirect:NamedFeature" />

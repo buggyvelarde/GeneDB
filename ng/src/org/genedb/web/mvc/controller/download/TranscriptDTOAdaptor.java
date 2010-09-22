@@ -102,19 +102,19 @@ public class TranscriptDTOAdaptor {
 	}
 
 	public String getLocation() {
-		return dto.getLocation();
+		return dto.getLocation() ;
 	}
 
 	public String getMolWeight() {
-		return dto.getPolypeptideProperties().getMass();
+		return dto.getPolypeptideProperties().getMass() + fieldDelim;
 	}
 
 	public String getNumTM() {
-		return (String) dto.getAlgorithmData().get("TMHMM");
+		return (String) dto.getAlgorithmData().get("TMHMM") + fieldDelim;
 	}
 
 	public String getPrimaryName() {
-		return dto.getGeneName();
+		return dto.getGeneName() + fieldDelim;
 	}
 
 	public String getProduct() {
@@ -130,11 +130,11 @@ public class TranscriptDTOAdaptor {
 	}
 
 	public String getContig() {
-		return dto.getTopLevelFeatureDisplayName();
+		return dto.getTopLevelFeatureDisplayName() + fieldDelim;
 	}
 
 	public String getId() {
-		return dto.getUniqueName();
+		return dto.getUniqueName() + fieldDelim;
 	}
 }
 

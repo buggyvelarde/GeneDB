@@ -7,7 +7,7 @@ public enum SequenceType {
     INTRON_AND_EXON,
     INTERGENIC_5,
     INTERGENIC_3,
-    CDS_RNA,
-    INTERGENIC_3and5,
-    EMBL;
+    INTERGENIC_3and5;
+    //CDS_RNA,
+    //EMBL;
 }

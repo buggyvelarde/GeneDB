@@ -177,7 +177,7 @@ public class DownloadUtils {
     
     /**
      * Retrieves the entire sequence of the transcript, with the exons capitalized. 
-     * 
+     * @author gv1
      * @param transcript
      * @return
      */

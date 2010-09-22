@@ -66,7 +66,9 @@ public class HistoryController {
         model.put("history", historyItem);
         HistoryItem item = historyManager.getHistoryItems().get(historyItem-1);
         //String internalName = item.getInternalName();
-
+        
+        
+        model.put("historyVersion", historyManager.getVersion());
         model.put("items", item.getIds());
         model.put("historyName", item.getName());
 
@@ -85,27 +87,50 @@ public class HistoryController {
         model.put("history", historyItem);
         HistoryItem item = historyManager.getHistoryItems().get(historyItem-1);
         //String internalName = item.getInternalName();
-
-        List<Integer> hits = Lists.newArrayList();
+        
+        List<String> allids = item.getIds();
+        
+        List<String> hits = Lists.newArrayList();
         Enumeration<String> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             if (name.startsWith("item")) {
                 name = name.substring(4);
-                logger.error("About to add '"+name+"' to hits");
-                hits.add(Integer.parseInt(name)-1);
+                //logger.error("About to add '"+name+"' to hits");
+                
+                int hitindex = Integer.parseInt(name)-1;
+                
+                String hit = allids.get(hitindex);
+                //logger.error("hit? " + hit);
+                
+                hits.add(hit);
+                
+                //hits.add(Integer.parseInt(name)-1);
             }
         }
-
-        for (Integer i : hits) {
-            item.removeNum(i);
-        }
+        
+        allids.removeAll(hits);
+        item.setIds(allids);
+        
+//        
+//        for (Integer i : hits) {
+//        	logger.error("removing : " + i);
+//        	
+//        	try {
+//        		item.removeNum(i);
+//        	} catch (java.lang.IndexOutOfBoundsException ie) {
+//        		logger.error("Could not delete " + i);
+//        		logger.error(ie.getStackTrace());
+//        	}
+//            
+//        }
 
         if (item.getNumberItems() < 1) {
-            historyManager.removeItem(historyItem, historyVersion);
-            return new ModelAndView("/History");
+            //historyManager.removeItem(historyItem, historyVersion);
+            return new ModelAndView("history/list");
         }
-
+        
+        model.put("historyVersion", historyManager.getVersion());
         model.put("items", item.getIds());
         model.put("historyName", item.getName());
 
@@ -113,15 +138,15 @@ public class HistoryController {
     }
 
 
-    @RequestMapping(method=RequestMethod.DELETE, params="historyItem")
+    @RequestMapping(method=RequestMethod.POST, params="historyItem")
     public ModelAndView deleteHistoryItem(HttpServletRequest request,HttpServletResponse response,
             @RequestParam("historyItem") int historyItem) {
-
+    	
         HttpSession session = request.getSession(false);
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
         logger.info("Removing item from history");
-        historyManager.removeItem(historyItem, historyManager.getVersion());
-        return new ModelAndView("redirect:/History/View");
+        historyManager.removeItem(historyItem -1, historyManager.getVersion());
+        return new ModelAndView("redirect:/History");
     }
 
 

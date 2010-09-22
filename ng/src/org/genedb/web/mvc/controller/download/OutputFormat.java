@@ -22,14 +22,14 @@ package org.genedb.web.mvc.controller.download;
 public enum OutputFormat {
     CSV,
     TAB,
-    EXCEL,
-    ODF,
+	EXCEL,
+//    ODF,
     HTML,
-    GO_ASSOC,
+//    GO_ASSOC,
     FASTA,
-    EMBL_REMAPPING,
-    EMBL_SUBMISSION,
-    EMBL_PATHOGEN_FLATTENED,
-    EMBL_PATHOGEN_UNFLATTENED
+//    EMBL_REMAPPING,
+//    EMBL_SUBMISSION,
+//    EMBL_PATHOGEN_FLATTENED,
+//    EMBL_PATHOGEN_UNFLATTENED
     ;
 }
