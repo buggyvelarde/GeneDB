@@ -14,7 +14,7 @@
 
         <h3>Front page photo contributors</h3>
         <div class="arrowList">
-			&raquo; Apicomplexan Protozoa Photo - Chris Newbold <br />
+			&raquo; Apicomplexan Protozoa Photo - David J.P. Ferguson. <br />
 			&raquo; Kinetoplastid Protozoa - Catarina Gadelha <br />
 			&raquo; Parasitic Helminths - Gary Dillon <br />
 			&raquo; Bacteria - Sharon Peacock <br />
