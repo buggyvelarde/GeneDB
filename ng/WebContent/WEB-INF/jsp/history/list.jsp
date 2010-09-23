@@ -31,12 +31,14 @@
         </display:column>
         
         <display:column title="Remove" style="width: 150px;">
-            <form:form method="DELETE" action="${baseUrl}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
+            <form action="<misc:url value="History?historyItem=${row_rowNum}"/>" method="POST"><input type="submit" value="Remove"/></form>
         </display:column>
         
     </display:table>
 
 </div>
+
+
 
 <br>
 '<misc:url value="/History/"/>'
