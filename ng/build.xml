@@ -154,7 +154,8 @@
     </jar>
   </target>
 
-
+  <property name="host" value="http://developer.genedb.org"/>     
+  <property name="prefix" value="ci-web/"/>
   <!-- Include trailing slash -->
 
   <target name="test-deployment">
