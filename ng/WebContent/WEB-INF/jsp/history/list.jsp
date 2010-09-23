@@ -38,4 +38,10 @@
 
 </div>
 
+<br>
+<misc:url value="/History/"/>
+<br>
+${baseUrl}
+<br>
+
 </format:page>
