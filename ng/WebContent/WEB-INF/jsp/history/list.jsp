@@ -27,11 +27,11 @@
         </display:column>
         
         <display:column title="View/Edit" style="width: 150px;">
-            <a href="<misc:url value="/History/"/>${row_rowNum}">View / Edit</a>
+            <a href="${baseUrl}/History/${row_rowNum}">View / Edit</a>
         </display:column>
         
         <display:column title="Remove" style="width: 150px;">
-            <form:form method="DELETE" action="<misc:url value="/History/"/>?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
+            <form:form method="DELETE" action="${baseUrl}/History?historyItem=${row_rowNum}"><input type="submit" value="Remove"/></form:form>
         </display:column>
         
     </display:table>
@@ -39,9 +39,10 @@
 </div>
 
 <br>
-<misc:url value="/History/"/>
+'<misc:url value="/History/"/>'
 <br>
-${baseUrl}
+'${baseUrl}'
 <br>
+
 
 </format:page>
