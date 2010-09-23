@@ -137,7 +137,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
         <c:if test="${dbxref.urlPrefix == 'http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='}">
             <tr>
                 <th>PlasmoDB</th>
-                <td><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.accession}"/></a></td>
+                <td><a href="http://plasmodb.org/gene/${dbxref.accession}"><db:dbName db="${dbxref.accession}"/></a></td>
            </tr>
        </c:if>
     </c:if>
