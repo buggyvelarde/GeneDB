@@ -31,7 +31,7 @@
         </display:column>
         
         <display:column title="Remove" style="width: 150px;">
-            <form action="<misc:url value="History?historyItem=${row_rowNum}"/>" method="POST"><input type="submit" value="Remove"/></form>
+            <form action="History?historyItem=${row_rowNum}" method="POST"><input type="submit" value="Remove"/></form>
         </display:column>
         
     </display:table>
