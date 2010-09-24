@@ -20,15 +20,21 @@
 package org.genedb.web.mvc.controller.download;
 
 import org.genedb.db.dao.SequenceDao;
+
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
-import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.mapped.Feature;
 
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.log4j.Logger;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +43,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedInputStream;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,10 +66,11 @@ import com.google.common.collect.Lists;
 
 /**
  * List Download
- *
+ * 
+ * @author Giles Velarde (gv1)
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
- * @author Giles Velarde (gv1)
+ * 
  */
 @Controller
 @RequestMapping("/Download")
@@ -65,12 +81,34 @@ public class DownloadController {
     private SequenceDao sequenceDao;
     private HistoryManagerFactory historyManagerFactory;
     
+    private JavaMailSender mailSender;
+    
+    public void setMailSender(JavaMailSender mailSender) {
+    	this.mailSender = mailSender;
+    }
+    
     private BerkeleyMapFactory bmf;
     
     public void setBmf(BerkeleyMapFactory bmf) {
         this.bmf = bmf;
     }
-
+    
+    private File downloadTmpFolder;
+    
+    private boolean deleteFiles = true;
+    
+    public void setDownloadTmpFolder(String downloadTmpFolder) throws Exception {
+    	this.downloadTmpFolder = new File (downloadTmpFolder);
+    	
+    	if (this.downloadTmpFolder.isFile()) {
+    		throw new Exception("Can't use the path to a file as a folder");
+    	}
+    	
+    	if (! this.downloadTmpFolder.isDirectory()) {
+    		this.downloadTmpFolder.mkdirs();
+    	}
+    }
+    
     @RequestMapping(method=RequestMethod.GET, value="/{historyItem}")
     public ModelAndView displayForm(
             @PathVariable("historyItem") int historyItem) {
@@ -93,6 +131,7 @@ public class DownloadController {
             @RequestParam("field_intsep") String fieldInternalSeparator,
             @RequestParam("prime3") int prime3,
             @RequestParam("prime5") int prime5,
+            @RequestParam("email") String email,
             HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
@@ -112,8 +151,12 @@ public class DownloadController {
         }
 
         HistoryItem hItem = historyItems.get(historyItem-1);
+        
+        String historyItemName = hItem.getName();
+        
         List<String> uniqueNames = hItem.getIds();
-        List<Integer> featureIds = convertUniquenamesToFeatureIds(uniqueNames);
+        List<Feature> features = sequenceDao.getFeaturesByUniqueNames(uniqueNames);
+        
         
         fieldSeparator = determineFieldSeparator(fieldSeparator, outputFormat);
         
@@ -121,102 +164,218 @@ public class DownloadController {
         	blankField = "";
         }
         
-        List<TranscriptDTO> transcriptDTOs = new ArrayList<TranscriptDTO>();
+        String fileName = downloadTmpFolder + "/" + historyItemName + "." + outputFormat.name().toLowerCase();
         
-        for (int id : featureIds) {
-        	TranscriptDTO dto = bmf.getDtoMap().get(id);
-        	transcriptDTOs.add(dto);
-        }
-
-        switch (outputFormat) {
-        case EXCEL:
+        if (outputFormat == OutputFormat.XLS) {
         	
-        	OutputStream outStream = response.getOutputStream();
-        	response.setContentType("application/vnd.ms-excel");
-        	response.setHeader("Content-Disposition", "attachment; filename=results.xls");
+        	OutputStream outStream = null;
+        	File outFile = null;
+        	
+        	if (outputDestination == OutputDestination.TO_BROWSER) {
+        		 outStream = response.getOutputStream();
+        		 
+        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE) ){
+        		
+        		outFile = new File( fileName );
+        		outStream = new FileOutputStream(outFile);
+        		
+        	} 
         	
         	FormatExcel excelFormatter = new FormatExcel();
         	
+        	excelFormatter.setBmf(bmf);
         	excelFormatter.setFieldInternalSeparator(fieldInternalSeparator);
         	excelFormatter.setOutputOptions(outputOptions);
         	
         	excelFormatter.setOutputStream(outStream);
         	
-        	excelFormatter.format(transcriptDTOs.iterator());
+        	excelFormatter.format(features);
             
-            break;
-
-        case CSV:
-        case TAB:
-        {
-        	Writer out = response.getWriter();
+        	
+        	/*
+        	 * Post formatting for file output destination.
+        	 */
+        	if (outputDestination == OutputDestination.TO_EMAIL) {
+            	sendEmail(email, historyItemName, "Please find attached your results in the excel file.", outFile);
+            	response.getWriter().append("Your email has been sent to " + email + ".");
+            	
+        	 } else if (outputDestination == OutputDestination.TO_FILE) {
+        		
+        		response.setContentType("application/vnd.ms-excel");
+              	response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        		
+             	OutputStream os = response.getOutputStream();
+     			returnFile(outFile, os);
+     			
+        	 } else {
+        		 
+        		 response.setContentType("application/vnd.ms-excel");
+        		 response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        	 }
+        	
+        	
+        	if ((outFile != null) && (deleteFiles)) {
+ 				outFile.delete();
+ 			}
+        	
+        	
+        
+        } else {
+        	
+        	Writer out = null;
+        	
+        	if (outputDestination == OutputDestination.TO_BROWSER) {
+        		out = response.getWriter();
+        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE)) {
+        		out = new StringWriter();
+        	} 
         	
         	if (fieldSeparator == "default") {
             	fieldSeparator = "\t";
             }
         	
-            prepareResponse(response, "text/plain", true);
-            response.setContentType("text/plain");
-            
-            FormatCSV csvFormatter = new FormatCSV();
-            
-            csvFormatter.setBlankField(blankField);
-            csvFormatter.setHeader(includeHeader);
-            csvFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-            csvFormatter.setFieldSeparator(fieldSeparator);
-            csvFormatter.setOutputOptions(outputOptions);
-            csvFormatter.setWriter(out);
-            
-            csvFormatter.format(transcriptDTOs.iterator());
-            
-            break;
-        }
-
-        case HTML:
-        {
-        	Writer out = response.getWriter();
+        	if (outputFormat == OutputFormat.CSV) {
+	            
+        		response.setContentType("text/plain");
+	            
+	            FormatCSV csvFormatter = new FormatCSV();
+	            
+	            csvFormatter.setBmf(bmf);
+	            csvFormatter.setBlankField(blankField);
+	            csvFormatter.setHeader(includeHeader);
+	            csvFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+	            csvFormatter.setFieldSeparator(fieldSeparator);
+	            csvFormatter.setOutputOptions(outputOptions);
+	            csvFormatter.setWriter(out);
+	            
+	            csvFormatter.format(features);
+	            
+        	}
         	
-            prepareResponse(response, "text/html", true);
-            
-            FormatHTML htmlFormatter = new FormatHTML();
-            htmlFormatter.setBlankField(blankField);
-            htmlFormatter.setHeader(includeHeader);
-            htmlFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-            htmlFormatter.setOutputOptions(outputOptions);
-            htmlFormatter.setWriter(out);
-            
-            htmlFormatter.format(transcriptDTOs.iterator());
-
-            break;
-        }
-
-        case FASTA:
+        	if (outputFormat == OutputFormat.HTML) {
+	            
+        		response.setContentType("text/html");
+        		
+	            FormatHTML htmlFormatter = new FormatHTML();
+	            
+	            htmlFormatter.setBmf(bmf);
+	            htmlFormatter.setBlankField(blankField);
+	            htmlFormatter.setHeader(includeHeader);
+	            htmlFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+	            htmlFormatter.setOutputOptions(outputOptions);
+	            htmlFormatter.setWriter(out);
+	            
+	            htmlFormatter.format(features);
+	            
+        	}
         	
-        	Writer out = response.getWriter();
         	
-            prepareResponse(response, "text/plain", true);
-            
-            FormatFASTA fastaFormatter = new FormatFASTA();
-            
-
-            fastaFormatter.setBlankField(blankField);
-            fastaFormatter.setHeader(includeHeader);
-            fastaFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-            fastaFormatter.setFieldSeparator(fieldSeparator);
-            fastaFormatter.setOutputOptions(outputOptions);
-            fastaFormatter.setWriter(out);
-            
-            fastaFormatter.setPrime3(prime3);
-            fastaFormatter.setPrime5(prime5);
-            fastaFormatter.setSequenceType(sequenceType);
-            fastaFormatter.setSequenceDao(sequenceDao);
-            
-            fastaFormatter.format(transcriptDTOs.iterator());
-            
-            break;
-            
+        	
+        	if (outputFormat == OutputFormat.FASTA) {
+        		
+        		response.setContentType("text/plain");
+        		
+	            FormatFASTA fastaFormatter = new FormatFASTA();
+	            
+	            fastaFormatter.setBmf(bmf);
+	            fastaFormatter.setBlankField(blankField);
+	            fastaFormatter.setHeader(includeHeader);
+	            fastaFormatter.setFieldInternalSeparator(fieldInternalSeparator);
+	            fastaFormatter.setFieldSeparator(fieldSeparator);
+	            fastaFormatter.setOutputOptions(outputOptions);
+	            fastaFormatter.setWriter(out);
+	            
+	            fastaFormatter.setPrime3(prime3);
+	            fastaFormatter.setPrime5(prime5);
+	            fastaFormatter.setSequenceType(sequenceType);
+	            fastaFormatter.setSequenceDao(sequenceDao);
+	            
+	            fastaFormatter.format(features);
+	                        
+        	}
+        	
+        	
+        	/*
+        	 * Post formatting for different output destinations.   
+        	 */
+        	
+        	if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE))  {
+        		
+        		File tabOutFile = new File( fileName );
+            	
+            	StringWriter sout = (StringWriter) out;
+            	String result = sout.getBuffer().toString();
+            	
+            	FileWriter fw = new FileWriter(tabOutFile);
+            	fw.write(result);
+            	fw.close();
+        		
+        		if (outputDestination == OutputDestination.TO_EMAIL) {
+                	
+                	sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results.", tabOutFile);
+                	response.getWriter().append("Your email has been sent to " + email + ".");
+                	
+                } else if (outputDestination == OutputDestination.TO_FILE) {
+                	
+                	
+                	response.setContentType("application/x-download");
+                	response.setHeader("Content-Dispostion", "attachment; filename="+fileName);
+                	
+                	OutputStream os = response.getOutputStream();
+        			returnFile(tabOutFile, os);
+        			
+                }
+        		
+        		if (deleteFiles) {
+    				tabOutFile.delete();
+     			}
+        	}
+        	
+        	
+        	
         }
+        	
+        
         return null;
+    }
+    
+    
+    
+    /*
+     * Lifted from genedb classic.
+     */
+    private static void returnFile(File file, OutputStream out) throws FileNotFoundException, IOException {
+		InputStream in = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(file));
+			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
+			int bytesRead;
+			while ((bytesRead = in.read(buf)) != -1) {
+				out.write(buf, 0, bytesRead);
+			}
+		}
+		finally {
+			if (in != null) in.close(  );
+		}
+	}
+    
+    private void sendEmail(String to, final String subject, String text, File attachment) throws javax.mail.MessagingException {
+    	
+    	MimeMessage message = mailSender.createMimeMessage();
+    	
+    	MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    	helper.setTo(to);
+    	helper.setFrom(new InternetAddress("webmaster@genedb.org"));
+    	helper.setSubject("Your GeneDB query results - " + subject);
+    	helper.setText(text);
+    	
+    	if (attachment != null) {
+    		FileSystemResource file = new FileSystemResource(attachment);
+        	helper.addAttachment(file.getFilename(), file);
+    	}
+    	
+    	mailSender.send(message);
+    	
     }
     
     private String determineFieldSeparator(String fieldSeparator, OutputFormat outputFormat) {
@@ -224,7 +383,6 @@ public class DownloadController {
     	if (fieldSeparator.equals("default")) {
     		switch (outputFormat) {
 	        case CSV:
-	        case TAB:
 	            	fieldSeparator = "\t";
 	        	break;
 	        case FASTA:
@@ -239,30 +397,8 @@ public class DownloadController {
         return fieldSeparator;
     }
 
-    private void prepareResponse(HttpServletResponse response, String type, boolean toPage) {
-        if (toPage) {
-            response.setContentType(type);
-        } else {
-            response.setContentType("application/x-download");
-            response.setHeader("Content-Disposition", "attachment; filename=results.txt");
-        }
-    }
-
-    
 
 
-    private List<Integer> convertUniquenamesToFeatureIds(List<String> uniqueNames) {
-        List<Integer> ret = Lists.newArrayList();
-        for (String name : uniqueNames) {
-            logger.error("Trying to lookup '"+name+"' as a Transcript");
-            Feature f = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-            logger.error("The value is '"+f+"'");
-            ret.add(f.getFeatureId());
-        }
-
-        return ret;
-    }
-    
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;

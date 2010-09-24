@@ -1,10 +1,10 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.genedb.web.mvc.model.TranscriptDTO;
+import org.gmod.schema.mapped.Feature;
 
 public class FormatCSV extends FormatBase {
 	
@@ -17,24 +17,23 @@ public class FormatCSV extends FormatBase {
 	}
 	
 	@Override
-	public void formatBody(Iterator<TranscriptDTO> transcriptDTOs) throws IOException {
+	public void formatBody(List<Feature> features) throws IOException {
 		
-		logger.info(String.format("Formatting with separator '%s' and internal '%s'.", fieldSeparator, fieldInternalSeparator));
-		
-		while (transcriptDTOs.hasNext()) {
-			TranscriptDTO transcriptDTO = transcriptDTOs.next();
-			TranscriptDTOAdaptor adaptor = new TranscriptDTOAdaptor(transcriptDTO, fieldInternalSeparator);
+		for (Feature feature : features) {
+			
+			logger.error(String.format("Formatting with separator '%s' and internal '%s'.", fieldSeparator, fieldInternalSeparator));
 			
 			boolean first = true;
-			for (OutputOption outputOption : outputOptions) {
+			for (String fieldValue : getFieldValues(feature, outputOptions)) {
 				if (! first) {
 					writer.append(fieldSeparator);
 				} else {
 					first = false;
 				}
-				String value = getFieldValue(adaptor, outputOption);
-				writer.append(value);
+				
+				writer.append(fieldValue);
 			}
+			
 			writer.append(postRecordSeparator);
 			
 		}

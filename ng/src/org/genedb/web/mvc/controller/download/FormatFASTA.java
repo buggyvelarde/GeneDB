@@ -1,14 +1,18 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.List;
 
-import org.genedb.web.mvc.model.TranscriptDTO;
+import org.apache.log4j.Logger;
 import org.genedb.web.utils.DownloadUtils;
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.Feature;
 import org.genedb.db.dao.SequenceDao;
 
 public class FormatFASTA extends FormatBase {
+	
+	private static Logger logger = Logger.getLogger(FormatFASTA.class);
 	
 	protected SequenceType sequenceType;
 	protected SequenceDao sequenceDao;
@@ -39,37 +43,41 @@ public class FormatFASTA extends FormatBase {
 	
 	
 	@Override
-	public void formatBody(Iterator<TranscriptDTO> transcriptDTOs)
-			throws IOException {
+	public void formatBody(List<Feature> features) throws IOException {
 		
-		while (transcriptDTOs.hasNext()) {
-			TranscriptDTO transcriptDTO = transcriptDTOs.next();
-			TranscriptDTOAdaptor adaptor = new TranscriptDTOAdaptor(transcriptDTO, fieldInternalSeparator);
+		for (Feature feature : features) {
 			
 			StringBuffer header = new StringBuffer(); 
 			
 			boolean first = true;
-			for (OutputOption outputOption : outputOptions) {
+			for (String fieldValue : getFieldValues(feature, outputOptions)) {
 				if (! first) {
 					header.append(fieldSeparator);
 				} else {
 					first = false;
 				}
-				String value = getFieldValue(adaptor, outputOption);
-				header.append(value);
+				header.append(fieldValue);
 			}
 			
-			String uniqueName = transcriptDTO.getUniqueName();
-			Transcript transcript = (Transcript) sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
+			String sequence = "";
 			
-			String sequence = DownloadUtils.getSequence(transcript, sequenceType, prime3, prime5);
-    		
+			if (feature instanceof Transcript) {
+				Transcript transcript = (Transcript) feature;
+				sequence = DownloadUtils.getSequence(transcript, sequenceType, prime3, prime5);
+			} else if (feature instanceof AbstractGene ) {				
+				AbstractGene abstractGene = (AbstractGene) feature;
+				sequence = DownloadUtils.getSequence(abstractGene, sequenceType);
+			}
+			
+			String headerString = header.toString();
     		String entry;
             if (sequence != null) {
-                entry = DownloadUtils.writeFasta(header.toString(), sequence);
+                entry = DownloadUtils.writeFasta(headerString, sequence);
             } else {
-                entry = String.format("%s \n Alternately spliced or sequence not attached ", uniqueName);
+                entry = String.format(">%s\nAlternately spliced or sequence not attached", headerString);
             }
+            
+            logger.error(headerString);
             
             writer.append(entry);
             writer.append(postRecordSeparator);

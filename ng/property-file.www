@@ -13,4 +13,8 @@ emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 resultsCacheDirectory=/tmp/results_staging.www
 
+download.tmpFolder=/tmp/files_www
+download.mail.host=mail.sanger.ac.uk
+download.mail.port=25
+
 diagram.fontFile=file:///nfs/pathsoft/projects/genedb/fonts/f011004t.ttf

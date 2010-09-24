@@ -166,7 +166,17 @@
     <!--<property name="dataFetcher" ref="dtoDataFetcher" />-->
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
     
+    <property name="mailSender"><ref bean="mailSender"/></property>
+    
+    <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
+    
   </bean>
+  
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	  <property name="host"><value>${download.mail.host}</value></property>
+	  <property name="port"><value>${download.mail.port}</value></property>
+	</bean>
+	
 
   <!-- <bean id="dtoDataFetcher" class="org.genedb.web.mvc.controller.download.DtoDataFetcher">
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" /> -->

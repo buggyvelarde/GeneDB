@@ -7,9 +7,13 @@ import org.genedb.web.mvc.controller.download.SequenceType;
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Pseudogene;
+import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
+
+import com.google.common.collect.Iterables;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -239,6 +243,8 @@ public class DownloadUtils {
 		//		}
 		return sequence;
     }
+    
+
 
     public static String getSequence(Transcript t, SequenceType sequenceType, int prime3, int prime5) {
     	String sequence = null;

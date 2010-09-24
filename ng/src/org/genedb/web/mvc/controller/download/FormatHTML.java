@@ -1,10 +1,10 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.genedb.web.mvc.model.TranscriptDTO;
+import org.gmod.schema.mapped.Feature;
 
 public class FormatHTML extends FormatBase {
 	
@@ -51,26 +51,20 @@ public class FormatHTML extends FormatBase {
 	}
 	
 	@Override
-	public void formatBody(Iterator<TranscriptDTO> transcriptDTOs)
-			throws IOException {
+	public void formatBody(List<Feature> features) throws IOException {
 		
 		logger.info(String.format("Formatting separators : %s %s %s %s", fieldSeparator, postFieldSeparator, recordSeparator, postRecordSeparator));
 		
-		while (transcriptDTOs.hasNext()) {
-			TranscriptDTO transcriptDTO = transcriptDTOs.next();
-			TranscriptDTOAdaptor adaptor = new TranscriptDTOAdaptor(transcriptDTO, fieldInternalSeparator);
+		for (Feature feature : features) {
 			
 			writer.append(recordSeparator);
 			
-			for (OutputOption outputOption : outputOptions) {
-				
+			for (String fieldValue : getFieldValues(feature, outputOptions)) {
 				writer.append(fieldSeparator);
-				
-				String value = getFieldValue(adaptor, outputOption);
-				
-				writer.append(value);
+				writer.append(fieldValue);
 				writer.append(postFieldSeparator);
 			}
+			
 			writer.append(postRecordSeparator);
 			
 		}

@@ -3,10 +3,15 @@ package org.genedb.web.mvc.controller.download;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
+import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
+import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.Synonym;
 
 /**
  * 
@@ -83,18 +88,112 @@ public abstract class FormatBase {
 		this.footerContentStart = footerContentStart;
 	}
 	
-	public void format(Iterator<TranscriptDTO> transcriptDTOs) throws IOException {
+	private BerkeleyMapFactory bmf;
+    
+    public void setBmf(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
+    }
+	
+    /**
+     * Formats a list of features.
+     * @param features
+     * @throws IOException
+     */
+	public void format(List<Feature> features) throws IOException {
 		formatHeader();
-		formatBody(transcriptDTOs);
+		formatBody(features);
 		formatFooter();
 	}
 	
 	abstract public void formatHeader() throws IOException;
 	
-	abstract public void formatBody(Iterator<TranscriptDTO> transcriptDTOs) throws IOException;
+	abstract public void formatBody(List<Feature> features) throws IOException;
 	
 	abstract public void formatFooter() throws IOException;
 	
+	/**
+	 * Returns a list of field values for a particular feature and output options. 
+	 * @param feature
+	 * @param outputOptions
+	 * @return
+	 */
+	protected List<String> getFieldValues(Feature feature, List<OutputOption> outputOptions) {
+		
+		List<String> values = new ArrayList<String>();
+		
+		if (feature instanceof Transcript) {
+			
+			int id = feature.getFeatureId();
+			TranscriptDTO dto = bmf.getDtoMap().get(id);
+			TranscriptDTOAdaptor adaptor = new TranscriptDTOAdaptor(dto, fieldInternalSeparator);
+			
+			for (OutputOption outputOption : outputOptions) {
+				values.add(this.getFieldValue(adaptor, outputOption));
+			}
+			
+		} else {
+			
+			for (OutputOption outputOption : outputOptions) {
+				values.add(getFieldValue(feature, outputOption));
+			}
+			
+		}
+		
+		return values;
+	}
+	
+	
+	
+	/**
+	 * Gets the field value for any Feature. Used when the feature in question is not a transcript. 
+	 * @param feature
+	 * @param outputOption
+	 * @return
+	 */
+	protected String getFieldValue(Feature feature, OutputOption outputOption) {
+		String fieldValue = null;
+		switch (outputOption) {
+		case CHROMOSOME:
+			FeatureLoc top = feature.getRankZeroFeatureLoc();
+			Feature topLevelFeature = top.getSourceFeature();
+			fieldValue = topLevelFeature.getDisplayName();
+			break;
+		case GENE_TYPE:
+			fieldValue = feature.getType().getName();
+			break;
+		case LOCATION:
+			FeatureLoc top2 = feature.getRankZeroFeatureLoc();
+			fieldValue = top2.getFmin() + " - " + top2.getFmax(); 
+			break;
+		case ORGANISM:
+			fieldValue = feature.getOrganism().getCommonName();
+			break;
+		case PRIMARY_NAME:
+			fieldValue = feature.getUniqueName();
+			break;
+		case SYNONYMS:
+			Collection<Synonym> synonyms = feature.getSynonyms();
+			for (Synonym synonym : synonyms) {
+				fieldValue += synonym.getName() + fieldInternalSeparator;
+			}
+			break;
+		case SYS_ID:
+			fieldValue = feature.getUniqueName();
+			break;
+		}
+		
+		fieldValue = (fieldValue == null || fieldValue.equals("")) ? this.blankField : fieldValue;
+		return fieldValue;
+	}
+	
+	/**
+	 * Gets field values for transcripts. Because this gets called several times for each transcript, 
+	 * and in each case an adaptor is needed, this method takes an adaptor parameter rather than 
+	 * the transcript itself, so as to be able to reuse the same adaptor instance. 
+	 * @param adaptor
+	 * @param outputOption
+	 * @return
+	 */
 	protected String getFieldValue(TranscriptDTOAdaptor adaptor, OutputOption outputOption) {
 		String fieldValue = null;
 		switch (outputOption) {

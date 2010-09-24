@@ -18,4 +18,9 @@ psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 cacheDirectory=/nfs/pathdb/genedb/ci-web/cache
 resultsCacheDirectory=/tmp/results_ci-web
 
+download.tmpFolder=/tmp/files_ci-web
+download.mail.host=mail.sanger.ac.uk
+download.mail.port=25
+
+
 diagram.fontFile=/nfs/pathsoft/projects/genedb/fonts/f011004t.ttf

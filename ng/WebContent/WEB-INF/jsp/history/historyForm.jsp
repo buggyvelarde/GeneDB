@@ -19,14 +19,14 @@
 		<table width="100%" cellpadding="0" cellspacing="4" border="0"
 			class="sequence-table">
 			<tr>
-				<td><input type="radio" name="cust_format" value="TAB" checked>
-				"Tab"-delimited file</td>
+				<td><input type="radio" name="cust_format" value="CSV" checked>
+				CSV (Character separated values)</td>
 				<td><input type="radio" name="cust_format" value="HTML">
 				HTML Table</td>
+				<td><input type="radio" name="cust_format" value="XLS">
+				EXCEL Spreadsheet</td>
 				<td><input type="radio" name="cust_format" value="FASTA">
-				FASTA</td>
-				<td><input type="radio" name="cust_format" value="EXCEL">
-				EXCEL</td>
+                FASTA Sequences</td>
 			</tr>
 		</table>
 	</format:genePageSection> <format:genePageSection>
@@ -73,9 +73,9 @@
 
 			<tr class="noSequenceOutput tabOutput htmlOutput">
 				<td>Column Headers:</td>
-				<td><input type="radio" name="cust_header" value="yes">
+				<td><input type="radio" name="cust_header" value="yes" checked>
 				Yes</td>
-				<td><input type="radio" name="cust_header" value="no" checked>
+				<td><input type="radio" name="cust_header" value="no">
 				No</td>
 				<td><small>Applies to tab-delimited and HTML formats</small></td>
 			</tr>
@@ -193,10 +193,18 @@
 		</table>
 	</format:genePageSection></div>
 
-	<input type="hidden" name="output_dest" value="TO_BROWSER"> <!--
+	<!--<input type="hidden" name="output_dest" value="TO_BROWSER"> 
 
-<format:genePageSection> 
+--><format:genePageSection> 
 <h2>Output Destination</h2>
+
+<P style="text-align:justify;">
+Display in the browser window is the default output destination. Users of some browsers (Internet Explorer, Mozilla) have reported problems saving the output to a file. In these cases, the "Save as..." option will force your browser to save the file directly.
+<br>
+
+Additionally, very large datasets can cause the List Download to fail with a time-out error. The exact number of entries for which a time-out will occur depends upon the requested fields and server load but is typically around 7000. Thus, an option to have download results e-mailed directly, is included.
+</P>
+
 <table width="100%">
 <tr>
 <td><input type="radio" name="output_dest" value="TO_BROWSER" checked>&nbsp;Normal page</td>
@@ -209,7 +217,6 @@
 </tr>
 </table>
 </format:genePageSection>
--->
 
      <format:genePageSection>
 		<table width="100%" cellpadding="0" cellspacing="4" border="0"
