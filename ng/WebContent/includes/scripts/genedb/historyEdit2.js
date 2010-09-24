@@ -49,12 +49,12 @@ $(function(){
 		
 		var value = $(event.target).val();
 		
-		if (value == "TAB") {
+		if (value == "CSV") {
 			$(".tabOutput").show();
 			$(".noTabOutput").hide();
 			$("#selectFieldTitle").html("Select fields for TAB columns");
 		
-		} else if ((value == "HTML") ||  (value == "EXCEL")) { // we can treat HTML and EXCEL to have equivalent options for now
+		} else if ((value == "HTML") ||  (value == "XLS")) { // we can treat HTML and EXCEL to have equivalent options for now
 			$(".htmlOutput").show();
 			$(".noHtmlOutput").hide();
 			$("#selectFieldTitle").html("Select fields for HTML columns");
