@@ -161,10 +161,14 @@
     ref="queryFactory" /> </bean>
   -->
   <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
+  
     <property name="historyManagerFactory" ref="historyManagerFactory" />
     <property name="sequenceDao" ref="sequenceDao" />
+    
     <!--<property name="dataFetcher" ref="dtoDataFetcher" />-->
     <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+    
+    <property name="queryFactory" ref="queryFactory" />
     
     <property name="mailSender"><ref bean="mailSender"/></property>
     
@@ -222,6 +226,7 @@
   <bean name="pfam" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
   <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
   <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
+  <bean name="idsToGeneDetail" class="org.genedb.querying.tmpquery.IdsToGeneDetailQuery" scope="prototype" />
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
   <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
   <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
@@ -266,6 +271,7 @@
           <map>
             <entry key="annotationStatus" value-ref="annotationStatus" />
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
+            <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
             <entry key="quickSearch" value-ref="quickSearch" />
             <entry key="dateCount" value-ref="dateCount" />
             <entry key="geneByDb" value-ref="geneByDb" />

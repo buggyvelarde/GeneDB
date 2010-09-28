@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.mapped.Feature;
+import org.genedb.querying.tmpquery.GeneDetail;
 
 public class FormatHTML extends FormatBase {
 	
@@ -51,15 +51,16 @@ public class FormatHTML extends FormatBase {
 	}
 	
 	@Override
-	public void formatBody(List<Feature> features) throws IOException {
+	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
 		logger.info(String.format("Formatting separators : %s %s %s %s", fieldSeparator, postFieldSeparator, recordSeparator, postRecordSeparator));
 		
-		for (Feature feature : features) {
+		for (GeneDetail entry : entries) {
+			
 			
 			writer.append(recordSeparator);
 			
-			for (String fieldValue : getFieldValues(feature, outputOptions)) {
+			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
 				writer.append(fieldSeparator);
 				writer.append(fieldValue);
 				writer.append(postFieldSeparator);

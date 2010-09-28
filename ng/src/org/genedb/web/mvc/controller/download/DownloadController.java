@@ -21,13 +21,17 @@ package org.genedb.web.mvc.controller.download;
 
 import org.genedb.db.dao.SequenceDao;
 
+import org.genedb.querying.core.NumericQueryVisibility;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.tmpquery.GeneDetail;
+import org.genedb.querying.tmpquery.IdsToGeneDetailQuery;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
-import org.gmod.schema.mapped.Feature;
-
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -54,6 +58,9 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.io.BufferedInputStream;
 
 
@@ -94,8 +101,15 @@ public class DownloadController {
     }
     
     private File downloadTmpFolder;
-    
     private boolean deleteFiles = true;
+    
+    @SuppressWarnings("unchecked")
+	private QueryFactory queryFactory;
+    
+    @SuppressWarnings("unchecked")
+    public void setQueryFactory(QueryFactory queryFactory) {
+    	this.queryFactory = queryFactory;
+    }
     
     public void setDownloadTmpFolder(String downloadTmpFolder) throws Exception {
     	this.downloadTmpFolder = new File (downloadTmpFolder);
@@ -118,7 +132,8 @@ public class DownloadController {
     }
 
 
-    @RequestMapping(method=RequestMethod.POST, value="/{historyItem}")
+    
+	@RequestMapping(method=RequestMethod.POST, value="/{historyItem}")
     public ModelAndView onSubmit(
             @PathVariable("historyItem") int historyItem,
             @RequestParam("cust_format") OutputFormat outputFormat,
@@ -134,7 +149,7 @@ public class DownloadController {
             @RequestParam("email") String email,
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws Exception {
+    ) throws IOException, QueryException  {
     	
     	
     	
@@ -153,10 +168,14 @@ public class DownloadController {
         HistoryItem hItem = historyItems.get(historyItem-1);
         
         String historyItemName = hItem.getName();
-        
         List<String> uniqueNames = hItem.getIds();
-        List<Feature> features = sequenceDao.getFeaturesByUniqueNames(uniqueNames);
         
+        @SuppressWarnings("unchecked")
+        IdsToGeneDetailQuery query = (IdsToGeneDetailQuery) queryFactory.retrieveQuery("idsToGeneDetail",  NumericQueryVisibility.PRIVATE);
+        query.setIds(uniqueNames);
+        
+        @SuppressWarnings("unchecked")
+        List<GeneDetail> results = query.getResults();
         
         fieldSeparator = determineFieldSeparator(fieldSeparator, outputFormat);
         
@@ -172,9 +191,10 @@ public class DownloadController {
         	File outFile = null;
         	
         	if (outputDestination == OutputDestination.TO_BROWSER) {
+        		
         		 outStream = response.getOutputStream();
         		 
-        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE) ){
+        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE) ) {
         		
         		outFile = new File( fileName );
         		outStream = new FileOutputStream(outFile);
@@ -189,18 +209,32 @@ public class DownloadController {
         	
         	excelFormatter.setOutputStream(outStream);
         	
-        	excelFormatter.format(features);
+        	excelFormatter.setSequenceDao(sequenceDao);
+        	excelFormatter.format(results);
             
         	
         	/*
         	 * Post formatting for file output destination.
         	 */
         	if (outputDestination == OutputDestination.TO_EMAIL) {
-            	sendEmail(email, historyItemName, "Please find attached your results in the excel file.", outFile);
-            	response.getWriter().append("Your email has been sent to " + email + ".");
+        		
+        		File zipFile = zip(outFile);
+        		
+            	try {
+					sendEmail(email, historyItemName, "Please find attached your results in the excel file.", zipFile);
+					response.getWriter().append("Your email has been sent to " + email + ".");
+				} catch (MessagingException e) {
+					logger.error(e.getStackTrace().toString());
+					response.getWriter().append("Could not send mail. " + e.getMessage());
+					
+				}
+            	
+            	if (deleteFiles) {
+            		zipFile.delete();
+            	}
             	
         	 } else if (outputDestination == OutputDestination.TO_FILE) {
-        		
+        		 
         		response.setContentType("application/vnd.ms-excel");
               	response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         		
@@ -248,7 +282,8 @@ public class DownloadController {
 	            csvFormatter.setOutputOptions(outputOptions);
 	            csvFormatter.setWriter(out);
 	            
-	            csvFormatter.format(features);
+	            csvFormatter.setSequenceDao(sequenceDao);
+	            csvFormatter.format(results);
 	            
         	}
         	
@@ -265,7 +300,8 @@ public class DownloadController {
 	            htmlFormatter.setOutputOptions(outputOptions);
 	            htmlFormatter.setWriter(out);
 	            
-	            htmlFormatter.format(features);
+	            htmlFormatter.setSequenceDao(sequenceDao);
+	            htmlFormatter.format(results);
 	            
         	}
         	
@@ -288,10 +324,10 @@ public class DownloadController {
 	            fastaFormatter.setPrime3(prime3);
 	            fastaFormatter.setPrime5(prime5);
 	            fastaFormatter.setSequenceType(sequenceType);
-	            fastaFormatter.setSequenceDao(sequenceDao);
 	            
-	            fastaFormatter.format(features);
-	                        
+	            fastaFormatter.setSequenceDao(sequenceDao);
+	            fastaFormatter.format(results);
+	            
         	}
         	
         	
@@ -302,6 +338,7 @@ public class DownloadController {
         	if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE))  {
         		
         		File tabOutFile = new File( fileName );
+        		
             	
             	StringWriter sout = (StringWriter) out;
             	String result = sout.getBuffer().toString();
@@ -310,24 +347,33 @@ public class DownloadController {
             	fw.write(result);
             	fw.close();
         		
+            	File zipFile = zip(tabOutFile);
+            	
         		if (outputDestination == OutputDestination.TO_EMAIL) {
                 	
-                	sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results.", tabOutFile);
-                	response.getWriter().append("Your email has been sent to " + email + ".");
+                	try {
+						sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results.", zipFile);
+						response.getWriter().append("Your email has been sent to " + email + ".");
+					} catch (MessagingException e) {
+						logger.error(e.getStackTrace().toString());
+						response.getWriter().append("Could not send mail. " + e.getMessage());
+					}
+                	
                 	
                 } else if (outputDestination == OutputDestination.TO_FILE) {
                 	
                 	
                 	response.setContentType("application/x-download");
-                	response.setHeader("Content-Dispostion", "attachment; filename="+fileName);
+                	response.setHeader("Content-Dispostion", "attachment; filename="+zipFile.getName());
                 	
                 	OutputStream os = response.getOutputStream();
-        			returnFile(tabOutFile, os);
+        			returnFile(zipFile, os);
         			
                 }
         		
         		if (deleteFiles) {
     				tabOutFile.delete();
+    				zipFile.delete();
      			}
         	}
         	
@@ -338,6 +384,32 @@ public class DownloadController {
         
         return null;
     }
+	
+	
+	private File zip(File file) throws IOException {
+		
+		byte[] buf = new byte[1024]; 
+		
+		String zipFileName = file.getName() +".zip";
+		
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
+		out.setLevel(Deflater.BEST_COMPRESSION);
+    	
+		FileInputStream in = new FileInputStream(file);
+    	out.putNextEntry(new ZipEntry(file.getName()));
+    	
+    	int len; 
+    	while ((len = in.read(buf)) > 0) { 
+    		out.write(buf, 0, len); 
+    	} 
+    	
+    	out.closeEntry(); 
+    	in.close();
+    	out.close();
+    	
+    	return new File(zipFileName);
+    	
+	}
     
     
     

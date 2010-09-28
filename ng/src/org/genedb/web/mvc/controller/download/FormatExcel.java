@@ -11,7 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.gmod.schema.mapped.Feature;
+import org.genedb.querying.tmpquery.GeneDetail;
 
 /**
  * @author gv1
@@ -34,14 +34,14 @@ public class FormatExcel extends FormatBase {
 	}
 	
 	@Override
-	public void formatBody(List<Feature> features) throws IOException {
+	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
-		for (Feature feature : features) {
+		for (GeneDetail entry : entries) {
 			
 			HSSFRow row = sheet.createRow(rcount);
 			
 			short count = 0;
-			for (String fieldValue : getFieldValues(feature, outputOptions)) {
+			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
 				
 				HSSFCell cell = row.createCell(count);
 				HSSFRichTextString richVal = new HSSFRichTextString(fieldValue);

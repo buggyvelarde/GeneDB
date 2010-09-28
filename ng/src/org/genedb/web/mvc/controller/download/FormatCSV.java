@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.mapped.Feature;
+import org.genedb.querying.tmpquery.GeneDetail;
 
 public class FormatCSV extends FormatBase {
 	
@@ -17,14 +17,14 @@ public class FormatCSV extends FormatBase {
 	}
 	
 	@Override
-	public void formatBody(List<Feature> features) throws IOException {
+	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
-		for (Feature feature : features) {
-			
-			logger.error(String.format("Formatting with separator '%s' and internal '%s'.", fieldSeparator, fieldInternalSeparator));
+		logger.error(String.format("Formatting with separator '%s' and internal '%s'.", fieldSeparator, fieldInternalSeparator));
+		
+		for (GeneDetail entry: entries) {
 			
 			boolean first = true;
-			for (String fieldValue : getFieldValues(feature, outputOptions)) {
+			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
 				if (! first) {
 					writer.append(fieldSeparator);
 				} else {

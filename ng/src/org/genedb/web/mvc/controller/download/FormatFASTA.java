@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.web.utils.DownloadUtils;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
-import org.genedb.db.dao.SequenceDao;
 
 public class FormatFASTA extends FormatBase {
 	
 	private static Logger logger = Logger.getLogger(FormatFASTA.class);
 	
 	protected SequenceType sequenceType;
-	protected SequenceDao sequenceDao;
+	
 	protected int prime3;
 	protected int prime5;
 	
@@ -36,21 +36,20 @@ public class FormatFASTA extends FormatBase {
 		this.prime5 = prime5;
 	}
 	
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
-	
-	
 	
 	@Override
-	public void formatBody(List<Feature> features) throws IOException {
+	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
-		for (Feature feature : features) {
+		logger.info("starting fasta export");
+		
+		for (GeneDetail entry : entries) {
 			
 			StringBuffer header = new StringBuffer(); 
 			
+			GeneDetailFieldValueExctractor facade = facade(entry);
+			
 			boolean first = true;
-			for (String fieldValue : getFieldValues(feature, outputOptions)) {
+			for (String fieldValue : getFieldValues(facade, outputOptions)) {
 				if (! first) {
 					header.append(fieldSeparator);
 				} else {
@@ -59,7 +58,12 @@ public class FormatFASTA extends FormatBase {
 				header.append(fieldValue);
 			}
 			
+			String headerString = header.toString();
+			logger.error(headerString);
+			
 			String sequence = "";
+			Feature feature = facade.getFeature();
+			logger.error(feature);
 			
 			if (feature instanceof Transcript) {
 				Transcript transcript = (Transcript) feature;
@@ -69,17 +73,14 @@ public class FormatFASTA extends FormatBase {
 				sequence = DownloadUtils.getSequence(abstractGene, sequenceType);
 			}
 			
-			String headerString = header.toString();
-    		String entry;
+    		String fasta;
             if (sequence != null) {
-                entry = DownloadUtils.writeFasta(headerString, sequence);
+            	fasta = DownloadUtils.writeFasta(headerString, sequence);
             } else {
-                entry = String.format(">%s\nAlternately spliced or sequence not attached", headerString);
+            	fasta = String.format(">%s\nAlternately spliced or sequence not attached", headerString);
             }
             
-            logger.error(headerString);
-            
-            writer.append(entry);
+            writer.append(fasta);
             writer.append(postRecordSeparator);
 		}
 		

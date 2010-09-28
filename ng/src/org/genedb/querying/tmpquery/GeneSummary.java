@@ -3,20 +3,20 @@ package org.genedb.querying.tmpquery;
 import java.io.Serializable;
 
 public class GeneSummary implements Comparable<GeneSummary>, Serializable {
-    private String systematicId;
+    protected String systematicId;
 
-    private String displayId;
+    protected String displayId;
 
     public String getDisplayId() {
         return displayId;
     }
 
 
-    private String taxonDisplayName;
+    protected String taxonDisplayName;
 
-    private String product;
+    protected String product;
 
-    private String topLevelFeatureName;
+    protected String topLevelFeatureName;
 
     private int left;
 
