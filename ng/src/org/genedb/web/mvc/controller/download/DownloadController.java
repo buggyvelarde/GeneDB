@@ -347,10 +347,12 @@ public class DownloadController {
             	fw.write(result);
             	fw.close();
         		
-            	File zipFile = zip(tabOutFile);
+            	
             	
         		if (outputDestination == OutputDestination.TO_EMAIL) {
                 	
+        			File zipFile = zip(tabOutFile);
+        			
                 	try {
 						sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results.", zipFile);
 						response.getWriter().append("Your email has been sent to " + email + ".");
@@ -358,22 +360,23 @@ public class DownloadController {
 						logger.error(e.getStackTrace().toString());
 						response.getWriter().append("Could not send mail. " + e.getMessage());
 					}
-                	
+					if (deleteFiles) {
+	    				zipFile.delete();
+	     			}
                 	
                 } else if (outputDestination == OutputDestination.TO_FILE) {
                 	
                 	
                 	response.setContentType("application/x-download");
-                	response.setHeader("Content-Dispostion", "attachment; filename="+zipFile.getName());
+                	response.setHeader("Content-Disposition", "attachment; filename="+tabOutFile.getName());
                 	
                 	OutputStream os = response.getOutputStream();
-        			returnFile(zipFile, os);
+        			returnFile(tabOutFile, os);
         			
                 }
         		
         		if (deleteFiles) {
     				tabOutFile.delete();
-    				zipFile.delete();
      			}
         	}
         	
