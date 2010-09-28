@@ -265,7 +265,12 @@ public class DownloadUtils {
     			return new String(transcript.getGene().getResidues());
     			//break;
     		case PROTEIN:
-    			return new String(transcript.getProtein().getResidues());
+    			try {
+    				return new String(transcript.getProtein().getResidues());
+    			} catch (NullPointerException npe) {
+    				logger.error(npe.getStackTrace());
+    				return null;
+    			}
     			//break;
     		case INTRON_AND_EXON:
     			return getIntronsAndExons(transcript);
@@ -286,6 +291,10 @@ public class DownloadUtils {
 
     // TODO Check off by one
 	private static String fetchParentSequence(Transcript t, boolean includeTranscript, int prime3, int prime5) {
+		
+		//logger.info(prime3 + " --- " + prime5);
+		
+		 
 	    if (prime3>0 && prime5 > 0 && !includeTranscript) {
 	        throw new IllegalArgumentException("Can't fetch sequence from both sides of a transcript but not include the transcript");
 	    }
@@ -293,6 +302,9 @@ public class DownloadUtils {
 	        throw new IllegalArgumentException("Can't use -ve sequence offsets");
 	    }
 		FeatureLoc fl = t.getRankZeroFeatureLoc();
+		
+		//logger.info(fl.getFmin() + " ,,, " + fl.getFmax());
+		
 		int start;
 		int end;
 		if (includeTranscript) {
@@ -315,6 +327,13 @@ public class DownloadUtils {
 		    start = end;
 		    end = tmp;
 		}
+		
+		int parentSequenceLength = parent.getSeqLen();
+		if (end > parentSequenceLength) {
+			logger.warn(String.format("Correcting end %s to %s (the parent length)", end, parentSequenceLength));
+			end = parentSequenceLength;
+		}
+		
 		return new String(parent.getResidues(start, end, fl.getStrand()==1));
 	}
 
