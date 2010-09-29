@@ -2,6 +2,8 @@ package org.genedb.web.mvc.controller;
 
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryUtils;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.view.FileCheckingInternalResourceViewResolver;
@@ -159,8 +161,37 @@ public class HistoryController {
 
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("items", historyManager.getHistoryItems());
+        
+        Map<String, String> descriptions = new HashMap<String, String>();
+        for (HistoryItem item : historyManager.getHistoryItems()) {
+        	descriptions.put(item.getName(), getFormattedParameterMap(item));
+        }
+        
+        model.put("descriptions", descriptions);
 
         return new ModelAndView("history/list", model);
+    }
+    
+    
+    public static String getFormattedParameterMap(HistoryItem item) {
+    	
+    	Query q = item.getQuery();
+    	
+    	if (q != null) {
+    		
+    		Map<String,String> map = QueryUtils.getParameterMap(q);
+    		StringBuffer description = new StringBuffer();
+    		description.append("<div style='font-weight:bold;'>" + q.getQueryName() + "</div>");
+    		
+    		for (String key : map.keySet()) {
+    			description.append("<div style='text-decoration:underline' >" + key + "</div>");
+    			description.append("<div style='margin-left:20px;' >" + map.get(key) + "</div>");
+    		}
+    		
+    		return description.toString();
+    	} 
+    
+        return "";
     }
 
 

@@ -28,6 +28,7 @@ import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.querying.tmpquery.IdsToGeneDetailQuery;
+import org.genedb.web.mvc.controller.HistoryController;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
@@ -57,7 +58,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -123,6 +126,14 @@ public class DownloadController {
     	}
     }
     
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+    public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
+        this.historyManagerFactory = historyManagerFactory;
+    }
+    
     @RequestMapping(method=RequestMethod.GET, value="/{historyItem}")
     public ModelAndView displayForm(
             @PathVariable("historyItem") int historyItem) {
@@ -130,8 +141,8 @@ public class DownloadController {
         ModelAndView mav = new ModelAndView("history/historyForm", "historyItem", historyItem);
         return mav;
     }
-
-
+    
+   
     
 	@RequestMapping(method=RequestMethod.POST, value="/{historyItem}")
     public ModelAndView onSubmit(
@@ -151,7 +162,7 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-    	
+		
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
@@ -166,6 +177,8 @@ public class DownloadController {
         }
 
         HistoryItem hItem = historyItems.get(historyItem-1);
+        
+        String description = HistoryController.getFormattedParameterMap(hItem);
         
         String historyItemName = hItem.getName();
         List<String> uniqueNames = hItem.getIds();
@@ -221,7 +234,7 @@ public class DownloadController {
         		File zipFile = zip(outFile);
         		
             	try {
-					sendEmail(email, historyItemName, "Please find attached your results in the excel file.", zipFile);
+					sendEmail(email, historyItemName, "Please find attached your results in the excel file." + description, zipFile);
 					response.getWriter().append("Your email has been sent to " + email + ".");
 				} catch (MessagingException e) {
 					logger.error(e.getStackTrace().toString());
@@ -257,11 +270,15 @@ public class DownloadController {
         } else {
         	
         	Writer out = null;
+        	File tabOutFile = null;
         	
         	if (outputDestination == OutputDestination.TO_BROWSER) {
         		out = response.getWriter();
         	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE)) {
-        		out = new StringWriter();
+        		
+        		tabOutFile = new File( fileName );
+        		out = new FileWriter(tabOutFile);
+        		
         	} 
         	
         	if (fieldSeparator == "default") {
@@ -337,16 +354,8 @@ public class DownloadController {
         	
         	if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE))  {
         		
-        		File tabOutFile = new File( fileName );
         		
-            	
-            	StringWriter sout = (StringWriter) out;
-            	String result = sout.getBuffer().toString();
-            	
-            	FileWriter fw = new FileWriter(tabOutFile);
-            	fw.write(result);
-            	fw.close();
-        		
+            	out.close();
             	
             	
         		if (outputDestination == OutputDestination.TO_EMAIL) {
@@ -354,7 +363,7 @@ public class DownloadController {
         			File zipFile = zip(tabOutFile);
         			
                 	try {
-						sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results.", zipFile);
+						sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
 						response.getWriter().append("Your email has been sent to " + email + ".");
 					} catch (MessagingException e) {
 						logger.error(e.getStackTrace().toString());
@@ -442,7 +451,9 @@ public class DownloadController {
     	helper.setTo(to);
     	helper.setFrom(new InternetAddress("webmaster@genedb.org"));
     	helper.setSubject("Your GeneDB query results - " + subject);
-    	helper.setText(text);
+    	helper.setText(text, true);
+    	
+    	
     	
     	if (attachment != null) {
     		FileSystemResource file = new FileSystemResource(attachment);
@@ -475,13 +486,7 @@ public class DownloadController {
 
 
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
-
-    public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
-        this.historyManagerFactory = historyManagerFactory;
-    }
+    
     
 }
 

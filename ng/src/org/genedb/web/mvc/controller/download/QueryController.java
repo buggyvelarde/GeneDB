@@ -193,7 +193,10 @@ public class QueryController extends AbstractGeneDBFormController{
             HistoryManager hm = hmFactory.getHistoryManager(session);
             logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
             System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            hm.addHistoryItem("query"+resultsKey, HistoryType.QUERY, gs.get(0).getSystematicId());
+            
+            HistoryItem hitem = hm.addHistoryItem("query"+resultsKey, HistoryType.QUERY, gs.get(0).getSystematicId());
+            hitem.setQuery(query);
+            
             return "redirect:/gene/" + gs.get(0).getSystematicId();
 
         default:
@@ -206,7 +209,10 @@ public class QueryController extends AbstractGeneDBFormController{
             }
             logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
             System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            hm2.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids);
+            
+            HistoryItem hitem2 = hm2.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids);
+            hitem2.setQuery(query);
+            
             //model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '"+gs2.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");

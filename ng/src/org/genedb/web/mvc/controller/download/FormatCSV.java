@@ -24,7 +24,7 @@ public class FormatCSV extends FormatBase {
 		for (GeneDetail entry: entries) {
 			
 			boolean first = true;
-			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
+			for (String fieldValue : getFieldValues(getExtractor(entry), outputOptions)) {
 				if (! first) {
 					writer.append(fieldSeparator);
 				} else {

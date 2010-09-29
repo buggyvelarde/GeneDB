@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
@@ -30,12 +31,15 @@ public class GeneDetailFieldValueExctractor {
 	private String systematicId;
 	
 	private Feature feature;
+	private Map<String, Feature> features;
 	
-	public GeneDetailFieldValueExctractor(GeneDetail entry, BerkeleyMapFactory bmf, SequenceDao sequenceDao, String fieldInternalSeparator, String blankField) {
+	public GeneDetailFieldValueExctractor(GeneDetail entry, BerkeleyMapFactory bmf, SequenceDao sequenceDao, Map<String,Feature>features, String fieldInternalSeparator, String blankField) {
 		
 		this.entry = entry;
 		this.bmf = bmf;
 		this.sequenceDao = sequenceDao;
+		
+		this.features = features;
 		
 		this.fieldInternalSeparator = fieldInternalSeparator;
 		this.blankField = blankField;
@@ -43,7 +47,7 @@ public class GeneDetailFieldValueExctractor {
 		featureId = entry.getFeatureId();
 		systematicId = entry.getSystematicId();
 		
-		logger.error(systematicId);
+		// logger.error(systematicId);
 		
 		if (entry.getType().equals("mRNA")) {
 			isTranscript = true;
@@ -55,24 +59,79 @@ public class GeneDetailFieldValueExctractor {
 		// try first to fetch from lucene because it's faster
 		String fieldValue = getFieldValue(entry, outputOption);
 		
+		//String source = "lucene";
+		
 		if (fieldValue == null) {
 			if (isTranscript) {
-				
 				// use the DTO if it's a transcript
-				// logger.debug(String.format("looking up %s in transcript, output %s", systematicId, outputOption.name()));
+				// source = "transcript";
 				fieldValue = getFieldValue(getAdaptor(), outputOption);
-			} else {
-				
+			} else {				
 				// fall back on feature (for pseudogenes, etc.), slow but no other way left to get the info
-				// logger.debug(String.format("looking up %s in feature, output %s", systematicId, outputOption.name()));
+				// source = "feature";
 				fieldValue = getFieldValue(getFeature(), outputOption);
 			}
-		} 
+		}
+		
+		//logger.error(String.format("%s.%s <- %s", systematicId, outputOption.name(), source));
 		
 		fieldValue = (fieldValue == null || fieldValue.equals("")) ? blankField : fieldValue;
 		return fieldValue;
 	}
 	
+	public static boolean availableFromLucene(OutputOption outputOption) {
+		
+		boolean available = false;
+		
+		switch (outputOption) {
+		case ORGANISM:
+			available = true;
+			break;
+		case SYS_ID:
+			available = true;
+			break;
+		case PRIMARY_NAME:
+			available = true;
+			break;
+		case PRODUCT:
+			available = true;
+			break;
+		case GENE_TYPE:
+			available = true;
+			break;
+		case SYNONYMS:
+			available = true;
+			break;
+		case PREV_SYS_ID:
+			break;
+		case CHROMOSOME:
+			available = true;
+			break;
+		case LOCATION:
+			available = true;
+			break;
+		case EC_NUMBERS:
+			break;
+		case NUM_TM_DOMAINS:
+			break;
+		case SIG_P:
+			break;
+		case GPI_ANCHOR:
+			break;
+		case MOL_WEIGHT:
+			break;
+		case ISOELECTRIC_POINT:
+			break;
+		case GO_IDS:
+			break;
+		case PFAM_IDS:
+			break;
+		case INTERPRO_IDS:
+			break;
+		}
+		
+		return available;
+	}
 	
 	private String getFieldValue(GeneDetail entry, OutputOption outputOption) {
 		String fieldValue = null;
@@ -258,6 +317,13 @@ public class GeneDetailFieldValueExctractor {
 			dto = bmf.getDtoMap().get(featureId);
 		}
 		
+		// if the dto is still null, then trying to make generate adaptor will raise an exception, 
+		if (dto == null) {
+			return null;
+		}
+		
+		//logger.debug(this.systematicId + " -- " + dto);
+		
 		if (adaptor == null) {
 			adaptor = new TranscriptDTOAdaptor(dto, fieldInternalSeparator);
 		}
@@ -265,10 +331,19 @@ public class GeneDetailFieldValueExctractor {
 		return adaptor;
 	}
 	
+	
 	public Feature getFeature() {
-		if (feature == null) {
-			feature = sequenceDao.getFeatureByUniqueName(this.systematicId, Feature.class);
+		
+		if (features != null) {
+			if (features.containsKey(systematicId)) {
+				return features.get(systematicId);
+			}
 		}
+		
+		if (feature == null) {
+			feature = sequenceDao.getFeatureByUniqueName(systematicId, Feature.class);
+		}
+		
 		return feature;
 	}
 

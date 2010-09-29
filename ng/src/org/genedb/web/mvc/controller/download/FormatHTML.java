@@ -60,7 +60,7 @@ public class FormatHTML extends FormatBase {
 			
 			writer.append(recordSeparator);
 			
-			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
+			for (String fieldValue : getFieldValues(getExtractor(entry), outputOptions)) {
 				writer.append(fieldSeparator);
 				writer.append(fieldValue);
 				writer.append(postFieldSeparator);

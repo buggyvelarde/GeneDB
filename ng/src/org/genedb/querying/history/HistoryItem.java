@@ -4,7 +4,6 @@ import org.genedb.querying.core.Query;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HistoryItem implements Serializable {
@@ -90,8 +89,7 @@ public class HistoryItem implements Serializable {
     }
 
     public Query getQuery() {
-        // TODO Auto-generated method stub
-        return null;
+        return query;
     }
 
     public void setHistoryType(HistoryType historyType) {

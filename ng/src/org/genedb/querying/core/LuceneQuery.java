@@ -53,9 +53,7 @@ public abstract class LuceneQuery implements Query {
     public transient LuceneIndexFactory luceneIndexFactory;
 
     protected transient LuceneIndex luceneIndex;
-
-    protected String name;
-
+    
     /**
      * Size of result retrieved
      */
@@ -74,7 +72,7 @@ public abstract class LuceneQuery implements Query {
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
 
     public String getParseableDescription() {
-        return QueryUtils.makeParseableDescription(name, getParamNames(), this);
+        return QueryUtils.makeParseableDescription(getQueryName(), getParamNames(), this);
     }
 
     public <T extends Comparable<? super T>> List<T> getResults(Class<T> clazz) throws QueryException {

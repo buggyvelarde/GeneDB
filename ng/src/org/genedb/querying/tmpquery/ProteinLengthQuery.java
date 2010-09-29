@@ -110,6 +110,10 @@ public class ProteinLengthQuery extends OrganismLuceneQuery {
             }
         }
     }
+    
+    public String getType() {
+    	return type;
+    }
 
 
     @Override

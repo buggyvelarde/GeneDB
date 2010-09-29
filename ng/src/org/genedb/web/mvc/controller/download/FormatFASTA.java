@@ -36,17 +36,34 @@ public class FormatFASTA extends FormatBase {
 		this.prime5 = prime5;
 	}
 	
+	/**
+	 * FASTA formatting can't rely on lucenes, so this is always false
+	 * @see org.genedb.web.mvc.controller.download.FormatBase#onlyNeedLuceneLookups()
+	 */
+	@Override
+	protected boolean onlyNeedLuceneLookups() {
+		return false;
+	}
+	
+	/**
+	 * FASTA formatting will always require feature objects
+	 * @see org.genedb.web.mvc.controller.download.FormatBase#requireFeatures(java.util.List)
+	 */
+	@Override
+	protected boolean requireFeatures(List<GeneDetail> entries) {
+		return true;
+	}
 	
 	@Override
 	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
-		logger.info("starting fasta export");
+		logger.info("fasta export");
 		
 		for (GeneDetail entry : entries) {
 			
 			StringBuffer header = new StringBuffer(); 
 			
-			GeneDetailFieldValueExctractor facade = facade(entry);
+			GeneDetailFieldValueExctractor facade = getExtractor(entry);
 			
 			boolean first = true;
 			for (String fieldValue : getFieldValues(facade, outputOptions)) {
@@ -59,11 +76,11 @@ public class FormatFASTA extends FormatBase {
 			}
 			
 			String headerString = header.toString();
-			logger.error(headerString);
+			//logger.error(headerString);
 			
 			String sequence = "";
 			Feature feature = facade.getFeature();
-			logger.error(feature);
+			//logger.error(feature);
 			
 			if (feature instanceof Transcript) {
 				Transcript transcript = (Transcript) feature;

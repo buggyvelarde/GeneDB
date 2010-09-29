@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -17,6 +18,8 @@ import org.genedb.querying.tmpquery.GeneDetail;
  * @author gv1
  */
 public class FormatExcel extends FormatBase {
+	
+	private static Logger logger = Logger.getLogger(FormatExcel.class);
 	
 	HSSFWorkbook workbook;
 	HSSFSheet sheet;
@@ -35,13 +38,13 @@ public class FormatExcel extends FormatBase {
 	
 	@Override
 	public void formatBody(List<GeneDetail> entries) throws IOException {
-		
+		logger.info("excel export");
 		for (GeneDetail entry : entries) {
 			
 			HSSFRow row = sheet.createRow(rcount);
 			
 			short count = 0;
-			for (String fieldValue : getFieldValues(facade(entry), outputOptions)) {
+			for (String fieldValue : getFieldValues(getExtractor(entry), outputOptions)) {
 				
 				HSSFCell cell = row.createCell(count);
 				HSSFRichTextString richVal = new HSSFRichTextString(fieldValue);
