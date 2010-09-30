@@ -70,7 +70,9 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
+    	
+    	logger.info(queryName);
+    	
         if (request.getParameterMap().size() > 1) {
             return processForm(queryName, suppress, request, session, model);
         } else {
@@ -84,13 +86,16 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
+    	
+    	logger.info("DISPLAYING FORM");
+    	
         Query query = findQueryType(queryName, session);
         if (query==null){
+        	logger.warn("No query, redirecting to the list");
         	//return "jsp:debug/debug";
             return "redirect:/QueryList";
         }
-
+        
         //Initialise model data somehow
         model.addAttribute("query", query);
         populateModelData(model, query);
@@ -107,8 +112,8 @@ public class QueryController extends AbstractGeneDBFormController{
             HttpSession session,
             Model model) throws QueryException {
 
-        System.err.println("Entering processForm");
-
+    	logger.info("PROCESSING FORM");
+        
         //Find query for request
         Query query = findQueryType(queryName, session);
         if (query==null){
@@ -172,14 +177,14 @@ public class QueryController extends AbstractGeneDBFormController{
     private String findDestinationView(
             String queryName, Query query, Model model, List<Object> results, HttpSession session){
 
-        System.err.println("Got into findDestinationView");
-        logger.error("Got into findDestinationView");
+        //System.err.println("Got into findDestinationView");
+        logger.info("FINAL DESTINATION VIEW " + queryName );
 
         //Get the current taxon name
         String taxonName = findTaxonName(query);
         String resultsKey = null;
 
-        logger.error("TaxonNodeName is '"+taxonName+"'");
+        logger.info("TaxonNodeName is '"+taxonName+"', results size: " + results.size());
         switch (results.size()) {
         case 0:
             logger.debug("No results found for query");
