@@ -458,7 +458,7 @@ br {
 	text-transform: uppercase;
 	font-weight: lighter;
 	text-align: left;
-	padding: 0 1em 1em 1em;
+	padding: 1em 1em 1em 1em;
 	background: #cbdcec;
 	line-height: 0.7em;
 }
