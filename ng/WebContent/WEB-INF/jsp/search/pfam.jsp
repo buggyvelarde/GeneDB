@@ -8,7 +8,7 @@
 <br>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="${baseUrl}Query/pfam" method="GET">
+        <form:form commandName="query" action="pfam" method="GET">
 
             <table>
                 <tr>
