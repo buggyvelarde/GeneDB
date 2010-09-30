@@ -181,11 +181,10 @@ public class HistoryController {
     		
     		Map<String,String> map = QueryUtils.getParameterMap(q);
     		StringBuffer description = new StringBuffer();
-    		description.append("<div style='font-weight:bold;'>" + q.getQueryName() + "</div>");
+    		description.append("<div style='font-size:1.2em;font-weight:bold;text-decoration:underline;'>" + q.getQueryName() + "</div>");
     		
     		for (String key : map.keySet()) {
-    			description.append("<div style='text-decoration:underline' >" + key + "</div>");
-    			description.append("<div style='margin-left:20px;' >" + map.get(key) + "</div>");
+    			description.append("<div><span style='font-weight:bold;' >" + key + "</span> : <span style='font-style:italic' >" + map.get(key) + "</span></div>");
     		}
     		
     		return description.toString();
