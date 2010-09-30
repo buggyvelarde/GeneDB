@@ -22,8 +22,10 @@ package org.genedb.web.mvc.controller.download;
 import org.genedb.db.dao.SequenceDao;
 
 import org.genedb.querying.core.NumericQueryVisibility;
+import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.core.QueryUtils;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.tmpquery.GeneDetail;
@@ -58,6 +60,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +110,9 @@ public class DownloadController {
     
     private File downloadTmpFolder;
     private boolean deleteFiles = true;
+    
+    private static final String DATE_FORMAT_NOW = "yyyy.MM.dd.HH.mm.ss";
+
     
     @SuppressWarnings("unchecked")
 	private QueryFactory queryFactory;
@@ -196,7 +204,8 @@ public class DownloadController {
         	blankField = "";
         }
         
-        String fileName = downloadTmpFolder + "/" + historyItemName + "." + outputFormat.name().toLowerCase();
+        String fileName = historyItemName + "." + getTime() + "." + outputFormat.name().toLowerCase();
+        String filePath = downloadTmpFolder + "/" + fileName;
         
         if (outputFormat == OutputFormat.XLS) {
         	
@@ -209,7 +218,7 @@ public class DownloadController {
         		 
         	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE) ) {
         		
-        		outFile = new File( fileName );
+        		outFile = new File( filePath );
         		outStream = new FileOutputStream(outFile);
         		
         	} 
@@ -249,7 +258,7 @@ public class DownloadController {
         	 } else if (outputDestination == OutputDestination.TO_FILE) {
         		 
         		response.setContentType("application/vnd.ms-excel");
-              	response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+              	response.setHeader("Content-Disposition", "attachment; filename=" + outFile.getName());
         		
              	OutputStream os = response.getOutputStream();
      			returnFile(outFile, os);
@@ -258,6 +267,7 @@ public class DownloadController {
         		 
         		 response.setContentType("application/vnd.ms-excel");
         		 response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        		 
         	 }
         	
         	
@@ -276,7 +286,7 @@ public class DownloadController {
         		out = response.getWriter();
         	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE)) {
         		
-        		tabOutFile = new File( fileName );
+        		tabOutFile = new File( filePath );
         		out = new FileWriter(tabOutFile);
         		
         	} 
@@ -397,6 +407,11 @@ public class DownloadController {
         return null;
     }
 	
+	private String getTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+		return sdf.format(cal.getTime());
+	}
 	
 	private File zip(File file) throws IOException {
 		
