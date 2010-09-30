@@ -8,13 +8,9 @@ import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
-import org.gmod.schema.feature.Pseudogene;
-import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
-
-import com.google.common.collect.Iterables;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -130,8 +126,24 @@ public class DownloadUtils {
 
         return embl.toString();
     }
+    
+    
+    public static String getSequence(Polypeptide polypeptide, SequenceType sequenceType, int prime3, int prime5) {
+    	String sequence = null;
+    	
+    	switch (sequenceType) {
+    		case PROTEIN:
+    			sequence = new String(polypeptide.getResidues());
+            	break;
+            default:
+            	sequence = getSequence(polypeptide.getTranscript(), sequenceType, prime3, prime5);
+            	//sequence = getSequence(polypeptide.getGene(), sequenceType, prime3, prime5);
+            	break;
+    	}
+    	return sequence;
+    }
 
-    public static String getSequence(AbstractGene gene,SequenceType sequenceType) {
+    public static String getSequence(AbstractGene gene,SequenceType sequenceType, int prime3, int prime5) {
         String sequence = null;
         boolean alternateSpliced = false;
         Collection<Transcript> transcripts = gene.getTranscripts();
@@ -145,6 +157,8 @@ public class DownloadUtils {
                transcript = (ProductiveTranscript) t;
            }
         }
+        
+        logger.error(transcript);
 
         if(!alternateSpliced && transcript!=null) {
             switch (sequenceType) {
@@ -167,8 +181,19 @@ public class DownloadUtils {
                 case INTRON_AND_EXON:
                 	sequence = getIntronsAndExons(transcript);
                     break;
-            }
+            
+	    		case INTERGENIC_3:
+	    			sequence =  fetchParentSequence(transcript, false, prime3, 0);
+	
+	    		case INTERGENIC_5:
+	    			sequence =  fetchParentSequence(transcript, false, 0, prime5);
+	
+	    		case INTERGENIC_3and5:
+	    			sequence =  fetchParentSequence(transcript, true, prime3, prime5);
+	            }
         }
+        
+        logger.info(sequence);
 
         return sequence;
     }
@@ -209,10 +234,10 @@ public class DownloadUtils {
     			intronPosition.start = lastPoint;
     			intronPosition.stop = exonStart;
     			positions.add(intronPosition);
-    			logger.debug(intronPosition.start + " ... " + intronPosition.stop);    			
+    			//logger.debug(intronPosition.start + " ... " + intronPosition.stop);    			
     		}
     		
-    		logger.debug(exon.getStart() + " <...> " + exon.getStop());
+    		//logger.debug(exon.getStart() + " <...> " + exon.getStop());
     		
     		Position exonPosition = new Position();
     		exonPosition.start = exon.getStart();
@@ -292,7 +317,7 @@ public class DownloadUtils {
     }
 
     // TODO Check off by one
-	private static String fetchParentSequence(Transcript t, boolean includeTranscript, int prime3, int prime5) {
+	private static String fetchParentSequence(Feature t, boolean includeTranscript, int prime3, int prime5) {
 		
 		//logger.info(prime3 + " --- " + prime5);
 		

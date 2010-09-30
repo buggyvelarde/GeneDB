@@ -140,7 +140,7 @@ public abstract class FormatBase {
     }
     
     /**
-     * Formats the results, with headers and footers. Pages through the entries for chunking Feature lookups.
+     * Formats the results, with headers and footers. Pages through the entries (to speed up Feature lookups by chunking them).
      * 
      * @param entries
      * @throws IOException

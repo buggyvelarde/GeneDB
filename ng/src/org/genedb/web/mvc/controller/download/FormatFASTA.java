@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.web.utils.DownloadUtils;
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
@@ -57,7 +58,9 @@ public class FormatFASTA extends FormatBase {
 	@Override
 	public void formatBody(List<GeneDetail> entries) throws IOException {
 		
-		logger.info("fasta export");
+		if (entries.size() > 0) {
+			logger.info("fasta export " + entries.get(0).getDisplayId() + " ...");
+		}
 		
 		for (GeneDetail entry : entries) {
 			
@@ -76,18 +79,19 @@ public class FormatFASTA extends FormatBase {
 			}
 			
 			String headerString = header.toString();
-			//logger.error(headerString);
 			
-			String sequence = "";
+			String sequence = null;
+			
 			Feature feature = facade.getFeature();
-			//logger.error(feature);
 			
 			if (feature instanceof Transcript) {
-				Transcript transcript = (Transcript) feature;
-				sequence = DownloadUtils.getSequence(transcript, sequenceType, prime3, prime5);
-			} else if (feature instanceof AbstractGene ) {				
-				AbstractGene abstractGene = (AbstractGene) feature;
-				sequence = DownloadUtils.getSequence(abstractGene, sequenceType);
+				sequence = DownloadUtils.getSequence( (Transcript) feature, sequenceType, prime3, prime5);
+			} else if (feature instanceof AbstractGene ) {
+				sequence = DownloadUtils.getSequence( (AbstractGene) feature, sequenceType, prime3, prime5);
+			} else if (feature instanceof Polypeptide ) {
+				sequence = DownloadUtils.getSequence( (Polypeptide) feature, sequenceType, prime3, prime5);
+			} else {
+				logger.error("unexpected class: " + feature.getClass());
 			}
 			
     		String fasta;
@@ -97,8 +101,8 @@ public class FormatFASTA extends FormatBase {
             	fasta = String.format(">%s\nAlternately spliced or sequence not attached", headerString);
             }
             
-            writer.append(fasta);
-            writer.append(postRecordSeparator);
+            writer.append(fasta.trim() + postRecordSeparator);
+            
 		}
 		
 	}

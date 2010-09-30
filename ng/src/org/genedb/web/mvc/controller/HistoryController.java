@@ -164,7 +164,21 @@ public class HistoryController {
         
         Map<String, String> descriptions = new HashMap<String, String>();
         for (HistoryItem item : historyManager.getHistoryItems()) {
-        	descriptions.put(item.getName(), getFormattedParameterMap(item));
+        	
+        	String description = getFormattedParameterMap(item);
+        	
+        	if (description == null) {
+        		if (item.getName().equals("AUTO_BASKET")) {
+        			description = "Genomic elements that you have viewed in this session.";
+        		}
+        		else if (item.getName().equals("BASKET")) {
+        			description = "Genomic elements that you have added to the basket in this session.";
+        		} else {
+        			description = "(no description)";
+        		}
+        	}
+        	
+        	descriptions.put(item.getName(), description);
         }
         
         model.put("descriptions", descriptions);
@@ -190,7 +204,7 @@ public class HistoryController {
     		return description.toString();
     	} 
     
-        return "";
+        return null;
     }
 
 

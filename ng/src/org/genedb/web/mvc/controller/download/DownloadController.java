@@ -207,6 +207,8 @@ public class DownloadController {
         String fileName = historyItemName + "." + getTime() + "." + outputFormat.name().toLowerCase();
         String filePath = downloadTmpFolder + "/" + fileName;
         
+        logger.info(fileName);
+        
         if (outputFormat == OutputFormat.XLS) {
         	
         	OutputStream outStream = null;
@@ -402,7 +404,8 @@ public class DownloadController {
         	
         	
         }
-        	
+        
+        logger.info(fileName + " complete");
         
         return null;
     }
