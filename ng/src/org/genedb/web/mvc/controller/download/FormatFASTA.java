@@ -84,14 +84,18 @@ public class FormatFASTA extends FormatBase {
 			
 			Feature feature = facade.getFeature();
 			
-			if (feature instanceof Transcript) {
-				sequence = DownloadUtils.getSequence( (Transcript) feature, sequenceType, prime3, prime5);
-			} else if (feature instanceof AbstractGene ) {
-				sequence = DownloadUtils.getSequence( (AbstractGene) feature, sequenceType, prime3, prime5);
-			} else if (feature instanceof Polypeptide ) {
-				sequence = DownloadUtils.getSequence( (Polypeptide) feature, sequenceType, prime3, prime5);
-			} else {
-				logger.error("unexpected class: " + feature.getClass());
+			if (feature != null) {
+			
+				if (feature instanceof Transcript) {
+					sequence = DownloadUtils.getSequence( (Transcript) feature, sequenceType, prime3, prime5);
+				} else if (feature instanceof AbstractGene ) {
+					sequence = DownloadUtils.getSequence( (AbstractGene) feature, sequenceType, prime3, prime5);
+				} else if (feature instanceof Polypeptide ) {
+					sequence = DownloadUtils.getSequence( (Polypeptide) feature, sequenceType, prime3, prime5);
+				} else {
+					logger.error("unexpected class: " + feature.getClass());
+				}
+				
 			}
 			
     		String fasta;
