@@ -104,20 +104,21 @@ public class QueryUtils {
     		map.put(paramNames[i], paramValues[i].toString());
     	}
     	
-    	if (taxons.getNodeCount() > 0) {
-    		
-    		TaxonNode node = taxons.getNodes().get(0);
-    		
-    		String nodeName = node.getName(TaxonNameType.HTML_FULL);
-    		
-    		if (nodeName == null) {
-    			nodeName = node.getName(TaxonNameType.FULL);
-    		}
-    		
-    		map.put("taxon", nodeName);
-    	} else {
-    		map.put("taxon", "--");
+    	if (taxons != null) {
+    		if (taxons.getNodeCount() > 0) {
+        		TaxonNode node = taxons.getNodes().get(0);
+        		String nodeName = node.getName(TaxonNameType.HTML_FULL);
+        		if (nodeName == null) {
+        			nodeName = node.getName(TaxonNameType.FULL);
+        		}
+        		
+        		map.put("taxon", nodeName);
+        	} else {
+        		map.put("taxon", "--");
+        	}
     	}
+    	
+    	
     	    	
 		return map;
     }
