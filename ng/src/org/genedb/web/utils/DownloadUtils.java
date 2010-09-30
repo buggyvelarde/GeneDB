@@ -6,6 +6,7 @@ import org.genedb.web.mvc.controller.download.SequenceType;
 
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
@@ -158,9 +159,10 @@ public class DownloadUtils {
                     }
                     break;
                 case PROTEIN:
-                    if(transcript.getProtein().getResidues() != null) {
-                        sequence = new String(transcript.getProtein().getResidues());
-                    }
+                	Polypeptide p = transcript.getProtein();
+                	if (p != null) {
+                		sequence = new String(p.getResidues());
+                	}
                     break;
                 case INTRON_AND_EXON:
                 	sequence = getIntronsAndExons(transcript);
