@@ -106,7 +106,7 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
 
     @Override
     protected String[] getParamNames() {
-        return new String[] {"present"};
+        return new String[] {"sigP", "gpi", "apicoplast"};
     }
 
 
