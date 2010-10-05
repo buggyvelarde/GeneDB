@@ -147,11 +147,13 @@
 
     <bean id="goaloader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.GOALoader"/>
+       
+    <bean id="renameFeatures" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.RenameFeature" />
 
     <!-- DataSource Property -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource" class="org.genedb.db.loading.auxiliary.SystemPropertyOverridingDataSource">
         <property name="maxWait" value="5"/>
-
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
         <property name="username"><value>${dbuser}</value></property>
