@@ -117,6 +117,12 @@ public class RenameFeature extends Loader {
             		
             		String namePattern = oldUniqueName + "%";
             		List<Feature> features = sequenceDao.getFeaturesByUniqueNamePattern(namePattern);
+            		
+            		if (features.size() == 0) {
+            			logger.warn("No matching features found.");
+            			break;
+            		}
+            		
             		for (Feature feature : features) {
             			
             			String featureName = feature.getUniqueName();
