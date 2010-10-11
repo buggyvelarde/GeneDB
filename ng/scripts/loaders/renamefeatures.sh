@@ -13,10 +13,12 @@ HELP
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` renamefeatures  [-d delimiter] <file>
+Usage: `basename $0` renamefeatures [-p]  [-d delimiter] <file>
 Options:
   -d delimiter
     The delimiter used to split the two columns (e.g. '\t' for tab)
+  -p 
+    Match the first column to featureName prefixes, e.g. providing Pf3_d7 -> PF3D7 would convert Pf3_d7.100 -> PF3D7.100 and Pf3_d7.100:pep to PF3D7.100:pep, and so on.   
 USAGE
     standard_options
     echo
@@ -24,11 +26,14 @@ USAGE
 
 doLoad() {
     delimiter='\t'
+    matchPrefixOnly=false
     
     OPTIND=0
-    while getopts "d:$stdopts" option; do
+    while getopts "d:p$stdopts" option; do
         case "$option" in
         d)  delimiter="$OPTARG"
+            ;;
+        p)  matchPrefixOnly=true
             ;;
         *)  process_standard_options "$option"
             ;;
@@ -40,5 +45,5 @@ doLoad() {
 
     java $database_properties -Dlog4j.configuration=log4j.loader.properties \
         org.genedb.db.loading.auxiliary.Load renameFeatures \
-        --delimiter="$delimiter" "$@"
+        --delimiter="$delimiter" --matchPrefixOnly="$matchPrefixOnly" "$@"
 }
