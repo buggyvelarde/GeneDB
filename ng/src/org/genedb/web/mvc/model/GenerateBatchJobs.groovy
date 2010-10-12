@@ -69,11 +69,14 @@ def cpProcessErr = new StringBuffer()
 cpProcess.consumeProcessOutput(cpProcessOut, cpProcessErr)
 cpProcess.waitFor()
 
-if (cpProcess.exitValue())
-	print cpProcess.err.text
+if (cpProcess.exitValue()) {
+	println cpProcess.err.text
 	System.exit(101)
-
-String cacheClassPath = new File(classPathFileLocation).getText();
+} else {
+	println cpProcess.text
+}
+	
+def cacheClassPath = new File(classPathFileLocation).getText();
 
 println "Using class path:"
 println cacheClassPath
