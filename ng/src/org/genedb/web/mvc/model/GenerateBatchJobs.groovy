@@ -85,9 +85,13 @@ println config
 def propertyFilePath = "property-file.${config}"
 println propertyFilePath
 
+URL propertyFileURL = new File(propertyFilePath).toURL()
+
+println propertyFileURL
+
 def slurper = new ConfigSlurper()
 println slurper
-def configLoaded = slurper.parse(propertyFilePath)
+def configLoaded = slurper.parse(propertyFileURL)
 
 println configLoaded
 
