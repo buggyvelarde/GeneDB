@@ -82,7 +82,7 @@ println "Using class path:"
 println cacheClassPath
 
 println config
-def propertyFilePath = 'property-file.${config}'
+def propertyFilePath = "property-file.${config}"
 println propertyFilePath
 
 def config_slurped = new ConfigSlurper().parse(new File(propertyFilePath).toURL())
