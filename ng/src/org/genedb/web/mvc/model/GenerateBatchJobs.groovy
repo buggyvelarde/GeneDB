@@ -61,6 +61,8 @@ if (args.length >= 5) {
 
 def classPathFileLocation = "/tmp/genedb-apps.txt"
 
+println "Running ant"
+
 Process cpProcess = ["ant", "-f", "build-apps.xml", "-Dclasspath.outputfile=${classPathFileLocation}", "write-classpath"].execute()
 def cpProcessOut = new StringBuffer()
 def cpProcessErr = new StringBuffer()
@@ -73,8 +75,8 @@ if (cpProcess.exitValue())
 
 String cacheClassPath = new File(classPathFileLocation).getText();
 
-print "Using class path:"
-print cacheClassPath
+println "Using class path:"
+println cacheClassPath
 
 def config_slurped = new ConfigSlurper().parse(new File('property-file.${config}' ).toURL())
 def dbname = config_slurped.dbname
