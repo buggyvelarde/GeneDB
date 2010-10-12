@@ -85,7 +85,9 @@ println config
 def propertyFilePath = "property-file.${config}"
 println propertyFilePath
 
-def configLoaded = new ConfigSlurper().parse(propertyFilePath)
+def slurper = new ConfigSlurper()
+println slurper
+def configLoaded = slurper.parse(propertyFilePath)
 
 println configLoaded
 
