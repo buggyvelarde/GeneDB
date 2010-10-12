@@ -78,19 +78,9 @@ if (cpProcess.exitValue()) {
 	
 def cacheClassPath = new File(classPathFileLocation).getText();
 
-println "Using class path:"
-println cacheClassPath
-
-println config
-def propertyFilePath = "property-file.${config}"
-println propertyFilePath
-
 props = new java.util.Properties()
-props.load( new FileInputStream(propertyFilePath) )
-	
+props.load(new FileInputStream("property-file.${config}"))
 def dbname = props.getProperty('dbname')
-
-println dbname
 
 List jobList = new ArrayList();
 
