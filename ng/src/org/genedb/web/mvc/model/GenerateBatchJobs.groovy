@@ -81,6 +81,7 @@ def cacheClassPath = new File(classPathFileLocation).getText();
 println "Using class path:"
 println cacheClassPath
 
+println config
 def propertyFilePath = 'property-file.${config}'
 println propertyFilePath
 
