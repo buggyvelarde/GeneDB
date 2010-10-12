@@ -86,19 +86,19 @@ List jobList = new ArrayList();
 
 for (org in orgs) {
 
-    def antLine
+    def execLine
 
     switch (action) {
 
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
-        // antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
-		antLine="java -server -Djava.awt.headless=true  -Xmx512m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
+        // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
+		execLine="java -server -Djava.awt.headless=true  -Xmx512m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
         break;
 
     case "DTO":
-        // antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
-		antLine="java -server -Djava.awt.headless=true  -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${dir} "
+        // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
+		execLine="java -server -Djava.awt.headless=true  -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${dir} "
         new File("${baseDir}/output/${org}").mkdir()
         break;
 
@@ -110,32 +110,38 @@ for (org in orgs) {
 
     String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)
-    print "Created? " + script.createNewFile() + " \n"
+    println "Created? " + script.createNewFile() 
     script.write(boilerPlate)
-    script.append(antLine + '\n')
+    script.append(execLine + '\n')
     "chmod 755 ${scriptName}".execute()
-
-    try {
-       new File(scriptName + ".out").delete
-    } catch (groovy.lang.MissingPropertyException mpe) {
-        println "\nWARNING could not delete file: " + scriptName + ".out\n"
-    }
-
-    try {
-       new File(scriptName + ".err").delete
-    } catch (groovy.lang.MissingPropertyException mpe) {
-       println "\nWARNING could not delete file: " + scriptName + ".err\n"
-    }
-
-
-    print "${org} "
-    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
+	
+	def outFileName= "${scriptName}.out"
+	File outFile = new File(outFileName)
+	if (outFile.exists()) {
+		try {
+			outFile.delete
+	    } catch (groovy.lang.MissingPropertyException mpe) {
+	        println "\nWARNING could not delete file: ${outFileName}"
+	    }
+	}
+	
+	def errFileName= "${scriptName}.err"
+	File errFile = new File(errFileName)
+	if (errFile.exists()) {
+		try {
+			errFile.delete
+		} catch (groovy.lang.MissingPropertyException mpe) {
+			println "\nWARNING could not delete file: ${errFileName}"
+		}
+	}
+	
+	
+    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${outFileName} -e ${errFileName} ${scriptName}"].execute()
     def sout = new StringBuffer()
     def serr = new StringBuffer()
     p.consumeProcessOutput(sout, serr)
     p.waitFor()
-    //println "Output: ${sout}"
-    //println "Error: ${serr}"
+	
 }
 
 println "All jobs submitted - waiting for them to finish"
