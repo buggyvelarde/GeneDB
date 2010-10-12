@@ -85,8 +85,13 @@ println config
 def propertyFilePath = "property-file.${config}"
 println propertyFilePath
 
-def config_slurped = new ConfigSlurper().parse(new File(propertyFilePath).toURL())
-def dbname = config_slurped.dbname
+def configLoaded = new ConfigSlurper().parse(new File(propertyFilePath).toURL())
+
+println configLoaded
+
+def dbname = configLoaded.dbname
+
+println dbname
 
 List jobList = new ArrayList();
 
