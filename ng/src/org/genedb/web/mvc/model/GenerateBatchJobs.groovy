@@ -59,6 +59,26 @@ if (args.length >= 5) {
     sql.close()
 }
 
+def classPathFileLocation = "/tmp/genedb-apps.txt"
+
+Process cpProcess = ["ant", "-f", "build-apps.xml", "-Dclasspath.outputfile=${classPathFileLocation}", "write-classpath"].execute()
+def cpProcessOut = new StringBuffer()
+def cpProcessErr = new StringBuffer()
+cpProcess.consumeProcessOutput(cpProcessOut, cpProcessErr)
+cpProcess.waitFor()
+
+if (cpProcess.exitValue())
+	print cpProcess.err.text
+	System.exit(101)
+
+String cacheClassPath = new File(classPathFileLocation).getText();
+
+print "Using class path:"
+print cacheClassPath
+
+def config_slurped = new ConfigSlurper().parse(new File('property-file.${config}' ).toURL())
+def dbname = config_slurped.dbname
+
 List jobList = new ArrayList();
 
 for (org in orgs) {
@@ -69,19 +89,21 @@ for (org in orgs) {
 
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
-        antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex"
+        // antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
+		antLine="java -cp ${cacheClassPath} -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -o ${organism} -i ${baseDir}/output/${org} ${dbname} -server -Djava.awt.headless=true org.genedb.web.mvc.model.PopulateLuceneIndices"
         break;
 
     case "DTO":
-        antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
+        // antLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
+		antLine="java -cp ${cacheClassPath} -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -o ${organism} --globalFileRoot ${dir} -server -Djava.awt.headless=true org.genedb.web.mvc.model.PopulateCaches"
         new File("${baseDir}/output/${org}").mkdir()
-        break
+        break;
 
     default:
         throw new RuntimeException("Don't know how to run '${action}'")
     }
-
-    jobList.add(org)
+	
+	jobList.add(org)
 
     String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)

@@ -559,7 +559,19 @@
         <!-- <arg line="-ncm" /> -->
       </java>
     </target>
-
+    
+	<path id="cache-classpathref">
+	    <path refid="run-classpathref"/>
+		<pathelement location="${ng.directory}/WebContent/WEB-INF"/>
+		<pathelement location="${ng.directory}/WebContent/WEB-INF/classes"/>
+	</path>
+	
+	<target name="write-classpath" >
+		<fail message="The 'classpath.outputfile' property must be set" unless="classpath.outputfile"/> 
+		<!-- the echo only works when given an actual property, so we create one here -->
+		<property name="the-echo-classpath" refid="cache-classpathref" />
+		<echo message="${the-echo-classpath}" file="${classpath.outputfile}" />
+	</target>
 
     <target name="_PopulateCaches">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
