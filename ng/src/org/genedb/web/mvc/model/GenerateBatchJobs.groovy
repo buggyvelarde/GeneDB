@@ -81,7 +81,10 @@ def cacheClassPath = new File(classPathFileLocation).getText();
 println "Using class path:"
 println cacheClassPath
 
-def config_slurped = new ConfigSlurper().parse(new File('property-file.${config}' ).toURL())
+def propertyFilePath = 'property-file.${config}'
+println propertyFilePath
+
+def config_slurped = new ConfigSlurper().parse(new File(propertyFilePath).toURL())
 def dbname = config_slurped.dbname
 
 List jobList = new ArrayList();
