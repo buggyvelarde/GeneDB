@@ -130,7 +130,7 @@ if [[ -z $ORGANISMS ]]; then
         GET_ORGANISMS_SQL="select common_name from organism where organism_id in (select distinct(organism_id) from feature where timelastmodified >= '${SINCE}');"
     else
     	# get everything
-        GET_ORGANISMS_SQL="select common_name from organism"
+        GET_ORGANISMS_SQL="select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'"
         ALL_ORGANISMS=1;
     fi
     
