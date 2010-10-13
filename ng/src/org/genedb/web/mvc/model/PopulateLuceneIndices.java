@@ -262,7 +262,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
             batchCount++;
             //logger.info(String.format("Indexed '%d'pc ('%d' of '%d'), %d hours, %d mins left", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), hours, mins));
-            System.out.println(String.format("Indexed '%d'pc ('%d' of '%d')", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size()));
+            logger.debug(String.format("Indexed '%d'pc ('%d' of '%d')", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size()));
             if (failed) {
                 failedToLoad.addAll(thisBatch);
             } else {
@@ -344,7 +344,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(), feature.getClass()));
                     session.index(feature);
                     batchCount++;
-                    logger.info(String.format("Indexed '%d' ('%d' of '%d') of type '%s'", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), featureClass));
+                    logger.debug(String.format("Indexed '%d' ('%d' of '%d') of type '%s'", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), featureClass));
                 } catch (Exception exp) {
                     //System.err.println(exp);
                     logger.error("Batch failed", exp);
@@ -542,7 +542,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             }
 
             if (failed || ++thisBatchCount == batchSize) {
-                logger.info(String.format("Indexed %d of %d", i, featureIds.size()));
+                logger.debug(String.format("Indexed %d of %d", i, featureIds.size()));
                 session.clear();
                 thisBatchCount = 0;
                 if (failed) {
