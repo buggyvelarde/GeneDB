@@ -42,15 +42,25 @@ String baseDir = "${baseOutputDir}/${action}"
 new File("${baseDir}/scripts").mkdirs()
 new File("${baseDir}/output").mkdir()
 
+props = new java.util.Properties()
+props.load(new FileInputStream("property-file.${config}"))
+def dbname = props.getProperty('dbname')
+
+
 List<String> orgs = new ArrayList<String>()
 
 if (args.length >= 5) {
     orgs = args[4].split(":")
 
 } else {
+	
+	def dbport = props.getProperty('dbport')
+	def dbhost = props.getProperty('dbhost')
+	def dbuser = props.getProperty('dbuser')
+	def dbpassword = props.getProperty('dbpassword')
 
-    def sql = Sql.newInstance("jdbc:postgresql://pgsrv2/nightly", "genedb",
-                                      "genedb", "org.postgresql.Driver")
+    def sql = Sql.newInstance("jdbc:postgresql://${dbhost}:${dbport}/${dbname}", "${dbuser}",
+                                      "${dbpassword}", "org.postgresql.Driver")
 
     sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'") { row ->
         def org = row.common_name
@@ -78,9 +88,6 @@ if (cpProcess.exitValue()) {
 	
 def cacheClassPath = new File(classPathFileLocation).getText();
 
-props = new java.util.Properties()
-props.load(new FileInputStream("property-file.${config}"))
-def dbname = props.getProperty('dbname')
 
 List jobList = new ArrayList();
 
