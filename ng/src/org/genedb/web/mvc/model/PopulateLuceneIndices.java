@@ -256,7 +256,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     failed = true;
                 }
                 if ((i % 10) == 0) {
-                    System.err.print('.');
+                    logger.debug('.');
                 }
              }
 
