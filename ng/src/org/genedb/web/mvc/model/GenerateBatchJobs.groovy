@@ -71,8 +71,6 @@ if (args.length >= 5) {
 
 def classPathFileLocation = "/tmp/genedb-apps.txt"
 
-println "Running ant"
-
 Process cpProcess = ["ant", "-f", "build-apps.xml", "-Dclasspath.outputfile=${classPathFileLocation}", "write-classpath"].execute()
 def cpProcessOut = new StringBuffer()
 def cpProcessErr = new StringBuffer()
@@ -83,7 +81,7 @@ if (cpProcess.exitValue()) {
 	println cpProcess.err.text
 	System.exit(101)
 } else {
-	println cpProcess.text
+	//print cpProcess.text
 }
 	
 def cacheClassPath = new File(classPathFileLocation).getText();
@@ -117,7 +115,7 @@ for (org in orgs) {
 
     String scriptName = "${baseDir}/scripts/${org}.script"
     File script = new File(scriptName)
-    println "Created? " + script.createNewFile() 
+    //println "Created? " + script.createNewFile() 
     script.write(boilerPlate)
     script.append(execLine + '\n')
     "chmod 755 ${scriptName}".execute()
