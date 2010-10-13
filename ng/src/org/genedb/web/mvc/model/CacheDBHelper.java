@@ -72,12 +72,12 @@ public class CacheDBHelper {
         RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
 
-        logger.error(String.format("About to try and generate context map for '%s'", feature.getUniqueName()));
+        logger.debug(String.format("About to try and generate context map for '%s'", feature.getUniqueName()));
         try {
             List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
             contextMapMap.put(feature.getFeatureId(), metadata);
-            logger.error("Stored contextMap for "+feature.getFeatureId()+" '"+feature.getUniqueName()+"' as '"+metadata+"'");
+            logger.debug("Stored contextMap for "+feature.getFeatureId()+" '"+feature.getUniqueName()+"' as '"+metadata+"'");
         } catch (IOException exp) {
             logger.error(exp);
         }
