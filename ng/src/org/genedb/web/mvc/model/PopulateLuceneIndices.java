@@ -351,15 +351,15 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     failed = true;
                 }
                 if ((i % 10) == 0) {
-                    System.err.print('.');
+                    logger.warn('.');
                 }
              }
 
             if (failed) {
-                logger.error("Adding failed to batch");
+                logger.warn("Adding failed to batch");
                 failedToLoad.addAll(thisBatch);
             } else {
-                logger.error("About to flush to indices");
+                logger.debug("About to flush to indices");
                 try {
                     session.flushToIndexes();
                 }
@@ -367,11 +367,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     exp.printStackTrace(System.err);
                     System.exit(1);
                 }
-                logger.error("Just flushed to indices");
+                logger.debug("Just flushed to indices");
             }
-            logger.error("About to clear session");
+            logger.debug("About to clear session");
             session.clear();
-            logger.error("Just cleared session");
+            logger.debug("Just cleared session");
 
             start = end;
             end = start + batchSize;
