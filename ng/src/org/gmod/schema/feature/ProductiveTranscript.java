@@ -215,7 +215,7 @@ public abstract class ProductiveTranscript extends Transcript {
 
         }
         String ret = allNamesSupport(names);
-        System.err.println("** T "+ret);
+        //System.err.println("** T "+ret);
         return ret;
     }
 }
