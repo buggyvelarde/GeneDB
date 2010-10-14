@@ -254,6 +254,9 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	
 	for organism in $ORGANISMS
 	do
+		#regex / / to trim white spaces
+        organism=${organism/ /}
+        
         echo "Cleaning up DTO: " $organism
         
 		echo `ls -R $TMPDIR/DTO/output/$organism`
