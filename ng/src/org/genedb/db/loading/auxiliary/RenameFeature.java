@@ -140,6 +140,7 @@ public class RenameFeature extends Loader {
             
             if (n % 50 == 1) {
                 logger.info("Clearing session");
+                session.flush();
                 session.clear();
             }
         }
@@ -229,6 +230,7 @@ public class RenameFeature extends Loader {
 		}
 		
 		session.update(feature);
+		
 		logger.info("New name: '" + feature.getUniqueName() + "'");
 		
 	}
