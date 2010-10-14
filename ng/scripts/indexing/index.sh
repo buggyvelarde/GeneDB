@@ -268,7 +268,7 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	    
 	done
 	
-	exit 1
+	
 	
 	#
 	# Generate DTO caches and check for errors.
