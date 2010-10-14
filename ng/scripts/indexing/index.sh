@@ -156,7 +156,7 @@ then
 		    #regex / / to trim white spaces
 	    	organism=${organism/ /} 
 	    	if [[ $organism != 'dummy' ]]; then
-		        ORGANISMS_JOINED="$ORGANISMS_JOINED:${organism/ /}"
+		        ORGANISMS_JOINED="$ORGANISMS_JOINED:$organism"
 	        fi
 	    done
 	    ORGANISMS_JOINED="${ORGANISMS_JOINED:1}"
@@ -178,6 +178,9 @@ if [[ $DO_INDEXING ]]; then
 	
 	for organism in $ORGANISMS
 	do
+		#regex / / to trim white spaces
+        organism=${organism/ /}
+        
 		echo "Cleaning up lucene: " $organism;
 	    rm -fvr $TMPDIR/Lucene/output/$organism
 	    rm -fvr $TMPDIR/Lucene/scripts/${organism}.script*
@@ -259,13 +262,9 @@ if [[ $DO_BERKLEY_CACHE	]];then
         
         echo "Cleaning up DTO: " $organism
         
-		echo `ls -R $TMPDIR/DTO/output/$organism`
 	    rm -fvr $TMPDIR/DTO/output/$organism
-	    echo `ls -R $TMPDIR/DTO/output/$organism`
-	    
-	    echo `ls -R $TMPDIR/DTO/scripts/${organism}.script*`
 	    rm -fvr $TMPDIR/DTO/scripts/${organism}.script*
-	    echo `ls -R $TMPDIR/DTO/scripts/${organism}.script*`
+        
 	    
 	done
 	
