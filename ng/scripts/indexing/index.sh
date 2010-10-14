@@ -254,10 +254,19 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	
 	for organism in $ORGANISMS
 	do
-		echo "Cleaning up DTO: " $organism;
+        echo "Cleaning up DTO: " $organism
+        
+		echo `ls -R $TMPDIR/DTO/output/$organism`
 	    rm -fvr $TMPDIR/DTO/output/$organism
+	    echo `ls -R $TMPDIR/DTO/output/$organism`
+	    
+	    echo `ls -R $TMPDIR/DTO/scripts/${organism}.script*`
 	    rm -fvr $TMPDIR/DTO/scripts/${organism}.script*
+	    echo `ls -R $TMPDIR/DTO/scripts/${organism}.script*`
+	    
 	done
+	
+	exit 1
 	
 	#
 	# Generate DTO caches and check for errors.
