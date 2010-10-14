@@ -179,8 +179,8 @@ if [[ $DO_INDEXING ]]; then
 	for organism in $ORGANISMS
 	do
 		echo "Cleaning up lucene: " $organism;
-	    rm -fr $TMPDIR/Lucene/output/$organism
-	    rm -fr $TMPDIR/Lucene/scripts/${organism}.script*
+	    rm -fvr $TMPDIR/Lucene/output/$organism
+	    rm -fvr $TMPDIR/Lucene/scripts/${organism}.script*
 	done
 	
 	
@@ -255,8 +255,8 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	for organism in $ORGANISMS
 	do
 		echo "Cleaning up DTO: " $organism;
-	    rm -fr $TMPDIR/DTO/output/$organism
-	    rm -fr $TMPDIR/DTO/scripts/${organism}.script*
+	    rm -fvr $TMPDIR/DTO/output/$organism
+	    rm -fvr $TMPDIR/DTO/scripts/${organism}.script*
 	done
 	
 	#
