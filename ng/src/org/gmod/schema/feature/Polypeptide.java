@@ -130,7 +130,7 @@ public class Polypeptide extends Region {
         I don't know why this inconsistency exists. rh11 */
 
         String colourIdString = getProperty("genedb_misc", "colour");
-        if (colourIdString == null) {
+        if (colourIdString == null || colourIdString.equals("")) {
             return null;
         }
         return Integer.valueOf(colourIdString);
