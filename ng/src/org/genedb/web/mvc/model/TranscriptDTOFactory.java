@@ -491,9 +491,17 @@ public class TranscriptDTOFactory {
         ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
 
         if (transcript instanceof ProductiveTranscript) {
-        	featureSynonyms = ((ProductiveTranscript)transcript).getProtein().getFeatureSynonyms();
-        	//Get the map of lists of synonyms
-        	ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+
+        	Polypeptide polypeptide = ((ProductiveTranscript)transcript).getProtein();
+        	
+        	// trying to avoid a NullPointerException
+        	if (polypeptide != null) {
+        		featureSynonyms = polypeptide.getFeatureSynonyms();
+        		
+            	//Get the map of lists of synonyms
+            	ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+        	}
+        	
         }
     }
 
