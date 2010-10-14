@@ -94,6 +94,7 @@ public class RenameFeature extends Loader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         
+        int n=1;
         while ((line = reader.readLine()) != null) { 
             if(line.length() > 0) {
             	
@@ -111,7 +112,7 @@ public class RenameFeature extends Loader {
             	}
             	
             	
-            	logger.info(String.format("CONVERSION PATTERN: '%s' -> '%s'", oldUniqueName, newUniqueName));
+            	logger.info(String.format("%d CONVERSION PATTERN: '%s' -> '%s'", n++, oldUniqueName, newUniqueName));
             	
             	if (matchPrefixOnly) {
             		
@@ -135,6 +136,11 @@ public class RenameFeature extends Loader {
             		Feature feature = sequenceDao.getFeatureByUniqueName(oldUniqueName, Feature.class);
             		renameFeatureAndStorePreviousSystematicIds(session, previousSystematicIdType, feature, newUniqueName);
             	}
+            }
+            
+            if (n % 50 == 1) {
+                logger.info("Clearing session");
+                session.clear();
             }
         }
 	}
