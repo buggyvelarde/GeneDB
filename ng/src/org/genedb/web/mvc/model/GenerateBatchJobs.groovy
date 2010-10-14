@@ -126,7 +126,7 @@ for (org in orgs) {
 		try {
 			outFile.delete
 	    } catch (groovy.lang.MissingPropertyException mpe) {
-	        println "\nWARNING could not delete file: ${outFileName}"
+	        println "WARNING could not delete file: ${outFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " + 	getMessage() 
 	    }
 	}
 	
@@ -136,7 +136,7 @@ for (org in orgs) {
 		try {
 			errFile.delete
 		} catch (groovy.lang.MissingPropertyException mpe) {
-			println "\nWARNING could not delete file: ${errFileName}"
+			println "WARNING could not delete file: ${errFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " + 	getMessage()
 		}
 	}
 	
