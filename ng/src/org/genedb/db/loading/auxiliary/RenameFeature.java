@@ -29,6 +29,7 @@ public class RenameFeature extends Loader {
 	
 	private String delimiter = "\t";
 	private boolean matchPrefixOnly = false;
+	private Set<String> newUniqueNames = new HashSet<String>();
 	
 	/*
 	 * Used the following for testing :
@@ -94,6 +95,8 @@ public class RenameFeature extends Loader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         
+        
+        
         int n=1;
         while ((line = reader.readLine()) != null) { 
             if(line.length() > 0) {
@@ -110,7 +113,6 @@ public class RenameFeature extends Loader {
             	if (oldUniqueName.length() < 1 || newUniqueName.length() < 1) {
             		throw new RuntimeException(String.format("Error on this line : %s.", line));
             	}
-            	
             	
             	logger.info(String.format("%d CONVERSION PATTERN: '%s' -> '%s'", n++, oldUniqueName, newUniqueName));
             	
@@ -148,6 +150,13 @@ public class RenameFeature extends Loader {
 	
 	
 	private void renameFeatureAndStorePreviousSystematicIds(Session session, CvTerm previousSystematicIdType, Feature feature, String newUniqueName) {
+		
+		if (newUniqueNames.contains(newUniqueName)) {
+    		logger.error(String.format("The newUniqueName '%s' has already been encountered. Skipping.", newUniqueName));
+    		return;
+    	} else {
+    		newUniqueNames.add(newUniqueName);
+    	}
 		
 		if (feature == null) {
     		logger.error("Could not find feature, skipping");
