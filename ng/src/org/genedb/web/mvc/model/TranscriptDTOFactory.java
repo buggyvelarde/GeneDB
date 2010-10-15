@@ -14,6 +14,7 @@ import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.NcRNA;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.feature.ProductiveTranscript;
@@ -273,6 +274,28 @@ public class TranscriptDTOFactory {
 
 
 
+        } else {
+        	
+        	if (transcript instanceof NcRNA) {
+        		
+        		NcRNA ncRna = (NcRNA) transcript;
+        		
+        		logger.info("** NOT A POLYPEPTIDE - let's see what we find to insert into this DTO anyway...");
+        		
+        		ret.setProducts(populateFromFeatureCvTerms(ncRna, "genedb_products"));
+        		
+        		logger.info(ret.getProducts());
+        		
+        		populateFromFeatureProps(ret, ncRna);
+        		logger.info(ret.getNotes());
+        		logger.info(ret.getComments());
+        		
+        		populateFromFeaturePubs(ret, ncRna);
+        		logger.info(ret.getPublications());
+        		
+        		
+        	}
+        	
         }
 
         return ret;
@@ -385,14 +408,14 @@ public class TranscriptDTOFactory {
     }
 
 
-    private void populateFromFeaturePubs(TranscriptDTO transcriptDTO, Polypeptide polypeptide) {
+    private void populateFromFeaturePubs(TranscriptDTO transcriptDTO, Feature feature) {
         List<String> pubNames = new ArrayList<String>();
-        for(FeaturePub fp : polypeptide.getFeaturePubs()) {
+        for(FeaturePub fp : feature.getFeaturePubs()) {
             String name = fp.getPub().getUniqueName();
             if (name.startsWith("PMID")) {
                 pubNames.add(name);
             } else {
-                logger.warn(String.format("Got a pub that isn't a PMID ('%s') for '%s'", name, polypeptide.getUniqueName()));
+                logger.warn(String.format("Got a pub that isn't a PMID ('%s') for '%s'", name, feature.getUniqueName()));
             }
         }
         if (pubNames.size() > 0) {
@@ -400,12 +423,12 @@ public class TranscriptDTOFactory {
         }
     }
 
-    private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Polypeptide polypeptide, String cvNamePrefix) {
-        Assert.notNull(polypeptide);
+    private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Feature feature, String cvNamePrefix) {
+        Assert.notNull(feature);
 
-        Organism org = polypeptide.getOrganism();
+        Organism org = feature.getOrganism();
         List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
-        for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
+        for (FeatureCvTerm featureCvTerm : feature.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
             FeatureCvTermDTO fctd = new FeatureCvTermDTO(featureCvTerm);
             fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm.getCvTerm().getName(), org));
             dtos.add(fctd);
@@ -445,13 +468,13 @@ public class TranscriptDTOFactory {
 
 
 
-    private void populateFromFeatureProps(TranscriptDTO ret, Polypeptide polypeptide) {
-        Assert.notNull(polypeptide);
-        ret.setNotes(stringListFromFeaturePropList(polypeptide, "feature_property", "comment"));
-        ret.setComments(stringListFromFeaturePropList(polypeptide, "genedb_misc", "curation"));
+    private void populateFromFeatureProps(TranscriptDTO ret, Feature feature) {
+        Assert.notNull(feature);
+        ret.setNotes(stringListFromFeaturePropList(feature, "feature_property", "comment"));
+        ret.setComments(stringListFromFeaturePropList(feature, "genedb_misc", "curation"));
 
         // Set the selenoprotein flag if it has the right property
-        String fp = polypeptide.getFeatureProp("sequence", "stop_codon_redefined_as_selenocysteine");
+        String fp = feature.getFeatureProp("sequence", "stop_codon_redefined_as_selenocysteine");
         if (fp != null) {
         	ret.setSelenoprotein(true);
         }
@@ -460,9 +483,9 @@ public class TranscriptDTOFactory {
 
 
 
-    private List<String> stringListFromFeaturePropList(Polypeptide polypeptide, String cvName, String cvTermName) {
+    private List<String> stringListFromFeaturePropList(Feature feature, String cvName, String cvTermName) {
         List<String> ret = new ArrayList<String>();
-        List<FeatureProp> featurePropNotes = polypeptide.getFeaturePropsFilteredByCvNameAndTermName(cvName, cvTermName);
+        List<FeatureProp> featurePropNotes = feature.getFeaturePropsFilteredByCvNameAndTermName(cvName, cvTermName);
         for (FeatureProp featureProp : featurePropNotes) {
             ret.add(featureProp.getValue());
         }
