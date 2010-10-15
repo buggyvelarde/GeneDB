@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
@@ -20,6 +21,7 @@ import org.gmod.schema.mapped.Feature;
  */
 public abstract class FormatBase {
 	
+	private Logger logger = Logger.getLogger(FormatBase.class);
 	
 	protected String fieldSeparator = "";
 	protected String fieldInternalSeparator = "";
@@ -155,17 +157,23 @@ public abstract class FormatBase {
     	
     	boolean allOptionsAvailableFromLucene = onlyNeedLuceneLookups();
     	
+    	int count = 0;
     	while (start <= max) {
     		
     		if (stop > max) {
-    			stop = max;
+    			// List.sublist, the end coordinate is NOT inclusive
+    			stop = max + 1;
     		}
     		
     		if (start > max) {
     			break;
     		}
     		
+    		logger.debug(String.format("%s :: %s", start, stop));
+    		
     		List<GeneDetail> currentEntries = entries.subList(start, stop);
+    		
+    		count += currentEntries.size();
     		
     		if (! allOptionsAvailableFromLucene) {
     			if (requireFeatures(currentEntries)) {
@@ -191,6 +199,8 @@ public abstract class FormatBase {
     		start += window;
     		stop = start + window;
     	}
+    	
+    	logger.debug(String.format("%s==%s", count, entries.size()));
     	
     	formatFooter();
     }
