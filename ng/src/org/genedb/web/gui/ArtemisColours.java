@@ -5,12 +5,17 @@ import java.awt.image.IndexColorModel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * Traditional mapping from internal colour numbers to real Color
  *
  * @author kmr
  */
 public class ArtemisColours {
+	
+	private static final Logger logger = Logger.getLogger(ArtemisColours.class);
+	
     /**
      * The number of elements in the mapping
      */
@@ -110,7 +115,7 @@ public class ArtemisColours {
             ret = cols[i];
         }
         catch (RuntimeException exp) {
-            System.err.println("Unable to find colour for "+i);
+            logger.warn("Unable to find colour for "+i);
             return getDefaultColour();
         }
         if (ret == null) {
