@@ -10,10 +10,13 @@ import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
 
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.NcRNA;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +31,7 @@ import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,7 +69,15 @@ public class PopulateCaches {
      * @throws EnvironmentLockedException
      */
     public static void main(String[] args) {
-
+    	
+    	String properties = "resources/classpath/log4j.properties";
+    	if (new File(properties).exists()) {
+    		PropertyConfigurator.configure(properties);
+    	} else {
+    		BasicConfigurator.configure();
+    	}
+    	
+    	
         Cli<PopulateCachesArgs> cli = CliFactory.createCli(PopulateCachesArgs.class);
         PopulateCachesArgs pca = null;
         try {
@@ -138,6 +150,9 @@ public class PopulateCaches {
             for (Feature f : features) {
                 if (f instanceof AbstractGene) {
                     populateDtoCache((AbstractGene) f);
+                } else if (f instanceof NcRNA) {
+                	populateDtoCache((NcRNA) f);
+
                 }
             }
 
@@ -194,6 +209,10 @@ public class PopulateCaches {
             dtoMap.put(transcript.getFeatureId(), dto);
             //dtoDb.persistDTO(dto, transcript.getFeatureId());
         }
+    }
+    
+    private void populateDtoCache(NcRNA ncRna) {
+    	
     }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {

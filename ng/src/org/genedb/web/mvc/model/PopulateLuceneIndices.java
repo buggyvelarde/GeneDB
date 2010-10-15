@@ -10,6 +10,7 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.index.IndexReader;
@@ -36,6 +37,7 @@ import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 import java.io.Console;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -666,6 +668,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public static void main(String[] args) {
 
         //PropertyConfigurator.configure("/nfs/pathdb/hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-web/WebContent/WEB-INF/log4j.properties");
+    	
+    	String properties = "resources/classpath/log4j.properties";
+    	if (new File(properties).exists()) {
+    		PropertyConfigurator.configure(properties);
+    	} else {
+    		BasicConfigurator.configure();
+    	}
+    	
 
         Cli<PopulateLuceneIndicesArgs> cli = CliFactory.createCli(PopulateLuceneIndicesArgs.class);
         PopulateLuceneIndicesArgs iga = null;
