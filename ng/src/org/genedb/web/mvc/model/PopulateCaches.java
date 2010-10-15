@@ -70,13 +70,7 @@ public class PopulateCaches {
      */
     public static void main(String[] args) {
     	
-    	String properties = "resources/classpath/log4j.properties";
-    	if (new File(properties).exists()) {
-    		PropertyConfigurator.configure(properties);
-    	} else {
-    		BasicConfigurator.configure();
-    	}
-    	
+    	PropertyConfigurator.configure("resources/classpath/log4j.index.properties");
     	
         Cli<PopulateCachesArgs> cli = CliFactory.createCli(PopulateCachesArgs.class);
         PopulateCachesArgs pca = null;
@@ -150,9 +144,6 @@ public class PopulateCaches {
             for (Feature f : features) {
                 if (f instanceof AbstractGene) {
                     populateDtoCache((AbstractGene) f);
-                } else if (f instanceof NcRNA) {
-                	populateDtoCache((NcRNA) f);
-
                 }
             }
 
@@ -211,10 +202,6 @@ public class PopulateCaches {
         }
     }
     
-    private void populateDtoCache(NcRNA ncRna) {
-    	
-    }
-
     public void setModelBuilder(ModelBuilder modelBuilder) {
         this.modelBuilder = modelBuilder;
     }

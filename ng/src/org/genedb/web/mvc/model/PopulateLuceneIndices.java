@@ -667,16 +667,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public static void main(String[] args) {
 
-        //PropertyConfigurator.configure("/nfs/pathdb/hudson/jobs/GeneDB Full Nightly Build/workspace/genedb-web/WebContent/WEB-INF/log4j.properties");
+        
+    	PropertyConfigurator.configure("resources/classpath/log4j.index.properties");
     	
-    	String properties = "resources/classpath/log4j.properties";
-    	if (new File(properties).exists()) {
-    		PropertyConfigurator.configure(properties);
-    	} else {
-    		BasicConfigurator.configure();
-    	}
-    	
-
         Cli<PopulateLuceneIndicesArgs> cli = CliFactory.createCli(PopulateLuceneIndicesArgs.class);
         PopulateLuceneIndicesArgs iga = null;
         try {
