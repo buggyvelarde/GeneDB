@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    
+    
+    <bean id="downloadProcessUtil" class="org.genedb.web.mvc.controller.download.DownloadProcessUtil">
+        <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
+        <property name="sequenceDao" ref="sequenceDao" />
+        <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+        <property name="queryFactory" ref="queryFactory" />
+        <property name="mailSender" ref="mailSender" />
+        <property name="transactionTemplate" ref="transactionTemplate" />
+    </bean>
+    
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+      <property name="host"><value>${download.mail.host}</value></property>
+      <property name="port"><value>${download.mail.port}</value></property>
+    </bean>
+    
+    
+  <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+    <property name="rootDirectory" value="${cacheDirectory}" />
+    <property name="readOnly" value="true" />
+  </bean>
+  
+  
+  <!--
+    ========================= QUERY CONFIGURATION
+    =========================
+  -->
+
+  <bean name="proteinLength" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
+  <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
+  <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
+  <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" />
+  <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />
+  <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
+  <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
+  <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
+  <bean name="proteinNumTM" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" scope="prototype" />
+  <bean name="product" class="org.genedb.querying.tmpquery.ProductQuery" scope="prototype" />
+  <bean name="simpleName" class="org.genedb.querying.tmpquery.SimpleNameQuery" scope="prototype" />
+  <bean name="go" class="org.genedb.querying.tmpquery.GoQuery" scope="prototype" />
+  <bean name="ec" class="org.genedb.querying.tmpquery.EcQuery" scope="prototype" />
+  <bean name="pfam" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
+  <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
+  <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
+  <bean name="idsToGeneDetail" class="org.genedb.querying.tmpquery.IdsToGeneDetailQuery" scope="prototype" />
+  <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
+  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
+  <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+  <bean name="curation" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
+  <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
+  <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
+
+  <!-- this does not currently implement query, so it can't be called from QueryFactory -->
+  <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+  <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+    <bean id="org.genedb.querying.core.NumericQueryVisibility.PRIVATE"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+
+  <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory">
+    <property name="queryNameMap">
+      <map>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC">
+          <map>
+            <entry key="proteinLength" value-ref="proteinLength" />
+            <entry key="proteinMass" value-ref="proteinMass" />
+            <entry key="geneType" value-ref="geneType" />
+            <entry key="nameProduct" value-ref="nameProduct" />
+            <entry key="controlledCuration" value-ref="controlledCuration" />
+            <entry key="date" value-ref="date" />
+            <entry key="geneLocation" value-ref="geneLocation" />
+            <entry key="proteinTargetingSeq" value-ref="proteinTargetingSeq" />
+            <entry key="proteinNumTM" value-ref="proteinNumTM" />
+            <entry key="product" value-ref="product" />
+            <entry key="simpleName" value-ref="simpleName" />
+            <entry key="go" value-ref="go" />
+            <entry key="ec" value-ref="ec" />
+            <entry key="pfam" value-ref="pfam" />
+            <entry key="curation" value-ref="curation" />
+            <entry key="dbxref" value-ref="dbxref" />
+          </map>
+        </entry>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
+          <map>
+            <entry key="annotationStatus" value-ref="annotationStatus" />
+            <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
+            <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
+            <entry key="quickSearch" value-ref="quickSearch" />
+            <entry key="dateCount" value-ref="dateCount" />
+            <entry key="geneByDb" value-ref="geneByDb" />
+            <entry key="suggest" value-ref="suggest" />
+          </map>
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
+  <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
+        <property name="luceneIndexList">
+        <list>
+            <bean class="org.genedb.querying.core.LuceneIndex">
+                <property name="indexDirectoryName" value="${lucene.indexDirectory}" />
+                <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+            </bean>
+        </list>
+        </property>
+    </bean>
+    
+    <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
+        <property name="phylogenyDao" ref="phylogenyDao" />
+        <!-- <property name="sessionFactory" ref="sessionFactory" /> -->
+    </bean>
+    
+    <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean name="organismHeirachy" class="org.gmod.schema.cfg.OrganismHeirachy" init-method="afterPropertiesSet">
+      <property name="beanName" value="sessionFactory" />
+    </bean>
+ 
+
+</beans>
