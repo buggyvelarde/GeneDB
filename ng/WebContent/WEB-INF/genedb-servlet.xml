@@ -21,6 +21,10 @@
   <context:spring-configured />
   <context:mbean-export />
 
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    
 
   <!-- Don't use a well known name here  -->
     <bean id="conversionService" class="org.genedb.util.GeneDBFormattingConversionServiceFactoryBean">
@@ -156,25 +160,22 @@
   <bean name="MiscPageController" class="org.genedb.web.mvc.controller.MiscPageController" />
 
 
-  <!--
-    <bean id="WsQueryController" class="org.genedb.web.mvc.controller.WsQueryController"> <property name="queryFactory"
-    ref="queryFactory" /> </bean>
-  -->
+  <bean id="downloadProcessUtil" class="org.genedb.web.mvc.controller.download.DownloadProcessUtil">
+        <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
+        <property name="sequenceDao" ref="sequenceDao" />
+        <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+        <property name="queryFactory" ref="queryFactory" />
+        <property name="mailSender" ref="mailSender" />
+   </bean>
+    
   <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
   
     <property name="historyManagerFactory" ref="historyManagerFactory" />
-    <property name="sequenceDao" ref="sequenceDao" />
-    
-    <!--<property name="dataFetcher" ref="dtoDataFetcher" />-->
-    <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
-    
-    <property name="queryFactory" ref="queryFactory" />
-    
-    <property name="mailSender"><ref bean="mailSender"/></property>
-    
-    <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
+    <property name="util" ref="downloadProcessUtil" />
     
   </bean>
+  
+  
   
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 	  <property name="host"><value>${download.mail.host}</value></property>
