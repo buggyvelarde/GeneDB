@@ -59,23 +59,23 @@ public class GeneDetailFieldValueExctractor {
 		// try first to fetch from lucene because it's faster
 		String fieldValue = getFieldValue(entry, outputOption);
 		
-		//String source = "lucene";
+		String source = "lucene";
 		
 		if (fieldValue == null) {
 			if (isTranscript) {
 				// use the DTO if it's a transcript
-				// source = "transcript";
+				source = "transcript";
 				fieldValue = getFieldValue(getAdaptor(), outputOption);
 			} else {				
 				// fall back on feature (for pseudogenes, etc.), slow but no other way left to get the info
-				// source = "feature";
+				source = "feature";
 				fieldValue = getFieldValue(getFeature(), outputOption);
 			}
 		}
 		
-		//logger.error(String.format("%s.%s <- %s", systematicId, outputOption.name(), source));
-		
 		fieldValue = (fieldValue == null || fieldValue.equals("")) ? blankField : fieldValue;
+		logger.debug(String.format("%s.%s (<- %s) = %s", systematicId, outputOption.name(), source, fieldValue));
+		
 		return fieldValue;
 	}
 	

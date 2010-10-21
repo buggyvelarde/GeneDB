@@ -19,29 +19,16 @@
 
 package org.genedb.web.mvc.controller.download;
 
-import org.genedb.db.dao.SequenceDao;
 
-import org.genedb.querying.core.NumericQueryVisibility;
-import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
-import org.genedb.querying.core.QueryFactory;
-import org.genedb.querying.core.QueryUtils;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.tmpquery.GeneDetail;
-import org.genedb.querying.tmpquery.IdsToGeneDetailQuery;
 import org.genedb.web.mvc.controller.HistoryController;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,17 +45,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import java.io.BufferedInputStream;
 
 
@@ -76,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 
 
 
@@ -92,52 +72,15 @@ import com.google.common.collect.Lists;
 public class DownloadController {
 
     private Logger logger = Logger.getLogger(this.getClass());
-
-    private SequenceDao sequenceDao;
+    
+    private final boolean deleteFiles = true;
+    
+    private DownloadProcessUtil util;
+    public void setUtil(DownloadProcessUtil util) {
+    	this.util = util;
+    }
+    
     private HistoryManagerFactory historyManagerFactory;
-    
-    private JavaMailSender mailSender;
-    
-    public void setMailSender(JavaMailSender mailSender) {
-    	this.mailSender = mailSender;
-    }
-    
-    private BerkeleyMapFactory bmf;
-    
-    public void setBmf(BerkeleyMapFactory bmf) {
-        this.bmf = bmf;
-    }
-    
-    private File downloadTmpFolder;
-    private boolean deleteFiles = true;
-    
-    private static final String DATE_FORMAT_NOW = "yyyy.MM.dd.HH.mm.ss";
-
-    
-    @SuppressWarnings("unchecked")
-	private QueryFactory queryFactory;
-    
-    @SuppressWarnings("unchecked")
-    public void setQueryFactory(QueryFactory queryFactory) {
-    	this.queryFactory = queryFactory;
-    }
-    
-    public void setDownloadTmpFolder(String downloadTmpFolder) throws Exception {
-    	this.downloadTmpFolder = new File (downloadTmpFolder);
-    	
-    	if (this.downloadTmpFolder.isFile()) {
-    		throw new Exception("Can't use the path to a file as a folder");
-    	}
-    	
-    	if (! this.downloadTmpFolder.isDirectory()) {
-    		this.downloadTmpFolder.mkdirs();
-    	}
-    }
-    
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
-
     public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
         this.historyManagerFactory = historyManagerFactory;
     }
@@ -150,7 +93,7 @@ public class DownloadController {
         return mav;
     }
     
-   
+	final private static int maxResultsInWebRequest = 1000;
     
 	@RequestMapping(method=RequestMethod.POST, value="/{historyItem}")
     public ModelAndView onSubmit(
@@ -178,7 +121,8 @@ public class DownloadController {
             response.sendError(511);
             return null;
         }
-
+        
+        
         List<OutputOption> outputOptions = Lists.newArrayList();
         for (String custField : custFields) {
             outputOptions.add(OutputOption.valueOf(custField));
@@ -191,23 +135,51 @@ public class DownloadController {
         String historyItemName = hItem.getName();
         List<String> uniqueNames = hItem.getIds();
         
-        @SuppressWarnings("unchecked")
-        IdsToGeneDetailQuery query = (IdsToGeneDetailQuery) queryFactory.retrieveQuery("idsToGeneDetail",  NumericQueryVisibility.PRIVATE);
-        query.setIds(uniqueNames);
-        
-        @SuppressWarnings("unchecked")
-        List<GeneDetail> results = query.getResults();
-        
-        fieldSeparator = determineFieldSeparator(fieldSeparator, outputFormat);
-        
         if (blankField.equals("blank")) {
         	blankField = "";
         }
         
-        String fileName = historyItemName + "." + getTime() + "." + outputFormat.name().toLowerCase();
-        String filePath = downloadTmpFolder + "/" + fileName;
+        File downloadTmpFolder = util.gettDownloadTmpFolder();
+        String fileName = historyItemName + "." + util.getTime() + "." + outputFormat.name().toLowerCase();
         
-        logger.info(fileName);
+        if (uniqueNames.size() > maxResultsInWebRequest) {
+        	
+        	if (email != null && email.length() > 0) {
+        		
+        		saveDownloadDetailsToJsonFile(fileName, downloadTmpFolder, outputFormat, outputOptions, outputDestination, 
+        				sequenceType, includeHeader, fieldSeparator, blankField, fieldInternalSeparator, prime3, prime5, 
+        				email, uniqueNames, historyItemName, description);
+        		
+        		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
+        	
+        		
+        	} else {
+        		response.getWriter().append("The number of results exceeds the maximum the web server will download in a single request (" + maxResultsInWebRequest + ")." +
+        				"\nPlease supply your email on the previous page and the results will be mailed back to you.");
+        	}
+        	
+        	return null;
+        	
+        }
+        
+        // if we got this far, it means we're going to try a download inside the web request.
+        DownloadProcess process = new DownloadProcess(outputFormat,
+			custFields,
+			outputDestination,
+			sequenceType,
+			includeHeader,
+			fieldSeparator,
+			blankField,
+			fieldInternalSeparator,
+			prime3,
+			prime5,
+			email,
+			uniqueNames,
+			historyItemName,
+			description,
+			util);
+        
+        String filePath = downloadTmpFolder + "/" + fileName;
         
         if (outputFormat == OutputFormat.XLS) {
         	
@@ -225,27 +197,19 @@ public class DownloadController {
         		
         	} 
         	
-        	FormatExcel excelFormatter = new FormatExcel();
         	
-        	excelFormatter.setBmf(bmf);
-        	excelFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-        	excelFormatter.setOutputOptions(outputOptions);
+        	process.generateXLS(outStream);
         	
-        	excelFormatter.setOutputStream(outStream);
-        	
-        	excelFormatter.setSequenceDao(sequenceDao);
-        	excelFormatter.format(results);
-            
         	
         	/*
         	 * Post formatting for file output destination.
         	 */
         	if (outputDestination == OutputDestination.TO_EMAIL) {
         		
-        		File zipFile = zip(outFile);
+        		File zipFile = util.zip(outFile);
         		
             	try {
-					sendEmail(email, historyItemName, "Please find attached your results in the excel file." + description, zipFile);
+					util.sendEmail(email, historyItemName, "Please find attached your results in the excel file." + description, zipFile);
 					response.getWriter().append("Your email has been sent to " + email + ".");
 				} catch (MessagingException e) {
 					logger.error(e.getStackTrace().toString());
@@ -292,73 +256,22 @@ public class DownloadController {
         		out = new FileWriter(tabOutFile);
         		
         	} 
-        	
-        	if (fieldSeparator == "default") {
-            	fieldSeparator = "\t";
-            }
-        	
-        	if (outputFormat == OutputFormat.CSV) {
-	            
+        	        	
+        	switch (outputFormat) {
+        	case CSV:
         		response.setContentType("text/plain");
-	            
-	            FormatCSV csvFormatter = new FormatCSV();
-	            
-	            csvFormatter.setBmf(bmf);
-	            csvFormatter.setBlankField(blankField);
-	            csvFormatter.setHeader(includeHeader);
-	            csvFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-	            csvFormatter.setFieldSeparator(fieldSeparator);
-	            csvFormatter.setOutputOptions(outputOptions);
-	            csvFormatter.setWriter(out);
-	            
-	            csvFormatter.setSequenceDao(sequenceDao);
-	            csvFormatter.format(results);
-	            
-        	}
-        	
-        	if (outputFormat == OutputFormat.HTML) {
-	            
+        		process.generateCSV(out);
+        		break;
+        	case HTML:
         		response.setContentType("text/html");
-        		
-	            FormatHTML htmlFormatter = new FormatHTML();
-	            
-	            htmlFormatter.setBmf(bmf);
-	            htmlFormatter.setBlankField(blankField);
-	            htmlFormatter.setHeader(includeHeader);
-	            htmlFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-	            htmlFormatter.setOutputOptions(outputOptions);
-	            htmlFormatter.setWriter(out);
-	            
-	            htmlFormatter.setSequenceDao(sequenceDao);
-	            htmlFormatter.format(results);
-	            
-        	}
-        	
-        	
-        	
-        	if (outputFormat == OutputFormat.FASTA) {
-        		
+        		process.generateHTML(out);
+        		break;
+        	case FASTA:
         		response.setContentType("text/plain");
-        		
-	            FormatFASTA fastaFormatter = new FormatFASTA();
-	            
-	            fastaFormatter.setBmf(bmf);
-	            fastaFormatter.setBlankField(blankField);
-	            fastaFormatter.setHeader(includeHeader);
-	            fastaFormatter.setFieldInternalSeparator(fieldInternalSeparator);
-	            fastaFormatter.setFieldSeparator(fieldSeparator);
-	            fastaFormatter.setOutputOptions(outputOptions);
-	            fastaFormatter.setWriter(out);
-	            
-	            fastaFormatter.setPrime3(prime3);
-	            fastaFormatter.setPrime5(prime5);
-	            fastaFormatter.setSequenceType(sequenceType);
-	            
-	            fastaFormatter.setSequenceDao(sequenceDao);
-	            fastaFormatter.format(results);
-	            
+        		process.generateFASTA(out);
+        		break;
         	}
-        	
+        	        	
         	
         	/*
         	 * Post formatting for different output destinations.   
@@ -366,16 +279,14 @@ public class DownloadController {
         	
         	if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE))  {
         		
-        		
-            	out.close();
-            	
+        		out.close();
             	
         		if (outputDestination == OutputDestination.TO_EMAIL) {
                 	
-        			File zipFile = zip(tabOutFile);
+        			File zipFile = util.zip(tabOutFile);
         			
                 	try {
-						sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
+						util.sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
 						response.getWriter().append("Your email has been sent to " + email + ".");
 					} catch (MessagingException e) {
 						logger.error(e.getStackTrace().toString());
@@ -410,43 +321,17 @@ public class DownloadController {
         return null;
     }
 	
-	private String getTime() {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
-		return sdf.format(cal.getTime());
-	}
 	
-	private File zip(File file) throws IOException {
-		
-		byte[] buf = new byte[1024]; 
-		
-		String zipFileName = file.getName() +".zip";
-		
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
-		out.setLevel(Deflater.BEST_COMPRESSION);
-    	
-		FileInputStream in = new FileInputStream(file);
-    	out.putNextEntry(new ZipEntry(file.getName()));
-    	
-    	int len; 
-    	while ((len = in.read(buf)) > 0) { 
-    		out.write(buf, 0, len); 
-    	} 
-    	
-    	out.closeEntry(); 
-    	in.close();
-    	out.close();
-    	
-    	return new File(zipFileName);
-    	
-	}
     
-    
-    
-    /*
+    /**
      * Lifted from genedb classic.
+     * 
+     * @param file
+     * @param out
+     * @throws FileNotFoundException
+     * @throws IOException
      */
-    private static void returnFile(File file, OutputStream out) throws FileNotFoundException, IOException {
+    private void returnFile(File file, OutputStream out) throws FileNotFoundException, IOException {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -461,48 +346,73 @@ public class DownloadController {
 		}
 	}
     
-    private void sendEmail(String to, final String subject, String text, File attachment) throws javax.mail.MessagingException {
-    	
-    	MimeMessage message = mailSender.createMimeMessage();
-    	
-    	MimeMessageHelper helper = new MimeMessageHelper(message, true);
-    	helper.setTo(to);
-    	helper.setFrom(new InternetAddress("webmaster@genedb.org"));
-    	helper.setSubject("Your GeneDB query results - " + subject);
-    	helper.setText(text, true);
-    	
-    	
-    	
-    	if (attachment != null) {
-    		FileSystemResource file = new FileSystemResource(attachment);
-        	helper.addAttachment(file.getFilename(), file);
-    	}
-    	
-    	mailSender.send(message);
-    	
-    }
     
-    private String determineFieldSeparator(String fieldSeparator, OutputFormat outputFormat) {
-    	
-    	if (fieldSeparator.equals("default")) {
-    		switch (outputFormat) {
-	        case CSV:
-	            	fieldSeparator = "\t";
-	        	break;
-	        case FASTA:
-        		fieldSeparator = "|";
-        		break;
-	        }
-    	}
-    	else if (fieldSeparator.equals("tab")) {
-        	fieldSeparator = "\t";
-        }
-        
-        return fieldSeparator;
-    }
-
-
-
+    /**
+     * Save the query details to a JSON file, for batch processing. 
+     * 
+     * @param scriptFileNamePrefix
+     * @param downloadTmpFolder
+     * @param outputFormat
+     * @param outputOptions
+     * @param outputDestination
+     * @param sequenceType
+     * @param includeHeader
+     * @param fieldSeparator
+     * @param blankField
+     * @param fieldInternalSeparator
+     * @param prime3
+     * @param prime5
+     * @param email
+     * @param uniqueNames
+     * @param historyItemName
+     * @param description
+     * @throws IOException
+     */
+    public void saveDownloadDetailsToJsonFile(
+			String scriptFileNamePrefix,
+			File downloadTmpFolder,
+			
+			OutputFormat outputFormat,
+			List<OutputOption> outputOptions,
+			OutputDestination outputDestination,
+			SequenceType sequenceType,
+			boolean includeHeader,
+			String fieldSeparator,
+			String blankField,
+			String fieldInternalSeparator,
+			int prime3,
+			int prime5,
+			String email,
+			List<String> uniqueNames,
+			String historyItemName,
+			String description) throws IOException {
+		
+		Hashtable<String, Object> ht = new Hashtable<String, Object>();
+		ht.put("custFields", outputOptions);
+		ht.put("outputFormat", outputFormat);
+		ht.put("outputDestination", outputDestination);
+		ht.put("sequenceType", sequenceType);
+		ht.put("includeHeader", includeHeader);
+		ht.put("fieldSeparator", fieldSeparator);
+		ht.put("blankField", blankField);
+		ht.put("fieldInternalSeparator", fieldInternalSeparator);
+		ht.put("prime3", prime3);
+		ht.put("prime5", prime5);
+		ht.put("email", email);
+		ht.put("historyItemName", historyItemName);
+		ht.put("description", description);
+		ht.put("uniqueNames", uniqueNames);
+		
+		String filePath = downloadTmpFolder + "/" + scriptFileNamePrefix + ".json";
+		
+		FileWriter out = new FileWriter(filePath);
+		Gson gson = new Gson();
+		gson.toJson(ht, out);
+		out.close();
+		
+		logger.info("Wrote to JSON file: " + filePath);
+		
+	}
 
     
     

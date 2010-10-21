@@ -12,6 +12,9 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.gmod.schema.mapped.Feature;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 
@@ -43,6 +46,12 @@ public abstract class FormatBase {
 	protected Writer writer;
 	
 	private SequenceDao sequenceDao;
+	
+	protected TransactionTemplate transactionTemplate;
+	
+	public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+		this.transactionTemplate = transactionTemplate;
+	}
 	
 	public void setFieldSeparator(String fieldSeparator) {
 		this.fieldSeparator = fieldSeparator;
@@ -147,7 +156,7 @@ public abstract class FormatBase {
      * @param entries
      * @throws IOException
      */
-    public void format(List<GeneDetail> entries) throws IOException {
+    public void format(final List<GeneDetail> entries) throws IOException {
     	formatHeader();
     	
     	final int max = entries.size() -1;
@@ -155,9 +164,9 @@ public abstract class FormatBase {
     	int window = 1000;
     	int stop = start + window;
     	
-    	boolean allOptionsAvailableFromLucene = onlyNeedLuceneLookups();
+    	final boolean allOptionsAvailableFromLucene = onlyNeedLuceneLookups();
     	
-    	int count = 0;
+    	//int count = 0;
     	while (start <= max) {
     		
     		if (stop > max) {
@@ -171,38 +180,57 @@ public abstract class FormatBase {
     		
     		logger.debug(String.format("%s :: %s", start, stop));
     		
-    		List<GeneDetail> currentEntries = entries.subList(start, stop);
-    		
-    		count += currentEntries.size();
-    		
-    		if (! allOptionsAvailableFromLucene) {
-    			if (requireFeatures(currentEntries)) {
-        			
-        			List<String> uniqueNames = new ArrayList<String>();
-            		
-            		for (GeneDetail detail : currentEntries) {
-            			uniqueNames.add(detail.getSystematicId());
-            		}
-            		
-            		getFeatures(uniqueNames);
-            		
-        		} else {
-        			// make sure we reset the features map... (no need to carry a live instance of it when it's no longer needed)
-        			features = null;
-        		}
-    		}
+    		final int final_start = start;
+    		final int final_stop = stop;
     		
     		
-    		
-    		formatBody(currentEntries);
+    		transactionTemplate.execute(new TransactionCallback<Object>() {
+    	        @Override
+    	        public Object doInTransaction(TransactionStatus status) {
+    	        	
+		    		final List<GeneDetail> currentEntries = entries.subList(final_start, final_stop);
+		    		
+		    		//count += currentEntries.size();
+		    		
+		    		if (! allOptionsAvailableFromLucene) {
+		    			if (requireFeatures(currentEntries)) {
+		        			
+		        			List<String> uniqueNames = new ArrayList<String>();
+		            		
+		            		for (GeneDetail detail : currentEntries) {
+		            			uniqueNames.add(detail.getSystematicId());
+		            		}
+		            		
+		            		getFeatures(uniqueNames);
+		            		
+		        		} else {
+		        			// make sure we reset the features map... (no need to carry a live instance of it when it's no longer needed)
+		        			features = null;
+		        		}
+		    		}
+		    		
+		    		
+		    		
+    	        	try {
+						formatBody(currentEntries);
+					} catch (IOException e) {
+						e.printStackTrace();
+						logger.error(e.getMessage());
+					}
+    	        	
+    	        	return true;
+    	        }
+    		});
     		
     		start += window;
     		stop = start + window;
     	}
     	
-    	logger.debug(String.format("%s==%s", count, entries.size()));
+    	// logger.debug(String.format("%s==%s", count, entries.size()));
     	
     	formatFooter();
+    	
+    	logger.info("Export complete");
     }
     
 	
