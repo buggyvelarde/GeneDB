@@ -13,7 +13,7 @@ psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 cacheDirectory=/nfs/pathdb/genedb/beta/cache
 resultsCacheDirectory=/tmp/results_beta
 
-download.tmpFolder=/tmp/files_beta
+download.tmpFolder=/nfs/pathdb/genedb/beta/tmp
 download.mail.host=mail.sanger.ac.uk
 download.mail.port=25
 
