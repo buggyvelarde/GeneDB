@@ -7,8 +7,11 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.LocationBridge;
 import org.genedb.util.SequenceUtils;
 
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProteinMatch;
 import org.gmod.schema.feature.Region;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.utils.CollectionUtils;
 import org.gmod.schema.utils.SimilarityI;
 import org.gmod.schema.utils.StrandedLocation;
@@ -781,7 +784,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     @Transient
     @Field(name = "synonym", index = Index.TOKENIZED, store = Store.YES)
     @Analyzer(impl = AllNamesAnalyzer.class)
-    private String getSynonymsAsSpaceSeparatedString() {
+	protected String getSynonymsAsSpaceSeparatedString() {
         List<String> synonyms = Lists.newArrayList();
         for (Synonym synonym: getSynonyms()) {
             synonyms.add(synonym.getName());
@@ -798,20 +801,44 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     @Transient
     @Field(name = "allNames", index = Index.TOKENIZED, store = Store.YES)
     @Analyzer(impl = AllNamesAnalyzer.class)
-    String getAllNames() {
+    public String getAllNames() {
+    	List<String> names = generateNamesList();
+        
+        /*
+         * Commented by gv1.
+         * 
+         * This method (commented out below) for getting the gene name using the colon (:) convention doesn't
+         * work for recently loaded genes that follow a dot (.) convention for different transcripts. Extending
+         * the same approach for dots won't work easily because dots are used throughout names, and relying on
+         * naming conventions is an approach clearly fails when the conventions change.
+         * 
+         * Instead, one should override the generateNamesList method to in Feature types that require
+         * custom all names entries. This has been done in the <Polypeptide> and <Transcript> classes.
+         * 
+         */
+        //        if (sysId.indexOf(':') != -1) {
+        //            names.add(sysId.substring(0, sysId.lastIndexOf(':')));
+        //        }
+
+        StringBuilder ret = new StringBuilder(allNamesSupport(names));
+        ret.append(" ");
+        ret.append(getSynonymsAsSpaceSeparatedString());
+        return ret.toString();
+    }
+    
+    /**
+     * Override this to generate a custom names list for a feature.
+     * 
+     * @return a list of names
+     */
+    protected List<String> generateNamesList() {
     	List<String> names = Lists.newArrayList();
         if (getName() != null) {
             names.add(getName());
         }
         String sysId = getUniqueName();
         names.add(sysId);
-        if (sysId.indexOf(':') != -1) {
-            names.add(sysId.substring(0, sysId.lastIndexOf(':')));
-        }
-        StringBuilder ret = new StringBuilder(allNamesSupport(names));
-        ret.append(" ");
-        ret.append(getSynonymsAsSpaceSeparatedString());
-        return ret.toString();
+        return names;
     }
 
     protected String allNamesSupport(List<String> names) {

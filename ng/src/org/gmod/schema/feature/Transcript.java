@@ -1,5 +1,6 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -7,14 +8,18 @@ import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import com.google.common.collect.Lists;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -81,6 +86,18 @@ public class Transcript extends Region {
             return null;
         }
         return gene;
+    }
+    
+    /**
+     * Overrides to add the gene name to the names list.
+     */
+    @Override protected List<String> generateNamesList() {
+    	List<String> names = super.generateNamesList();
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+    		names.add(gene.getUniqueName());
+    	}
+    	return names;
     }
 
     /**

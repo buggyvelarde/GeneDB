@@ -99,6 +99,21 @@ public class Polypeptide extends Region {
         gene = transcript.getGene();
         return gene;
     }
+    
+    
+    /**
+     * Overrides to add the gene name to the names list.
+     */
+    @Override protected List<String> generateNamesList() {
+    	List<String> names = super.generateNamesList();
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+    		names.add(gene.getUniqueName());
+    	}
+    	return names;
+    }
+    
+    
 
     @Transient
     public List<String> getProducts() {
