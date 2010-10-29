@@ -166,6 +166,7 @@
         <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
         <property name="queryFactory" ref="queryFactory" />
         <property name="mailSender" ref="mailSender" />
+        <property name="transactionTemplate" ref="transactionTemplate"/>
    </bean>
     
   <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadController">
