@@ -183,7 +183,6 @@ public abstract class FormatBase {
     		final int final_start = start;
     		final int final_stop = stop;
     		
-    		
     		transactionTemplate.execute(new TransactionCallback<Object>() {
     	        @Override
     	        public Object doInTransaction(TransactionStatus status) {
