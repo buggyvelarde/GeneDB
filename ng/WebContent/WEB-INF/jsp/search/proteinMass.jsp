@@ -7,7 +7,7 @@
 
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="proteinMass" method="GET">
+        <form:form commandName="query" action="${actionName}" method="GET">
             <table border=0>
                 <tr>
                     <td>

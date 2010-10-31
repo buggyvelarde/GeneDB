@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
@@ -49,12 +49,14 @@ public class ResultsController {
         this.resultsCacheFactory = resultsCacheFactory;
     }
 
-    public void setQueryFactory(QueryFactory queryFactory) {
+    @SuppressWarnings("unchecked")
+	public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
     //@Autowired
-    private QueryFactory queryFactory;
+    @SuppressWarnings("unchecked")
+	private QueryFactory queryFactory;
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
@@ -65,7 +67,7 @@ public class ResultsController {
     public String setUpForm(
             @PathVariable(value="key") String key,
             @RequestParam(value="taxonNodeName", required=false) String taxonNodeName,
-            ServletRequest request,
+            HttpServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
         // TODO Do we want form submission via GET?
@@ -87,7 +89,11 @@ public class ResultsController {
         }
 
         int end = start + DEFAULT_LENGTH;
-
+        
+        logger.debug(key);
+        logger.debug(resultsCacheFactory);
+        logger.debug(resultsCacheFactory.getResultsCacheMap());
+        
         if (!resultsCacheFactory.getResultsCacheMap().containsKey(key)) {
         	WebUtils.setFlashMessage("Unable to retrieve results for this key", session);
             logger.error("Unable to retrieve results for key '"+key+"'");
@@ -139,6 +145,7 @@ public class ResultsController {
         if (resultEntry.query != null) {
             model.addAttribute("query", resultEntry.query);
             populateModelData(model, resultEntry.query);
+            model.addAttribute("actionName" , request.getContextPath() + "/Query/" + resultEntry.queryName);
             return "search/"+resultEntry.queryName;
         }
         return "list/results2";
@@ -171,7 +178,8 @@ public class ResultsController {
         return expanded;
     }
 
-    private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
+    @SuppressWarnings("unchecked")
+	private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
         IdsToGeneSummaryQuery idsToGeneSummary =
             (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY, NumericQueryVisibility.PRIVATE);
 

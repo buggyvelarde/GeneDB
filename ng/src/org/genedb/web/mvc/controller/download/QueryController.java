@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Lists;
@@ -41,7 +42,8 @@ public class QueryController extends AbstractGeneDBFormController{
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
     //@Autowired
-    private QueryFactory queryFactory;
+    @SuppressWarnings("unchecked")
+	private QueryFactory queryFactory;
 
     private HistoryManagerFactory hmFactory;
 
@@ -51,7 +53,8 @@ public class QueryController extends AbstractGeneDBFormController{
         this.hmFactory = hmFactory;
     }
 
-    public void setQueryFactory(QueryFactory queryFactory) {
+    @SuppressWarnings("unchecked")
+	public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -67,11 +70,13 @@ public class QueryController extends AbstractGeneDBFormController{
     public String chooseFormHandling(
             @PathVariable(value="queryName") String queryName,
             @RequestParam(value="suppress", required=false) String suppress,
-            ServletRequest request,
+            HttpServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
     	
     	logger.info(queryName);
+    	
+    	model.addAttribute("actionName" , request.getContextPath() + "/Query/" + queryName);
     	
         if (request.getParameterMap().size() > 1) {
             return processForm(queryName, suppress, request, session, model);

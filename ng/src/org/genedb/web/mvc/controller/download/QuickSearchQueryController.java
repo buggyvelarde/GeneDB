@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -52,10 +52,12 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     private ApplicationContext applicationContext;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
+    public String processRequest(HttpServletRequest request, HttpSession session, Model model) throws QueryException {
 
         QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME, NumericQueryVisibility.PRIVATE);
-
+        
+        model.addAttribute("actionName" , request.getContextPath() + "/QuickSearchQuery");
+        
         if (query==null){
             return "redirect:/Query";
         }

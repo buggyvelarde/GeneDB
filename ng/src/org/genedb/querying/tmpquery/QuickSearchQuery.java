@@ -67,12 +67,14 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         if (allNames) {
 
             if (tokens.length > 1) {
+            	logger.info("phrase query");
                 PhraseQuery pq = new PhraseQuery();
                 for (String token : tokens) {
                     pq.add(new Term("allNames", token.toLowerCase()));
                 }
                 bq.add(pq, Occur.SHOULD);
             } else {
+            	logger.info("wildcard query");
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
             }
 
@@ -99,6 +101,8 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             queries.add(mRNAQuery);
         }
         // queries.add(isCurrentQuery);
+        
+        logger.info(queries);
     }
 
     @Override
