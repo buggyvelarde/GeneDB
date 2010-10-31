@@ -6,13 +6,6 @@
 <br>
 
 
-<P>
-url: ${query.queryName}
-</P>
-
-<P>
-url: ${actionName}
-</P>
 
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
