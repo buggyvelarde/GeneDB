@@ -145,7 +145,14 @@ public class ResultsController {
         if (resultEntry.query != null) {
             model.addAttribute("query", resultEntry.query);
             populateModelData(model, resultEntry.query);
-            model.addAttribute("actionName" , request.getContextPath() + "/Query/" + resultEntry.queryName);
+            
+            if (resultEntry.queryName.equals("quickSearch")) {
+            	// quick search query has a special path...
+            	model.addAttribute("actionName" , request.getContextPath() + "/QuickSearchQuery");
+            } else {
+            	model.addAttribute("actionName" , request.getContextPath() + "/Query/" + resultEntry.queryName);
+            }
+            
             return "search/"+resultEntry.queryName;
         }
         return "list/results2";
