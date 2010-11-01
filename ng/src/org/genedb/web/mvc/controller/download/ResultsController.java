@@ -200,6 +200,7 @@ public class ResultsController {
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+        	logger.info("Populating " + entry.getKey());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }

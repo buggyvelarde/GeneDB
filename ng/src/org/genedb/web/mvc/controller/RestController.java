@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.taxon.TaxonNameType;
@@ -13,6 +14,8 @@ import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
 
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -32,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -67,6 +71,10 @@ public class RestController {
     @Autowired
     @Qualifier("sequenceDao")
     SequenceDao sequenceDao;
+    
+    @Autowired
+    @Qualifier("cvDao")
+    CvDao cvDao;
 
     private final String viewName = "json:";
 
@@ -77,6 +85,61 @@ public class RestController {
         mav.addObject("model", "hello world");
         return mav;
     }
+    
+    @RequestMapping(method=RequestMethod.GET, value="/organisms")
+    public ModelAndView organisms() {
+    	ModelAndView mav = new ModelAndView(viewName);
+    	
+    	OrganismResults results = new OrganismResults();
+    	
+    	List<Organism> organisms = organismDao.getOrganisms();
+    	for (Organism organism : organisms) {
+    		
+    		if (organism.isPopulated() == true && ! organism.getCommonName().equals("dummy")) {
+    			results.organisms.add(organism.getCommonName());
+    		}
+    		
+    	}
+    	
+    	Collections.sort(results.organisms);
+    	
+    	mav.addObject("model", results);
+    	
+    	return mav;
+    }
+    
+    @RequestMapping(method=RequestMethod.GET, value="/top")
+    public ModelAndView top(@RequestParam("commonName") String commonName) {
+    	ModelAndView mav = new ModelAndView(viewName);
+    	
+    	Organism org = organismDao.getOrganismByCommonName(commonName);
+    	
+    	TopLevelResults results = new TopLevelResults();
+    	results.organism = commonName;
+    	
+    	try {
+	    	List<Feature> tops = sequenceDao.getTopLevelFeaturesInOrganism(org);
+	    	logger.info(tops.size());
+	    	for (Feature top : tops) {
+	    		
+	    		
+	    		
+	    		TopLevelFeature tlf = new TopLevelFeature();
+	    		tlf.name = top.getUniqueName();
+	    		tlf.length = top.getResidues().length();
+	    		
+	    		results.features.add(tlf);
+	    	}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		logger.error(e.getMessage());
+    	}
+    	
+    	mav.addObject("model", results);
+    	
+    	return mav;
+    }
+    
     
     @RequestMapping(method=RequestMethod.GET, value={"/changesummary", "/changesummary.*"})
     public ModelAndView changesSummary(@RequestParam("since") String since,  @RequestParam("taxon") String taxon)
@@ -465,6 +528,34 @@ class RestResultSet extends BaseResult
     {
         results.add(br);
     }
+}
+
+@XStreamAlias("results")
+class TopLevelResults extends BaseResult {
+	@XStreamAlias("organism")
+    @XStreamAsAttribute
+    public String organism;
+	
+	@XStreamImplicit()
+	@XStreamAlias("features")
+    public List<TopLevelFeature> features = new ArrayList<TopLevelFeature>();
+	
+}
+
+@XStreamAlias("feature")
+class TopLevelFeature extends BaseResult {
+	@XStreamAlias("length")
+    @XStreamAsAttribute
+    public int length;
+	
+}
+
+@XStreamAlias("results")
+class OrganismResults extends BaseResult {
+	
+	@XStreamAlias("organisms")
+    public List<String> organisms = new ArrayList<String>();
+	
 }
 
 @XStreamAlias("results")

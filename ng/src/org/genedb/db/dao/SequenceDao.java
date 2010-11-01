@@ -452,6 +452,21 @@ public class SequenceDao extends BaseDao {
                 "from Feature where cvTerm.name like :name", "name", name);
         return topLevels;
     }
+    
+    public List<Feature> getTopLevelFeaturesInOrganism(Organism organism) {
+    	
+    	CvTerm cvterm = cvDao.getCvTermByNameAndCvName("top_level_seq", "genedb_misc", true);
+    	
+    	List<Feature> topLevels = performQuery(Feature.class,
+    			"select f from Feature f, FeatureProp fp " +
+    			" where fp.feature = f " +
+    			" and f.organism = :organism  " +
+    			" and fp.cvTerm = :cvterm " +
+    			" order by f.uniqueName ", 
+    			new String[] {"organism", "cvterm"}, new Object[] {organism, cvterm});
+    	
+        return topLevels;
+    }
 
     /**
      * Return a list of features that have this particular cvterm
