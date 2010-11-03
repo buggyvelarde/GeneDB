@@ -71,7 +71,7 @@ while getopts "s:r:o:t:p:c:1234v" o ; do
         2 ) DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION=1;;
         3 ) DO_BERKLEY_CACHE=1;;
         4 ) DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION=1;;
-        c ) CONFIG=1;;
+        c ) CONFIG=$OPTARG;;
         v ) echo $VERSION  
             exit 0;;
         ?) usage
