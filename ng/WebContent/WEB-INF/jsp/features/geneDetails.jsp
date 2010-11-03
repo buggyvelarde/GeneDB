@@ -122,7 +122,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
                 <c:if test="${dbxref.urlPrefix=='http://www.genedb.org/genedb/pathway_comparison_TriTryp/'}">
                     <c:set var="urlSuffix" value=".html"/>
                 </c:if>
-                <li><a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}"><db:dbName db="${dbxref.dbName}"/></a></li>
+                <li> <a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.accession}</a> (<db:dbName db="${dbxref.dbName}"/>) </li>
         </c:if>
       </c:if>
     </c:forEach>
