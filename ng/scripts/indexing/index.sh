@@ -2,7 +2,7 @@
 
 usage() {
 cat <<OPTIONS
-Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [-r org1,org2 | -s 2010-08-10] -c [-1] [-2] [-3] [4]
+Usage: index.sh -t TMPDIR -p /path/to/psql-driver.jar [-o OUTDIR1,OUTDIR2] [-r org1,org2 | -s 2010-08-10] -c [-1] [-2] [-3] [4]
 
 You can choose to specify a list of organisms (-r) or a date (-s), if you specify neither then all organisms will be used. There are several actions in the workflow that you can call: 
 
@@ -15,9 +15,6 @@ You can ommit any one or more of these actions (they are all off by default). Ho
 
 Options:
 
- -o OUTDIRS 			dir1,dir2,dir3
-    A comma-separated list of output folders.
-
  -t TMPDIR				tmpfolder
     The path to a temp folder.
 
@@ -29,6 +26,9 @@ Options:
 
  -s SINCE 				2010-08-10
     All organisms changed since this date. Do not run with -r flag. Not specifying either of -r or -s will default to all organisms being indexed.
+
+ -o OUTDIRS             dir1,dir2,dir3
+    A comma-separated list of output folders.
 
  -c CONFIG
     The name of the genedb config (e.g. beta, nightly, etc.) 
@@ -80,9 +80,9 @@ while getopts "s:r:o:t:p:c:1234v" o ; do
 done
 
 
-if [[ -z $OUTDIRS ]] || [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]] || [[ -z $CONFIG ]]
+if [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]] || [[ -z $CONFIG ]]
 then
-    echo "You must supply a tempdir (-t) and outdir (-o), config (-c) and postgres driver (-p) parameters."
+    echo "You must supply a tempdir (-t), config (-c) and postgres driver (-p) parameters."
     usage
     exit 1
 fi
@@ -234,15 +234,15 @@ if [[ $DO_INDEXING ]]; then
 	eval $MAKE_DICTIONARY_LUCENE
 	
 	
-	
-	for OUTDIR in $OUTDIRS
-	do
-	    logecho "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
-	    rm -fr $OUTDIR/lucene
-	    mkdir -p $OUTDIR/lucene
-	    cp -vr  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
-	done
-	
+    if [[ ! -z $OUTDIRS ]]; then
+		for OUTDIR in $OUTDIRS
+		do
+		    logecho "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
+		    rm -fr $OUTDIR/lucene
+		    mkdir -p $OUTDIR/lucene
+		    cp -vr  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
+		done
+    fi
 	
 	
 fi
@@ -340,15 +340,15 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	
 	
 	
-	
-	for OUTDIR in $OUTDIRS
-	do
-	    logecho "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
-	    rm -fr $OUTDIR/cache;
-	    mkdir -p $OUTDIR/cache
-	    cp -vr $TMPDIR/DTO/merged/* $OUTDIR/cache;
-	done
-	
+	if [[ ! -z $OUTDIRS ]]; then
+		for OUTDIR in $OUTDIRS
+		do
+		    logecho "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
+		    rm -fr $OUTDIR/cache;
+		    mkdir -p $OUTDIR/cache
+		    cp -vr $TMPDIR/DTO/merged/* $OUTDIR/cache;
+		done
+	fi
 	
 
 	
