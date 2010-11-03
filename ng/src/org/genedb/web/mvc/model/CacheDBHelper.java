@@ -34,7 +34,7 @@ public class CacheDBHelper {
     private static final int TILE_WIDTH = 5000;
     private static final int THUMBNAIL_WIDTH = 600;
 
-    public static final int MIN_CONTEXT_LENGTH_BASES = 5000;
+    public static final int MIN_CONTEXT_LENGTH_BASES = 100;
 
      /**
       * Find a Gene, using it's unique name
@@ -51,9 +51,9 @@ public class CacheDBHelper {
         .setParameter("geneUniqueName", geneUniqueName)
         .uniqueResult();
     }
-
+    
     /**
-     *
+     * 
      * @param feature
      * @param basicGeneService
      * @param renderedDiagramFactory
@@ -64,17 +64,32 @@ public class CacheDBHelper {
             Feature feature, BasicGeneService basicGeneService,
             RenderedDiagramFactory renderedDiagramFactory,
             DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap) {
+    	populateContextMapCache(feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap, TILE_WIDTH);
+    }
+    
+    /**
+     * 
+     * @param feature
+     * @param basicGeneService
+     * @param renderedDiagramFactory
+     * @param diagramCache
+     * @param contextMapMap
+     * @param tileWidth
+     */
+    public static void populateContextMapCache(
+            Feature feature, BasicGeneService basicGeneService,
+            RenderedDiagramFactory renderedDiagramFactory,
+            DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap, int tileWidth) {
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
             feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getFeatureId(), feature.getSeqLen());
 
         RenderedContextMap renderedContextMap = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
-
-
+        
         logger.debug(String.format("About to try and generate context map for '%s'", feature.getUniqueName()));
         try {
-            List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
+            List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(tileWidth);
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
             contextMapMap.put(feature.getFeatureId(), metadata);
             logger.debug("Stored contextMap for "+feature.getFeatureId()+" '"+feature.getUniqueName()+"' as '"+metadata+"'");

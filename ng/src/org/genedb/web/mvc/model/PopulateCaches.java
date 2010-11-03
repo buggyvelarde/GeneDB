@@ -87,7 +87,10 @@ public class PopulateCaches {
             new String[] {"classpath:applicationContext.xml", "classpath:populateCaches.xml"});
         PopulateCaches pc = ctx.getBean("populateCaches", PopulateCaches.class);
         pc.setConfig(pca);
+        
+        logger.info("fully populating");
         pc.fullCachePopulate();
+        logger.info("fully populated");
     }
 
     @Transactional
@@ -98,6 +101,9 @@ public class PopulateCaches {
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 
+        logger.info(config.isGeneUniqueName());
+        //logger.info(config.getGeneUniqueName());
+        
         if (config.isGeneUniqueName()) {
             String geneUniqueName = config.getGeneUniqueName();
             if (geneUniqueName != null) {
@@ -106,6 +112,7 @@ public class PopulateCaches {
             }
             throw new RuntimeException("Found a --gene argument, but didn't understand it");
         }
+        logger.info("topLevel?");
         populateCacheForTopLevelFeatures();
     }
 
@@ -118,23 +125,33 @@ public class PopulateCaches {
         long start = System.currentTimeMillis();
 
         Iterator<Feature> topLevelFeatures = getTopLevelFeatures();
-
+        
         int count = 0;
         while (topLevelFeatures.hasNext()) {
             Feature feature = topLevelFeatures.next();
+            
+            logger.info(feature.getUniqueName());
 
             if (config.isDebugCount() && count >= config.getDebugCount()) {
                 break;
             }
-
-
-            if (!config.isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
-                logger.trace("About to create context map");
-                CacheDBHelper.populateContextMapCache(
-                        feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
-                logger.trace("Created context map ");
+            
+            logger.info(feature.getSeqLen());
+            
+            if (!config.isNoContextMap()) {
+            	int len = feature.getSeqLen();
+            	logger.trace("About to create context map");
+            	if (len > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
+            		CacheDBHelper.populateContextMapCache(
+                            feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
+            	} else {
+            		logger.warn(String.format("Attempting tile width of %d for top level feature %s.", len, feature.getUniqueName()));
+            		CacheDBHelper.populateContextMapCache(
+            				feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap, len);
+            	}
+            	logger.trace("Created context map ");
             }
-
+            
             @SuppressWarnings("unchecked")
             List<Feature> features = session.createQuery(
                 "select fl.feature from FeatureLoc fl" +
@@ -186,7 +203,11 @@ public class PopulateCaches {
                 " where fp.cvTerm.name='top_level_seq'" +
                 " and fp.cvTerm.cv.name = 'genedb_misc'");
         }
-
+        
+        logger.info(config.getOrganisms());
+        logger.info(q.getQueryString());
+        
+        
         @SuppressWarnings("unchecked")
         Iterator<Feature> iterator = q.iterate();
         return iterator;
