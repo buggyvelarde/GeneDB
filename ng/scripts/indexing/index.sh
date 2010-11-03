@@ -60,7 +60,7 @@ if [ `uname -n` != ${HST} ]; then
     exit 1
 fi
 
-while getopts "s:r:o:t:p:1234v" o ; do  
+while getopts "s:r:o:t:p:c:1234v" o ; do  
     case $o in  
         s ) SINCE=$OPTARG;;
         r ) ORGANISMS=$(echo $OPTARG | tr "," "\n" );;
