@@ -2,14 +2,14 @@
 
 usage() {
 cat <<OPTIONS
-Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [-r org1,org2 | -s 2010-08-10] [-1] [-2] [-3] [-4]
+Usage: index.sh -o OUTDIR1,OUTDIR2 -t TMPDIR -p /path/to/psql-driver.jar [-r org1,org2 | -s 2010-08-10] -c [-1] [-2] [-3] [4]
 
 You can choose to specify a list of organisms (-r) or a date (-s), if you specify neither then all organisms will be used. There are several actions in the workflow that you can call: 
 
- 1. dump to nightly and cleanup 
- 2. lucene indexing 
- 3. berkley dto caching 
- 4. copying nightly to staging 
+ 1. lucene indexing
+ 2. moving merged lucenes to the config location 
+ 3. berkley dto caching  
+ 4. move the berkley cache to the config location
 
 You can ommit any one or more of these actions (they are all off by default). However they will always be called in the same order.
 
@@ -30,19 +30,26 @@ Options:
  -s SINCE 				2010-08-10
     All organisms changed since this date. Do not run with -r flag. Not specifying either of -r or -s will default to all organisms being indexed.
 
- -1 DUMP_AND_CLEANUP_DB
-    Copy the pathogens to nightly, and cleans up. Off by default. Stage 1.
+ -c CONFIG
+    The name of the genedb config (e.g. beta, nightly, etc.) 
 
- -2 DO_INDEXING
- 	Run the lucene indexing operations. Off by default. Stage 2. 
+ -1 DO_INDEXING
+ 	Run the lucene indexing operations. Off by default. Stage 1. 
+
+ -2 DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION
+    Move the merged indices to the location specified by the config file. If not specified, the berkley caching will run ontop of old indices.  Off by default. Stage 2.
 
  -3 DO_BERKLEY_CACHE
  	Run the berkley cache (DTO) indexing operations. Off by default. Stage 3. 
 
- -4 COPY_DB_TO_STAGING
-    Copy the nightly to staging at the end of the process. Off by default. Stage 4.
+ -4 DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION
+    Move the merged cache to the location specified by the config file. Off by default. Stage 4.
 
 OPTIONS
+}
+
+logecho() {
+    echo [`date '+%F %T'`] $1	
 }
 
 VERSION=0.1
@@ -60,10 +67,11 @@ while getopts "s:r:o:t:p:1234v" o ; do
         o ) OUTDIRS=$(echo $OPTARG | tr "," "\n" );;
         t ) TMPDIR=$OPTARG;;
         p ) POSTGRES_DRIVER=$OPTARG;;
-        1 ) DUMP_AND_CLEANUP_DB=1;;
-        2 ) DO_INDEXING=1;;
+        1 ) DO_INDEXING=1;;
+        2 ) DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION=1;;
         3 ) DO_BERKLEY_CACHE=1;;
-        4 ) COPY_DB_TO_STAGING=1;;
+        4 ) DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION=1;;
+        c ) CONFIG=1;;
         v ) echo $VERSION  
             exit 0;;
         ?) usage
@@ -72,9 +80,9 @@ while getopts "s:r:o:t:p:1234v" o ; do
 done
 
 
-if [[ -z $OUTDIRS ]] || [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]]
+if [[ -z $OUTDIRS ]] || [[ -z $TMPDIR ]] || [[ -z $POSTGRES_DRIVER ]] || [[ -z $CONFIG ]]
 then
-    echo "You must supply a tempdir (-t) and outdir (-o) and postgres driver (-p) parameters"
+    echo "You must supply a tempdir (-t) and outdir (-o), config (-c) and postgres driver (-p) parameters."
     usage
     exit 1
 fi
@@ -94,28 +102,18 @@ SOURCE_HOME=`dirname $(readlink -f "${SCRIPT_DIRECTORY}/../")`
 cd $SOURCE_HOME
 echo Executing indexing at $SOURCE_HOME 
 
+CONFIG_FILE=$SOURCE_HOME/property-file.$CONFIG
+
+if [ -f $CONFIG_FILE ]; then
+	echo The file "$CONFIG_FILE" does not exist. 
+	exit 1
+fi
+
+
 
 ORIGINAL_IFS=$IFS
 IFS=$'\n'
 
-
-if [[ $DUMP_AND_CLEANUP_DB ]]; then
-	echo "Stage 1"
-    echo Backing up db
-    genedb-web-control ci-web stop
-    dropdb -h pgsrv2 nightly
-    createdb -h pgsrv2 -E SQL-ASCII nightly
-    pg_dump -Naudit -Naudit_backup -Ngraphs -h pgsrv1 pathogens | psql -h pgsrv2 nightly
-    
-    for sqlfile in $SOURCE_HOME/sql/cleanup/*.sql
-    do
-        echo "Processing SQL cleanup file? " $sqlfile
-        psql -h pgsrv2 nightly < $sqlfile
-    done
-    
-    cd $SOURCE_HOME
-    echo "Backed up db"
-fi
 
 # a flag to indicate if all organisms should be indexed
 ALL_ORGANISMS=0;
@@ -134,9 +132,9 @@ if [[ -z $ORGANISMS ]]; then
         ALL_ORGANISMS=1;
     fi
     
-    echo ${GET_ORGANISMS_SQL}
+    logecho ${GET_ORGANISMS_SQL}
     ORGANISMS=`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c "${GET_ORGANISMS_SQL}" pathogens`
-    
+    logecho $ORGANISMS
 fi
 
 
@@ -150,7 +148,7 @@ then
 	ORGANISMS_JOINED=""
 	
 	if [[ ALL_ORGANISMS -eq 0 ]]; then
-	    echo "Joining organism list"
+	    logecho "Joining organism list"
 	    for organism in $ORGANISMS
 	    do
 		    #regex / / to trim white spaces
@@ -163,14 +161,14 @@ then
 	    
 	fi
 	
-	echo "Groovy Orgs List: $ORGANISMS_JOINED"
+	logecho "Groovy Orgs List: $ORGANISMS_JOINED"
 	
 fi
 
 
 if [[ $DO_INDEXING ]]; then
 	
-	echo "Stage 2"
+	logecho "Stage 1"
 	
 	#
 	# Clean up tmp directories for the organisms to be indexed. 
@@ -181,7 +179,7 @@ if [[ $DO_INDEXING ]]; then
 		#regex / / to trim white spaces
         organism=${organism/ /}
         
-		echo "Cleaning up lucene: " $organism;
+		logecho "Cleaning up lucene: " $organism;
 	    rm -fvr $TMPDIR/Lucene/output/$organism
 	    rm -fvr $TMPDIR/Lucene/scripts/${organism}.script*
 	done
@@ -193,18 +191,18 @@ if [[ $DO_INDEXING ]]; then
 	#
 	
 	mkdir -p $TMPDIR/Lucene/scripts
-	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-	echo $GENERATE_LUCENE
+	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	logecho $GENERATE_LUCENE
 	eval $GENERATE_LUCENE
 	
 	
 	LUCENE_ERRORS=`cat $TMPDIR/Lucene/scripts/*.err`
 	LEN_LUCENE_ERRORS=${#LUCENE_ERRORS}
 	if [[ $LUCENE_ERRORS > 0 ]]; then
-	    echo "Found errors in Lucene"
+	    logecho "Found errors in Lucene"
 	    exit 1
 	else
-	    echo "Found no errors in Lucene"
+	    logecho "Found no errors in Lucene"
 	fi
 	
 	
@@ -220,8 +218,8 @@ if [[ $DO_INDEXING ]]; then
 	# ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
 	
 	
-	MERGE_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
-	echo $MERGE_LUCENE
+	MERGE_LUCENE="ant -f build-apps.xml -Dconfig=$CONFIG -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
+	logecho $MERGE_LUCENE
 	eval $MERGE_LUCENE
 	
 	
@@ -229,27 +227,54 @@ if [[ $DO_INDEXING ]]; then
 	# Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
 	#
 	
-	MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=nightly -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
-	echo $MAKE_DICTIONARY_LUCENE
+	MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=$CONFIG -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
+	logecho $MAKE_DICTIONARY_LUCENE
 	eval $MAKE_DICTIONARY_LUCENE
 	
 	
 	
 	for OUTDIR in $OUTDIRS
 	do
-	    echo "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
+	    logecho "Copying merged lucenes from $TMPDIR/Lucene/merged to $OUTDIR/lucene"
 	    rm -fr $OUTDIR/lucene
 	    mkdir -p $OUTDIR/lucene
-	    cp -r  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
+	    cp -vr  $TMPDIR/Lucene/merged/*  $OUTDIR/lucene
 	done
 	
 	
 	
 fi
 
+
+if [[ $DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION ]]; then
+	
+	logecho "Stage 2"
+	
+    #
+    # Determine location of the indices as specified in the config file. 
+    #
+	
+    LUCENE_LINE=`grep lucene.indexDirectory $CONFIG_FILE`
+    LUCENE_INDEX_DIRECTORY=${LUCENE_LINE#lucene.indexDirectory=}
+    
+    #
+    # Move the indices to the specified location.  
+    #
+    
+    logecho Wiping $LUCENE_INDEX_DIRECTORY
+    rm -frv $LUCENE_INDEX_DIRECTORY
+    
+    logecho Copying merged indices from "$TMPDIR/Lucene/merged/" to $LUCENE_INDEX_DIRECTORY
+    mkdir -p $LUCENE_INDEX_DIRECTORY
+    cp -vr  $TMPDIR/Lucene/merged/*  $LUCENE_INDEX_DIRECTORY
+    
+fi
+
+
+
 if [[ $DO_BERKLEY_CACHE	]];then
 	
-	echo "Stage 3"
+	logecho "Stage 3"
 	
 	#
 	# Clean up tmp directories for the organisms to be indexed. 
@@ -260,12 +285,11 @@ if [[ $DO_BERKLEY_CACHE	]];then
 		#regex / / to trim white spaces
         organism=${organism/ /}
         
-        echo "Cleaning up DTO: " $organism
+        logecho "Cleaning up DTO: " $organism
         
 	    rm -fvr $TMPDIR/DTO/output/$organism
 	    rm -fvr $TMPDIR/DTO/scripts/${organism}.script*
         
-	    
 	done
 	
 	
@@ -275,18 +299,18 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	#
 	
 	mkdir -p $TMPDIR/DTO/scripts
-	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO nightly $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-	echo $GENERATE_DTO
+	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	logecho $GENERATE_DTO
 	eval $GENERATE_DTO
 	
 	
 	DTO_ERRORS=`cat $TMPDIR/DTO/scripts/*.err`
 	LEN_DTO_ERRORS=${#DTO_ERRORS}
 	if [[ $LEN_DTO_ERRORS > 0 ]]; then
-	    echo "Found errors in DTO"
+	    logecho "Found errors in DTO"
 	    exit 1
 	else
-	    echo "Found no errors in DTO"
+	    logecho "Found no errors in DTO"
 	fi
 	
 	
@@ -301,26 +325,26 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	# gv1 - tested on laptop:
 	# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 	
-	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=nightly -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
-	echo $MERGE_DTO
+	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+	logecho $MERGE_DTO
 	ssh pcs4m "$MERGE_DTO"
 	
 	
 	
 	
-	echo Sleeping for 60 seconds to give NFS time to catch up with whats been happening...
+	logecho Sleeping for 60 seconds to give NFS time to catch up with whats been happening...
 	sleep 60
-	echo Awake!
+	logecho Awake!
 	
 	
 	
 	
 	for OUTDIR in $OUTDIRS
 	do
-	    echo "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
+	    logecho "Copying merged indices from $TMPDIR/DTO/merged to $OUTDIR/cache"
 	    rm -fr $OUTDIR/cache;
 	    mkdir -p $OUTDIR/cache
-	    cp -r $TMPDIR/DTO/merged/* $OUTDIR/cache;
+	    cp -vr $TMPDIR/DTO/merged/* $OUTDIR/cache;
 	done
 	
 	
@@ -330,16 +354,30 @@ fi
 
 
 
-#
-# Copy the database accross from nightly. 
-#
 
-if [[ $COPY_DB_TO_STAGING ]]; then
-	echo "Stage 4"
-    echo Copying db to staging
-    dropdb -h genedb-db snapshot-old
-    createdb -h genedb-db staging
-    pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
+if [[ $DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION ]]; then
+    
+    logecho "Stage 4"
+    
+    #
+    # Determine location of the indices as specified in the config file. 
+    #
+    
+    CACHE_LINE=`grep cacheDirectory $CONFIG_FILE`
+    CACHE_INDEX_DIRECTORY=${CACHE_LINE#cacheDirectory=}
+    
+    #
+    # Move the indices to the specified location.  
+    #
+    
+    logecho Wiping $CACHE_INDEX_DIRECTORY
+    rm -frv $CACHE_INDEX_DIRECTORY
+    
+    logecho Copying merged caches from "$TMPDIR/DTO/merged/" to $CACHE_INDEX_DIRECTORY
+    mkdir -p $CACHE_INDEX_DIRECTORY
+    cp -vr  $TMPDIR/DTO/merged/*  $CACHE_INDEX_DIRECTORY
+    
+    
 fi
 
 
