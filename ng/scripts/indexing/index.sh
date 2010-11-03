@@ -104,7 +104,9 @@ echo Executing indexing at $SOURCE_HOME
 
 CONFIG_FILE=$SOURCE_HOME/property-file.$CONFIG
 
-if [ -f $CONFIG_FILE ]; then
+echo Using config file $CONFIG_FILE
+
+if [ ! -f $CONFIG_FILE ]; then
 	echo The file "$CONFIG_FILE" does not exist. 
 	exit 1
 fi
