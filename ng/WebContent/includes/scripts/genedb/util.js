@@ -64,7 +64,7 @@ $(function(){
             $("#search input[name=searchText]").val(ui.item.value);    // make sure the form is updated before submitting
             $('#search form[name=quicksearch]').submit();
         },
-        delay: 400                                                     // don't want it too frequent, as some queries take time, so account for slow-ish typers
+        delay: 200                                                     // don't want it too frequent, as some queries take time, so account for slow-ish typers
 	});
 	
 	
