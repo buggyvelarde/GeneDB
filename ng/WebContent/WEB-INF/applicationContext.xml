@@ -81,6 +81,7 @@
 
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
         <property name="sessionFactory" ref="sessionFactory" />
+        <property name="cvDao" ref="cvDao" />
     </bean>
 
     <bean id="cvDao" class="org.genedb.db.dao.CvDao">
