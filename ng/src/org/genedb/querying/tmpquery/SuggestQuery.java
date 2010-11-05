@@ -102,7 +102,7 @@ public class SuggestQuery extends OrganismLuceneQuery {
 		logger.info("Searching for " + searchText);
 
 		try {
-			String[] suggestions = spellChecker.suggestSimilar(searchText, 50);
+			String[] suggestions = spellChecker.suggestSimilar(searchText.toLowerCase(), 50);
 
 			if ( (taxons == null ) || (taxons.getNodeCount() == 1 && taxons.getNodes().get(0).getLabel().equals("Root")) ) {
 
