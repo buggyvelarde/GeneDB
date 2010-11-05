@@ -2,6 +2,7 @@ package org.genedb.web.utils;
 
 
 import org.apache.log4j.Logger;
+import org.genedb.util.SequenceUtils;
 import org.genedb.web.mvc.controller.download.SequenceType;
 
 import org.gmod.schema.feature.AbstractExon;
@@ -61,7 +62,7 @@ public class DownloadUtils {
             }
 
             fasta.append(sequence.substring(startPos, endPos));
-            fasta.append(" ");
+            //fasta.append(" ");
             startPos += BASES_WIDTH;
             if(startPos % 60 == 0) {
                 fasta.append("\n");
@@ -159,6 +160,11 @@ public class DownloadUtils {
         }
         
         logger.error(transcript);
+        
+        boolean reverseCompliment = false;
+        if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
+            reverseCompliment = true;
+        }
 
         if(!alternateSpliced && transcript!=null) {
             switch (sequenceType) {
@@ -168,9 +174,12 @@ public class DownloadUtils {
                     }
                     break;
                 case UNSPLICED_DNA:
-                    if(transcript.getResidues() != null) {
-                        sequence = new String(gene.getResidues());
-                    }
+                	sequence = gene.getResidues();
+    				
+    				if (reverseCompliment) {
+    					sequence = SequenceUtils.reverseComplement(sequence);
+    				}
+    				
                     break;
                 case PROTEIN:
                 	Polypeptide p = transcript.getProtein();
@@ -280,7 +289,12 @@ public class DownloadUtils {
     	if (t instanceof ProductiveTranscript) {
     		transcript = (ProductiveTranscript) t;
     	}
-
+    	
+    	boolean reverseCompliment = false;
+        if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
+            reverseCompliment = true;
+        }
+    	
     	if (transcript!=null) {
     		switch (sequenceType) {
     		case SPLICED_DNA:
@@ -289,7 +303,13 @@ public class DownloadUtils {
     			}
     			//break;
     		case UNSPLICED_DNA:
-    			return new String(transcript.getGene().getResidues());
+    			sequence = transcript.getGene().getResidues();
+				
+				if (reverseCompliment) {
+					sequence = SequenceUtils.reverseComplement(sequence);
+				}
+				
+    			return sequence;
     			//break;
     		case PROTEIN:
     			try {
