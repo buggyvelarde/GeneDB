@@ -64,7 +64,11 @@ public class ControlledCurationQuery extends OrganismHqlQuery {
     public void setCvTermName(String cvTermName) {
         this.cvTermName = cvTermName;
     }
-
+    
+    public String getCvName() {
+    	return cv.getLookupName();
+    }
+    
     @Override
     protected String[] getParamNames() {
         return new String[] {"cvName", "cvTermName"};
