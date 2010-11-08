@@ -115,7 +115,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
     <td>
     <ul>
     <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
-      <c:if test="${!empty dbxref.urlPrefix}">
+      
         <c:if test="${dbxref.urlPrefix != 'http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='}" >
             <!-- ignoring plasmo DB links, no displayed below like TriTrypDB links -->
             <c:set var="urlSuffix" value=""/>
@@ -124,7 +124,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
                 </c:if>
                 <li> <a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.accession}</a> (<db:dbName db="${dbxref.dbName}"/>) </li>
         </c:if>
-      </c:if>
+      
     </c:forEach>
     </ul>
     </td>
@@ -143,10 +143,17 @@ should be obtained before publishing analyses of the sequence/open reading frame
     </c:if>
 </c:forEach>
 
+<c:if test="${dto.organismCommonName=='Pchabaudi' || dto.organismCommonName=='Pberghei'}">
+<tr>
+  <th>PlasmoDB</th>
+  <td><a href="http://plasmodb.org/gene/<misc:formatSystematicName name="${dto.uniqueName}"/>"><misc:formatSystematicName name="${dto.uniqueName}"/></a></td>
+</tr>
+</c:if>
+
 <c:if test="${dto.organismCommonName=='Lmajor' || dto.organismCommonName=='Linfantum' || dto.organismCommonName=='Lbraziliensis' || dto.organismCommonName=='Tbruceibrucei927' || dto.organismCommonName=='Tbruceibrucei427' || dto.organismCommonName=='Tbruceigambiense' || dto.organismCommonName=='Tvivax' || dto.organismCommonName=='Tcruzi' }">
 <tr>
   <th>TriTrypDB</th>
-  <td><a href="http://tritrypdb.org/tritrypdb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=TriTrypDB&source_id=<misc:formatSystematicName name="${dto.uniqueName}"/>"><misc:formatSystematicName name="${dto.uniqueName}"/></a></td>
+  <td><a href="http://tritrypdb.org/gene/<misc:formatSystematicName name="${dto.uniqueName}"/>"><misc:formatSystematicName name="${dto.uniqueName}"/></a></td>
 </tr>
 </c:if>
 
