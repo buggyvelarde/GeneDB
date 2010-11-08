@@ -143,7 +143,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
     </c:if>
 </c:forEach>
 
-<c:if test="${dto.organismCommonName=='Pchabaudi' || dto.organismCommonName=='Pberghei'}">
+<c:if test="${dto.organismCommonName=='Pchabaudi' || dto.organismCommonName=='Pberghei' || dto.organismCommonName=='Pknowlesi'}">
 <tr>
   <th>PlasmoDB</th>
   <td><a href="http://plasmodb.org/gene/<misc:formatSystematicName name="${dto.uniqueName}"/>"><misc:formatSystematicName name="${dto.uniqueName}"/></a></td>
