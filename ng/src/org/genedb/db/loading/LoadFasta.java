@@ -52,7 +52,8 @@ public class LoadFasta extends FileProcessor {
      *                  created for the file as a whole; rather each entry represents a top-level
      *                  feature in its own right. This is useful for loading FASTA files containing
      *                  EST or BAC end sequences.
-     *    <li> <code>load.entryType</code> may be <code>contig</code>, <code>EST</code>, or <code>BAC_end</code>,
+     *    <li> <code>load.entryType</code> may be <code>contig</code>, <code>EST</code>, <code>BAC_end</code>, 
+     *                  <code>supercontig</code> or <code>chromosome</code>
      *                  and determines the type of feature that is created for each entry in the file.
      * </ul>
      *
@@ -122,6 +123,14 @@ public class LoadFasta extends FileProcessor {
             loader.setEntryClass(EST.class);
         } else if (entryType.equals("BAC_end")) {
             loader.setEntryClass(BACEnd.class);
+        /* Sometimes the FASTA files have supercontig or chromosome sequences.
+         * Example, Schisto version 5
+         * nds, 9.11.2010
+         */
+        } else if (entryType.equals("supercontig")) {          
+            loader.setEntryClass(Supercontig.class); 
+        } else if (entryType.equals("chromosome")) {          
+            loader.setEntryClass(Chromosome.class); 
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.entryType: '%s'", topLevelFeatureType));
