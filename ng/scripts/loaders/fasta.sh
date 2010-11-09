@@ -108,7 +108,7 @@ SQL2
         set -x
     fi
     
-    java -Xmx1G -Dlog4j.configuration=log4j.loader.properties \
+    java -Xmx2G -Dlog4j.configuration=log4j.loader.properties \
         -Dload.organismCommonName="$organism" \
         -Dload.inputDirectory="$file" \
         -Dload.topLevel="$topLevel" -Dload.entryType="$entryType" \
