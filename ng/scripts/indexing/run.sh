@@ -1,3 +1,3 @@
 #!/bin/csh
-source /software/pathogen/etc/cshrc.pathogen
+export PATH=/software/pathogen/external/applications/groovy/groovy/bin:$PATH
 sh index.sh
