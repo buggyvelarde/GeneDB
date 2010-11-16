@@ -561,7 +561,7 @@ class EmblLoader {
     private void loadFeature(List<FeatureTable.Feature> utrs,
             FeatureTable.Feature feature) throws DataError {
         String featureType = feature.type;
-
+        
         if (feature.location.getFmax() < feature.location.getFmin()) {
             throw new DataError("Location has fmax before fmin");
         }
@@ -709,7 +709,6 @@ class EmblLoader {
         EmblLocation gapLocation = gapFeature.location;
 
         logger.debug(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
-        System.err.println(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
         Gap gap = topLevelFeature.addGap(gapLocation.getFmin(), gapLocation.getFmax());
         session.persist(gap);
 
@@ -948,6 +947,7 @@ class EmblLoader {
         }
 
         private void loadTranscript(AbstractGene gene) throws DataError {
+            
             logger.debug(String.format("Creating transcript '%s' for gene '%s'", transcriptUniqueName, gene.getUniqueName()));
 
             /**
@@ -1857,6 +1857,7 @@ class EmblLoader {
     }
 
     private Feature loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
+        System.out.println("Calling loadCDS...");
         return new CDSLoader(cdsFeature).load();
     }
 
@@ -1936,6 +1937,7 @@ class EmblLoader {
 
     /* UTR */
     private List<UTR> loadUTR(FeatureTable.Feature utrFeature) throws DataError {
+                
         String utrType = utrFeature.type;
         EmblLocation utrLocation = utrFeature.location;
         String uniqueName = utrFeature.getUniqueName();
@@ -1943,11 +1945,43 @@ class EmblLoader {
         logger.debug(String.format("Loading %s for '%s' at %s", utrType, uniqueName, utrLocation));
 
         Transcript transcript = transcriptsByUniqueName.get(uniqueName);
-
-        if (transcript == null) {
-            throw new DataError(String.format("Could not find transcript '%s' for %s", uniqueName, utrType));
+        
+        /* Sometimes the UTR locus tag will have the gene name as is the case with Schisto v5.
+         * In order to deal with that, I'm looking for transcripts that look like the gene 
+         * name here even though, technically, the UTR locus tag is meant to have the transcript.
+         * Also, we cannot make this "prediction" if there are multiple transcripts
+         * nds, 16th Nov 2010
+         */
+                
+        if(transcript == null){
+            List<String> possibleTranscriptNames = new ArrayList<String>();
+            
+            String possibleGeneName; //trying to figure out what the gene name is
+            if(uniqueName.matches("\\S+.\\d:mRNA")){
+                possibleGeneName = uniqueName.substring(0,uniqueName.length()-5);
+            }else if(uniqueName.matches("\\S+:mRNA")){
+                possibleGeneName = uniqueName.substring(0,uniqueName.length()-4);
+            }else{
+                possibleGeneName = uniqueName;                
+            }
+            
+           
+            for(String s: transcriptsByUniqueName.keySet()){
+                
+                if(s.matches(possibleGeneName.concat(".\\d")) || s.matches(possibleGeneName.concat(".\\d:mRNA"))){
+                    possibleTranscriptNames.add(s);
+                }               
+            }
+            if(possibleTranscriptNames.size()==1){ //No alternative splicing
+                transcript = transcriptsByUniqueName.get(possibleTranscriptNames.get(0));
+                logger.warn(String.format("Assuming %s is the transcript for this UTR for %s", possibleTranscriptNames.get(0), uniqueName));
+            }else{
+                throw new DataError(String.format("Could not find transcript '%s' for %s", uniqueName, utrType));
+            }
+            
         }
 
+ 
         List<UTR> utrs = new ArrayList<UTR>();
 
         Class<? extends UTR> utrClass;
@@ -1962,7 +1996,7 @@ class EmblLoader {
         int part = 1;
         List<EmblLocation> utrParts = utrLocation.getParts();
         for (EmblLocation utrPartLocation: utrParts) {
-            String utrUniqueName = String.format("%s:%dutr", uniqueName, utrClass == ThreePrimeUTR.class ? 3 : 5);
+            String utrUniqueName = String.format("%s:%dutr", transcript.getUniqueName()/*uniqueName*/, utrClass == ThreePrimeUTR.class ? 3 : 5);
             if (utrParts.size() > 1) {
                 utrUniqueName += ":" + part;
             }
