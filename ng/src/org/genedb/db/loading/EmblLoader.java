@@ -1957,15 +1957,15 @@ class EmblLoader {
             List<String> possibleTranscriptNames = new ArrayList<String>();
             
             String possibleGeneName; //trying to figure out what the gene name is
-            if(uniqueName.matches("\\S+.\\d:mRNA")){
-                possibleGeneName = uniqueName.substring(0,uniqueName.length()-5);
+            
+            if(uniqueName.matches("\\S+\\.\\d:mRNA")){ //@$$! Need to escape the .!
+                possibleGeneName = uniqueName.substring(0,uniqueName.length()-7);
             }else if(uniqueName.matches("\\S+:mRNA")){
-                possibleGeneName = uniqueName.substring(0,uniqueName.length()-4);
+                possibleGeneName = uniqueName.substring(0,uniqueName.length()-5);
             }else{
                 possibleGeneName = uniqueName;                
             }
-            
-           
+          
             for(String s: transcriptsByUniqueName.keySet()){
                 
                 if(s.matches(possibleGeneName.concat(".\\d")) || s.matches(possibleGeneName.concat(".\\d:mRNA"))){
@@ -1975,8 +1975,10 @@ class EmblLoader {
             if(possibleTranscriptNames.size()==1){ //No alternative splicing
                 transcript = transcriptsByUniqueName.get(possibleTranscriptNames.get(0));
                 logger.warn(String.format("Assuming %s is the transcript for this UTR for %s", possibleTranscriptNames.get(0), uniqueName));
-            }else{
-                throw new DataError(String.format("Could not find transcript '%s' for %s", uniqueName, utrType));
+            }else if (possibleTranscriptNames.size()==0){
+                throw new DataError(String.format("Could not find a transcript '%s' for %s", uniqueName, utrType));
+            }else if (possibleTranscriptNames.size() > 1) {
+                throw new DataError(String.format("Multiple transcripts possible for this UTR", uniqueName, utrType));
             }
             
         }
