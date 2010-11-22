@@ -1,0 +1,7 @@
+dbhost=pgsrv1
+dbport=5432
+dbname=emu
+dbuser=pathdb
+dbpassword=LongJ!@n
+
+
