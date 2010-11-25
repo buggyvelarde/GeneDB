@@ -240,13 +240,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
                     session.index(gene);
 
                     for (Transcript transcript : gene.getTranscripts()) {
-                        logger.info(String.format("Indexing '%s' (%s)", transcript.getUniqueName(), transcript.getClass()));
+                        logger.info(String.format("-Indexing '%s' (%s)", transcript.getUniqueName(), transcript.getClass()));
                         session.index(transcript);
                         if (transcript instanceof ProductiveTranscript) {
                             ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
                             Polypeptide protein = productiveTranscript.getProtein();
                             if (protein != null) {
-                                logger.info(String.format("Indexing '%s' (%s)", protein.getUniqueName(), gene.getClass()));
+                                logger.info(String.format("--Indexing '%s' (%s)", protein.getUniqueName(), protein.getClass()));
                                 session.index(protein);
                             }
                         }
