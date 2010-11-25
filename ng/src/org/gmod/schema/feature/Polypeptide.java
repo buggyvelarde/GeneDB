@@ -373,7 +373,7 @@ public class Polypeptide extends Region {
     }
 
     /**
-     * FIX_ME - This method is duplicated (and also in the ProductiveTranscript class)
+     * FIXED - This method is no longer duplicated (and also in the ProductiveTranscript class)
      * @return
      */
     @Transient
@@ -384,20 +384,12 @@ public class Polypeptide extends Region {
         if (products == null) {
             return null;
         }
-
-        List<String> munged = Lists.newArrayList();
-        for (String product : products) {
-        	if (product.contains("-")) {
-        		munged.add(product.replace("-", ""));
-        	}
-		}
-        products.addAll(munged);
-
+        
         return StringUtils.collectionToDelimitedString(products, " ");
     }
 
     /**
-     * FIX_ME - This method is duplicated (and also in the ProductiveTranscript class)
+     * FIXED - This method is no longer duplicated (and also in the ProductiveTranscript class)
      * @return
      */
     @Transient
@@ -408,7 +400,9 @@ public class Polypeptide extends Region {
         if (products == null) {
             return null;
         }
-
+        
+        // we only munge in the expandedProduct lucene field, because
+        // we are assuming this exists just for display
         List<String> munged = Lists.newArrayList();
         for (String product : products) {
         	if (product.contains("-")) {
@@ -416,7 +410,7 @@ public class Polypeptide extends Region {
         	}
 		}
         products.addAll(munged);
-
+        
         return StringUtils.collectionToDelimitedString(products, " ");
     }
 
@@ -452,7 +446,7 @@ public class Polypeptide extends Region {
 
 
     @Transient
-    @Field(index=Index.TOKENIZED, store=Store.NO)
+    @Field(index=Index.TOKENIZED, store=Store.YES)
     public String getAllCuration() {
         List<String> curation = new ArrayList<String>();
         for (FeatureProp fp : getFeatureProps()) {
@@ -464,6 +458,10 @@ public class Polypeptide extends Region {
                 curation.add(fp.getValue());
             }
         }
+        
+        // we add terms from the CC_genedb_controlledcuration featurecvterm here
+        curation.addAll(populateFromFeatureCvTerms("CC_genedb_controlledcuration"));
+        
         return StringUtils.collectionToDelimitedString(curation, " ");
     }
 
