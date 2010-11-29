@@ -33,6 +33,7 @@ import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,7 @@ public class AGPLoader {
     /* Configurable parameters */
     private Organism organism;
     private Class<? extends TopLevelFeature> topLevelFeatureClass = Chromosome.class; //Chromosome (default) or supercontig
+    private Class<? extends TopLevelFeature> childLevelFeatureClass = Contig.class; //Contig (default) or supercontig
     private String mode ="1"; 
     private String createMissingContigs = "no"; //Default no.
     private Session session;
@@ -116,85 +118,52 @@ public class AGPLoader {
     @Transactional(rollbackFor=DataError.class) 
     public void load(AGPFile agpFile) {
         
+        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        
         /* Initialising values*/
         this.setSession(SessionFactoryUtils.doGetSession(sessionFactory, false));
         String prevTopLevelName = new String();
         TopLevelFeature topLevelFeature = null;
         List<AGPLine> agpLines = new ArrayList<AGPLine>();
         int tlfLength = 0, linesRead=0; /* Total length of topLevel feature and lines read */
- 
-        String residue = new String();
-       
+        
         for (AGPLine line : agpFile.lines() ) {
-                      
+            
+            linesRead++;                             
             String currentTopLevelName = line.getTopLevelName();
-       
-            if (!currentTopLevelName.equals(prevTopLevelName) || agpFile.isLastLine(linesRead)) { //Start of a new topLevelFeature or end of file
-                
-                if(agpFile.hasOnlyOneLine()){ //special case
+         
+            if ((!currentTopLevelName.equals(prevTopLevelName) && !prevTopLevelName.isEmpty()) || agpFile.isLastLine(linesRead)){ //Start of a new topLevelFeature or end of file
+                if(agpFile.isLastLine(linesRead)){
+                    if(!currentTopLevelName.equals(prevTopLevelName) && !prevTopLevelName.isEmpty() ){
+                        /* If you are here, it means that the last line in the file is of a different
+                         * top level feature (tlf). In this case, process the previous tlf and then process
+                         * this one.
+                         */
+                        topLevelFeature = processTopLevel(prevTopLevelName, tlfLength, agpLines);
+                        this.contigsByStart.clear();
+                        tlfLength = 0;
+                        agpLines.clear();
+                       
+                    }
                     agpLines.add(line);
+                    tlfLength = line.getTopLevelEnd();
+                    topLevelFeature = processTopLevel(currentTopLevelName, tlfLength, agpLines);                     
+                    
+                }else{                   
+                    topLevelFeature = processTopLevel(prevTopLevelName, tlfLength, agpLines); 
                 }
-                
-                if(agpLines.size()>0){
-                    
-                    /* Deal with the toplevel feature */
-                    if(!agpFile.isLastLine(linesRead)){
-                       topLevelFeature = processTopLevel(prevTopLevelName, tlfLength); 
-                    }else{
-                       tlfLength = line.getTopLevelEnd();
-                       agpLines.add(line); //Add the last line
-                       topLevelFeature = processTopLevel(currentTopLevelName, tlfLength);
-                    }
- 
-                    /* Deal with contigs and gaps for this toplevel feature*/
-                    residue="";
-                    for(AGPLine entry: agpLines){
-                        Feature entryFeature;
-                        if(!entry.getEntryType().equals("N") && !entry.getEntryType().equals("U")){ //Contig
-                            entryFeature = processContigFeature(entry, topLevelFeature);  
-                            contigsByStart.put(new Integer(entryFeature.getStart()), entryFeature);
-                            residue = residue.concat(entryFeature.getResidues());
-                        }else{ //Gap
-                            entryFeature = processGapFeature(entry, topLevelFeature);  
-                            residue = residue.concat(entryFeature.getResidues());
-                            //Reset the residue value for the gaps as they dont seem to have residues in the database. Doesn't make sense to store them anyway.
-                            int seqlen = entryFeature.getSeqLen();
-                            entryFeature.setResidues("");
-                            entryFeature.setSeqLen(seqlen);
-                        }
- 
-                    }
-                   
-                    /* Doing some checks on the toplevel feature */
-                    if(topLevelFeature.getSeqLen()!=residue.length()){
-                        logger.warn(String.format("The length of tlf %s (%d) does not add up to the length of features' residues (%d)!", topLevelFeature.getUniqueName(), topLevelFeature.getSeqLen(), residue.length()));
-                    }
-                    if(topLevelFeature.getResidues()!=null && !topLevelFeature.getResidues().equalsIgnoreCase(residue)){
-                        logger.warn(String.format("The residue of top level feature %s does not appear to be correct. Check. ", topLevelFeature.getUniqueName()));
-                    }
-                    
-                    /* Remap features from topLevelFeature (tlf) to contigs or vice-versa */
-                    if(mode.equals("2")){
-                        remapFeaturesFromTLFToContigs(topLevelFeature); 
-                    }else if (mode.equals("1")){      
-                        topLevelFeature.setResidues(residue); 
-                        remapFeaturesFromContigsToTLF(topLevelFeature);
-                        this.putUnusedContigsInBin(getContigsAlreadyOnTLF(), contigsByStart.values());                        
-                    }
                                        
-                    /* Re-set values for next chromosome */
-                    logger.info(String.format("Processed %d contigs for toplevelfeature %s", contigsByStart.size(), topLevelFeature.getUniqueName()));
-                    this.contigsByStart.clear();
-                    tlfLength = 0;
-                    agpLines.clear(); 
-                }
-                prevTopLevelName = currentTopLevelName;
-                session.flush();
-                session.clear(); //Or else this becomes very very slow 
+                /* Re-set values for next toplevelfeature */
+                this.contigsByStart.clear();
+                tlfLength = 0;
+                agpLines.clear();                              
+                session.flush(); //Or else this becomes very very slow 
+                session.clear(); 
             }
-            agpLines.add(line);
-            linesRead++;
-            tlfLength = line.getTopLevelEnd();   
+            
+         agpLines.add(line);         
+         tlfLength = line.getTopLevelEnd();  
+         prevTopLevelName = currentTopLevelName;
         }
     }
     
@@ -203,10 +172,10 @@ public class AGPLoader {
     * Process the top-level feature (tlf) according to the selected mode. In mode 1, if the top-level feature exists, then delete it
     * and create a new one. In mode 2, return the top-level feature with the name specified.
     */
-    private TopLevelFeature processTopLevel(String topLevelName, int tlfLength) {
+    private TopLevelFeature processTopLevel(String topLevelName, int tlfLength, List<AGPLine> agpLines) {
 
         TopLevelFeature existingTopLevelFeature = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(topLevelName, organism.getCommonName() , TopLevelFeature.class);
-    	
+    	TopLevelFeature newTopLevelFeature;
     	if(mode.equals("1")){
     	    if (existingTopLevelFeature != null) {
     	        this.setContigsAlreadyOnTLF(this.getContigsOnThis(existingTopLevelFeature));
@@ -215,22 +184,67 @@ public class AGPLoader {
     	        session.flush();
     	    }
     	
-    	    TopLevelFeature topLevelFeature = TopLevelFeature.make(topLevelFeatureClass, topLevelName, organism);
-    	    topLevelFeature.markAsTopLevelFeature();
-    	    topLevelFeature.setSeqLen(tlfLength);
-    	    session.persist(topLevelFeature);
-    	    logger.info(String.format("Created new top level feature %s with ID=%d and length %d", topLevelName, topLevelFeature.getFeatureId(), topLevelFeature.getSeqLen()));
-    	    return topLevelFeature;
+    	    newTopLevelFeature = TopLevelFeature.make(topLevelFeatureClass, topLevelName, organism);
+    	    newTopLevelFeature.markAsTopLevelFeature();
+    	    newTopLevelFeature.setSeqLen(tlfLength);
+    	    session.persist(newTopLevelFeature);
+    	    logger.info(String.format("Created new top level feature %s with ID=%d and length %d", topLevelName, newTopLevelFeature.getFeatureId(), newTopLevelFeature.getSeqLen()));
+
     	    
-    	}else{ 
+    	}else{ //mode 2
  
     	    if (existingTopLevelFeature == null) {
     	        throw new RuntimeException(String.format("Looking for top level feature '%s' which does not exist!", topLevelName));
     	    }
     	    this.setContigsAlreadyOnTLF(this.getContigsOnThis(existingTopLevelFeature));
-    	    return existingTopLevelFeature;
+    	    newTopLevelFeature = existingTopLevelFeature;
     	}
+    	
+    	
+        /* Deal with child features and gaps for this toplevel feature*/
+        String residue="";
+        for(AGPLine entry: agpLines){
+            Feature entryFeature;
+            
+            if(!entry.getEntryType().equals("N") && !entry.getEntryType().equals("U")){ //Contig/child
+                entryFeature = processContigFeature(entry, newTopLevelFeature);  
+                contigsByStart.put(new Integer(entryFeature.getStart()), entryFeature);
+                residue = residue.concat(entryFeature.getResidues());
+            }else{ //Gap
+                entryFeature = processGapFeature(entry, newTopLevelFeature);  
+                residue = residue.concat(entryFeature.getResidues());
+                /*Reset the residue value for the gaps as they dont seem to have residues in the database. 
+                 *Doesn't make sense to store them anyway. */                           
+                int seqlen = entryFeature.getSeqLen();
+                entryFeature.setResidues("");
+                entryFeature.setSeqLen(seqlen);
+            }
+
+        }
+        
+        /* Remap features from topLevelFeature (tlf) to contigs or vice-versa */
+        if(mode.equals("2")){
+            remapFeaturesFromTLFToContigs(newTopLevelFeature); 
+        }else if (mode.equals("1")){      
+            newTopLevelFeature.setResidues(residue); 
+            remapFeaturesFromContigsToTLF(newTopLevelFeature);
+            this.putUnusedContigsInBin(getContigsAlreadyOnTLF(), contigsByStart.values());                        
+        } 
+        logger.info(String.format("Processed %d child features for toplevelfeature %s", contigsByStart.size(), newTopLevelFeature.getUniqueName()));
+       
+        /* Doing some checks on the toplevel feature */
+        if(newTopLevelFeature.getSeqLen()!=residue.length()){
+              logger.warn(String.format("The length of tlf %s (%d) does not add up to the length of features' residues (%d)!", newTopLevelFeature.getUniqueName(), newTopLevelFeature.getSeqLen(), residue.length()));
+          }
+        if(newTopLevelFeature.getResidues()!=null && !newTopLevelFeature.getResidues().equalsIgnoreCase(residue)){
+              logger.warn(String.format("The residue of top level feature %s does not appear to be correct. Check. ", newTopLevelFeature.getUniqueName()));
+          } 
+          
+
+    	return newTopLevelFeature;   	
     }
+    
+    
     
     /**
      * Process gap features. In both modes, if a gap does not exist, create a new one.
@@ -268,7 +282,7 @@ public class AGPLoader {
     /**
      * Process contigs according to the selected mode. If a contig with the specified name can be found in the database, we just make
      * sure it is featureloc'd correctly to the toplevelfeature. If it cannot be found:
-     * In mode 2, if a contig cannot be found, a new one is always created.
+     * In mode 2, a new one is always created.
      * In mode 1, all contigs should (in theory) already be in the database. However, in some organisms like Congolense, it may be necessary 
      * to create contigs even in mode 2 as the contig features have not been added properly. This is indicated by the createMissingContigs option. 
      * If set to 'yes', a new contig is created. By parsing the name and strand in the AGP file, we can also find out if this contig needs to be reversed. 
@@ -282,7 +296,7 @@ public class AGPLoader {
         boolean reverse_contig = false; 
      
         String uniqueName = line.getEntryName(); //Uniquename of contig
-        Pattern TURN_PATTERN = Pattern.compile("(\\S+)_turn");
+        Pattern TURN_PATTERN = Pattern.compile("(\\S+)_turn"); //This stuff was specific to Tcongolense - please update
         Matcher matcher = TURN_PATTERN.matcher(uniqueName);
         if (matcher.matches()){ //Definitely reverse this contig
             uniqueName = matcher.group(1);
@@ -316,14 +330,17 @@ public class AGPLoader {
             String residue = new String();
             
             if(mode.equals("2")){
-                /*In this mode: Always create missing contigs */
-                contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
-                topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0); 
-                residue = topLevelFeature.getResidues(line.getTopLevelStart(), line.getTopLevelEnd());
-                contig.setResidues(residue);
+      
+                if(createMissingContigs.equalsIgnoreCase("yes")){
+                    contig = TopLevelFeature.make(childLevelFeatureClass, uniqueName, organism);
+                    topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0); 
+                    residue = topLevelFeature.getResidues(line.getTopLevelStart(), line.getTopLevelEnd());
+                    contig.setResidues(residue);
                 
-                logger.info(String.format("Created contig %s (%d). Got residue from chromosome %s (%d-%d)", contig.getUniqueName(), contig.getFeatureId(), topLevelFeature.getUniqueName(),line.getTopLevelStart(), line.getTopLevelEnd()));
-                
+                    logger.info(String.format("Created child feature %s (%d). Got residue from chromosome %s (%d-%d)", contig.getUniqueName(), contig.getFeatureId(), topLevelFeature.getUniqueName(),line.getTopLevelStart(), line.getTopLevelEnd()));
+                }else{
+                    throw new RuntimeException(String.format("Looking for child feature '%s' which does not exist!", uniqueName));
+                }
             }else if(mode.equals("1")){
   
                 if (line.getEntryStrand().equals("-")){
@@ -338,8 +355,8 @@ public class AGPLoader {
                     }else{
                         if(createMissingContigs.equalsIgnoreCase("yes")){
                             uniqueName = reverseName(uniqueName);
-                            contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
-                            FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%"); 
+                            contig = TopLevelFeature.make(childLevelFeatureClass, uniqueName, organism);
+                            FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%"); //Gets the feature loc of the contig (if it has previously been archived e.g. in a bin)
                             if(archivedFloc!=null){
                                 residue = (archivedFloc.getSourceFeature()).getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
                                 logger.info(String.format("Creating contig %s (%d). Getting residue from  %s (%d-%d)", 
@@ -364,11 +381,11 @@ public class AGPLoader {
                     
                 }else{ //On +ve strand
                     if(createMissingContigs.equalsIgnoreCase("yes")){
-                        contig = TopLevelFeature.make(Contig.class, uniqueName, organism);
+                        contig = TopLevelFeature.make(childLevelFeatureClass, uniqueName, organism);
                         FeatureLoc archivedFloc = this.getArchivedContigFeatureloc("%"+uniqueName+"%");
                         if(archivedFloc!=null){
                             residue = (archivedFloc.getSourceFeature()).getResidues(archivedFloc.getFmin(), archivedFloc.getFmax());
-                            logger.info(String.format("Creating contig %s (%d). Getting residue from bin %s (%d-%d)", 
+                            logger.info(String.format("Creating child feature %s (%d). Getting residue from bin %s (%d-%d)", 
                                                        contig.getUniqueName(), contig.getFeatureId(), archivedFloc.getSourceFeature().getUniqueName(), archivedFloc.getFmin(), archivedFloc.getFmax()));
                         }
                         contig.setResidues(residue);
@@ -400,18 +417,27 @@ public class AGPLoader {
      * but different locgroups).
      */
     private void remapFeaturesFromTLFToContigs(TopLevelFeature tlf){
-        logger.info("Starting to remap features from chromosomes to contigs...");
+        logger.info("Starting to remap features from top level feature to child level features...");
         int count = 0;
         
         for(Feature f: this.getAllFeaturesExceptContigsAndGaps(tlf)){
             count++;
-            FeatureLoc floc = f.getFeatureLoc(0, 0); //Featureloc of feature on the chromosome
-
+            FeatureLoc floc = f.getFeatureLocOnThisSrcFeature(tlf);    //f.getFeatureLoc(0, 0); //Featureloc of feature on the chromosome
+            
+            // Get the max locgroup for this feature
+            int maxLocGroup = 0;
+            for(FeatureLoc fl: f.getFeatureLocs()){
+                if(fl.getLocGroup() > maxLocGroup){
+                    maxLocGroup = fl.getLocGroup();
+                }
+                
+            }
+            
             if(floc!=null){ //Sanity check
                 Feature contig = contigsByStart.isEmpty() ? null : contigsByStart.floorEntry(floc.getFmin()).getValue(); //The contig that the feature starts on
 
                 if(contig!=null){
-                    if (floc.getFmax() > contig.getStop()) { //Fmax partial
+                    if (floc.getFmax() > contig.getStop() ) { //Fmax partial
                         Feature fmincontig = contig;
                         Feature fmaxcontig = contigsByStart.isEmpty() ? null : contigsByStart.floorEntry(floc.getFmax()).getValue(); //The contig the feature ends on 
 
@@ -430,20 +456,34 @@ public class AGPLoader {
                                         f.getUniqueName(), floc.getFmin(), floc.getFmax(), 
                                         fmincontig.getUniqueName(), (floc.getFmin()-fmincontig.getStart()), (fmincontig.getStop()-fmincontig.getStart()),
                                         fmaxcontig.getUniqueName(), 0, (floc.getFmax()-fmaxcontig.getStart())));
-
-                                FeatureLoc fminfloc = fmincontig.addLocatedChild(f, (floc.getFmin()-fmincontig.getStart()), (fmincontig.getStop()-fmincontig.getStart()), floc.getStrand(), floc.getPhase(), 1, 0);
-                                FeatureLoc fmaxfloc = fmaxcontig.addLocatedChild(f, 0, (floc.getFmax()-fmaxcontig.getStart()), floc.getStrand(), floc.getPhase(), 2, 0);
-                                fminfloc.setFmaxPartial(true);
-                                fmaxfloc.setFminPartial(true);
-                                session.persist(fminfloc);
-                                session.persist(fmaxfloc);
+    
+                                //Feature split over two child features
+                                if(floc.getFmin() < fmincontig.getStop()){
+                                    FeatureLoc fminfloc = fmincontig.addLocatedChild(f, (floc.getFmin()-fmincontig.getStart()), (fmincontig.getStop()-fmincontig.getStart()), floc.getStrand(), floc.getPhase(), maxLocGroup+1, 0);
+                                    fminfloc.setFmaxPartial(true);
+                                    session.persist(fminfloc);
+                                }
+                                if(floc.getFmax() < fmaxcontig.getStop()){
+                                    FeatureLoc fmaxfloc = fmaxcontig.addLocatedChild(f, 0, (floc.getFmax()-fmaxcontig.getStart()), floc.getStrand(), floc.getPhase(), maxLocGroup+2, 0);                                
+                                    fmaxfloc.setFminPartial(true);
+                                    session.persist(fmaxfloc);
+                                }
+                                if(floc.getFmin() > fmincontig.getStop() || floc.getFmax() > fmaxcontig.getStop()){
+                                    logger.warn(String.format("Parts of the feature %s fall into the gaps between the child features.", f.getUniqueName()));
+                                }
+                                
+                               
                             }
                         }else{
                             logger.warn(String.format("!!Feature %s fmax partial but no possible contig for fmax", f.getUniqueName()));
                         }
+                        
+                        
+                  
 
-                    }else{ 
-                        FeatureLoc newFloc = contig.addLocatedChild(f, floc.getFmin()-contig.getStart(), floc.getFmax()-contig.getStart(), floc.getStrand(), floc.getPhase(), 1, 0); 
+                    }else{ //Nothing is partial
+
+                        FeatureLoc newFloc = contig.addLocatedChild(f, floc.getFmin()-contig.getStart(), floc.getFmax()-contig.getStart(), floc.getStrand(), floc.getPhase(), maxLocGroup+1, 0); 
                         session.persist(newFloc);
                     }
 
@@ -696,11 +736,20 @@ public class AGPLoader {
 
     /** 
      * Set the class of the top-level features that this AGP file represents. With AGP files,
-     * it's usually chromosomes but this may, in theory, correspond to chromosomes or supercontigs 
-     * in the database. The default, if this method is not called, is <code>Chromosome</code>. 
+     * it's usually chromosomes but they could also be supercontigs. The default, if this method 
+     * is not called, is <code>Chromosome</code>. 
      */
     public void setTopLevelFeatureClass(Class<? extends TopLevelFeature> topLevelFeatureClass) {
         this.topLevelFeatureClass = topLevelFeatureClass;
+    }
+    
+    /** 
+     * Set the class of the child-level features that this AGP file represents. With AGP files,
+     * it's usually contigs but they could also be supercontigs. The default, if this method 
+     * is not called, is <code>contig</code>. 
+     */
+    public void setChildLevelFeatureClass(Class<? extends TopLevelFeature> childLevelFeatureClass) {
+        this.childLevelFeatureClass = childLevelFeatureClass;
     }
     
     /**
@@ -757,7 +806,7 @@ class AGPFile {
 
         String line;
         int lineNumber = 0;
-        while (null != (line = reader.readLine())) { //While not end of file            
+        while (null != (line = reader.readLine())) { //While not end of file      
             lineNumber++;
             AGPLine newLine = new AGPLine(lineNumber, line);
             lines.add(newLine);   
@@ -769,7 +818,7 @@ class AGPFile {
     }
     
     public boolean isLastLine(int lineNum){
-        if(lineNum==(this.lines().size()-1)){
+        if(lineNum==this.lines().size()){           
             return true;        
         }
         return false;
@@ -794,8 +843,10 @@ class AGPLine {
 
     public AGPLine(int lineNumber, String line){
  
-       final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([ADFGOPW])\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)"); 
-       final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([UN])\\t(\\S+)\\t(\\S+)\\t(\\S+)");
+       /*final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([ADFGOPW])\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)"); */
+       final Pattern CONTIG_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+([ADFGOPW])\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)"); 
+       /*final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\t(\\S+)\\t(\\S+)\\t(\\S+)\\t([UN])\\t(\\S+)\\t(\\S+)\\t(\\S+)");*/
+       final Pattern GAP_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+([UN])\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)");
 
         Matcher matcher_contig = CONTIG_PATTERN.matcher(line);
         Matcher matcher_gap = GAP_PATTERN.matcher(line);
@@ -806,7 +857,7 @@ class AGPLine {
         
         if (matcher_contig.matches()){ /*&& (matcher_contig.group(5).equals("D") ||
                                          matcher_contig.group(5).equals("A"))) { //Making sure it's a contig line */
-                   
+                                           
             this.topLevelName = matcher_contig.group(1);
             this.topLevelStart = Integer.parseInt(matcher_contig.group(2))-1;//subtract 1 to convert to interbase coordinates
             this.topLevelEnd = Integer.parseInt(matcher_contig.group(3)); 
@@ -817,7 +868,7 @@ class AGPLine {
             this.entryStrand = matcher_contig.group(9);
  
         }else if (matcher_gap.matches() ){ //Making sure it's a gap line
- 
+
             this.topLevelName = matcher_gap.group(1);
             this.topLevelStart = (Integer.parseInt(matcher_gap.group(2)))-1;//subtract 1 to convert to interbase coordinates //imt
             this.topLevelEnd = Integer.parseInt(matcher_gap.group(3)); //int
@@ -826,7 +877,6 @@ class AGPLine {
             this.gapLinkage = matcher_gap.group(8);
 
         }else{
-
             logger.error(String.format("Unable to parse line %d: %s", lineNumber, line));
         }
 
