@@ -1,9 +1,11 @@
 package org.genedb.db.loading;
 
 import org.gmod.schema.feature.Chromosome;
+import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.Supercontig;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,6 +38,8 @@ public class LoadAGP extends FileProcessor{
      *                  or <b>2</b> (load the top level features, not the contigs and gaps).
      *   <li> <code>load.topLevel</code> tells the loader if the top level feature(s) we need to deal with for this organism is a 
      *          chromosome or supercontig. The default will be a chromosome. 
+     *   <li> <code>load.childLevel</code> tells the loader what the child level features are (usually contigs, occassional supercontigs when
+     *          they are assembled into chromosomes). The default will be a contig. 
      *   <li> <code>load.createMissingContigs</code> tells the loader if it should create missing contigs in mode 1 where, in theory, all the contigs
      *   should already be in the database. In some cases, however, like Tcongolense it is ok to create contigs when they cannot be found as there are
      *   no contig features in the database for it anyway. </li>        
@@ -60,16 +64,20 @@ public class LoadAGP extends FileProcessor{
             logger.warn("Ignoring command-line arguments");
         }
         
+        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String mode = getPropertyWithDefault("load.mode", "1");
         String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "chromosome").toLowerCase();
+        String childLevelFeatureType = getPropertyWithDefault("load.childLevel", "contig").toLowerCase();
         String createMissingContigs = getPropertyWithDefault("load.createMissingContigs", "no");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.(agp)(?:\\.gz)?");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         
-        logger.info(String.format("Options: organismCommonName=%s, mode=%s, topLevel=%s, inputDirectory=%s", organismCommonName, mode, topLevelFeatureType, inputDirectory));
+        logger.info(String.format("Options: organismCommonName=%s, mode=%s, topLevel=%s, inputDirectory=%s", organismCommonName, mode, topLevelFeatureType, childLevelFeatureType, inputDirectory));
+      
 
-        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, createMissingContigs);
+        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, childLevelFeatureType, createMissingContigs);
         loadAGP.processFileOrDirectory(inputDirectory, fileNamePattern);
       
     }
@@ -82,9 +90,10 @@ public class LoadAGP extends FileProcessor{
      * @param organismCommonName
      * @param mode
      * @param topLevelFeatureType
+     * @param childLevelFeatureType
      * @param inputAGPFileName
      */
-    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String createMissingContigs) throws IOException{
+    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String childLevelFeatureType, String createMissingContigs) throws IOException{
         
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
         this.loader = applicationContext.getBean("agpLoader", AGPLoader.class);
@@ -106,6 +115,20 @@ public class LoadAGP extends FileProcessor{
             loader.setTopLevelFeatureClass(Supercontig.class);
         } else {
             throw new RuntimeException(String.format("Unrecognised value for load.topLevel: %s", topLevelFeatureType));
+        }
+        
+        //Child level: Only allows contig or supercontig for now.
+        if (childLevelFeatureType.equals("contig")) {
+            loader.setChildLevelFeatureClass(Contig.class);
+        } else if (childLevelFeatureType.equals("supercontig")) {
+            loader.setChildLevelFeatureClass(Supercontig.class);
+        } else {
+            throw new RuntimeException(String.format("Unrecognised value for load.childLevel: %s", childLevelFeatureType));
+        }
+        
+        //Check again that both the top level and child level are not set to supercontig!
+        if(childLevelFeatureType.equals(topLevelFeatureType)){
+            throw new RuntimeException(String.format("Both the child level and the top level feature types are set to: %s", childLevelFeatureType));
         }
         
         //Should the loader create contigs in mode 1 (when it expects to find all the contigs in the database)
