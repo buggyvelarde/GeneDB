@@ -12,6 +12,7 @@ import org.gmod.schema.feature.Supercontig;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,7 +32,9 @@ import java.util.regex.Pattern;
  *
  */
 public class LoadEmbl extends FileProcessor {
-    private static final Logger logger = Logger.getLogger(LoadEmbl.class);
+    
+    
+     private static final Logger logger = Logger.getLogger(LoadEmbl.class);
     /**
      * Recurse through a directory structure, loading each EMBL file we encounter.
      * <p>
@@ -82,6 +85,10 @@ public class LoadEmbl extends FileProcessor {
         if (args.length > 0) {
             logger.warn("Ignoring command-line arguments");
         }
+        
+        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        
+        
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.(embl|tab)(?:\\.gz)?");

@@ -282,6 +282,19 @@ class FeatureTable extends EmblFile.Section {
         public boolean isPseudo() {
             return hasQualifier("pseudo");
         }
+        
+        /**
+         * Is this feature obsolete?
+         *
+         * @return <code>true</code> if it is (i.e. note="true",
+         *          <code>false</code>if it isn't.
+         */
+        public boolean isObsolete() {
+            if (getQualifierValues("note").contains(new String("true"))){
+                return true;
+            }
+            return false;
+        }
     }
     private class Qualifier {
         String name, value;
@@ -399,6 +412,7 @@ class FeatureTable extends EmblFile.Section {
                 // This is the last line of the string
                 if (! data.endsWith("\"")) {
                     throw new SyntaxError("Failed to parse string data: unbalanced quotes");
+                    
                 }
                 currentString.append(data.substring(0, data.length() - 1).replaceAll("\"\"", "\""));
                 currentFeature.qualifiers.add(new Qualifier(currentQualifier, currentString.toString(), true));

@@ -10,6 +10,7 @@ import org.genedb.util.IterableArray;
 import org.gmod.schema.cfg.FeatureTypeUtils;
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Centromere;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.DirectRepeatRegion;
 import org.gmod.schema.feature.FivePrimeUTR;
@@ -27,6 +28,7 @@ import org.gmod.schema.feature.RRNA;
 import org.gmod.schema.feature.Region;
 import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.RepeatUnit;
+import org.gmod.schema.feature.SECISElement;
 import org.gmod.schema.feature.SnRNA;
 import org.gmod.schema.feature.SnoRNA;
 import org.gmod.schema.feature.Supercontig;
@@ -42,10 +44,12 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.HasPubsAndDbXRefs;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.mapped.PubDbXRef;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.ObjectManager;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -284,6 +288,9 @@ class EmblLoader {
      * @throws DataError if a data problem is discovered
      */
     public void load(EmblFile emblFile) throws DataError {
+        
+        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        
         propagateIgnoreFeaturesAndQualifiers(emblFile.getFeatureTable());
 
         TopLevelFeature topLevelFeature;
@@ -607,6 +614,18 @@ class EmblLoader {
         else if (featureType.equals("fasta_record")) {
             loadFastaRecord(feature); // These are often used to identify individual contigs within a bin chromosome
         }
+        else if (featureType.equals("misc_feature") && feature.getQualifierValues("note").contains(new String("centromere"))){
+            /* Centromeres are pulled out as misc_features with note="centromere" with writedb_entry.
+             * Here we check for this note and load the centromere. Rest of the misc features are archived.
+             * nds, 30 Nov 2010
+             */
+            focalFeature = loadCentromere(feature); 
+            
+        }
+        else if (featureType.equals("misc_feature") && feature.getQualifierValues("note").contains(new String("SECIS_element"))){
+            /* SECIS_elements are pulled out with a note='SECIS_element' */
+            focalFeature = loadSECISElement(feature);
+        }
         else {
             logger.info(String.format("Archiving %s feature", featureType));
             archiveFeature(feature);
@@ -644,7 +663,58 @@ class EmblLoader {
         archiveUnusedQualifiers(feature, focalFeature);
 
     }
+    // Centromeres
+    private Centromere loadCentromere(FeatureTable.Feature feature) throws DataError {
+        EmblLocation centromereLocation = feature.location;
+        String centromereName = feature.getUniqueName();
 
+        logger.info(String.format("Adding a centromere %s at %d-%d on %s", 
+                   centromereName, centromereLocation.getFmin(), centromereLocation.getFmax(), topLevelFeature.getUniqueName() ));
+        Centromere centromere = Centromere.make(topLevelFeature, centromereName, centromereLocation.getFmin(), centromereLocation.getFmax()); 
+        session.persist(centromere);    
+   
+        // Add any literature (duplicated effort here since the processLiterature() method is within the geneLoader). Fix later.
+        Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)(?:;.*)?");
+        for (String pmid: feature.getQualifierValues("literature", "citation")) {
+            Matcher matcher = literaturePattern.matcher(pmid);
+            if (!matcher.matches()) {
+                throw new DataError("Failed to parse literature/citation qualifier: " + pmid);
+            }
+            String accession = matcher.group(1);      
+            DbXRef dbXRef = objectManager.getDbXRef("PMID", accession);
+            Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
+            session.persist(pub.addDbXRef(dbXRef, true));
+            session.persist(centromere.addPub(pub));
+        }
+        
+        return centromere;
+
+    }
+
+    //SECIS_elements
+    private SECISElement loadSECISElement(FeatureTable.Feature feature) throws DataError {
+        EmblLocation secisLocation = feature.location;
+        String secisName = feature.getUniqueName();
+
+        logger.info(String.format("Adding a SECIS_element %s at %d-%d on %s", 
+                   secisName, secisLocation.getFmin(), secisLocation.getFmax(), topLevelFeature.getUniqueName() ));
+      
+        SECISElement secisElement = new SECISElement(organism, secisName);
+        locate(secisElement,secisLocation);
+        session.persist(secisElement);   
+        
+        int rank=0;
+        for (String note: feature.getQualifierValues("note")) {
+            if(!note.equalsIgnoreCase("SECIS_element") && !note.equalsIgnoreCase("false")){ //The note=false just means it is not obsolete
+                secisElement.addFeatureProp(note, "feature_property", "comment", rank++);
+            }
+        }
+ 
+        return secisElement;
+
+    }
+    
+    
     private Counters archivedFeatureIndexes = new Counters();
     private void archiveFeature(FeatureTable.Feature feature) {
         String featureUniqueName = String.format("%s:archived:%s:%d",
@@ -854,6 +924,7 @@ class EmblLoader {
         protected EmblLocation location;
         protected boolean isPseudo = false;
         protected boolean singlySpliced = true;
+        protected boolean isObsolete = false;
         protected String geneUniqueName = null;
         protected String transcriptUniqueName = null;
         protected String geneName;
@@ -941,6 +1012,8 @@ class EmblLoader {
         private AbstractGene createGene() {
             logger.debug(String.format("Creating gene '%s' (%s)", geneUniqueName, geneName));
             AbstractGene gene = AbstractGene.make(getGeneClass(), organism, geneUniqueName, geneName);
+            gene.setObsolete(isObsolete); //Is it obsolete?
+            logger.info(String.format("Setting gene %s 's obsolete status to %s", gene.getUniqueName(), isObsolete));
             locate(gene, location);
             session.persist(gene);
             return gene;
@@ -972,12 +1045,14 @@ class EmblLoader {
             }
 
             this.transcript = gene.makeTranscript(getTranscriptClass(), actualTranscriptUniqueName, location.getFmin(), location.getFmax(), gene, location);
+            transcript.setObsolete(isObsolete); //Is it obsolete?
             session.persist(transcript);
 
             focalFeature = transcript;
             if (transcript instanceof ProductiveTranscript) {
                 Polypeptide polypeptide = ((ProductiveTranscript) transcript).getProtein();
                 if (polypeptide != null) {
+                    polypeptide.setObsolete(isObsolete);
                     focalFeature = polypeptide;
                 }
             }
@@ -1134,6 +1209,7 @@ class EmblLoader {
                 String exonUniqueName = String.format("%s:exon:%d", actualTranscriptUniqueName, ++exonIndex);
                 logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
                 AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax(), phase);
+                exon.setObsolete(isObsolete);
                 session.persist(exon);
             }
         }
@@ -1815,6 +1891,7 @@ class EmblLoader {
             super(cdsFeature);
 
             isPseudo = cdsFeature.isPseudo();
+            isObsolete = cdsFeature.isObsolete();
             geneUniqueName = cdsFeature.getSharedId();
             transcriptUniqueName = cdsFeature.getUniqueName();
 
@@ -1857,7 +1934,6 @@ class EmblLoader {
     }
 
     private Feature loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
-        System.out.println("Calling loadCDS...");
         return new CDSLoader(cdsFeature).load();
     }
 
