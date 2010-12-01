@@ -53,7 +53,7 @@ logecho() {
 }
 
 VERSION=0.1
-HST="pathdbsrv1a"
+HST="pcs-genedb-dev"
 
 if [ `uname -n` != ${HST} ]; then
     echo "This only runs on ${HST}. Not proceeding."
