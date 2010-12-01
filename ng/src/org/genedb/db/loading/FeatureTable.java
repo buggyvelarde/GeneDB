@@ -290,7 +290,7 @@ class FeatureTable extends EmblFile.Section {
          *          <code>false</code>if it isn't.
          */
         public boolean isObsolete() {
-            if (getQualifierValues("note").contains(new String("true"))){
+            if (getQualifierValues("note").contains(new String("obsolete"))){
                 return true;
             }
             return false;
