@@ -289,7 +289,7 @@ class EmblLoader {
      */
     public void load(EmblFile emblFile) throws DataError {
         
-        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        //PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
         
         propagateIgnoreFeaturesAndQualifiers(emblFile.getFeatureTable());
 

@@ -86,7 +86,7 @@ public class LoadEmbl extends FileProcessor {
             logger.warn("Ignoring command-line arguments");
         }
         
-        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+       // PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
         
         
         String organismCommonName = getRequiredProperty("load.organismCommonName");
