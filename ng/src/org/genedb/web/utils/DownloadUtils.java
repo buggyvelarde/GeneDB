@@ -193,12 +193,15 @@ public class DownloadUtils {
             
 	    		case INTERGENIC_3:
 	    			sequence =  fetchParentSequence(transcript, false, prime3, 0);
+	    			break;
 	
 	    		case INTERGENIC_5:
 	    			sequence =  fetchParentSequence(transcript, false, 0, prime5);
+	    			break;
 	
 	    		case INTERGENIC_3and5:
 	    			sequence =  fetchParentSequence(transcript, true, prime3, prime5);
+	    			break;
 	            }
         }
         
@@ -340,7 +343,7 @@ public class DownloadUtils {
 	private static String fetchParentSequence(Feature t, boolean includeTranscript, int prime3, int prime5) {
 		
 		//logger.info(prime3 + " --- " + prime5);
-		
+		//System.out.println(String.format("prime3:: %s prime5:: %s", prime3, prime5));
 		 
 	    if (prime3>0 && prime5 > 0 && !includeTranscript) {
 	        throw new IllegalArgumentException("Can't fetch sequence from both sides of a transcript but not include the transcript");
@@ -381,7 +384,9 @@ public class DownloadUtils {
 			end = parentSequenceLength;
 		}
 		
-		return new String(parent.getResidues(start, end, fl.getStrand()==1));
+		//System.out.println(String.format("START:: %s END:: %s", start, end));
+		
+		return new String(parent.getResidues(start, end, fl.getStrand() == -1));
 	}
 
 
