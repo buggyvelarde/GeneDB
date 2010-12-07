@@ -104,7 +104,23 @@ public class DownloadProcessUtil {
     	return downloadTmpFolder;
     }
     
+    private String baseDownloadUrl; 
     
+    public void setBaseDownloadUrl(String baseDownloadUrl) {
+    	this.baseDownloadUrl = baseDownloadUrl;
+    }
+    
+    private String baseDownloadDestFolder;
+    
+    public void setBaseDownloadDestFolder(String baseDownloadDestFolder) {
+    	this.baseDownloadDestFolder = baseDownloadDestFolder;
+    }
+    
+    public String getBaseDownloadDestFolder() {
+    	return baseDownloadDestFolder;
+    }
+    
+    private long maxAtachmentSize = 5242880;
     
     public void sendEmail(String to, final String subject, String text, File attachment) throws javax.mail.MessagingException {
     	
@@ -114,12 +130,21 @@ public class DownloadProcessUtil {
     	helper.setTo(to);
     	helper.setFrom(new InternetAddress("webmaster@genedb.org"));
     	helper.setSubject("Your GeneDB query results - " + subject);
-    	helper.setText(text, true);
+    	
     	
     	if (attachment != null) {
-    		FileSystemResource file = new FileSystemResource(attachment);
-        	helper.addAttachment(file.getFilename(), file);
+    		
+    		if (attachment.length() > maxAtachmentSize) {
+    			text += "<p>The results are too large to attach. Please find them temporarily hosted here:";
+    			text += String.format("<a href='%s'>%s</a>.</p>", baseDownloadUrl + attachment.getName() , subject);
+    		} else {
+    			FileSystemResource file = new FileSystemResource(attachment);
+            	helper.addAttachment(file.getFilename(), file);
+    		}
+    		
     	}
+    	
+    	helper.setText(text, true);
     	
     	mailSender.send(message);
     	
