@@ -325,7 +325,7 @@
     aspectpathref="compile-classpathref"
     classpathRef ="compile-classpathref"
     showWeaveInfo="true"
-    destdir="${classes.dir}" maxmem="2048M" fork="true">
+    destdir="${classes.dir}" maxmem="1024M" fork="true">
 
       <forkclasspath refid="aspectj-tools-classpath"/>
     </iajc>
