@@ -2,17 +2,20 @@ package org.genedb.misc.remapper
 
 import groovy.sql.Sql
 
+// Takes the mapping file produced with ExtractInfo2.groovy
+// and remaps the annotation on the old sequence to the new
+// sequence
 
 public class MultiChromSimpleLocationRemapper {
 
     def db
-    def organismId = 16
+    def organismId = 27 //remove the hardcoded organism id!
     boolean transcriptNameHack = false
 
     MultiChromSimpleLocationRemapper(boolean transcriptNameHack) {
         this.transcriptNameHack = transcriptNameHack
         db = Sql.newInstance(
-            'jdbc:postgresql://pgsrv1:5432/pathogens',
+            'jdbc:postgresql://pgsrv1:5432/test_falciparum',
             'pathdb',
             'LongJ!@n',
             'org.postgresql.Driver')
@@ -39,7 +42,7 @@ public class MultiChromSimpleLocationRemapper {
 
     private void convert(def features, def contigNameId, def currentContigList) {
 
-//        Map contigNameId = lookupContigMap(sequenceNames)
+//      Map contigNameId = lookupContigMap(sequenceNames)
 
         Map dbids = [:]
         List rows = db.rows('''
@@ -342,9 +345,12 @@ public class MultiChromSimpleLocationRemapper {
         return input.substring(0, index) + to
     }
 
+
+    // MAIN METHOD
+    
     public static void main(String[] args) {
       if (args.length < 2) {
-        println "MultiChromSimpleLocationRemapper mappingFile sequenceFile1 ..."
+        println "MultiChromSimpleLocationRemapper mappingFile1 sequenceFile1"
         System.exit(3)
       }
 
@@ -354,10 +360,10 @@ public class MultiChromSimpleLocationRemapper {
       def currentContigList = "";
       boolean first = true
       for (int i in 1 .. args.length-1) {
-	  String name = args[i]+"__new"
-	  String lookup = app.lookupContigId(name, true)
-	  mapping.put(name, lookup)
-	  //println "Storing mapping '${name}' '${lookup}'"
+	       String name = args[i]+"__new" //This is the new name of the top level as loaded in step 1 of this remapping process
+	       String lookup = app.lookupContigId(name, true)
+	       mapping.put(name, lookup)
+	       //println "Storing mapping '${name}' '${lookup}'"
 	  int oldId = app.lookupContigId(args[i], false) 
 	  if (oldId != -1) {
              if (!first) {

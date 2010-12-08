@@ -4,6 +4,12 @@ import java.io.File
 import java.util.Set;
 import java.util.List;
 
+// This script reads the specified EMBL files and extracts the feature names and locations
+// This data will be used in the next stage to remap the annotation.
+// Sample usage:
+// (groovy ExtractInfo.groovy L* > mapping.out) >& mapping.out.err
+//
+
 public class ExtractInfo {
 
     private boolean cdsHack
@@ -19,7 +25,7 @@ public class ExtractInfo {
         File an = new File(annotation)
         String contigName = an.name
         def g
-	def lastFeatType
+	    def lastFeatType
         boolean seenID = true
         an.eachLine({
 
@@ -36,7 +42,7 @@ public class ExtractInfo {
                 } else {
                     g.type = parts[1]
                 }
-		lastFeatType = parts[1]
+		        lastFeatType = parts[1]
                 String location = parts[2]
                 //System.err.println(location)
                 if (location.contains("complement")) {
