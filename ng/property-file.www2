@@ -14,7 +14,6 @@ resultsCacheDirectory=/tmp/results_staging.www2
 download.tmpFolder=/nfs/pathdb/genedb/www2/tmp
 download.mail.host=mail.sanger.ac.uk
 download.mail.port=25
-download.destFolder=/nfs/pathdb/genedb/www-cgi/htdocs/downloads
-download.baseURL=http://www.genedb.org/downloads/
+download.baseURL=http://beta.genedb.org/Download/batch
 
 diagram.fontFile=file:///nfs/pathdb/f011004t.ttf

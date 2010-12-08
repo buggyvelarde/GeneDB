@@ -110,15 +110,6 @@ public class DownloadProcessUtil {
     	this.baseDownloadUrl = baseDownloadUrl;
     }
     
-    private String baseDownloadDestFolder;
-    
-    public void setBaseDownloadDestFolder(String baseDownloadDestFolder) {
-    	this.baseDownloadDestFolder = baseDownloadDestFolder;
-    }
-    
-    public String getBaseDownloadDestFolder() {
-    	return baseDownloadDestFolder;
-    }
     
     private long maxAtachmentSize = 5242880;
     
@@ -131,12 +122,10 @@ public class DownloadProcessUtil {
     	helper.setFrom(new InternetAddress("webmaster@genedb.org"));
     	helper.setSubject("Your GeneDB query results - " + subject);
     	
-    	
     	if (attachment != null) {
-    		
     		if (attachment.length() > maxAtachmentSize) {
-    			text += "<p>The results are too large to attach. Please find them temporarily hosted here:";
-    			text += String.format("<a href='%s'>%s</a>.</p>", baseDownloadUrl + attachment.getName() , subject);
+    			text += "<p>The results are too large to attach. Please find them temporarily hosted here: ";
+    			text += String.format("<a href='%s?file=%s'>%s</a>.</p>", baseDownloadUrl , attachment.getName(), subject);
     		} else {
     			FileSystemResource file = new FileSystemResource(attachment);
             	helper.addAttachment(file.getFilename(), file);

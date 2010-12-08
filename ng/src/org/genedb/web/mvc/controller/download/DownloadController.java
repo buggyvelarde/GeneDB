@@ -42,6 +42,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -320,6 +321,25 @@ public class DownloadController {
         
         return null;
     }
+	
+	@RequestMapping(method=RequestMethod.GET, value="/batch")
+	public ModelAndView batch (HttpServletResponse response, @RequestParam("file") final String suppliedFileName) throws FileNotFoundException, IOException {
+		
+		final File baseFileFolder = util.gettDownloadTmpFolder();
+		File suppliedFile = new File(baseFileFolder, suppliedFileName);
+		
+		logger.info(String.format("Trying to return %s link for file %s.", suppliedFileName, suppliedFile.getAbsolutePath()));
+		
+		if ((! suppliedFile.isFile()) || (suppliedFile.isDirectory() || (! suppliedFile.getName().endsWith("zip")))) {
+			logger.error("Could not find file");
+			response.getWriter().append("Could not find file " + suppliedFileName);
+			return null;
+		}
+		
+		returnFile(suppliedFile, response.getOutputStream());
+		
+		return null;
+	}
 	
 	
     

@@ -200,19 +200,8 @@ public class DownloadProcess {
 		
 		File zipFile = util.zip(file);
 		
-		File dir = new File( util.getBaseDownloadDestFolder() );
-		
-		File newZipFile = new File(dir, zipFile.getName());
-		
-		boolean success = zipFile.renameTo(newZipFile);
-		
-		if (! success) {
-			System.err.println(String.format("Could not move file " , zipFile.getAbsolutePath(), newZipFile.getAbsolutePath()));
-			System.exit(1);
-		}
-		
 		if (outputDestination == OutputDestination.TO_EMAIL) {
-			util.sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, newZipFile);
+			util.sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
 		}
 		
 	}
