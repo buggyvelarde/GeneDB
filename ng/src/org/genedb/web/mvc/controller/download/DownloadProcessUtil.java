@@ -125,7 +125,7 @@ public class DownloadProcessUtil {
     	if (attachment != null) {
     		text += String.format("<P>File length: %s (max attacheable %s) </P>",  attachment.length(), maxAtachmentSize);
     		if (attachment.length() > maxAtachmentSize) {
-    			text += "<p>The results are too large to attach. Please find them temporarily hosted here: " + baseDownloadUrl + attachment.getName() + " . ";
+    			text += "<p>The results are too large to attach. Please find them temporarily hosted here: " + baseDownloadUrl + attachment.getName() + " .</p> ";
     			
     		} else {
     			FileSystemResource file = new FileSystemResource(attachment);
