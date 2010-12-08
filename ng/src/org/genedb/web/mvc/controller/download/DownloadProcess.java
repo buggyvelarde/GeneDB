@@ -198,6 +198,8 @@ public class DownloadProcess {
 			break;
 		}
 		
+		System.gc();
+		
 		File zipFile = util.zip(file);
 		
 		if (outputDestination == OutputDestination.TO_EMAIL) {
