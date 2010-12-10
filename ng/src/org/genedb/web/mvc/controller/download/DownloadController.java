@@ -114,9 +114,12 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-		String downloadLinkUrl = request.getContextPath() + "/Download/batch";
+		
+		String downloadLinkUrl  = "http://" ;
+		downloadLinkUrl += request.getRequestURL().toString() + "/Download/batch";
 		
 		logger.info("URL:: " + downloadLinkUrl);
+		logger.info("PROXY :: " + request.getRemoteHost());
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
