@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<format:header title="Trypanosoma surface phylome" />
+<format:header title="The African trypanosome surface phylome" />
 <format:page>
 
 <div id="col-2-1">
 
 <h1>
-    A Phylome of gene families in African trypanosomes with predicted cell surface roles.
+    The African trypanosome surface phylome.
 </h1>
 
 <format:genePageSection>
@@ -15,7 +15,7 @@
 
 <div id="surface_phylome"></div>
 
-<div style="font-size:x-small;font-weight:bold;text-align:center;">
+<div style="font-size:x-small;font-weight:bold;">
 The taxonomic distribution of gene families with putative cell-surface roles, displayed in a Venn diagram. Each circle represents a family. The 
 label in each circle refers to the description key, while size reflects the number of genes it contains; for large families the absolute number 
 is shown in parentheses. For families present in multiple species, a pie chart is shown indicating relative gene numbers. The three tabs attending 
