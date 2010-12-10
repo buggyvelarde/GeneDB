@@ -115,6 +115,8 @@ public class DownloadController {
     ) throws IOException, QueryException  {
     	
 		String downloadLinkUrl = request.getContextPath() + "/Download/batch";
+		
+		logger.info("URL:: " + downloadLinkUrl);
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
