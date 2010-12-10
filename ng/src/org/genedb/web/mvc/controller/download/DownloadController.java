@@ -42,7 +42,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -114,12 +113,9 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-		
-		String downloadLinkUrl  = "http://" ;
-		downloadLinkUrl += request.getRequestURL().toString() + "/Download/batch";
+		String downloadLinkUrl = util.getBaseDownloadUrl();
 		
 		logger.info("URL:: " + downloadLinkUrl);
-		logger.info("PROXY :: " + request.getRemoteHost());
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
