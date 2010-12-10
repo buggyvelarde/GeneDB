@@ -21,6 +21,8 @@ resultsCacheDirectory=/tmp/results_ci-web
 download.tmpFolder=/nfs/pathdb/genedb/ci-web/tmp
 download.mail.host=mail.sanger.ac.uk
 download.mail.port=25
+download.baseURL=http://developer.genedb.org/ci-web/Download/batch
 
 
 diagram.fontFile=/nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
+
