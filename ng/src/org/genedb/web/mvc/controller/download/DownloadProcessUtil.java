@@ -104,16 +104,9 @@ public class DownloadProcessUtil {
     	return downloadTmpFolder;
     }
     
-    private String baseDownloadUrl; 
-    
-    public void setBaseDownloadUrl(String baseDownloadUrl) {
-    	this.baseDownloadUrl = baseDownloadUrl;
-    }
-    
-    
     private long maxAtachmentSize = 5242880;
     
-    public void sendEmail(String to, final String subject, String text, File attachment) throws javax.mail.MessagingException {
+    public void sendEmail(String to, final String subject, String text, File attachment, String url) throws javax.mail.MessagingException {
     	
     	MimeMessage message = mailSender.createMimeMessage();
     	
@@ -125,7 +118,7 @@ public class DownloadProcessUtil {
     	if (attachment != null) {
     		text += String.format("<P>File length: %s (max attacheable %s) </P>",  attachment.length(), maxAtachmentSize);
     		if (attachment.length() > maxAtachmentSize) {
-    			text += "<p>The results are too large to attach. Please find them temporarily hosted here: " + baseDownloadUrl + attachment.getName() + " .</p> ";
+    			text += "<p>The results are too large to attach. Please find the file temporarily hosted here: " + url + "?file=" + attachment.getName() + " .</p> ";
     			
     		} else {
     			FileSystemResource file = new FileSystemResource(attachment);

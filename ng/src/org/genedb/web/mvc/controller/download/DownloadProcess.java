@@ -48,6 +48,7 @@ public class DownloadProcess {
 	String historyItemName;
 	String description;
 	
+	String url;
 	
 	private BerkeleyMapFactory bmf;
 	private SequenceDao sequenceDao;
@@ -114,6 +115,10 @@ public class DownloadProcess {
     	String getDescription();
         void setDescription(String description);
         
+        @Option(shortName="r", longName="url", description="The base url of the site.")
+    	String getUrl();
+        void setUrl(String url);
+        
     }
 	
 	/**
@@ -154,6 +159,8 @@ public class DownloadProcess {
 			logger.debug(cliArgs.getUniqueNames());
 			logger.debug(cliArgs.getHistoryItemName());
 			logger.debug(cliArgs.getDescription());
+			
+			logger.debug(cliArgs.getUrl());
 			
 			
 			if (process.outputDestination == OutputDestination.TO_BROWSER) {
@@ -203,7 +210,7 @@ public class DownloadProcess {
 		File zipFile = util.zip(file);
 		
 		if (outputDestination == OutputDestination.TO_EMAIL) {
-			util.sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
+			util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, url);
 		}
 		
 	}
@@ -234,6 +241,7 @@ public class DownloadProcess {
 		this.uniqueNames = args.getUniqueNames();
 		this.historyItemName = args.getHistoryItemName();
 		this.description = args.getDescription();
+		this.url = args.getUrl();
 		
 		this.util = util;
 		bmf = util.getBmf();
@@ -273,7 +281,8 @@ public class DownloadProcess {
 			List<String> uniqueNames,
 			String historyItemName,
 			String description,
-			DownloadProcessUtil util
+			DownloadProcessUtil util,
+			String url
 			) throws QueryException {
 		
 		this.outputFormat = outputFormat;
@@ -300,6 +309,8 @@ public class DownloadProcess {
 		this.util = util;
 		bmf = util.getBmf();
 		sequenceDao = util.getSequenceDao();
+		
+		this.url = url;
 	}
 	
 	

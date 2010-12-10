@@ -114,7 +114,7 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-		
+		String downloadLinkUrl = request.getContextPath() + "/Download/batch";
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
@@ -149,7 +149,7 @@ public class DownloadController {
         		
         		saveDownloadDetailsToJsonFile(fileName, downloadTmpFolder, outputFormat, outputOptions, outputDestination, 
         				sequenceType, includeHeader, fieldSeparator, blankField, fieldInternalSeparator, prime3, prime5, 
-        				email, uniqueNames, historyItemName, description);
+        				email, uniqueNames, historyItemName, description, downloadLinkUrl);
         		
         		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
         	
@@ -178,7 +178,8 @@ public class DownloadController {
 			uniqueNames,
 			historyItemName,
 			description,
-			util);
+			util,
+			downloadLinkUrl);
         
         String filePath = downloadTmpFolder + "/" + fileName;
         
@@ -210,7 +211,7 @@ public class DownloadController {
         		File zipFile = util.zip(outFile);
         		
             	try {
-					util.sendEmail(email, historyItemName, "Please find attached your results in the excel file." + description, zipFile);
+					util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, downloadLinkUrl);
 					response.getWriter().append("Your email has been sent to " + email + ".");
 				} catch (MessagingException e) {
 					logger.error(e.getStackTrace().toString());
@@ -287,7 +288,7 @@ public class DownloadController {
         			File zipFile = util.zip(tabOutFile);
         			
                 	try {
-						util.sendEmail(email, historyItemName, "Please find attached your " + outputFormat.name() + " results." + description, zipFile);
+						util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, downloadLinkUrl);
 						response.getWriter().append("Your email has been sent to " + email + ".");
 					} catch (MessagingException e) {
 						logger.error(e.getStackTrace().toString());
@@ -335,6 +336,9 @@ public class DownloadController {
 			response.getWriter().append("Could not find file " + suppliedFileName);
 			return null;
 		}
+		
+		response.setContentType("application/x-download");
+    	response.setHeader("Content-Disposition", "attachment; filename="+suppliedFile.getName());
 		
 		returnFile(suppliedFile, response.getOutputStream());
 		
@@ -391,7 +395,6 @@ public class DownloadController {
     public void saveDownloadDetailsToJsonFile(
 			String scriptFileNamePrefix,
 			File downloadTmpFolder,
-			
 			OutputFormat outputFormat,
 			List<OutputOption> outputOptions,
 			OutputDestination outputDestination,
@@ -405,7 +408,8 @@ public class DownloadController {
 			String email,
 			List<String> uniqueNames,
 			String historyItemName,
-			String description) throws IOException {
+			String description, 
+			String downloadLinkUrl) throws IOException {
 		
 		Hashtable<String, Object> ht = new Hashtable<String, Object>();
 		ht.put("custFields", outputOptions);
@@ -422,6 +426,7 @@ public class DownloadController {
 		ht.put("historyItemName", historyItemName);
 		ht.put("description", description);
 		ht.put("uniqueNames", uniqueNames);
+		ht.put("url", downloadLinkUrl);
 		
 		String filePath = downloadTmpFolder + "/" + scriptFileNamePrefix + ".json";
 		
