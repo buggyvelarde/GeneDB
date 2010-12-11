@@ -98,12 +98,12 @@ for (org in orgs) {
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
-		execLine="java -server -Djava.awt.headless=true  -Xmx512m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
+		execLine="java -server -Djava.awt.headless=true  -Xmx1024m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
         break;
 
     case "DTO":
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
-		execLine="java -server -Djava.awt.headless=true  -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
+		execLine="java -server -Djava.awt.headless=true  -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
         new File("${baseDir}/output/${org}").mkdir()
         break;
 
