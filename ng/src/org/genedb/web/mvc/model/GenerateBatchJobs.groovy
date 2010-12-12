@@ -141,7 +141,7 @@ for (org in orgs) {
 	}
 	
 	
-    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 1179648 -o ${outFileName} -e ${errFileName} ${scriptName}"].execute()
+    Process p = ["ssh", "pcs4a", "bsub -q ${queueName} -M 2000000  -R select[mem>2000] rusage[mem=2000] -o ${outFileName} -e ${errFileName} ${scriptName}"].execute()
     def sout = new StringBuffer()
     def serr = new StringBuffer()
     p.consumeProcessOutput(sout, serr)
