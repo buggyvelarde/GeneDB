@@ -103,7 +103,8 @@ for (org in orgs) {
 
     case "DTO":
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
-		execLine="java -server -Djava.awt.headless=true  -Xmx2000m -XX:+HeapDumpOnOutOfMemoryError -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
+		// -XX:+HeapDumpOnOutOfMemoryError
+		execLine="java -server -Djava.awt.headless=true  -Xmx2000m -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
         new File("${baseDir}/output/${org}").mkdir()
         break;
 
