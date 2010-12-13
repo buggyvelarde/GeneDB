@@ -3,7 +3,7 @@ finaldest.server.bin=/Users/gv1/bin/tomcat/bin
 webAppRootKey=genedb.new.root
 dbhost=localhost
 dbport=5433
-dbname=pathogens
+dbname=pathogens_test
 dbuser=pathdb
 dbpassword=pathdb
 lucene.indexDirectory=/Users/gv1/Documents/Data/genedb-caches/lucene
@@ -21,4 +21,6 @@ proteinMap.render.directory=/Users/gv1/Documents/Data/genedb-caches/pmap
 baseUri=/gi
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+
+diagram.fontFile=file:///Users/gv1/Documents/Data/f011004t.ttf
 
