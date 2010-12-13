@@ -9,5 +9,14 @@ dbpassword=genedb
 lucene.indexDirectory=/nfs/pathdata/genedb-ng/index/lucene
 cacheDirectory=/nfs/pathdata/genedb-ng/index/cache
 diagram.fontFile=file:///nfs/pathdb/f011004t.ttf
+resultsCacheDirectory=/tmp/results_index
+
+#emboss.directory=/software/pathogen/external/applications/EMBOSS/
+#psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+
+#download.tmpFolder=/nfs/pathdb/genedb/beta/tmp
+#download.mail.host=mail.sanger.ac.uk
+#download.mail.port=25
+
 
 
