@@ -11,7 +11,7 @@ if (args.length >= 1) {
 
 } else {
 
-    def sql = Sql.newInstance("jdbc:postgresql://pathdbsrv1b/nightly", "pathdb",
+    def sql = Sql.newInstance("jdbc:postgresql://pgsrv2/nightly", "genedb",
                                       "genedb", "org.postgresql.Driver")
 
     sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'") { row ->
