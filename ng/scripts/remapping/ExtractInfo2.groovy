@@ -24,6 +24,14 @@ public class ExtractInfo {
 
         File an = new File(annotation)
         String contigName = an.name
+
+	// The top level feature name is determined by the file name.
+	// Lets strip the .embl from the end if it has one
+	if(contigName =~ /\S+\.embl/){
+	   contigName = contigName.substring(0,contigName.length()-5)
+	}
+
+
         def g
 	    def lastFeatType
         boolean seenID = true
@@ -41,8 +49,9 @@ public class ExtractInfo {
                     g.type = "exon"
                 } else {
                     g.type = parts[1]
+		    
                 }
-		        lastFeatType = parts[1]
+		lastFeatType = parts[1]
                 String location = parts[2]
                 //System.err.println(location)
                 if (location.contains("complement")) {
@@ -85,9 +94,9 @@ public class ExtractInfo {
                     //    g.id = g.id.replace(":mRNA", ".1");
                     //}
                     if (g.fmax != null && !g.id.contains(",")) {
-                        if (g.type!="repeat_region") {
+                       // if (g.type!="repeat_region") {
                             println g.type + '\t' + g.id + '\t' + contigName + '\t'+ g.strand + '\t' + g.fmin + '\t' + g.fmax
-                        }
+                       // }
                     } else {
                         // Splicing or id contains comma
 			if (g.fmax != null) {
