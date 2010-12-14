@@ -338,4 +338,5 @@ ${dto.ims.imageMap}
 
 </c:if>
 
-<p>See this gene in <a href="<misc:url value="/gene/${dto.uniqueName}.xml" />">XML</a> or <a href="<misc:url value="/gene/${dto.uniqueName}.json" />">JSON</a> formats</p>
+<!-- <p>See this gene in <a href="<misc:url value="/gene/${dto.uniqueName}.xml" />">XML</a> or <a href="<misc:url value="/gene/${dto.uniqueName}.json" />">JSON</a> formats</p> -->
+
