@@ -104,17 +104,6 @@ public class DownloadProcessUtil {
     	return downloadTmpFolder;
     }
     
-    private String baseDownloadUrl; 
-    
-    public void setBaseDownloadUrl(String baseDownloadUrl) {
-    	this.baseDownloadUrl = baseDownloadUrl;
-    }
-    
-    public String getBaseDownloadUrl() {
-    	return baseDownloadUrl;
-    }
-    
-    
     private long maxAtachmentSize = 5242880;
     
     public void sendEmail(String to, final String subject, String text, File attachment, String url) throws javax.mail.MessagingException {

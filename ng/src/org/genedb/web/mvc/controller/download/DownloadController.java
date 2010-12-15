@@ -114,7 +114,7 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-		String downloadLinkUrl = request.getScheme() + "://" + request.getServerName() + "/";
+		String downloadLinkUrl = request.getScheme() + "://" + request.getServerName() + "/Download/batch";
 		
 		logger.info("URL:: " + downloadLinkUrl);
 		

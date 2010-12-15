@@ -163,8 +163,7 @@
   <bean id="downloadProcessUtil" class="org.genedb.web.mvc.controller.download.DownloadProcessUtil">
   
         <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
-        <property name="baseDownloadUrl"><value>${download.baseURL}</value></property>
-        
+                
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
         <property name="queryFactory" ref="queryFactory" />
