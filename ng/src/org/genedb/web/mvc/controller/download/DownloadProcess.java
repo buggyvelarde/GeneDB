@@ -213,6 +213,9 @@ public class DownloadProcess {
 			util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, url);
 		}
 		
+		// don't need to keep the unzipped version
+		file.delete();
+		
 	}
 	
 	
