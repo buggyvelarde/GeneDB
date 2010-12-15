@@ -53,6 +53,7 @@ import java.io.BufferedInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -113,16 +114,10 @@ public class DownloadController {
             HttpServletResponse response
     ) throws IOException, QueryException  {
     	
-		String downloadLinkUrl = util.getBaseDownloadUrl();
+		String downloadLinkUrl = request.getScheme() + "://" + request.getServerName() + "/";
 		
 		logger.info("URL:: " + downloadLinkUrl);
 		
-		logger.info("getServerName:: " + request.getServerName());
-		
-		logger.info("getServerName:: " + request.getRequestURL());
-		
-		logger.info("getRemoteAddr:: " + request.getRemoteAddr());
-    	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
         if (historyItem > historyItems.size()) {
