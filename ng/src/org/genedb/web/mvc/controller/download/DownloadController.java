@@ -116,6 +116,12 @@ public class DownloadController {
 		String downloadLinkUrl = util.getBaseDownloadUrl();
 		
 		logger.info("URL:: " + downloadLinkUrl);
+		
+		logger.info("getServerName:: " + request.getServerName());
+		
+		logger.info("getServerName:: " + request.getRequestURL());
+		
+		logger.info("getRemoteAddr:: " + request.getRemoteAddr());
     	
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
@@ -220,9 +226,6 @@ public class DownloadController {
 					
 				}
             	
-            	if (deleteFiles) {
-            		zipFile.delete();
-            	}
             	
         	 } else if (outputDestination == OutputDestination.TO_FILE) {
         		 
@@ -295,9 +298,7 @@ public class DownloadController {
 						logger.error(e.getStackTrace().toString());
 						response.getWriter().append("Could not send mail. " + e.getMessage());
 					}
-					if (deleteFiles) {
-	    				zipFile.delete();
-	     			}
+					
                 	
                 } else if (outputDestination == OutputDestination.TO_FILE) {
                 	
@@ -310,8 +311,8 @@ public class DownloadController {
         			
                 }
         		
-        		if (deleteFiles) {
-    				tabOutFile.delete();
+        		if ((tabOutFile != null) && (deleteFiles)) {
+        			tabOutFile.delete();
      			}
         	}
         	
