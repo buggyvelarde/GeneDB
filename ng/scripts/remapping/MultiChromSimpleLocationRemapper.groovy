@@ -54,6 +54,7 @@ public class MultiChromSimpleLocationRemapper {
         and f1.type_id=cvt.cvterm_id'''
         , [organismId])
 
+        // All the featurelocs in this organism
         for (def row in rows) {
             dbids.put(row['uniquename'], [fid:row['feature_id'], type:row['type'], fmin:row['fmin'], fmax:row['fmax'], strand:row['strand']])
         }
@@ -122,10 +123,65 @@ public class MultiChromSimpleLocationRemapper {
         return row[0]
     }
 
+
+    // This method tries to match the feature names since features get renamed manually and via the EMBL loader.
+    // So here we try to 'guess' what the old name would have been
+    
     private String nameMatch(def dbids, def f) {
+    
         if (dbids.containsKey(f.name)) {
             return f.name
         }
+        
+        // If the name cannot be found, it does some 'guess work'
+        
+        // Lets define some regular expression patterns
+        
+        def trna_transcript = /(\S+):tRNA\.(\d)/
+        def ncrna_exon_with_digit =  /(\S+):ncRNA:exon:(\d)/
+        def ncrna_exon_without_digit = /(\S+):ncRNA:exon/
+        
+        
+        // ~~ Non coding exons with a number at the end ~~ (Example: PF01TR002:ncRNA:exon:2 will be turned into PF01TR002:exon:2)
+        
+        def matcher = ( f.name =~ ncRNA_exon_with_digit )
+        if(matcher.matches()){
+            String tmp
+            if(matcher[0][2].equals('1'){
+                tmp = matcher[0][1] + ":exon"           
+            }else{
+                tmp = matcher[0][1] + ":exon:" + matcher[0][2]                        
+            }
+            if (dbids.containsKey(tmp)) {
+                return tmp;
+            } else {
+                return null
+            }
+       
+        }
+        
+        // ~~ Non coding exons without a number (TODO: Combine this with method above!!)
+        
+        matcher = ( f.name =~ ncRNA_exon_without_digit )
+        if(matcher.matches()){
+            String tmp = matcher[0][1] + ":exon"                       
+            }
+            if (dbids.containsKey(tmp)) {
+                return tmp;
+            } else {
+                return null
+            }
+       
+        }
+        
+        
+        // ~~ Pseudogenic transcripts
+        
+        
+        
+        
+        
+        
         if (f.name.endsWith(":tRNA")) {
             String tmp = replaceLast(f.name, ":tRNA", "")
             if (dbids.containsKey(tmp)) {
@@ -134,6 +190,9 @@ public class MultiChromSimpleLocationRemapper {
                 return null
             }
         }
+        
+        //if(f.name =~ /\S+\.embl/){
+        
         if (f.name.endsWith(":tRNA.1")) {
             String tmp = replaceLast(f.name, ":tRNA.1", ":tRNA")
             if (dbids.containsKey(tmp)) {
@@ -218,6 +277,16 @@ public class MultiChromSimpleLocationRemapper {
             }
         }
         if (f.name.endsWith(":rRNA.1:exon:1")) {
+            String tmp = replaceLast(f.name, ":rRNA.1:exon:1", ":exon:1")
+            if (dbids.containsKey(tmp)) {
+                return tmp;
+            } else {
+                return null
+            }
+        }
+        
+        //Added by nds
+         if (f.name.endsWith(":rRNA:exon:1")) {
             String tmp = replaceLast(f.name, ":rRNA.1:exon:1", ":exon:1")
             if (dbids.containsKey(tmp)) {
                 return tmp;
@@ -364,14 +433,14 @@ public class MultiChromSimpleLocationRemapper {
 	       String lookup = app.lookupContigId(name, true)
 	       mapping.put(name, lookup)
 	       //println "Storing mapping '${name}' '${lookup}'"
-	  int oldId = app.lookupContigId(args[i], false) 
-	  if (oldId != -1) {
-             if (!first) {
-		currentContigList += ", "
-	     }
-	     currentContigList += oldId
-	     first = false
-          } 
+	       int oldId = app.lookupContigId(args[i], false) 
+	       if (oldId != -1) {
+                if (!first) {
+		          currentContigList += ", "
+	            }
+	           currentContigList += oldId
+	           first = false
+           } 
       }
 
       def features = app.loadNewMappings(args[0])
