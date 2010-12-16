@@ -6,7 +6,7 @@
 <div id="col-2-1">
 
 <h1>
-    The African trypanosome surface phylome.
+    The African trypanosome surface phylome
 </h1>
 
 <format:genePageSection>
@@ -15,13 +15,12 @@
 
 <div id="surface_phylome"></div>
 
-<div style="font-size:x-small;font-weight:bold;">
 The taxonomic distribution of gene families with putative cell-surface roles, displayed in a Venn diagram. Each circle represents a family. The 
 label in each circle refers to the description key, while size reflects the number of genes it contains; for large families the absolute number 
 is shown in parentheses. For families present in multiple species, a pie chart is shown indicating relative gene numbers. The three tabs attending 
 each species domain show the number of single-copy genes, pairs and triplets also predicted to have cell surface roles and to be species-specific 
 (e.g. 101 singletons in <i>T. brucei</i>).
- </div>
+
 <h2>Instructions for use</h2>
  Mouse over a circle to access the data and phylogenetic analysis for a given family. Bayesian and Maximum likelihood phylogenies are available in 
  NEWICK format, as well as the multiple sequence alignments used in their estimation, in PHYLIP and NEXUS formats. For certain families a supplementary 
