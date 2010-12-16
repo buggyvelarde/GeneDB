@@ -114,7 +114,8 @@ public class DownloadTest {
 				uniqueNames, 
 				historyItemName, 
 				description, 
-				util);
+				util, 
+				"http://someurl.com");
 		
 		
 		process.generateFASTA(writer);
