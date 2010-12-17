@@ -9,6 +9,7 @@ echo Executing indexing at $SOURCE_HOME
 
 echo Backing up db
 genedb-web-control ci-web stop
+sleep 20
 dropdb -h pgsrv2 nightly
 createdb -h pgsrv2 -E SQL-ASCII nightly
 pg_dump -Naudit -Naudit_backup -Ngraphs -h pgsrv1 pathogens | psql -h pgsrv2 nightly
