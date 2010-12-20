@@ -766,7 +766,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
         </classpath>
-        <jvmarg value="-Xmx2048m"/>
+        <jvmarg value="-Xmx4096m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <arg line="-r ${merge.indices.destination} ${merge.indices.origin}"/>
       </java>
