@@ -759,7 +759,7 @@
       <fail unless="merge.indices.destination" message="The property merge.indices.destination must be specified"/>
       <fail unless="merge.indices.origin" message="The property merge.indices.origin must be specified"/>
       
-      <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices" failonerror="true">
         <classpath>
           <path refid="run-classpathref"/>
           <pathelement location="${imported.basedir.web}/ant-build/classes"/>
