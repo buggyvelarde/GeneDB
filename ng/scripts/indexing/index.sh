@@ -2,14 +2,17 @@
 
 usage() {
 cat <<OPTIONS
-Usage: index.sh -t TMPDIR -p /path/to/psql-driver.jar [-o OUTDIR1,OUTDIR2] [-r org1,org2 | -s 2010-08-10] -c [-1] [-2] [-3] [4]
+Usage: index.sh -t TMPDIR -p /path/to/psql-driver.jar [-o OUTDIR1,OUTDIR2] [-r org1,org2 | -s 2010-08-10] -c [-0] [-1] [-2] [-3] [-4] [-5]
 
 You can choose to specify a list of organisms (-r) or a date (-s), if you specify neither then all organisms will be used. There are several actions in the workflow that you can call: 
 
+ 0. Copy the the pathogens db to nightly, and run SQL cleanup scripts.
  1. lucene indexing
  2. moving merged lucenes to the config location 
  3. berkley dto caching  
- 4. move the berkley cache to the config location
+ 4. merge the berkley caches (on its own because this can be problematic)
+ 5. move the berkley cache to the config location
+ 6. Copy the nightly db to staging
 
 You can ommit any one or more of these actions (they are all off by default). However they will always be called in the same order.
 
@@ -33,6 +36,9 @@ Options:
  -c CONFIG
     The name of the genedb config (e.g. beta, nightly, etc.) 
 
+ -0 COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP
+    Clone the pathogen database to the nightly database, and run the cleanup scripts on it. Stage 0.
+
  -1 DO_INDEXING
  	Run the lucene indexing operations. Off by default. Stage 1. 
 
@@ -41,10 +47,18 @@ Options:
 
  -3 DO_BERKLEY_CACHE
  	Run the berkley cache (DTO) indexing operations. Off by default. Stage 3. 
-
- -4 DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION
-    Move the merged cache to the location specified by the config file. Off by default. Stage 4.
-
+    
+ -4 DO_MERGE_BERKLEY_CACHE
+    Merge the berkley caches. Stage 4.
+    
+ -5 DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION
+    Move the merged cache to the location specified by the config file. Off by default. Stage 5.
+    
+ -6 COPY_NIGHTLY_TO_STAGING
+    The final automated step. Copies the contents of the nightly database to the staging database. Stage 6. 
+ 
+    
+ 
 OPTIONS
 }
 
@@ -60,17 +74,20 @@ if [ `uname -n` != ${HST} ]; then
     exit 1
 fi
 
-while getopts "s:r:o:t:p:c:1234v" o ; do  
+while getopts "s:r:o:t:p:c:0123456v" o ; do  
     case $o in  
         s ) SINCE=$OPTARG;;
         r ) ORGANISMS=$(echo $OPTARG | tr "," "\n" );;
         o ) OUTDIRS=$(echo $OPTARG | tr "," "\n" );;
         t ) TMPDIR=$OPTARG;;
         p ) POSTGRES_DRIVER=$OPTARG;;
+        0 ) COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP=1;;
         1 ) DO_INDEXING=1;;
         2 ) DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION=1;;
         3 ) DO_BERKLEY_CACHE=1;;
-        4 ) DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION=1;;
+        4 ) DO_MERGE_BERKLEY_CACHE=1;;
+        5 ) DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION=1;;
+        6 ) COPY_NIGHTLY_TO_STAGING=1;;
         c ) CONFIG=$OPTARG;;
         v ) echo $VERSION  
             exit 0;;
@@ -115,6 +132,31 @@ fi
 
 ORIGINAL_IFS=$IFS
 IFS=$'\n'
+
+
+if [[ -z $COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP ]]; then
+
+	echo Backing up db
+	genedb-web-control ci-web stop
+	sleep 20
+	dropdb -h pgsrv2 nightly
+	createdb -h pgsrv2 -E SQL-ASCII nightly
+	pg_dump -Naudit -Naudit_backup -Ngraphs -h pgsrv1 pathogens | psql -h pgsrv2 nightly
+	
+	for sqlfile in $SOURCE_HOME/sql/cleanup/*.sql
+	do
+	    echo "Processing SQL cleanup file? " $sqlfile
+	    psql -h pgsrv2 nightly < $sqlfile
+	done
+	
+	cd $SOURCE_HOME
+	echo "Backed up db"
+
+
+fi
+
+
+
 
 
 # a flag to indicate if all organisms should be indexed
@@ -315,8 +357,12 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	    logecho "Found no errors in DTO"
 	fi
 	
+
+fi
+
+if [[ $DO_MERGE_BERKLEY_CACHE ]];then	
 	
-	
+	logecho "Stage 4"
 	
 	#
 	# Merge the DTO caches into place. Sshing into a BIG MEM machine to do this. 
@@ -359,7 +405,7 @@ fi
 
 if [[ $DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION ]]; then
     
-    logecho "Stage 4"
+    logecho "Stage 5"
     
     #
     # Determine location of the indices as specified in the config file. 
@@ -380,6 +426,19 @@ if [[ $DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION ]]; then
     cp -vr  $TMPDIR/DTO/merged/*  $CACHE_INDEX_DIRECTORY
     
     
+fi
+
+
+#
+# Copy the database accross from nightly. 
+#
+
+if [[ $COPY_NIGHTLY_TO_STAGING ]]; then
+    echo "Stage 6"
+    echo Copying db to staging
+    dropdb -h genedb-db snapshot-old
+    createdb -h genedb-db staging
+    pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
 fi
 
 
