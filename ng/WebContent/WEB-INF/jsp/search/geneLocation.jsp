@@ -99,7 +99,9 @@ function loadOrganisms() {
         type: 'GET',
         dataType: 'json',
         success: function(response) {
-        
+
+		   var loadingTops = false;
+		   
            for (var i in response.results.organisms.string) {
                var result = response.results.organisms.string[i];
                
@@ -108,13 +110,16 @@ function loadOrganisms() {
                if (organism == result) {
             	    selected = " selected ";
             	    loadTops(organism);
+            	    loadingTops = true;
                }
                
                $('#organisms').append('<option ' + selected + '>' + result + '</option>');
            }
-           
-           $("#spinner").spinner('remove');
-           loading = false;
+
+           if (loadingTops != true) {
+        	    $("#spinner").spinner('remove');
+        	    loading = false;
+           }
         }
     });
 }
