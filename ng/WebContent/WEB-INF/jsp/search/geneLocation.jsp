@@ -34,9 +34,23 @@ var lengths = {};
 var loading = false;
 var opts = { height: 11, width: 43, position : 'right', img: '<misc:url value="/includes/image/spinner.gif"/>"' };
 
+function startedLoading() {
+    if (! loading) {
+    	$("#spinner").spinner(opts);
+    	loading = true;
+    }
+}
+
+function stoppedLoading() {
+    if (loading) {
+    	$("#spinner").spinner('remove');
+        loading = false;
+    }
+}
+
 function loadTops(organism) {
-	$("#spinner").spinner(opts);
-	loading = true;
+	startedLoading();
+	
 	$.ajax({
         url: getBaseURL() + "service/top",
         type: 'GET',
@@ -83,8 +97,8 @@ function loadTops(organism) {
                 $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
         	}
 
-       		$("#spinner").spinner('remove');
-       		loading = false;
+        	stoppedLoading();
+            
        	
         }
 	});
@@ -92,16 +106,13 @@ function loadTops(organism) {
 }
 
 function loadOrganisms() {
-	$("#spinner").spinner(opts);
-	loading = true;
+	startedLoading();
+	
 	$.ajax({
         url: getBaseURL() + "service/organisms",
         type: 'GET',
         dataType: 'json',
         success: function(response) {
-
-		   var loadingTops = false;
-		   
            for (var i in response.results.organisms.string) {
                var result = response.results.organisms.string[i];
                
@@ -110,16 +121,13 @@ function loadOrganisms() {
                if (organism == result) {
             	    selected = " selected ";
             	    loadTops(organism);
-            	    loadingTops = true;
                }
                
                $('#organisms').append('<option ' + selected + '>' + result + '</option>');
            }
 
-           if (loadingTops != true) {
-        	    $("#spinner").spinner('remove');
-        	    loading = false;
-           }
+           stoppedLoading();
+           
         }
     });
 }
