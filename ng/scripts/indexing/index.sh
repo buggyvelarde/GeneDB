@@ -134,7 +134,7 @@ ORIGINAL_IFS=$IFS
 IFS=$'\n'
 
 
-if [[ -z $COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP ]]; then
+if [[ $COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP ]]; then
 
 	echo Backing up db
 	genedb-web-control ci-web stop
