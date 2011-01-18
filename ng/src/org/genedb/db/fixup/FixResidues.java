@@ -507,6 +507,12 @@ public class FixResidues {
         PreparedStatement st = conn.prepareStatement(
             "select polypeptide.feature_id"
             +"    , polypeptide.uniquename"
+            +"    , exists ("
+            +"         select * "
+            +"         from featureprop"
+            +"         where feature_id = polypeptide.feature_id"
+            +"         and type_id = ?"
+            +"      ) as stop_codon_redefined " 
             +" from feature polypeptide"
             +" join feature_relationship polypeptide_transcript"
             +"     on polypeptide_transcript.subject_id = polypeptide.feature_id"
@@ -515,8 +521,9 @@ public class FixResidues {
             +" where transcript.feature_id = ?"
             +" and polypeptide.type_id = ?");
         try {
-            st.setInt(1, transcript.featureId);
-            st.setInt(2, typeCodes.typeId("sequence", "polypeptide"));
+        	st.setInt(1, typeCodes.typeId("sequence", "stop_codon_redefined_as_selenocysteine"));
+            st.setInt(2, transcript.featureId);
+            st.setInt(3, typeCodes.typeId("sequence", "polypeptide"));
 
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
@@ -529,6 +536,14 @@ public class FixResidues {
             int polypeptideId = rs.getInt("feature_id");
             String polypeptideName = rs.getString("uniquename");
             debug("Polypeptide '%s'", polypeptideName);
+            
+            if (rs.getBoolean("stop_codon_redefined") && transcript.stopCodonTranslatedAsSelenocysteine == false) {
+            	warn(String.format("Setting the transcript's (%s) polypeptide (%s) to " +
+            			" stopCodonTranslatedAsSelenocysteine = true because polypeptide has this property.", 
+            			transcript.uniqueName, polypeptideName));
+            	transcript.stopCodonTranslatedAsSelenocysteine = true;
+            }
+            
             try {
                 fixPolypeptide(transcript, polypeptideId);
             } catch (TranslationException e) {
