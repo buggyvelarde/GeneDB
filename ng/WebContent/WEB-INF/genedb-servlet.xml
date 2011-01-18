@@ -237,6 +237,7 @@
   <bean name="curation" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
   <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
+  <bean name="topLevelFeatures" class="org.genedb.querying.tmpquery.TopLevelFeaturesQuery" scope="prototype" />
 
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
@@ -280,6 +281,7 @@
             <entry key="dateCount" value-ref="dateCount" />
             <entry key="geneByDb" value-ref="geneByDb" />
             <entry key="suggest" value-ref="suggest" />
+            <entry key="topLevelFeatures" value-ref="topLevelFeatures" />
           </map>
         </entry>
       </map>

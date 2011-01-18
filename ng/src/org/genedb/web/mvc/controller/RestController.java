@@ -7,12 +7,16 @@ import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
+import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
+import org.genedb.querying.tmpquery.TopLevelFeaturesQuery;
+import org.genedb.querying.tmpquery.TopLevelFeaturesQuery.TopLevelFeature;
 
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
@@ -108,8 +112,9 @@ public class RestController {
     	return mav;
     }
     
+    
     @RequestMapping(method=RequestMethod.GET, value="/top")
-    public ModelAndView top(@RequestParam("commonName") String commonName) {
+    public ModelAndView top(@RequestParam("commonName") String commonName) throws RestException {
     	ModelAndView mav = new ModelAndView(viewName);
     	
     	Organism org = organismDao.getOrganismByCommonName(commonName);
@@ -117,19 +122,23 @@ public class RestController {
     	TopLevelResults results = new TopLevelResults();
     	results.organism = commonName;
     	
+    	//TopLevelFeaturesQuery topQuery = (TopLevelFeaturesQuery) queryFactory.retrieveQuery("topLevelFeatures", NumericQueryVisibility.PRIVATE); 
+    	TopLevelFeaturesQuery topQuery = (TopLevelFeaturesQuery) applicationContext.getBean("topLevelFeatures", TopLevelFeaturesQuery.class);
+    	
+    	TaxonNode taxonNode = getTaxonNode(commonName);
+    	TaxonNodeList taxons = new TaxonNodeList(taxonNode);
+    	topQuery.setTaxons(taxons);
+    	
     	try {
-	    	List<Feature> tops = sequenceDao.getTopLevelFeaturesInOrganism(org);
-	    	logger.info(tops.size());
-	    	for (Feature top : tops) {
-	    		
-	    		
-	    		
-	    		TopLevelFeature tlf = new TopLevelFeature();
-	    		tlf.name = top.getUniqueName();
-	    		tlf.length = top.getResidues().length();
-	    		
-	    		results.features.add(tlf);
-	    	}
+    		
+    		
+    		List<TopLevelFeature> tops = topQuery.getResults();
+    		
+    		for (TopLevelFeature top : tops) {
+    			results.features.add(top);
+    		}
+    		
+	    	
     	} catch (Exception e) {
     		e.printStackTrace();
     		logger.error(e.getMessage());
@@ -542,13 +551,6 @@ class TopLevelResults extends BaseResult {
 	
 }
 
-@XStreamAlias("feature")
-class TopLevelFeature extends BaseResult {
-	@XStreamAlias("length")
-    @XStreamAsAttribute
-    public int length;
-	
-}
 
 @XStreamAlias("results")
 class OrganismResults extends BaseResult {
