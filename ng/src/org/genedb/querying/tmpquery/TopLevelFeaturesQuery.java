@@ -81,7 +81,7 @@ public class TopLevelFeaturesQuery extends OrganismLuceneQuery {
                 
                 Integer chrlenValue = Integer.parseInt(chrlen.stringValue());
                 
-                System.out.println(chrValue + " :: " + chrlenValue);
+                //System.out.println(chrValue + " :: " + chrlenValue);
                 
                 TopLevelFeature top = new TopLevelFeature();
                 top.length = chrlenValue;
