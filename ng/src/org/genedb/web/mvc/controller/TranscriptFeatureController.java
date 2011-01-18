@@ -42,8 +42,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -180,6 +182,18 @@ public class TranscriptFeatureController {
             logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
         }
+        
+        
+        List<String> publicOrthologues = new ArrayList<String>();
+        for (String ortho : dto.getOrthologueNames()) {
+        	Feature ortho_f = sequenceDao.getFeatureByUniqueName(ortho, Feature.class);
+        	if (ortho_f != null) {
+        		publicOrthologues.add(ortho);
+        	}
+        }
+        model.put("orthologues", publicOrthologues);
+        
+        
         
         ModelAndView mav;
         if (StringUtils.hasLength(extension)) {
