@@ -96,7 +96,7 @@ for (org in orgs) {
     switch (action) {
 
     case "Lucene":
-        //new File("${baseDir}/output/${org}").mkdir()
+        new File("${baseDir}/output/${org}").mkdir()
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
 		execLine="java -server -Djava.awt.headless=true  -Xmx2000m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
         break;
