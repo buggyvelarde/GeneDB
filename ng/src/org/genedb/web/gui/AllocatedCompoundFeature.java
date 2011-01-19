@@ -46,7 +46,9 @@ public class AllocatedCompoundFeature implements Comparable<AllocatedCompoundFea
     public AllocatedCompoundFeature(CompoundLocatedFeature feature, int track, Mode mode) {
         this.feature = feature;
         this.track = track;
-
+        
+        logger.debug(feature.getUniqueName());
+        
         switch (mode) {
         case UNPACKED:       dontPackSubfeatures();         break;
         case PACKED:         packSubfeatures();             break;
