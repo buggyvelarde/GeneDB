@@ -2,7 +2,7 @@ import groovy.sql.Sql
 
 String HOST = "pathdbsrv1a"
 //String PATH = "/lustre/scratch101/blastdb/Pathogen/website/genedb/"
-String PATH="/nfs/pathdb/tmp/blast/"
+String PATH="/nfs/pathdb/tmp/blast-ng/"
 
 List<String> orgs = new ArrayList<String>()
 
