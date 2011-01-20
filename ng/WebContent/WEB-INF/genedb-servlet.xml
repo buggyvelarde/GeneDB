@@ -446,6 +446,7 @@
   <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
     <property name="queryFactory" ref="queryFactory" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <property name="hmFactory" ref="historyManagerFactory" />
     <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
   </bean>
 

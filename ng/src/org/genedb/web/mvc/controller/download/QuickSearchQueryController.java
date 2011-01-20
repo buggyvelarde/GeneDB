@@ -7,11 +7,15 @@ import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
+import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.google.common.collect.Lists;
 
 
 import java.util.List;
@@ -47,7 +53,14 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
-
+    
+    
+    private HistoryManagerFactory hmFactory;
+    
+    public void setHmFactory(HistoryManagerFactory hmFactory) {
+        this.hmFactory = hmFactory;
+    }
+    
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -134,7 +147,9 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         logger.error("The number of results is '"+quickSearchQueryResults.getResults().size());
 
         logger.error(taxonName);
-
+        
+        
+        
         switch (quickSearchQueryResults.getQuickResultType()) {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
             logger.error("No results found for query");
@@ -161,6 +176,11 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         case SINGLE_RESULT_IN_CURRENT_TAXON:
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
             cacheResults(gs, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
+            
+            HistoryManager hm = hmFactory.getHistoryManager(session);
+            HistoryItem hitem = hm.addHistoryItem("query"+resultsKey, HistoryType.QUERY, gs.get(0).getSystematicId());
+            hitem.setQuery(query);
+            
             logger.error("The result is "+gs.get(0));
             return "redirect:/gene/" + gs.get(0).getSystematicId();
 
@@ -168,6 +188,16 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
             List<GeneSummary> gs2 = quickSearchQueryResults.getResults();
             resultsKey = cacheResults(gs2, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
             //model.addAttribute("key", resultsKey);
+            
+            HistoryManager hm2 = hmFactory.getHistoryManager(session);
+            List<String> ids2 = Lists.newArrayList();
+            for (GeneSummary geneSummary : gs2) {
+                ids2.add(geneSummary.getSystematicId());
+            }
+            
+            HistoryItem hitem2 = hm2.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids2);
+            hitem2.setQuery(query);
+            
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query (Size: '" + gs2.size() + "' key: '" + resultsKey
                     + "')- redirecting to Results controller");
@@ -177,6 +207,17 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
             List<GeneSummary> gs3 = quickSearchQueryResults.getResults();
             resultsKey = cacheResults(gs3, query, QUERY_NAME, quickSearchQueryResults.getTaxonGroup(), session.getId());
             //model.addAttribute("key", resultsKey);
+            
+            HistoryManager hm3 = hmFactory.getHistoryManager(session);
+            
+            List<String> ids3 = Lists.newArrayList();
+            for (GeneSummary geneSummary : gs3) {
+                ids3.add(geneSummary.getSystematicId());
+            }
+            
+            HistoryItem hitem3 = hm3.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids3);
+            hitem3.setQuery(query);
+            
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query (Size: '" + gs3.size() + "' key: '" + resultsKey
                     + "')- redirecting to Results controller");
