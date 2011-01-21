@@ -16,7 +16,7 @@
          </security>
          <resources>
            <j2se version="1.5+" initial-heap-size="32m" max-heap-size="512m"/>
-             <jar href="sartemis.jar"/>
+             <jar href="sartemis_dev.jar"/>
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis" />
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
