@@ -50,7 +50,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
       <misc:formatSystematicName name="${dto.uniqueName}"/> (one splice form of <misc:formatSystematicName name="${dto.geneName}"/>)
     </c:when>
     <c:otherwise>
-      <misc:formatSystematicName name="${dto.uniqueName}"/>
+      <misc:formatSystematicName name="${geneUniaueName}"/>
     </c:otherwise>
     </c:choose>
     </td>

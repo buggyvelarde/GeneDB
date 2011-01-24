@@ -183,6 +183,9 @@ public class TranscriptFeatureController {
             model.put("inBasket", Boolean.FALSE);
         }
         
+        String geneUniqueName = transcript.getGene().getUniqueName();
+        model.put("geneUniaueName", geneUniqueName);
+        
         
         List<String> publicOrthologues = new ArrayList<String>();
         for (String ortho : dto.getOrthologueNames()) {
