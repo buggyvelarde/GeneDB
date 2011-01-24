@@ -51,7 +51,7 @@ public class ProductQuery extends OrganismLuceneQuery {
         if (StringUtils.containsWhitespace(search)) {
             for (String term : search.split(" ")) {
                 bq.add(new TermQuery(new Term("expandedProduct",term.toLowerCase()
-                    )), Occur.SHOULD);
+                    )), Occur.MUST);
             }
         } else {
             if (search.indexOf('*') == -1) {
