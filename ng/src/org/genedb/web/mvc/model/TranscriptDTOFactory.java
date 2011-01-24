@@ -501,7 +501,7 @@ public class TranscriptDTOFactory {
     private void populateNames(TranscriptDTO ret, Transcript transcript, AbstractGene gene) {
         String uniqueName = transcript.getUniqueName();
         ret.setUniqueName(uniqueName);
-        ret.setGeneName(gene.getDisplayName());
+        ret.setGeneName(gene.getName());
         if (transcript.getName() != null && !transcript.getName().equals(uniqueName)) {
             ret.setProperName(transcript.getName());
         }
