@@ -81,9 +81,9 @@ public class TranscriptDTO implements Serializable {
         if (getUniqueName().matches(getGeneName()+":\\w+")) {
             return false;
         }
-//        if (getUniqueName().matches(getGeneName()+"\\.\\w+")) {
-//            return false;
-//        }
+        if (getUniqueName().matches(getGeneName()+"\\.\\w+")) {
+            return false;
+        }
         return true;
     }
 
