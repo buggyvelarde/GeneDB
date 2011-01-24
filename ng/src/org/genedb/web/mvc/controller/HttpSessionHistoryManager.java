@@ -75,7 +75,8 @@ public class HttpSessionHistoryManager implements HistoryManager {
         for (HistoryItem hi : history) {
             if (hi.getName().equals(name) && hi.getHistoryType().equals(type)) {
                 found = true;
-                break;
+                return hi;
+                
             }
         }
         if(!found) {
