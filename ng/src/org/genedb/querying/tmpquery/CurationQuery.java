@@ -43,7 +43,7 @@ public class CurationQuery extends OrganismLuceneQuery {
         if(StringUtils.containsWhitespace(search)) {
         	BooleanQuery bq_sub = new BooleanQuery();
             for(String term : search.split(" ")) {
-            	bq_sub.add(new TermQuery(new Term("allCuration",term.toLowerCase())), Occur.SHOULD);
+            	bq_sub.add(new TermQuery(new Term("allCuration",term.toLowerCase())), Occur.MUST);
             }
             bq.add(bq_sub, Occur.MUST);
         } else {
