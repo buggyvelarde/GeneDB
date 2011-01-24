@@ -71,23 +71,17 @@ public class HttpSessionHistoryManager implements HistoryManager {
     public HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
 
         List<HistoryItem> history = getHistoryItems();
-        boolean found = false;
         for (HistoryItem hi : history) {
             if (hi.getName().equals(name) && hi.getHistoryType().equals(type)) {
-                found = true;
                 return hi;
-                
             }
         }
-        if(!found) {
-          HistoryItem item = new HistoryItem(name, ids);
-          item.setHistoryType(type);
-          history.add(item);
-          version++;
-          return item;
-        }
-
-        return null;
+        
+		HistoryItem item = new HistoryItem(name, ids);
+		item.setHistoryType(type);
+		history.add(item);
+		version++;
+		return item;
     }
 
 
@@ -124,17 +118,16 @@ public class HttpSessionHistoryManager implements HistoryManager {
         for (HistoryItem item : history) {
             if (item.getName().equals(name)) {
                 found = item;
-                break;
+                return found;
+                
             }
         }
-        if (found == null) {
-            found = new HistoryItem(name, id);
-            history.add(found);
-            version++;
-            return found;
-        }
-
-        return null;
+        
+        found = new HistoryItem(name, id);
+        history.add(found);
+        version++;
+        return found;
+        
     }
 
     public String getCartName() {
