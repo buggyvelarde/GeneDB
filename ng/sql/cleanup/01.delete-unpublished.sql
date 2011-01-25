@@ -10,7 +10,7 @@ delete from organism where
     or (
         organism.genus = 'Streptococcus'
         and organism.species in ('pneumoniae TIGR4', 'pneumoniae D39', 'pneumoniae OXC141', 'pneumoniae ATCC 700669')
-    ),
+    )
     or (
         organism.genus = 'Leishmania'
         and organism.species in ('donovani')
