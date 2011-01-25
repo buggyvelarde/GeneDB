@@ -184,7 +184,8 @@ while (jobList.size() > 0) {
     for (job in finishedJobs) {
         jobList.remove(job)
     }
-    System.err.println(" \nJobs ${jobList.size()} remaining of ${originalJobListSize}");
+	def now = new Date()
+    System.err.println(" \n${now} Jobs ${jobList.size()} remaining of ${originalJobListSize}");
 }
 
 if (worked) {
