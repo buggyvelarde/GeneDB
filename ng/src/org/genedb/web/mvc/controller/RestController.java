@@ -96,14 +96,16 @@ public class RestController {
     	
     	OrganismResults results = new OrganismResults();
     	
-    	List<Organism> organisms = organismDao.getOrganisms();
-    	for (Organism organism : organisms) {
-    		
-    		if (organism.isPopulated() == true && ! organism.getCommonName().equals("dummy")) {
-    			results.organisms.add(organism.getCommonName());
-    		}
-    		
-    	}
+    	// using the taxon node manager to make sure any organism that isn't properly setup doesn't slip through here
+    	TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel("Root");
+        List<TaxonNode> childrens = taxonNode.getAllChildren();
+        for (TaxonNode node : childrens)
+        {
+        	if (node.isOrganism() && node.isPopulated()) {
+        		results.organisms.add(node.getName(TaxonNameType.NICKNAME));
+        	}
+        }
     	
     	Collections.sort(results.organisms);
     	
