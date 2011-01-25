@@ -122,7 +122,7 @@ public class SequenceDistributorController {
             return String.format("redirect:%s&%s&QUERY=%s",
                 "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome",
                 nucleotide ?
-                    "PROGRAM=blastnBLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
+                    "PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
                     : "PROGRAM=blastp&BLAST_PROGRAMS=blastp",
                 sequence
             );
