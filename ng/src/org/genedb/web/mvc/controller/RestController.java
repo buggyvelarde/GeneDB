@@ -103,8 +103,8 @@ public class RestController {
         for (TaxonNode node : childrens)
         {
         	if (node.isOrganism() && node.isPopulated()) {
-        		results.organisms.add(node.getName(TaxonNameType.NICKNAME));
-        		System.out.println("NICKNAME :: " + TaxonNameType.NICKNAME);
+        		results.organisms.add(node.getLabel());
+        		System.out.println("NICKNAME :: " + node.getLabel());
         	}
         }
     	
