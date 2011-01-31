@@ -104,9 +104,12 @@ public class RestController {
         {
         	if (node.isOrganism() && node.isPopulated()) {
         		results.organisms.add(node.getName(TaxonNameType.NICKNAME));
+        		System.out.println("NICKNAME :: " + TaxonNameType.NICKNAME);
         	}
         }
     	
+        System.out.println(results.organisms);
+        
     	Collections.sort(results.organisms);
     	
     	mav.addObject("model", results);
