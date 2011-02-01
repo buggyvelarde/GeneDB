@@ -35,13 +35,13 @@ $(function(){
 	
 	var d = new Date();
 	d.setDate(d.getDate() - defaultDateOffset);
-	var since = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+	var since = d.getFullYear() + "-" + ( d.getMonth() + 1 ) + "-" + d.getDate();
     var baseHREF = getBaseURL() + "gene/";
     
     
     function getAllStatistics(sincedate) {
 
-    	var thissince = sincedate.getFullYear() + "-" + sincedate.getMonth() + "-" + sincedate.getDate();
+    	var thissince = sincedate.getFullYear() + "-" + ( sincedate.getMonth() + 1 ) + "-" + sincedate.getDate();
         
 	    $.ajax({
 	         url: getBaseURL() + "service/changes",
