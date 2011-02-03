@@ -145,17 +145,39 @@ public class DownloadController {
         File downloadTmpFolder = util.gettDownloadTmpFolder();
         String fileName = historyItemName + "." + util.getTime() + "." + outputFormat.name().toLowerCase();
         
-        
-        if (email != null && email.length() > 0) {
-    		
-    		saveDownloadDetailsToJsonFile(fileName, downloadTmpFolder, outputFormat, outputOptions, outputDestination, 
-    				sequenceType, includeHeader, fieldSeparator, blankField, fieldInternalSeparator, prime3, prime5, 
-    				email, uniqueNames, historyItemName, description, downloadLinkUrl);
-    		
-    		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
-    	
-    		return null;
-    	}
+        if (outputDestination == OutputDestination.TO_EMAIL) {
+	        if (email != null && email.length() > 0) {
+	    		
+	    		saveDownloadDetailsToJsonFile(
+	    				fileName, 
+	    				downloadTmpFolder, 
+	    				outputFormat, 
+	    				outputOptions, 
+	    				outputDestination, 
+	    				sequenceType, 
+	    				includeHeader, 
+	    				fieldSeparator, 
+	    				blankField, 
+	    				fieldInternalSeparator, 
+	    				prime3, 
+	    				prime5, 
+	    				email, 
+	    				uniqueNames, 
+	    				historyItemName, 
+	    				description, 
+	    				downloadLinkUrl);
+	    		
+	    		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
+	    	
+	    		return null;
+	    		
+	    	} else {
+	    		
+	    		response.getWriter().append("Please supply an email address.");
+	    		return null;
+	    		
+	    	}
+		}
         
         if (uniqueNames.size() > maxResultsInWebRequest) {
         	
@@ -197,45 +219,30 @@ public class DownloadController {
         		
         		 outStream = response.getOutputStream();
         		 
-        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE) ) {
+        		 
+        	} else if (outputDestination == OutputDestination.TO_FILE)  {
         		
         		outFile = new File( filePath );
         		outStream = new FileOutputStream(outFile);
         		
         	} 
         	
-        	
+        	response.setContentType("application/vnd.ms-excel");
         	process.generateXLS(outStream);
         	
         	
         	/*
-        	 * Post formatting for file output destination.
+        	 * As this is a binary file, whether or not a TO_FILE is chosen, a file will be downloaded by the user.
         	 */
-        	if (outputDestination == OutputDestination.TO_EMAIL) {
-        		
-        		File zipFile = util.zip(outFile);
-        		
-            	try {
-					util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, downloadLinkUrl);
-					response.getWriter().append("Your email has been sent to " + email + ".");
-				} catch (MessagingException e) {
-					logger.error(e.getStackTrace().toString());
-					response.getWriter().append("Could not send mail. " + e.getMessage());
-					
-				}
-            	
-            	
-        	 } else if (outputDestination == OutputDestination.TO_FILE) {
+        	if (outputDestination == OutputDestination.TO_FILE) {
         		 
-        		response.setContentType("application/vnd.ms-excel");
-              	response.setHeader("Content-Disposition", "attachment; filename=" + outFile.getName());
         		
+              	response.setHeader("Content-Disposition", "attachment; filename=" + outFile.getName());
              	OutputStream os = response.getOutputStream();
      			returnFile(outFile, os);
      			
         	 } else {
         		 
-        		 response.setContentType("application/vnd.ms-excel");
         		 response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         		 
         	 }
@@ -254,7 +261,7 @@ public class DownloadController {
         	
         	if (outputDestination == OutputDestination.TO_BROWSER) {
         		out = response.getWriter();
-        	} else if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE)) {
+        	} else if (outputDestination == OutputDestination.TO_FILE) {
         		
         		tabOutFile = new File( filePath );
         		out = new FileWriter(tabOutFile);
@@ -281,40 +288,19 @@ public class DownloadController {
         	 * Post formatting for different output destinations.   
         	 */
         	
-        	if ((outputDestination == OutputDestination.TO_EMAIL) || (outputDestination == OutputDestination.TO_FILE))  {
+        	if (outputDestination == OutputDestination.TO_FILE)  {
         		
-        		out.close();
+            	response.setContentType("application/x-download");
+            	response.setHeader("Content-Disposition", "attachment; filename="+tabOutFile.getName());
             	
-        		if (outputDestination == OutputDestination.TO_EMAIL) {
-                	
-        			File zipFile = util.zip(tabOutFile);
-        			
-                	try {
-						util.sendEmail(email, historyItemName, "Please find your " + outputFormat.name() + " results." + description, zipFile, downloadLinkUrl);
-						response.getWriter().append("Your email has been sent to " + email + ".");
-					} catch (MessagingException e) {
-						logger.error(e.getStackTrace().toString());
-						response.getWriter().append("Could not send mail. " + e.getMessage());
-					}
-					
-                	
-                } else if (outputDestination == OutputDestination.TO_FILE) {
-                	
-                	
-                	response.setContentType("application/x-download");
-                	response.setHeader("Content-Disposition", "attachment; filename="+tabOutFile.getName());
-                	
-                	OutputStream os = response.getOutputStream();
-        			returnFile(tabOutFile, os);
-        			
-                }
+            	OutputStream os = response.getOutputStream();
+    			returnFile(tabOutFile, os);
+            
+    			if ((tabOutFile != null) && (deleteFiles)) {
+            		tabOutFile.delete();
+    			}
         		
-        		if ((tabOutFile != null) && (deleteFiles)) {
-        			tabOutFile.delete();
-     			}
         	}
-        	
-        	
         	
         }
         
