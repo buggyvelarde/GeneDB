@@ -128,87 +128,128 @@ public class DownloadUtils {
         return embl.toString();
     }
     
-    
-    public static String getSequence(Polypeptide polypeptide, SequenceType sequenceType, int prime3, int prime5) {
-    	String sequence = null;
-    	
-    	switch (sequenceType) {
-    		case PROTEIN:
-    			sequence = new String(polypeptide.getResidues());
-            	break;
-            default:
-            	sequence = getSequence(polypeptide.getTranscript(), sequenceType, prime3, prime5);
-            	//sequence = getSequence(polypeptide.getGene(), sequenceType, prime3, prime5);
-            	break;
-    	}
-    	return sequence;
-    }
-
     public static String getSequence(AbstractGene gene,SequenceType sequenceType, int prime3, int prime5) {
-        String sequence = null;
-        boolean alternateSpliced = false;
-        Collection<Transcript> transcripts = gene.getTranscripts();
-        ProductiveTranscript transcript = null;
+    	
+    	boolean reverseCompliment = false;
+        if (gene.getRankZeroFeatureLoc().getStrand() < 0) {
+            reverseCompliment = true;
+        }
+    	
+        // the following cases do not need transcripts
+    	switch (sequenceType) {
+    	
+        case UNSPLICED_DNA:
+        	String sequence = gene.getResidues();
+			
+			if (reverseCompliment) {
+				sequence = SequenceUtils.reverseComplement(sequence);
+			}
+			
+			return sequence;
+			
+    	case INTERGENIC_3:
+			return fetchParentSequence(gene, false, prime3, 0);
+			
 
-        if(transcripts.size() > 1 ) {
-            alternateSpliced = true;
-        } else {
-           Transcript t = transcripts.iterator().next();
-           if(t instanceof ProductiveTranscript) {
-               transcript = (ProductiveTranscript) t;
-           }
+		case INTERGENIC_5:
+			return  fetchParentSequence(gene, false, 0, prime5);
+			
+
+		case INTERGENIC_3and5:
+			return fetchParentSequence(gene, true, prime3, prime5);
+			
+        }
+    	
+        
+        StringBuffer sb = new StringBuffer();
+        
+        for (Transcript transcript : gene.getTranscripts()) {
+        	String seq = getSequence(transcript, sequenceType, prime3, prime5);
+        	sb.append(seq);
         }
         
-        logger.error(transcript);
+        return sb.toString();
         
-        boolean reverseCompliment = false;
+    }
+    
+    public static String getSequence(Transcript transcript, SequenceType sequenceType, int prime3, int prime5) {
+    	
+    	boolean reverseCompliment = false;
         if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
             reverseCompliment = true;
         }
+    	
+        ProductiveTranscript productiveTranscript = null;
+    	if (transcript instanceof ProductiveTranscript) {
+    		productiveTranscript = (ProductiveTranscript) transcript;
+    	}
+    	
+		switch (sequenceType) {
+		
+		case SPLICED_DNA:
+			if (transcript.getResidues() != null) {
+				return new String(transcript.getResidues());
+			}
+			
+		case UNSPLICED_DNA:
+			
+			String sequence = transcript.getGene().getResidues();
+			
+			if (reverseCompliment) {
+				sequence = SequenceUtils.reverseComplement(sequence);
+			}
+			
+			return sequence;
 
-        if(!alternateSpliced && transcript!=null) {
-            switch (sequenceType) {
-                case SPLICED_DNA:
-                    if(transcript.getResidues() != null) {
-                        sequence = new String(transcript.getResidues());
-                    }
-                    break;
-                case UNSPLICED_DNA:
-                	sequence = gene.getResidues();
-    				
-    				if (reverseCompliment) {
-    					sequence = SequenceUtils.reverseComplement(sequence);
-    				}
-    				
-                    break;
-                case PROTEIN:
-                	Polypeptide p = transcript.getProtein();
-                	if (p != null) {
-                		sequence = new String(p.getResidues());
-                	}
-                    break;
-                case INTRON_AND_EXON:
-                	sequence = getIntronsAndExons(transcript);
-                    break;
-            
-	    		case INTERGENIC_3:
-	    			sequence =  fetchParentSequence(transcript, false, prime3, 0);
-	    			break;
-	
-	    		case INTERGENIC_5:
-	    			sequence =  fetchParentSequence(transcript, false, 0, prime5);
-	    			break;
-	
-	    		case INTERGENIC_3and5:
-	    			sequence =  fetchParentSequence(transcript, true, prime3, prime5);
-	    			break;
-	            }
-        }
-        
-        logger.info(sequence);
+		case PROTEIN:
+			
+			if (productiveTranscript == null) {
+				return null;
+			}
+			
+			try {
+				return new String(productiveTranscript.getProtein().getResidues());
+			} catch (NullPointerException npe) {
+				logger.error(npe.getStackTrace());
+				return null;
+			}
+			
+		case INTRON_AND_EXON:
+			
+			if (productiveTranscript == null) {
+				return null;
+			}
+			
+			return getIntronsAndExons(productiveTranscript);
+			
+		case INTERGENIC_3:
+			
+			return fetchParentSequence(transcript, false, prime3, 0);
 
-        return sequence;
+		case INTERGENIC_5:
+			
+			return fetchParentSequence(transcript, false, 0, prime5);
+
+		case INTERGENIC_3and5:
+			
+			return fetchParentSequence(transcript, true, prime3, prime5);
+
+		}
+		
+    	return null;
     }
+    
+    public static String getSequence(Polypeptide polypeptide, SequenceType sequenceType, int prime3, int prime5) {
+    	Transcript transcript = polypeptide.getTranscript();
+    	if (transcript != null) {
+    		return getSequence(transcript, sequenceType, prime3, prime5);
+    	}
+    	return null;
+    }
+    
+    
+
+    
     
     
     private static class Position {
@@ -273,71 +314,12 @@ public class DownloadUtils {
     		sequence = sequence.concat(str);
     	}
 		
-		
-		//    	for (AbstractExon exon : transcript.getExons()) {
-		//			int start = exon.getStart();
-		//			int stop = exon.getStop();
-		//			String str = new String(transcript.getGene().getRankZeroFeatureLoc().getSourceFeature().getResidues(start, stop));
-		//			sequence = sequence.concat(str);
-		//		}
 		return sequence;
     }
     
 
 
-    public static String getSequence(Transcript t, SequenceType sequenceType, int prime3, int prime5) {
-    	String sequence = null;
-    	ProductiveTranscript transcript = null;
-
-    	if (t instanceof ProductiveTranscript) {
-    		transcript = (ProductiveTranscript) t;
-    	}
-    	
-    	boolean reverseCompliment = false;
-        if (transcript.getRankZeroFeatureLoc().getStrand() < 0) {
-            reverseCompliment = true;
-        }
-    	
-    	if (transcript!=null) {
-    		switch (sequenceType) {
-    		case SPLICED_DNA:
-    			if (transcript.getResidues() != null) {
-    				return new String(transcript.getResidues());
-    			}
-    			//break;
-    		case UNSPLICED_DNA:
-    			sequence = transcript.getGene().getResidues();
-				
-				if (reverseCompliment) {
-					sequence = SequenceUtils.reverseComplement(sequence);
-				}
-				
-    			return sequence;
-    			//break;
-    		case PROTEIN:
-    			try {
-    				return new String(transcript.getProtein().getResidues());
-    			} catch (NullPointerException npe) {
-    				logger.error(npe.getStackTrace());
-    				return null;
-    			}
-    			//break;
-    		case INTRON_AND_EXON:
-    			return getIntronsAndExons(transcript);
-    			
-    		case INTERGENIC_3:
-    			return fetchParentSequence(t, false, prime3, 0);
-
-    		case INTERGENIC_5:
-    			return fetchParentSequence(t, false, 0, prime5);
-
-    		case INTERGENIC_3and5:
-    			return fetchParentSequence(t, true, prime3, prime5);
-
-    		}
-    	}
-    	return sequence;
-    }
+    
 
     // TODO Check off by one
 	private static String fetchParentSequence(Feature t, boolean includeTranscript, int prime3, int prime5) {
