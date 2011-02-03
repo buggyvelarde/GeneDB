@@ -145,21 +145,24 @@ public class DownloadController {
         File downloadTmpFolder = util.gettDownloadTmpFolder();
         String fileName = historyItemName + "." + util.getTime() + "." + outputFormat.name().toLowerCase();
         
+        
+        if (email != null && email.length() > 0) {
+    		
+    		saveDownloadDetailsToJsonFile(fileName, downloadTmpFolder, outputFormat, outputOptions, outputDestination, 
+    				sequenceType, includeHeader, fieldSeparator, blankField, fieldInternalSeparator, prime3, prime5, 
+    				email, uniqueNames, historyItemName, description, downloadLinkUrl);
+    		
+    		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
+    	
+    		return null;
+    	}
+        
         if (uniqueNames.size() > maxResultsInWebRequest) {
         	
-        	if (email != null && email.length() > 0) {
-        		
-        		saveDownloadDetailsToJsonFile(fileName, downloadTmpFolder, outputFormat, outputOptions, outputDestination, 
-        				sequenceType, includeHeader, fieldSeparator, blankField, fieldInternalSeparator, prime3, prime5, 
-        				email, uniqueNames, historyItemName, description, downloadLinkUrl);
-        		
-        		response.getWriter().append("The results will be mailed back to " + email + " once processed.");
         	
-        		
-        	} else {
-        		response.getWriter().append("The number of results exceeds the maximum the web server will download in a single request (" + maxResultsInWebRequest + ")." +
+        	response.getWriter().append("The number of results exceeds the maximum the web server will download in a single request (" + maxResultsInWebRequest + ")." +
         				"\nPlease supply your email on the previous page and the results will be mailed back to you.");
-        	}
+        	
         	
         	return null;
         	
