@@ -99,6 +99,8 @@
     <bean id="simpleNameQuery" class="org.genedb.querying.tmpquery.SimpleNameQuery"/>
     <bean id="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery"/>
     <bean id="dateCountQuery" class="org.genedb.querying.tmpquery.DateCountQuery" />
+    <bean id="quickSearchQuery" class="org.genedb.querying.tmpquery.QuickSearchQuery" />
+    
     <bean id="changedGeneFeaturesQuery" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
     	<property name="dataSource" ref="dataSource" />
     </bean>
