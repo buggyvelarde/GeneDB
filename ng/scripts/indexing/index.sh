@@ -74,9 +74,11 @@ doeval() {
 	if [ $exitCode -ne 0 ];then
 	    logecho "The script returned a status code of ${exitCode}. Exiting."
 	    echo "top :"
-	    echo `top -b -c -n 1`
+	    processes=$(top -b -c -n 1)
+	    echo $processes
 	    echo "free :"
-	    echo `free -m`
+	    memory=$(free -t -m)
+	    echo $memory
 	    exit ${exitCode}
 	fi
 }
