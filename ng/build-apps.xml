@@ -780,7 +780,7 @@
       <delete dir="${merge.lucene.destination}" />
       <mkdir dir="${merge.lucene.destination}" />
         
-      <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices" failonerror="true">
         <classpath>
           <path refid="run-classpathref"/>
           <pathelement location="${imported.basedir.web}/ant-build/classes"/>
