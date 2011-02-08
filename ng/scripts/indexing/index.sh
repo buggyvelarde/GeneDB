@@ -188,7 +188,7 @@ if [[ -z $ORGANISMS ]]; then
     fi
     
     logecho ${GET_ORGANISMS_SQL}
-    ORGANISMS_COMMAND="ORGANISMS=`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c \"${GET_ORGANISMS_SQL}\" pathogens`"
+    ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c \"${GET_ORGANISMS_SQL}\" pathogens\`"
     doeval $ORGANISMS_COMMAND
     logecho "ORGANISMS : "
     logecho $ORGANISMS
