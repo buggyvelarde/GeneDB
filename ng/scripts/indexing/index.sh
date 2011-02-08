@@ -66,6 +66,17 @@ logecho() {
     echo [`date '+%F %T'`] $1	
 }
 
+doeval() {
+	command=$1
+	logecho $command
+	eval $command
+	exitCode=$?    
+	if [ $exitCode -ne 0 ];then
+	    logecho "The script returned a status code of ${exitCode}. Exiting."
+	    exit ${exitCode}
+	fi
+}
+
 VERSION=0.1
 HST="pcs-genedb-dev"
 
@@ -177,8 +188,9 @@ if [[ -z $ORGANISMS ]]; then
     fi
     
     logecho ${GET_ORGANISMS_SQL}
-    ORGANISMS=`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c "${GET_ORGANISMS_SQL}" pathogens`
-    logecho $ORGANISMS
+    ORGANISMS="psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c \"${GET_ORGANISMS_SQL}\" pathogens"
+    doeval ORGANISMS
+    
 fi
 
 
@@ -236,9 +248,14 @@ if [[ $DO_INDEXING ]]; then
 	
 	mkdir -p $TMPDIR/Lucene/scripts
 	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-	logecho $GENERATE_LUCENE
-	eval $GENERATE_LUCENE
+	doeval $GENERATE_LUCENE
 	
+	exitCode=$?    
+	if [ $exitCode -ne 0 ];then
+	    logecho "The script returned a status code of ${exitCode}"
+	    exit ${exitCode}
+	fi
+
 	
 	LUCENE_ERRORS=`cat $TMPDIR/Lucene/scripts/*.err`
 	LEN_LUCENE_ERRORS=${#LUCENE_ERRORS}
@@ -263,18 +280,28 @@ if [[ $DO_INDEXING ]]; then
 	
 	
 	MERGE_LUCENE="ant -f build-apps.xml -Dconfig=$CONFIG -Dmerge.lucene.destination=$TMPDIR/Lucene/merged -Dmerge.lucene.origin=$TMPDIR/Lucene/output runMergeLuceneIndices"
-	logecho $MERGE_LUCENE
-	eval $MERGE_LUCENE
+	doeval $MERGE_LUCENE
 	
+	exitCode=$?    
+	if [ $exitCode -ne 0 ];then
+	    logecho "The script returned a status code of ${exitCode}"
+	    exit ${exitCode}
+	fi
+
 	
 	#
 	# Generate the lucene dictionary on the final merged indices. To do this only once, it should be done before the lucene merged folder is copied. 
 	#
 	
 	MAKE_DICTIONARY_LUCENE="ant -f build-apps.xml -Dconfig=$CONFIG -Ddir=$TMPDIR/Lucene/merged _LuceneDictionary"
-	logecho $MAKE_DICTIONARY_LUCENE
-	eval $MAKE_DICTIONARY_LUCENE
+	doeval $MAKE_DICTIONARY_LUCENE
 	
+	exitCode=$?    
+	if [ $exitCode -ne 0 ];then
+	    logecho "The script returned a status code of ${exitCode}"
+	    exit ${exitCode}
+	fi
+
 	
     if [[ ! -z $OUTDIRS ]]; then
 		for OUTDIR in $OUTDIRS
@@ -344,8 +371,7 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	
 	mkdir -p $TMPDIR/DTO/scripts
 	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
-	logecho $GENERATE_DTO
-	eval $GENERATE_DTO
+	doeval $GENERATE_DTO
 	
 	
 	DTO_ERRORS=`cat $TMPDIR/DTO/scripts/*.err`
@@ -374,9 +400,9 @@ if [[ $DO_MERGE_BERKLEY_CACHE ]];then
 	# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 	
 	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
-	logecho $MERGE_DTO
-	ssh pcs4m "$MERGE_DTO"
-	
+	# logecho $MERGE_DTO
+	# ssh pcs4m "$MERGE_DTO"
+	doeval $MERGE_DTO
 	
 	
 	
