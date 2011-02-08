@@ -36,7 +36,7 @@ unset DISPLAY
 
 boilerPlate += 'cd "' +  sourceHome + '"\n'  
 
-def queueName = "yesterday";
+def queueName = "long";
 
 String baseDir = "${baseOutputDir}/${action}"
 new File("${baseDir}/scripts").mkdirs()
