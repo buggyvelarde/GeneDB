@@ -73,6 +73,10 @@ doeval() {
 	exitCode=$?    
 	if [ $exitCode -ne 0 ];then
 	    logecho "The script returned a status code of ${exitCode}. Exiting."
+	    logecho "top :"
+	    logecho `top -b -c -n 1`
+	    logecho "free :"
+	    logecho `free -m`
 	    exit ${exitCode}
 	fi
 }
