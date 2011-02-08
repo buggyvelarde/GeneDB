@@ -73,6 +73,8 @@ doeval() {
 	exitCode=$?    
 	if [ $exitCode -ne 0 ];then
 	    logecho "The script returned a status code of ${exitCode}. Exiting."
+	    echo "processes :"
+	    echo "`ps -ef`"
 	    echo "top :"
 	    echo "`top -b -c -n 1`"
 	    echo "free :"
