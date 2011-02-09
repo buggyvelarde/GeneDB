@@ -173,6 +173,7 @@ while (jobList.size() > 0) {
                 finishedJobs.add(job)
                 failedJobs.add(job)
                 justFinishedJobs.add("FAILED The script ${baseDir}/scripts/${job}.script.err has failed")
+				print f.getText();
             }
         } else {
             System.err.print(" ${job}")
