@@ -252,7 +252,7 @@ if [[ $DO_INDEXING ]]; then
 	#
 	
 	mkdir -p $TMPDIR/Lucene/scripts
-	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy Lucene $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	GENERATE_LUCENE="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/scripts/indexing/GenerateBatchJobs.groovy Lucene $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 	doeval $GENERATE_LUCENE
 	
 	exitCode=$?    
@@ -375,7 +375,7 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	#
 	
 	mkdir -p $TMPDIR/DTO/scripts
-	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/src/org/genedb/web/mvc/model/GenerateBatchJobs.groovy DTO $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
+	GENERATE_DTO="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/scripts/indexing/GenerateBatchJobs.groovy DTO $CONFIG $SOURCE_HOME $TMPDIR $ORGANISMS_JOINED "
 	doeval $GENERATE_DTO
 	
 	
@@ -404,7 +404,10 @@ if [[ $DO_MERGE_BERKLEY_CACHE ]];then
 	# gv1 - tested on laptop:
 	# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 	
-	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+	#MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+	#groovy MergeCacheIndices.groovy SOURCE_HOME SCRIPT_DIR TO FROM
+	MERGE_DTO="groovy MergeCacheIndices.groovy $SOURCE_HOME $TMPDIR/DTO/scripts $TMPDIR/DTO/merged $TMPDIR/DTO/output"
+	
 	# logecho $MERGE_DTO
 	# ssh pcs4m "$MERGE_DTO"
 	doeval $MERGE_DTO
