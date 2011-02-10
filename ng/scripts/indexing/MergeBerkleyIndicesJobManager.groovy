@@ -23,9 +23,9 @@ export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
 
-cd ${SOURCE_HOME}
-
 '''
+
+boilerPlate += 'cd "' +  SOURCE_HOME + '"\n'  
 
 def classPathFileLocation = "/tmp/genedb-apps.txt"
 
@@ -76,7 +76,7 @@ if (errFile.exists()) {
 
 
 
-def processExecLine = "bsub -q ${queueName} -R 'select[mem>8000] rusage=[mem=8000]' -M 8000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+def processExecLine = "bsub -q ${queueName} -R 'select[mem>12000] rusage=[mem=12000]' -M 12000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 println processExecLine 
 Process p = ["ssh", "pcs4a", processExecLine].execute()
 def sout = new StringBuffer()
