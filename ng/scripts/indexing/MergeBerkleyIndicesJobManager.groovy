@@ -76,7 +76,7 @@ if (errFile.exists()) {
 
 
 
-def processExecLine = "bsub -q ${queueName} -R 'select[mem>4000] rusage=[mem=4000]' -M 4000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+def processExecLine = "bsub -q ${queueName} -R 'select[mem>8000] rusage=[mem=8000]' -M 8000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 println processExecLine 
 Process p = ["ssh", "pcs4a", processExecLine].execute()
 def sout = new StringBuffer()
