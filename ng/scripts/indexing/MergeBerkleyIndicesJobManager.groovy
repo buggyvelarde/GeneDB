@@ -58,7 +58,7 @@ def outFileName= "${scriptName}.out"
 File outFile = new File(outFileName)
 if (outFile.exists()) {
     try {
-        outFile.delete
+        outFile.delete()
     } catch (groovy.lang.MissingPropertyException mpe) {
         println "WARNING could not delete file: ${outFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  mpe.getMessage() 
     }
@@ -68,7 +68,7 @@ def errFileName= "${scriptName}.err"
 File errFile = new File(errFileName)
 if (errFile.exists()) {
     try {
-        errFile.delete
+        errFile.delete()
     } catch (groovy.lang.MissingPropertyException mpe) {
         println "WARNING could not delete file: ${errFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  mpe.getMessage()
     }
