@@ -23,7 +23,7 @@ export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
 unset DISPLAY
 
-cd "${SOURCE_HOME}"
+cd ${SOURCE_HOME}
 
 '''
 
