@@ -46,7 +46,7 @@ def cacheClassPath = new File(classPathFileLocation).getText();
 
 execLine="java -server -Djava.awt.headless=true -Xmx3000m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
 
-String scriptName = "${SCRIPT_DIR}/scripts/MERGE.script"
+String scriptName = "${SCRIPT_DIR}/MERGE.script"
 File script = new File(scriptName)
 println "Created? " + script.createNewFile() 
 script.write(boilerPlate)
