@@ -471,6 +471,7 @@ if [[ $COPY_NIGHTLY_TO_STAGING ]]; then
     echo "Stage 6"
     echo Copying db to staging
     dropdb -h genedb-db snapshot-old
+    dropdb -h genedb-db staging
     createdb -h genedb-db staging
     pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
 fi
