@@ -406,7 +406,7 @@ if [[ $DO_MERGE_BERKLEY_CACHE ]];then
 	
 	#MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
 	#groovy MergeCacheIndices.groovy SOURCE_HOME SCRIPT_DIR TO FROM
-	MERGE_DTO="groovy $SOURCE_HOME/scripts/indexing/MergeCacheIndicesJobManager.groovy $SOURCE_HOME $TMPDIR/DTO/scripts $TMPDIR/DTO/merged $TMPDIR/DTO/output"
+	MERGE_DTO="groovy $SOURCE_HOME/scripts/indexing/MergeBerkleyIndicesJobManager.groovy $SOURCE_HOME $TMPDIR/DTO/scripts $TMPDIR/DTO/merged $TMPDIR/DTO/output"
 	
 	# logecho $MERGE_DTO
 	# ssh pcs4m "$MERGE_DTO"

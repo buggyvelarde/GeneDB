@@ -1,6 +1,6 @@
 
 def usage () {
-	println "groovy MergeCacheIndicesJobManager.groovy SOURCE_HOME SCRIPT_DIR TO FROM"
+	println "groovy MergeBerkleyIndicesJobManager.groovy SOURCE_HOME SCRIPT_DIR TO FROM"
 }
 
 String SOURCE_HOME = this.args[0];
