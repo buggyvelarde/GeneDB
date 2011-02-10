@@ -44,7 +44,7 @@ if (cpProcess.exitValue()) {
     
 def cacheClassPath = new File(classPathFileLocation).getText();
 
-execLine="java -server -Djava.awt.headless=true -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
+execLine="java -server -Djava.awt.headless=true -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -XX:-UseGCOverheadLimit -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
 
 String scriptName = "${SCRIPT_DIR}/MERGE.script"
 File script = new File(scriptName)
@@ -76,7 +76,7 @@ if (errFile.exists()) {
 
 
 
-def processExecLine = "bsub -q ${queueName} -R 'select[mem>12000] rusage=[mem=12000]' -M 12000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+def processExecLine = "bsub -q ${queueName} -R 'select[mem>3000] rusage=[mem=3000]' -M 3000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 println processExecLine 
 Process p = ["ssh", "pcs4a", processExecLine].execute()
 def sout = new StringBuffer()
