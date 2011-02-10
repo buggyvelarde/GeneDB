@@ -404,13 +404,13 @@ if [[ $DO_MERGE_BERKLEY_CACHE ]];then
 	# gv1 - tested on laptop:
 	# ant -f build-apps.xml -Dconfig=gv1-osx-cachetest -Dmerge.indices.destination=/Users/gv1/Desktop/dto/merged/ -Dmerge.indices.origin=/Users/gv1/Desktop/dto/output/ runMergeIndices 
 	
-	#MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
+	MERGE_DTO="ant -f $SOURCE_HOME/build-apps.xml -Dconfig=$CONFIG -Dmerge.indices.destination=$TMPDIR/DTO/merged -Dmerge.indices.origin=$TMPDIR/DTO/output runMergeIndices"
 	#groovy MergeCacheIndices.groovy SOURCE_HOME SCRIPT_DIR TO FROM
-	MERGE_DTO="groovy $SOURCE_HOME/scripts/indexing/MergeBerkleyIndicesJobManager.groovy $SOURCE_HOME $TMPDIR/DTO/scripts $TMPDIR/DTO/merged $TMPDIR/DTO/output"
+	#MERGE_DTO="groovy $SOURCE_HOME/scripts/indexing/MergeBerkleyIndicesJobManager.groovy $SOURCE_HOME $TMPDIR/DTO/scripts $TMPDIR/DTO/merged $TMPDIR/DTO/output"
 	
-	# logecho $MERGE_DTO
-	# ssh pcs4m "$MERGE_DTO"
-	doeval $MERGE_DTO
+	logecho $MERGE_DTO
+	ssh pcs4m "$MERGE_DTO"
+	#doeval $MERGE_DTO
 	
 	
 	
