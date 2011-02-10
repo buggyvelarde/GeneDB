@@ -48,7 +48,7 @@ execLine="java -server -Djava.awt.headless=true -Xmx1900m  -classpath ${cacheCla
 
 String scriptName = "${SCRIPT_DIR}/MERGE.script"
 File script = new File(scriptName)
-println "Created? " + script.createNewFile() 
+println "Created? ${scriptName} " + script.createNewFile() 
 script.write(boilerPlate)
 script.append(execLine + '\n')
 "chmod 755 ${scriptName}".execute()
@@ -60,7 +60,7 @@ if (outFile.exists()) {
     try {
         outFile.delete
     } catch (groovy.lang.MissingPropertyException mpe) {
-        println "WARNING could not delete file: ${outFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  getMessage() 
+        println "WARNING could not delete file: ${outFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  mpe.getMessage() 
     }
 }
 
@@ -70,7 +70,7 @@ if (errFile.exists()) {
     try {
         errFile.delete
     } catch (groovy.lang.MissingPropertyException mpe) {
-        println "WARNING could not delete file: ${errFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  getMessage()
+        println "WARNING could not delete file: ${errFileName} " + mpe.getProperty() + " - " + mpe.getType() + " - " +  mpe.getMessage()
     }
 }
 
