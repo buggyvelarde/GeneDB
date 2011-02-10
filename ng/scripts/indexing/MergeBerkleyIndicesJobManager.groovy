@@ -44,7 +44,7 @@ if (cpProcess.exitValue()) {
     
 def cacheClassPath = new File(classPathFileLocation).getText();
 
-execLine="java -server -Djava.awt.headless=true -Xmx1900m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
+execLine="java -server -Djava.awt.headless=true -Xmx3000m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
 
 String scriptName = "${SCRIPT_DIR}/MERGE.script"
 File script = new File(scriptName)
