@@ -44,7 +44,7 @@ if (cpProcess.exitValue()) {
     
 def cacheClassPath = new File(classPathFileLocation).getText();
 
-execLine="java -server -Djava.awt.headless=true -Xmx3000m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
+execLine="java -server -Djava.awt.headless=true -Xmx4000m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.MergeBerkeleyIndices -r ${TO} ${FROM} "
 
 String scriptName = "${SCRIPT_DIR}/MERGE.script"
 File script = new File(scriptName)
@@ -76,7 +76,7 @@ if (errFile.exists()) {
 
 
 
-def processExecLine = "bsub -q ${queueName} -R 'select[mem>3000] rusage=[mem=3000]' -M 3000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+def processExecLine = "bsub -q ${queueName} -R 'select[mem>4000] rusage=[mem=4000]' -M 4000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 println processExecLine 
 Process p = ["ssh", "pcs4a", processExecLine].execute()
 def sout = new StringBuffer()
@@ -97,10 +97,10 @@ while (! finished) {
 		
         if (errFile.size() == 0) {
 			worked = true
-			println "WORKED The script errFileName has worked"
+			println "WORKED The script ${errFileName} has worked"
         } else {
             worked = false
-            println "FAILED The script errFileName has failed"
+            println "FAILED The script ${errFileName} has failed"
 			print errFile.getText();
         }
 		
