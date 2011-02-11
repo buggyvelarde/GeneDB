@@ -474,6 +474,9 @@ if [[ $COPY_NIGHTLY_TO_STAGING ]]; then
     dropdb -h genedb-db staging
     createdb -h genedb-db staging
     pg_dump -h pgsrv2 nightly | psql -h genedb-db staging
+    
+    /nfs/pathdb/bin/push-staging-to-snapshot2 
+ 	/nfs/pathdb/bin/fix-snapshot 
 fi
 
 
