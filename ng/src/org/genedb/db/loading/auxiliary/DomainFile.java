@@ -539,10 +539,16 @@ class DomainFile {
                 continue;
             }
 
+            //If the peptide and domain don't already exist, add a new entry into the hash
             if (!rowsByKeyAndAcc.containsKey(row.key(), row.acc())) {
             	rowsByKeyAndAcc.put(row.key(), row.acc(), new HashSet<DomainRow>());
-	    		rowsByKeyAndAcc.get(row.key(), row.acc()).add(row);
-        	}
+	        rowsByKeyAndAcc.get(row.key(), row.acc()).add(row);
+            }else{
+                /* If it already exists (in case of the same domain existing in two different locations),
+                 * then just add the dbrow
+                 */
+                rowsByKeyAndAcc.get(row.key(), row.acc()).add(row);               
+            }
     	}
     }
 
