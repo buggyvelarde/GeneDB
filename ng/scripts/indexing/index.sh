@@ -346,7 +346,11 @@ if [[ $DO_MOVE_OF_INDEX_TO_CONFIG_LOCATION ]]; then
     
 fi
 
-
+if [[ $DO_BERKLEY_CACHE ]] || [[ $DO_MERGE_BERKLEY_CACHE ]]
+then
+	logecho "Cleaning up DTO: MERGEs"
+	rm -fv $TMPDIR/DTO/scripts/MERGE.script*
+fi
 
 if [[ $DO_BERKLEY_CACHE	]];then
 	
@@ -367,7 +371,6 @@ if [[ $DO_BERKLEY_CACHE	]];then
 	    rm -fvr $TMPDIR/DTO/scripts/${organism}.script*
         
 	done
-	
 	
 	
 	#
