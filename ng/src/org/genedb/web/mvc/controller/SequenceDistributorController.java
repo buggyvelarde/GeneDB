@@ -19,6 +19,16 @@
 
 package org.genedb.web.mvc.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.feature.Polypeptide;
@@ -26,6 +36,11 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,18 +64,21 @@ public class SequenceDistributorController {
     private SequenceDao sequenceDao;
 
     @RequestMapping(method=RequestMethod.GET, value="/{name}/{type}/{destination}")
-    public String process(
+    public void process(
+    		HttpServletResponse response,
             @PathVariable(value="name") String uniqueName,
             @PathVariable(value="destination") String destination,
             @PathVariable(value="type") String sequenceType
-    ) {
-
+    ) throws IOException {
+    	
+    	Writer writer = response.getWriter();
+    	
         Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);
         if (feature == null) {
-            logger.warn(String.format("Failed to find feature '%s'", uniqueName));
+            writer.append(String.format("Failed to find feature '%s'", uniqueName));
             //be.reject("no.results");
             //return showForm(request, response, be);
-            return null; // FIXME
+            return; // FIXME
         }
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
 
@@ -103,36 +121,121 @@ public class SequenceDistributorController {
         sequence = splitSequenceIntoLines(sequence);
 
         SequenceDestination sd = SequenceDestination.valueOf(destination);
+        
+        
+        
         switch (sd) {
         case BLAST:
-        	String returnable = String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
-                    LOCAL_BLAST,
-                    "GeneDB_" + transcript.getOrganism().getCommonName(),
-                    sequence,
-                    program
-                );
-        	logger.error(returnable);
-            return returnable;
+        	
+        	String uri = String.format("%s/%s", LOCAL_BLAST, "GeneDB_" + transcript.getOrganism().getCommonName() );
+        	Map<String,String> parameters = new Hashtable<String,String>();
+        	parameters.put("sequence", sequence);
+        	parameters.put("blast_type", program);
+        	
+        	writer.append( post(uri, parameters) );
+        	break;
+        	
+//        	String returnable = String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
+//                    LOCAL_BLAST,
+//                    "GeneDB_" + transcript.getOrganism().getCommonName(),
+//                    sequence,
+//                    program
+//                );
+//        	
+//        	
+        	
+//        	logger.error(returnable);
+//            return returnable;
+        	
         case OMNIBLAST:
-            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
-                LOCAL_BLAST,
-                nucleotide ? "GeneDB_transcripts/omni" : "GeneDB_proteins/omni",
-                sequence,
-                program
-            );
+        	
+        	String uri2 = String.format("%s/%s", LOCAL_BLAST, nucleotide ? "GeneDB_transcripts/omni" : "GeneDB_proteins/omni" );
+        	Map<String,String> parameters2 = new Hashtable<String,String>();
+        	parameters2.put("sequence", sequence);
+        	parameters2.put("blast_type", program);
+        	
+        	writer.append( post(uri2, parameters2)) ;
+        	break;
+        	
+//            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
+//                LOCAL_BLAST,
+//                nucleotide ? "GeneDB_transcripts/omni" : "GeneDB_proteins/omni",
+//                sequence,
+//                program
+//            );
+        	
         case NCBI_BLAST:
-            return String.format("redirect:%s&%s&QUERY=%s",
-                "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome",
-                nucleotide ?
-                    "PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
-                    : "PROGRAM=blastp&BLAST_PROGRAMS=blastp",
-                sequence
-            );
+        	
+        	String uri3 = "http://blast.ncbi.nlm.nih.gov/Blast.cgi";
+        	Map<String,String> parameters3 = new Hashtable<String,String>();
+        	parameters3.put("PAGE_TYPE", "BlastSearch");
+        	parameters3.put("SHOW_DEFAULTS", "on");
+        	parameters3.put("LINK_LOC", "blasthome");
+        	
+        	if (nucleotide) {
+        		parameters3.put("PROGRAM", "blastn");
+        		parameters3.put("BLAST_PROGRAMS", "megaBlast");
+        		parameters3.put("DBTYPE", "gc");
+        		parameters3.put("DATABASE", "nr");
+        	} else {
+        		parameters3.put("PROGRAM", "blastp");
+        		parameters3.put("BLAST_PROGRAMS", "blastp");
+        	}
+        	
+        	parameters3.put("QUERY", sequence);
+        	writer.append( post(uri3, parameters3));
+        	break;
+        	
+//            return String.format("redirect:%s&%s&QUERY=%s",
+//                "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome",
+//                nucleotide ?
+//                    "PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
+//                    : "PROGRAM=blastp&BLAST_PROGRAMS=blastp",
+//                sequence
+//            );
+        	
         default:
             throw new RuntimeException("Unknown sequence destination");
         }
     }
-
+    
+    private String post(String uri, Map<String,String> parameters) {
+    	final PostMethod postMethod = new PostMethod(uri);
+    	
+    	for(Entry<String,String> entry : parameters.entrySet()) {
+    		postMethod.addParameter( entry.getKey(), entry.getValue());
+    	}
+    	
+    	HttpClient client = new HttpClient();
+    	
+    		int statusCode;
+			try {
+				statusCode = client.executeMethod( postMethod );
+				
+				if( statusCode == HttpStatus.SC_OK )
+				{
+				    final InputStream responseBodyStream = postMethod.getResponseBodyAsStream();
+				    StringWriter writer = new StringWriter();
+				    IOUtils.copy(responseBodyStream, writer);
+				    
+				    responseBodyStream.close();
+				    
+				    return writer.toString();
+				    
+				}
+				
+			} catch (HttpException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		return "Sorry but could not prepare the BLAST form. Please contact webmaster@genedb.org with information on the gene that caused this problem.";
+    }
+    
     private String getSequence(Transcript transcript, GeneSection start, int length1, GeneSection end,
             int length2, boolean exons, boolean introns) {
         Feature topLevelFeature = transcript.getPrimarySourceFeature();
