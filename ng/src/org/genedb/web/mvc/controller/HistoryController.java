@@ -204,7 +204,7 @@ public class HistoryController {
     		return description.toString();
     	} 
     
-        return null;
+        return "";
     }
 
 
