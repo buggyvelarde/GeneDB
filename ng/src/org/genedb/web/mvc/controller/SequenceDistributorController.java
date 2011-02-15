@@ -206,6 +206,8 @@ public class SequenceDistributorController {
     private String postForm(String uri, Map<String,String> parameters) {
     	StringBuilder sb = new StringBuilder();
     	
+    	sb.append("Redirecting to NCBI... (if there is a problem please try the submit button below)");
+    	
     	sb.append(String.format("<form id='ncbi' action='%s' method='POST'>", uri));
     	
     	for(Entry<String,String> entry : parameters.entrySet()) {
@@ -213,7 +215,7 @@ public class SequenceDistributorController {
     	}
     	
     	sb.append("<input type='SUBMIT'></form>");
-    	//sb.append("<script> document.forms['ncbi'].submit(); </script>");
+    	sb.append("<script> document.forms['ncbi'].submit(); </script>");
     	
 		return sb.toString();
     }
