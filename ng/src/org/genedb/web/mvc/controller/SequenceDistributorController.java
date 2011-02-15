@@ -73,6 +73,7 @@ public class SequenceDistributorController {
     ) throws IOException {
     	
     	Writer writer = response.getWriter();
+    	response.setContentType("text/html");
     	
         Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);
         if (feature == null) {
