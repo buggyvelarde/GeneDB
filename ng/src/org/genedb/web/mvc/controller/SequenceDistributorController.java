@@ -119,7 +119,9 @@ public class SequenceDistributorController {
             }
             program = "wublastx";
         }
-
+        
+        String unsplitSequence = sequence;
+        
         sequence = splitSequenceIntoLines(sequence);
 
         SequenceDestination sd = SequenceDestination.valueOf(destination);
@@ -185,7 +187,7 @@ public class SequenceDistributorController {
         		parameters3.put("BLAST_PROGRAMS", "blastp");
         	}
         	
-        	parameters3.put("QUERY", sequence);
+        	parameters3.put("QUERY", unsplitSequence);
         	
         	writer.append( postForm(uri3, parameters3));
         	break;
