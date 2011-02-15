@@ -206,13 +206,14 @@ public class SequenceDistributorController {
     private String postForm(String uri, Map<String,String> parameters) {
     	StringBuilder sb = new StringBuilder();
     	
-    	sb.append(String.format("<form action='%s' method='POST'>", uri));
+    	sb.append(String.format("<form id='ncbi' action='%s' method='POST'>", uri));
     	
     	for(Entry<String,String> entry : parameters.entrySet()) {
-    		sb.append(String.format("<form name='%s' value='%s' type='HIDDEN'>", entry.getKey(), entry.getValue()));
+    		sb.append(String.format("<input name='%s' value='%s' type='HIDDEN'>", entry.getKey(), entry.getValue()));
     	}
     	
     	sb.append("<input type='SUBMIT'></form>");
+    	//sb.append("<script> document.forms['ncbi'].submit(); </script>");
     	
 		return sb.toString();
     }
