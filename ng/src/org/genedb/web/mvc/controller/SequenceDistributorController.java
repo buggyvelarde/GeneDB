@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
+ * @author gv1
  */
 @Controller
 @RequestMapping("/SequenceDistributor")
@@ -202,35 +203,39 @@ public class SequenceDistributorController {
     private String post(String uri, Map<String,String> parameters) {
     	final PostMethod postMethod = new PostMethod(uri);
     	
+    	logger.error(uri);
+    	
     	for(Entry<String,String> entry : parameters.entrySet()) {
+    		logger.error(entry.getKey());
+    		logger.error(entry.getValue());
     		postMethod.addParameter( entry.getKey(), entry.getValue());
     	}
     	
     	HttpClient client = new HttpClient();
     	
-    		int statusCode;
-			try {
-				statusCode = client.executeMethod( postMethod );
-				
-				if( statusCode == HttpStatus.SC_OK )
-				{
-				    final InputStream responseBodyStream = postMethod.getResponseBodyAsStream();
-				    StringWriter writer = new StringWriter();
-				    IOUtils.copy(responseBodyStream, writer);
-				    
-				    responseBodyStream.close();
-				    
-				    return writer.toString();
-				    
-				}
-				
-			} catch (HttpException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		int statusCode;
+		try {
+			statusCode = client.executeMethod( postMethod );
+			
+			if( statusCode == HttpStatus.SC_OK )
+			{
+			    final InputStream responseBodyStream = postMethod.getResponseBodyAsStream();
+			    StringWriter writer = new StringWriter();
+			    IOUtils.copy(responseBodyStream, writer);
+			    
+			    responseBodyStream.close();
+			    
+			    return writer.toString();
+			    
 			}
+			
+		} catch (HttpException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 			
 		
 		return "Sorry but could not prepare the BLAST form. Please contact webmaster@genedb.org with information on the gene that caused this problem.";
