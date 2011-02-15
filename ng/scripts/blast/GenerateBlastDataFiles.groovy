@@ -1,6 +1,6 @@
 import groovy.sql.Sql
 
-String HOST = "pathdbsrv1a"
+//String HOST = "pathdbsrv1a"
 String PATH = "/lustre/scratch101/blastdb/Pathogen/website/genedb/"
 //String PATH="/nfs/pathdb/tmp/blast-ng/"
 
@@ -33,7 +33,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    Process p = ["ssh", HOST, "chado_dump_proteins -s -o ${org}"].execute()
+    Process p = ["sh","chado_dump_proteins -s -o ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -59,7 +59,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    p = ["ssh", HOST, "chado_dump_transcripts ${org}"].execute()
+    p = ["sh", "chado_dump_transcripts ${org}"].execute()
     sout = new FileOutputStream(script)
     serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -84,7 +84,7 @@ for (org in orgs) {
 	serr.delete()
 
 	print "${scriptName} : "
- 	p = ["ssh", HOST, "chado_dump_genome -o ${org}"].execute()
+ 	p = ["sh", "chado_dump_genome -o ${org}"].execute()
 	sout = new FileOutputStream(script)
 	serros = new FileOutputStream(serr)
 	p.consumeProcessOutput(sout, serros)
