@@ -105,12 +105,14 @@ public class SequenceDistributorController {
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
-                LOCAL_BLAST,
-                "GeneDB_" + transcript.getOrganism().getCommonName(),
-                sequence,
-                program
-            );
+        	String returnable = String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
+                    LOCAL_BLAST,
+                    "GeneDB_" + transcript.getOrganism().getCommonName(),
+                    sequence,
+                    program
+                );
+        	logger.error(returnable);
+            return returnable;
         case OMNIBLAST:
             return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
                 LOCAL_BLAST,
