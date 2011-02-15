@@ -208,7 +208,7 @@ public class SequenceDistributorController {
     private String postForm(String uri, Map<String,String> parameters) {
     	StringBuilder sb = new StringBuilder();
     	
-    	sb.append("Redirecting to NCBI... (if there is a problem please try the submit button below)");
+    	sb.append("Redirecting to NCBI... If you have Javascript disabled, or nothing happens, please try the submit button below.");
     	
     	sb.append(String.format("<form id='ncbi' action='%s' method='POST'>", uri));
     	
@@ -225,11 +225,11 @@ public class SequenceDistributorController {
     private String post(String uri, Map<String,String> parameters) {
     	final PostMethod postMethod = new PostMethod(uri);
     	
-    	logger.error(uri);
+    	logger.debug(uri);
     	
     	for(Entry<String,String> entry : parameters.entrySet()) {
-    		logger.error(entry.getKey());
-    		logger.error(entry.getValue());
+//    		logger.error(entry.getKey());
+//    		logger.error(entry.getValue());
     		postMethod.addParameter( entry.getKey(), entry.getValue());
     	}
     	
