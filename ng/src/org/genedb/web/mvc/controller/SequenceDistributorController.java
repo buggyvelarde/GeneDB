@@ -168,24 +168,18 @@ public class SequenceDistributorController {
         	
         case NCBI_BLAST:
         	
-        	String uri3 = "http://blast.ncbi.nlm.nih.gov/Blast.cgi";
+        	
+        	String uri3 = String.format("%s&%s",
+                "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome",
+                nucleotide ?
+                    "PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&DBTYPE=gc&DATABASE=nr"
+                    : "PROGRAM=blastp&BLAST_PROGRAMS=blastp");
+        	
+        	
         	Map<String,String> parameters3 = new Hashtable<String,String>();
-        	parameters3.put("PAGE_TYPE", "BlastSearch");
-        	parameters3.put("SHOW_DEFAULTS", "on");
-        	parameters3.put("LINK_LOC", "blasthome");
-        	
-        	if (nucleotide) {
-        		parameters3.put("PROGRAM", "blastn");
-        		parameters3.put("BLAST_PROGRAMS", "megaBlast");
-        		parameters3.put("DBTYPE", "gc");
-        		parameters3.put("DATABASE", "nr");
-        	} else {
-        		parameters3.put("PROGRAM", "blastp");
-        		parameters3.put("BLAST_PROGRAMS", "blastp");
-        	}
-        	
         	parameters3.put("QUERY", sequence);
         	writer.append( post(uri3, parameters3));
+        	
         	break;
         	
 //            return String.format("redirect:%s&%s&QUERY=%s",
