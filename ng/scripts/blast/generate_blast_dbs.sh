@@ -28,14 +28,8 @@ logecho ${GET_ORGANISMS_SQL}
 ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv2 -U genedb -c \"${GET_ORGANISMS_SQL}\" nightly\`"
 doeval $ORGANISMS_COMMAND
 
-
- d        : Database name
-  u        : Database username
-  p        : Database port
-  i        : Database host
-  
-
 CONNECTION_DETAILS="-d nightly -u genedb -p 5432 -i pgsrv2"
+    
 
 for organism in $ORGANISMS
 do
