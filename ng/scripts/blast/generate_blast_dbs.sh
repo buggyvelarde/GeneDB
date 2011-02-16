@@ -37,10 +37,10 @@ do
      	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism} > ${BLAST_DB_PATH}/GeneDB_${organism}_Proteins"
      	doeval $DUMP_PROTEINS
      	
-     	DUMP_PROTEINS="chado_dump_transcripts ${organism} ${BLAST_DB_PATH}/GeneDB_${organism}_Genes"
+     	DUMP_PROTEINS="chado_dump_transcripts ${organism} > ${BLAST_DB_PATH}/GeneDB_${organism}_Genes"
      	doeval $DUMP_PROTEINS
      	
-     	DUMP_PROTEINS="chado_dump_genome -o ${organism} ${BLAST_DB_PATH}/GeneDB_${organism}_Contigs"
+     	DUMP_PROTEINS="chado_dump_genome -o ${organism} > ${BLAST_DB_PATH}/GeneDB_${organism}_Contigs"
      	doeval $DUMP_PROTEINS
      	
      	logecho "Dumped!"
