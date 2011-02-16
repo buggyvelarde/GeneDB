@@ -208,7 +208,7 @@ public class SequenceDistributorController {
     private String postForm(String uri, Map<String,String> parameters) {
     	StringBuilder sb = new StringBuilder();
     	
-    	sb.append(String.format("<form id='ncbi' action='%s' method='POST'>", uri));
+    	sb.append(String.format("<html><title>redirect</title></html><body onLoad='doSubmit()'><form id='ncbi' action='%s' method='POST'>", uri));
     	
     	for(Entry<String,String> entry : parameters.entrySet()) {
     		sb.append(String.format("<input name='%s' value='%s' type='HIDDEN'>", entry.getKey(), entry.getValue()));
@@ -216,7 +216,11 @@ public class SequenceDistributorController {
     	
     	sb.append("<noscript>You appear to have Javascript disabled, please use the submit button: <input type='SUBMIT'></noscript>");
     	sb.append("</form>");
-    	sb.append("<script> document.forms['ncbi'].submit(); </script>");
+    	sb.append("<script> function doSubmit() { \n" +
+    			" document.forms['ncbi'].submit(); \n" +
+    			"} \n" +
+    			"</script>");
+    	sb.append("</body>");
     	
 		return sb.toString();
     }
