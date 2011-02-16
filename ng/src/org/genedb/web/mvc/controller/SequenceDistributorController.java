@@ -136,7 +136,7 @@ public class SequenceDistributorController {
         	parameters.put("sequence", sequence);
         	parameters.put("blast_type", program);
         	
-        	writer.append( post(uri, parameters) );
+        	writer.append( postForm(uri, parameters) );
         	break;
         	
 //        	String returnable = String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
@@ -158,7 +158,7 @@ public class SequenceDistributorController {
         	parameters2.put("sequence", sequence);
         	parameters2.put("blast_type", program);
         	
-        	writer.append( post(uri2, parameters2)) ;
+        	writer.append( postForm(uri2, parameters2)) ;
         	break;
         	
 //            return String.format("redirect:%s/%s?sequence=%s&blast_type=%s",
