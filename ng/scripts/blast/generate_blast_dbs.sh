@@ -27,7 +27,16 @@ logecho ${GET_ORGANISMS_SQL}
 
 ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv2 -U genedb -c \"${GET_ORGANISMS_SQL}\" nightly\`"
 doeval $ORGANISMS_COMMAND
-    
+
+
+ d        : Database name
+  u        : Database username
+  p        : Database port
+  i        : Database host
+  
+
+CONNECTION_DETAILS="-d nightly -u genedb -p 5432 -i pgsrv2"
+
 for organism in $ORGANISMS
 do
 	#regex / / to trim white spaces
@@ -37,13 +46,13 @@ do
      	
      	logecho "Dumping ${organism} : "
      	
-     	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism} > ${BLAST_DB_PATH}GeneDB_${organism}_Proteins"
+     	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism} ${CONNECTION_DETAILS} > ${BLAST_DB_PATH}GeneDB_${organism}_Proteins"
      	doeval $DUMP_PROTEINS
      	
-     	DUMP_TRANSCRIPTS="chado_dump_transcripts ${organism} > ${BLAST_DB_PATH}GeneDB_${organism}_Genes"
-     	doeval $DUMP_TRANSCRIPTS
+#     	DUMP_TRANSCRIPTS="chado_dump_transcripts > ${BLAST_DB_PATH}GeneDB_${organism}_Genes"
+#     	doeval $DUMP_TRANSCRIPTS
      	
-     	DUMP_GENOME="chado_dump_genome -o ${organism} > ${BLAST_DB_PATH}GeneDB_${organism}_Contigs"
+     	DUMP_GENOME="chado_dump_genome -o ${organism} ${CONNECTION_DETAILS} > ${BLAST_DB_PATH}GeneDB_${organism}_Contigs"
      	doeval $DUMP_GENOME
      	
      	logecho "Dumped!"
