@@ -20,7 +20,7 @@ BLAST_DB_PATH="/lustre/scratch101/blastdb/Pathogen/website/genedb/"
 ORIGINAL_IFS=$IFS
 IFS=$'\n'
 
-PGPASSWORD="genedb"
+export PGPASSWORD="genedb"
 
 GET_ORGANISMS_SQL="select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'"
 logecho ${GET_ORGANISMS_SQL}
