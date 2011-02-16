@@ -104,7 +104,7 @@ public abstract class LuceneQuery implements Query {
 
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = fetchDocument(scoreDoc.doc);
-                logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+                logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
                 //T t = convertDocumentToReturnType(document, clazz);
                 Object t = convertDocumentToReturnType(document);
                 names.add(t);
@@ -154,7 +154,11 @@ public abstract class LuceneQuery implements Query {
 
 
     private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries) {
-
+    	
+    	logger.info("version " + luceneIndex.getReader().getVersion());
+    	logger.info(luceneIndex.getIndexDirectoryName());
+    	
+    	
         TopDocs hits = null;
         if (queries.size() > 1) {
             BooleanQuery booleanQuery = new BooleanQuery();
