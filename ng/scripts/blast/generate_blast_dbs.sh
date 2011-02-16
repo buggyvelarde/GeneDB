@@ -11,18 +11,14 @@ doeval() {
 	exitCode=$?    
 	if [ $exitCode -ne 0 ];then
 	    logecho "The script returned a status code of ${exitCode}. Exiting."
-	    echo "processes :"
-	    echo "`ps -ef`"
-	    echo "top :"
-	    echo "`top -b -c -n 1`"
-	    echo "free :"
-	    echo "`free -tm`"
 	    exit ${exitCode}
 	fi
 }
 
+ORIGINAL_IFS=$IFS
+IFS=$'\n'
+
 GET_ORGANISMS_SQL="select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'"
-    
 logecho ${GET_ORGANISMS_SQL}
 ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c \"${GET_ORGANISMS_SQL}\" pathogens\`"
 doeval $ORGANISMS_COMMAND
