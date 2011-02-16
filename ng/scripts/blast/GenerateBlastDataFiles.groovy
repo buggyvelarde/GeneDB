@@ -33,7 +33,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    Process p = ["sh","chado_dump_proteins -s -o ${org}"].execute()
+    Process p = ["chado_dump_proteins -s -o ${org}"].execute()
     def sout = new FileOutputStream(script)
     def serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -44,7 +44,7 @@ for (org in orgs) {
     if (serr.length() > 70) {
         // Hack as script outputs a progress msg
         println("Looks like we got a problem")
-		print serr
+		println(serr.text)
         worked = false
     } else {
         println("OK")
@@ -60,7 +60,7 @@ for (org in orgs) {
     serr.delete()
 
     print "${scriptName} : "
-    p = ["sh", "chado_dump_transcripts ${org}"].execute()
+    p = ["chado_dump_transcripts ${org}"].execute()
     sout = new FileOutputStream(script)
     serros = new FileOutputStream(serr)
     p.consumeProcessOutput(sout, serros)
@@ -69,7 +69,7 @@ for (org in orgs) {
     serros.close()
     if (serr.length() > 0) {
         println("Looks like we got a problem")
-		print serr
+		println(serr.text)
         worked = false
     } else {
         println("OK")
@@ -86,7 +86,7 @@ for (org in orgs) {
 	serr.delete()
 
 	print "${scriptName} : "
- 	p = ["sh", "chado_dump_genome -o ${org}"].execute()
+ 	p = ["chado_dump_genome -o ${org}"].execute()
 	sout = new FileOutputStream(script)
 	serros = new FileOutputStream(serr)
 	p.consumeProcessOutput(sout, serros)
@@ -95,7 +95,7 @@ for (org in orgs) {
 	serros.close()
 	if (serr.length() > 0) {
 		println("Looks like we got a problem")
-		print serr
+		println(serr.text)
 		worked = false
 	} else {
 		println("OK")
