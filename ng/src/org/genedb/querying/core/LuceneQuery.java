@@ -27,11 +27,9 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
-//import org.hibernate.validator.ClassValidator;
-//import org.hibernate.validator.InvalidValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.util.StringUtils;
+
 import org.springframework.validation.Errors;
 
 import java.io.IOException;
@@ -82,7 +80,7 @@ public abstract class LuceneQuery implements Query {
 
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = fetchDocument(scoreDoc.doc);
-                logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
                 //T t = convertDocumentToReturnType(document, clazz);
                 Object t = convertDocumentToReturnType(document);
                 names.add((T)t);
@@ -104,7 +102,7 @@ public abstract class LuceneQuery implements Query {
 
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = fetchDocument(scoreDoc.doc);
-                logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
                 //T t = convertDocumentToReturnType(document, clazz);
                 Object t = convertDocumentToReturnType(document);
                 names.add(t);
@@ -155,8 +153,8 @@ public abstract class LuceneQuery implements Query {
 
     private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries) {
     	
-    	logger.info("version " + luceneIndex.getReader().getVersion());
-    	logger.info(luceneIndex.getIndexDirectoryName());
+    	//logger.info("version " + luceneIndex.getReader().getVersion());
+    	//logger.info(luceneIndex.getIndexDirectoryName());
     	
     	
         TopDocs hits = null;
@@ -165,11 +163,14 @@ public abstract class LuceneQuery implements Query {
             for (org.apache.lucene.search.Query query : queries) {
                 booleanQuery.add(new BooleanClause(query, Occur.MUST));
             }
+            
+            logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
             hits = luceneIndex.search(booleanQuery);
-            logger.info(String.format("Lucene query is '%s', results size is '%d'", booleanQuery.toString(), hits.totalHits));
+            logger.debug(String.format("Results size is '%d'", hits.totalHits));
         } else {
+        	logger.debug(String.format("Lucene query is '%s'", queries.get(0).toString()));
             hits = luceneIndex.search(queries.get(0));
-            logger.info(String.format("Lucene query is '%s', results size is '%d'", queries.get(0).toString(), hits.totalHits));
+            logger.debug(String.format("Results size is '%d'", hits.totalHits));
         }
         return hits;
     }

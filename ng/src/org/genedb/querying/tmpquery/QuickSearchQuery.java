@@ -102,7 +102,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         }
         // queries.add(isCurrentQuery);
         
-        logger.info(queries);
+        // logger.info(queries);
     }
 
     @Override

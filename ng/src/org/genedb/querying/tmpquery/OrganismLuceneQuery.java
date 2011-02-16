@@ -1,6 +1,5 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.LuceneQuery;

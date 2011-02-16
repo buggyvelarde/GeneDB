@@ -155,6 +155,7 @@
             <bean class="org.genedb.querying.core.LuceneIndex">
                 <property name="indexDirectoryName" value="${lucene.indexDirectory}" />
                 <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+                <property name="maxResults" value="850000" />
             </bean>
         </list>
         </property>
