@@ -15,6 +15,8 @@ doeval() {
 	fi
 }
 
+BLAST_DB_PATH = "/lustre/scratch101/blastdb/Pathogen/website/genedb/"
+
 ORIGINAL_IFS=$IFS
 IFS=$'\n'
 
@@ -32,13 +34,13 @@ do
      	
      	logecho "Dumping ${organism} : "
      	
-     	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism}"
+     	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism} > $BLAST_DB_PATH/GeneDB_${organism}_Proteins"
      	doeval $DUMP_PROTEINS
      	
-     	DUMP_PROTEINS="chado_dump_transcripts -o ${organism}"
+     	DUMP_PROTEINS="chado_dump_transcripts ${organism} $BLAST_DB_PATH/GeneDB_${organism}_Genes"
      	doeval $DUMP_PROTEINS
      	
-     	DUMP_PROTEINS="chado_dump_genome -o ${organism}"
+     	DUMP_PROTEINS="chado_dump_genome -o ${organism} $BLAST_DB_PATH/GeneDB_${organism}_Contigs"
      	doeval $DUMP_PROTEINS
      	
      	logecho "Dumped!"
