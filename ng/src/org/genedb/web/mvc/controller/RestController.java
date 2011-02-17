@@ -158,6 +158,13 @@ public class RestController {
     	
     	ModelAndView mav = new ModelAndView(viewName);
     	
+    	final ChangedFeatureSetResultSummary organismSetResultSummary = new ChangedFeatureSetResultSummary();
+    	organismSetResultSummary.name = "genome/changes";
+    	organismSetResultSummary.since = since;
+    	organismSetResultSummary.count = 0;
+    	
+        mav.addObject("model", organismSetResultSummary);
+    	
     	try {
     		TaxonNode taxonNode = getTaxonNode(taxon);
 	    	Organism o = getOrganism(taxonNode);
@@ -167,15 +174,12 @@ public class RestController {
 	        changedGeneFeaturesQuery.setDate(sinceDate);
 	        changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
 	    	
-	        final ChangedFeatureSetResultSummary organismSetResultSummary = new ChangedFeatureSetResultSummary();
+	        // deliberately resetting since to whatever it has been interpreted to be
 	        organismSetResultSummary.since = sinceDate.toString();
-	        organismSetResultSummary.name = "genome/changes";
 	        organismSetResultSummary.taxonomyID = taxonNode.getTaxonId();
-	        organismSetResultSummary.count = 0;
+	        
 	        
 	        final Hashtable<String,Integer> statistics = new Hashtable<String,Integer>(); 
-	        
-	        
 	        
 	    	changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
 	            public void processRow(ResultSet rs) throws SQLException {
@@ -200,7 +204,7 @@ public class RestController {
 	    	}
 	    	
 	    	
-	    	mav.addObject("model", organismSetResultSummary);
+	    	
     		
     	} catch (RestException re) {
     		mav.addObject("model", re.model);
