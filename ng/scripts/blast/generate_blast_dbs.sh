@@ -36,15 +36,14 @@ do
 	#regex / / to trim white spaces
 	organism=${organism/ /} 
 	if [[ $organism != 'dummy' ]]; then
-     	#ORGANISMS_JOINED="$ORGANISMS_JOINED:$organism"
-     	
+		
      	logecho "Dumping ${organism} : "
      	
      	DUMP_PROTEINS="chado_dump_proteins -s -o ${organism} ${CONNECTION_DETAILS} > ${BLAST_DB_PATH}GeneDB_${organism}_Proteins"
      	doeval $DUMP_PROTEINS
      	
-#     	DUMP_TRANSCRIPTS="chado_dump_transcripts > ${BLAST_DB_PATH}GeneDB_${organism}_Genes"
-#     	doeval $DUMP_TRANSCRIPTS
+     	DUMP_TRANSCRIPTS="chado_dump_transcripts -o ${organism} ${CONNECTION_DETAILS} > ${BLAST_DB_PATH}GeneDB_${organism}_Genes"
+     	doeval $DUMP_TRANSCRIPTS
      	
      	DUMP_GENOME="chado_dump_genome -o ${organism} ${CONNECTION_DETAILS} > ${BLAST_DB_PATH}GeneDB_${organism}_Contigs"
      	doeval $DUMP_GENOME
