@@ -22,7 +22,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
     private int nextNumber = 1;
     private int version = 1;
 
-    private static final String HISTORY_LIST = "_HISTORY_LIST";
+    public static final String HISTORY_LIST = "_HISTORY_LIST";
     private static final String DEFAULT_CART_NAME = "Feature Basket";
 
     private WeakReference<HttpSession> sessionReference;

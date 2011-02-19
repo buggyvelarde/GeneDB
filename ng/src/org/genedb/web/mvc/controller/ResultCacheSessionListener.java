@@ -1,9 +1,14 @@
 package org.genedb.web.mvc.controller;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
@@ -38,10 +43,14 @@ public class ResultCacheSessionListener implements HttpSessionListener {
 
         //Retrieve the ResultCacheFactory bean
         ResultsCacheFactory resultsCacheFactory = (ResultsCacheFactory)wac.getBean("resultsCacheFactory");
-
+        
+        HttpSession session = event.getSession();
+        
         //The session ID is used to construct keys used to caching results
-        String sessionId = event.getSession().getId();
-
+        String sessionId = session.getId();
+        
+        logger.info("Attempting to cleanup session " + sessionId);
+        
         //Remove all relevant results before session is invalidated
         StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();
         for (String key: storedMap.keySet()){
@@ -50,7 +59,27 @@ public class ResultCacheSessionListener implements HttpSessionListener {
                 logger.info(String.format("results cache with key %s removed...", key));
             }
         }
-        logger.debug(String.format("Ended ResultCacheSessionListener.sessionDestroyed for %s", event.getSession().getId()));
+        
+        
+        HistoryManager historyManager = (HistoryManager) session.getAttribute(HttpSessionHistoryManagerFactory.HISTORY_MANAGER);
+        if (historyManager != null) {
+        	logger.info("removing " + historyManager + " from session " + sessionId);
+        	session.removeAttribute(HttpSessionHistoryManagerFactory.HISTORY_MANAGER);
+        } else {
+        	logger.info("no  historyManager associated with session " + sessionId);
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<HistoryItem> historyItemList = (List<HistoryItem>) session.getAttribute(HttpSessionHistoryManager.HISTORY_LIST);
+        if (historyItemList != null) {
+        	logger.info("removing " + historyItemList + " from session " + sessionId);
+        	session.removeAttribute(HttpSessionHistoryManager.HISTORY_LIST);
+        }
+        
+        logger.info(String.format("Ended ResultCacheSessionListener.sessionDestroyed for %s", event.getSession().getId()));
+        
+        
+        
     }
 
 }
