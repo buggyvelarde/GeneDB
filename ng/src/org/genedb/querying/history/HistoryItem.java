@@ -31,7 +31,7 @@ public class HistoryItem implements Serializable {
     public HistoryItem(String name) {
         this.name = name;
         this.internalName = name;
-        this.ids = new ArrayList<String>();
+        this.ids = new ArrayList<String>(1);
     }
 
     public HistoryItem(String name, List<String> ids) {
