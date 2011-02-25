@@ -106,7 +106,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         query.setTaxons(taxons);
 
-        logger.debug("Query taxonsssssss: " + query.getTaxons());
+        logger.debug("Query taxons: " + query.getTaxons());
 
         QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();
 

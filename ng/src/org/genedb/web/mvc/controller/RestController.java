@@ -168,6 +168,10 @@ public class RestController {
     	try {
     		TaxonNode taxonNode = getTaxonNode(taxon);
 	    	Organism o = getOrganism(taxonNode);
+	    	
+	    	if (o == null) {
+	    		return mav;
+	    	}
 	    	Date sinceDate = getSinceDate(since);
 	    	
 	    	ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
@@ -327,6 +331,17 @@ public class RestController {
 		logger.info(String.format("Searching %s for %s : ", taxon, term));
 		ModelAndView mav = new ModelAndView(viewName);
 		
+		QuickSearchResults qsr = new QuickSearchResults();
+    	qsr.term = term;
+    	qsr.max = max;
+    	qsr.totalHits = 0;
+		
+    	mav.addObject("model", qsr);
+    	
+		if (term.equalsIgnoreCase("*")) {
+			return mav;
+		}
+		
 		try {
 			
 	    	QuickSearchQuery query = (QuickSearchQuery) applicationContext.getBean("quickSearch", QuickSearchQuery.class);
@@ -352,9 +367,6 @@ public class RestController {
 	    	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
 	    	List<GeneSummary> geneResults = results.getResults();
 	
-	    	QuickSearchResults qsr = new QuickSearchResults();
-	    	qsr.term = term;
-	    	qsr.max = max;
 	    	qsr.totalHits = results.getTotalHits();
 	
 	
@@ -390,7 +402,7 @@ public class RestController {
 	
 	    	}
 	    	
-	        mav.addObject("model", qsr);
+	        
 		
 		} catch (RestException re) {
     		mav.addObject("model", re.model);

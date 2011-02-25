@@ -91,8 +91,8 @@ public class ResultsController {
         int end = start + DEFAULT_LENGTH;
         
         logger.debug(key);
-        logger.debug(resultsCacheFactory);
-        logger.debug(resultsCacheFactory.getResultsCacheMap());
+        //logger.debug(resultsCacheFactory);
+        //logger.debug(resultsCacheFactory.getResultsCacheMap());
         
         if (!resultsCacheFactory.getResultsCacheMap().containsKey(key)) {
         	WebUtils.setFlashMessage("Unable to retrieve results for this key", session);

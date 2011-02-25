@@ -471,40 +471,40 @@ public class HistoryController {
     // }
 
     // FIXME - Not working
-    public ModelAndView ParseCommand(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            // No session
-            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
-                "false");
-            if ("true".equals(secondTry)) {
-                // TODO Maybe use built in error handling
-                return new ModelAndView("history/noSession");
-            }
-            // Try and create session and return here
-            session = request.getSession(true);
-            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
-        }
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-
-        String command = null;
-        //HistoryParser historyParser = new HistoryParser(new StringReader(command));
-        //historyParser.setHistoryManager(historyManager);
-
-        //HistoryItem historyItem = null;
-        //try {
-        //    historyItem = historyParser.Start();
-        //} catch (NumberFormatException exp) {
-            // TODO Auto-generated catch block
-        //    exp.printStackTrace();
-        //} catch (ParseException exp) {
-            // TODO Auto-generated catch block
-        //    exp.printStackTrace();
-        //}
-
-        //historyManager.addHistoryItems("merged", historyItem.getIds());
-        return new ModelAndView("redirect:/History/View");
-    }
+//    public ModelAndView ParseCommand(HttpServletRequest request, HttpServletResponse response) {
+//        HttpSession session = request.getSession(false);
+//        if (session == null) {
+//            // No session
+//            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
+//                "false");
+//            if ("true".equals(secondTry)) {
+//                // TODO Maybe use built in error handling
+//                return new ModelAndView("history/noSession");
+//            }
+//            // Try and create session and return here
+//            session = request.getSession(true);
+//            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
+//        }
+//        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+//
+//        String command = null;
+//        //HistoryParser historyParser = new HistoryParser(new StringReader(command));
+//        //historyParser.setHistoryManager(historyManager);
+//
+//        //HistoryItem historyItem = null;
+//        //try {
+//        //    historyItem = historyParser.Start();
+//        //} catch (NumberFormatException exp) {
+//            // TODO Auto-generated catch block
+//        //    exp.printStackTrace();
+//        //} catch (ParseException exp) {
+//            // TODO Auto-generated catch block
+//        //    exp.printStackTrace();
+//        //}
+//
+//        //historyManager.addHistoryItems("merged", historyItem.getIds());
+//        return new ModelAndView("redirect:/History/View");
+//    }
 
     public String getHistoryView() {
         return historyView;
