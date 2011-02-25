@@ -134,8 +134,14 @@ public class LuceneIndex {
     public TopDocs search(Query query) {
         return search(query, null);
     }
+    
+    public TopDocs search(Query query, int maxResults) {
+        return search(query, null, maxResults);
+    }
 
-
+    public TopDocs search(Query query, Sort sort) {
+    	return search(query, sort, maxResults);
+    }
 
     /**
      * Perform a Lucene search using a prebuilt Query object.
@@ -144,7 +150,7 @@ public class LuceneIndex {
      * @param query The query
      * @return The result of the search
      */
-    public TopDocs search(Query query, Sort sort) {
+    public TopDocs search(Query query, Sort sort, int maxResults) {
         IndexSearcher searcher = new IndexSearcher(indexReader);
         logger.debug("searcher is -> " + searcher.toString());
         try {

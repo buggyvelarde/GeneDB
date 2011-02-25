@@ -55,10 +55,14 @@
 
                                <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
                                     <td>
-                                        Select <a href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
+                                        <c:if test="${(fn:length(query.searchText) > 0)}" >
+                                        Select <a href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${query.searchText}*</a> to repeat search with a wildcard.
+                                        </c:if>
+                                         
+                                        Please note that searches with a wildcard (*) prefix will have this removed for performance reasons. You can still
+                                        use wildcards in the middle or at the end of your search.
+                                        
                                     </td>
-                                    
-                                    
                                     
                                </c:if>
 

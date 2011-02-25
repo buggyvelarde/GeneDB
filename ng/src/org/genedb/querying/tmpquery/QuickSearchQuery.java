@@ -61,7 +61,11 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries){
         BooleanQuery bq = new BooleanQuery();
-
+        
+        if (searchText.startsWith("*") || searchText.startsWith("?")) {
+        	searchText = searchText.substring(1);
+        }
+        
         String tokens[] = searchText.trim().split("\\s");
 
         if (allNames) {
@@ -132,8 +136,13 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     public QuickSearchQueryResults getReallyQuickSearchQueryResults(int maxResults) throws QueryException {
 
         QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();
+        quickSearchQueryResults.setTotalHits(0);
         List<GeneSummary> geneSummaries = quickSearchQueryResults.getResults();
-
+        
+        if (searchText.length() == 0) {
+    		return quickSearchQueryResults;
+    	}
+        
         try {
             // taxn name
             List<String> currentTaxonNames = null;
@@ -141,36 +150,36 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
                 currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
 
-            TopDocs topDocs = lookupInLucene();
-            int currentResult = 0;
+            TopDocs topDocs = lookupInLucene(maxResults);
+            //int currentResult = 0;
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 
                 Document document = fetchDocument(scoreDoc.doc);
 
                 // Get the current taxon name from document
-                String taxonName = document.get("organism.commonName");
+//                String taxonName = document.get("organism.commonName");
 
-                boolean isNoTaxonMatch = currentTaxonNames != null && !currentTaxonNames.contains(taxonName);
-
-                if (isNoTaxonMatch) {
-                	continue;
-                }
+//                boolean isNoTaxonMatch = currentTaxonNames != null && !currentTaxonNames.contains(taxonName);
+//
+//                if (isNoTaxonMatch) {
+//                	continue;
+//                }
 
                 // only populate if we are under the max
-                if (currentResult < maxResults) {
-                	populateGeneSummaries(geneSummaries, document);
-                }
-
+//                if (currentResult < maxResults) {
+                populateGeneSummaries(geneSummaries, document);
+//                }
+//                
                 // we want the total number of hits, even if we don't return them all
-                currentResult++;
+                //currentResult++;
 
             }
             Collections.sort(geneSummaries);
 
             logger.info("Total returned hits :" + geneSummaries.size());
-            logger.info("Total unreturned hits :" + currentResult);
+            logger.info("Total unreturned hits :" + topDocs.totalHits);
 
-            quickSearchQueryResults.setTotalHits(currentResult);
+            quickSearchQueryResults.setTotalHits(topDocs.totalHits);
 
             if(luceneIndex.getMaxResults() == geneSummaries.size()){
                 isActualResultSizeSameAsMax = true;
@@ -207,6 +216,11 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
         QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();
         List<GeneSummary> geneSummaries = quickSearchQueryResults.getResults();
+        
+        if (searchText.length() == 0) {
+    		return quickSearchQueryResults;
+    	}
+        
         TreeMap<String, Integer> taxonGroup = quickSearchQueryResults.getTaxonGroup();
         TreeMap<String, Integer> tempTaxonGroup = new TreeMap<String, Integer>();
         try {
@@ -297,7 +311,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     }
 
     private void populateGeneSummaries(List<GeneSummary> geneSummaries, Document document) {
-        logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+        //logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
         GeneSummary gs = convertDocumentToReturnType(document);
         geneSummaries.add(gs);
     }

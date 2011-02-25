@@ -100,6 +100,10 @@ public class SuggestQuery extends OrganismLuceneQuery {
 
 		List<String> results = new ArrayList<String>();
 		logger.info("Searching for " + searchText);
+		
+		if (searchText.length() == 0) {
+			return results;
+		}
 
 		try {
 			String[] suggestions = spellChecker.suggestSimilar(searchText.toLowerCase(), 50);

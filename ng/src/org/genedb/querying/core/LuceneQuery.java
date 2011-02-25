@@ -153,10 +153,6 @@ public abstract class LuceneQuery implements Query {
 
     private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries) {
     	
-    	//logger.info("version " + luceneIndex.getReader().getVersion());
-    	//logger.info(luceneIndex.getIndexDirectoryName());
-    	
-    	
         TopDocs hits = null;
         if (queries.size() > 1) {
             BooleanQuery booleanQuery = new BooleanQuery();
@@ -174,12 +170,39 @@ public abstract class LuceneQuery implements Query {
         }
         return hits;
     }
+    
+    private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries, int maxResults) {
+    	
+        TopDocs hits = null;
+        if (queries.size() > 1) {
+            BooleanQuery booleanQuery = new BooleanQuery();
+            for (org.apache.lucene.search.Query query : queries) {
+                booleanQuery.add(new BooleanClause(query, Occur.MUST));
+            }
+            
+            logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
+            hits = luceneIndex.search(booleanQuery, maxResults);
+            logger.debug(String.format("Results size is '%d'", hits.totalHits));
+        } else {
+        	logger.debug(String.format("Lucene query is '%s'", queries.get(0).toString()));
+            hits = luceneIndex.search(queries.get(0), maxResults);
+            logger.debug(String.format("Results size is '%d'", hits.totalHits));
+        }
+        return hits;
+    }
 
 
     protected Document fetchDocument(int docId) throws CorruptIndexException, IOException {
         return luceneIndex.getDocument(docId);
     }
-
+    
+    protected TopDocs lookupInLucene(int maxResults) {
+    	List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
+        getQueryTerms(queries);
+        
+        return lookupInLucene(queries, maxResults);
+    }
+    
     protected TopDocs lookupInLucene() {
 
         List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
