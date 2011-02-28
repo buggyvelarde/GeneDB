@@ -264,6 +264,17 @@ public class RestController {
 	    	Organism o = getOrganism(taxonNode);
 	    	Date sinceDate = getSinceDate(since);
 	        
+	    	final ChangedFeatureSetResult organismSetResult = new ChangedFeatureSetResult();
+	        organismSetResult.since = sinceDate.toString();
+	        organismSetResult.name = "genome/changes";
+	        organismSetResult.count = 0;
+	        
+	        mav.addObject("model", organismSetResult);
+	        
+	        if (o == null) {
+	        	return mav;
+	        }
+	        
 	        ChangedGeneFeaturesQuery changedGeneFeaturesQuery = (ChangedGeneFeaturesQuery) applicationContext.getBean("changedGeneFeatures", ChangedGeneFeaturesQuery.class);
 	        changedGeneFeaturesQuery.setDate(sinceDate);
 	        changedGeneFeaturesQuery.setOrganismId(o.getOrganismId());
@@ -272,11 +283,9 @@ public class RestController {
 	        	changedGeneFeaturesQuery.setType(type);
 	        }
 	        
-	        final ChangedFeatureSetResult organismSetResult = new ChangedFeatureSetResult();
-	        organismSetResult.since = sinceDate.toString();
-	        organismSetResult.name = "genome/changes";
+	        
 	        organismSetResult.taxonomyID = taxonNode.getTaxonId();
-	        organismSetResult.count = 0;
+	        
 	        
 	
 	        changedGeneFeaturesQuery.processCallBack(new RowCallbackHandler(){
@@ -299,7 +308,7 @@ public class RestController {
 	
 	        
 	        
-	        mav.addObject("model", organismSetResult);
+	        
 	    
     	} catch (RestException re) {
     		mav.addObject("model", re.model);
