@@ -1,5 +1,7 @@
 import groovy.sql.Sql
 
+final String contigSeparator = "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn";
+
 class Feature {
 	Integer feature_id
 	String uniquename
@@ -7,9 +9,10 @@ class Feature {
 	Integer fmin
 	Integer fmax
 	Boolean is_obsolete
-	String phase
+	Integer phase
 	int strand
 	String residues
+	Integer organism_id
 }
 
 class Cvterm {
@@ -19,12 +22,89 @@ class Cvterm {
 
 def getFeature(String uniquename, Sql sql) {
 	Feature feature = sql.firstRow("""
-		SELECT f.uniquename, f.feature_id, f.residues, type.name as type
+		SELECT f.uniquename, f.feature_id, f.residues, type.name as type, f.organism_id
 		FROM feature f 
 		JOIN cvterm type ON f.type_id = type.cvterm_id
 		WHERE f.uniquename = ${uniquename} 
 	""")
 	return feature
+}
+
+def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
+	
+	String sequence = bin.residues;
+	String sequenceName = bin.uniquename + ":";
+	
+	def contigs = []
+	Integer nCount = 0
+	
+	Integer start = 0
+	Integer end = 0
+	
+	Integer lastPos
+	
+	Boolean unfinished = true
+	
+	Integer contigTypeID = sql.firstRow("""
+		SELECT cvterm_id FROM cvterm where name = 'contig' 
+	""").cvterm_id
+	
+	println "Contig feature type id ${contigTypeID}"
+
+	while (unfinished) {
+		
+		if (lastPos == null) {
+			start = 0
+		} else {
+			start = lastPos + contigSeparator.length()
+		}
+		
+		Integer pos = sequence.indexOf(contigSeparator, start)
+		
+		if (pos == -1) {
+			unfinished = false
+			end = sequence.length()
+		} else {
+			end = pos
+		}
+		
+		String contigName = "${sequenceName}:${nCount}:${start}-${end}"
+		println contigName
+		
+		String contigSequence = sequence.substring(start, end);
+		println contigSequence
+		lastPos = pos
+		
+		Feature contig = new Feature()
+		contig.residues = sequence
+		contig.uniquename = contigName
+		contig.fmin = start
+		contig.fmax = end
+		contig.organism_id = bin.organism_id
+		
+		Feature existingContigFeature = getFeature(contig.uniquename, sql) 
+		
+		if (existingContigFeature == null) {
+			
+			sql.execute("""
+				INSERT INTO feature (uniqueName, residues, organism_id, type_id) VALUES 
+				(${contig.uniquename}, ${contig.residues}, ${contig.organism_id}, ${contigTypeID})
+			""")
+			
+			// run the select again to get the feature_id
+			existingContigFeature = getFeature(contig.uniquename, sql)
+				
+		} else {
+			println "Contig feature already exists for ${existingContigFeature.uniquename} with a feature_id of ${existingContigFeature.feature_id}"
+		}
+		
+		contig.feature_id = existingContigFeature.feature_id
+		
+		contigs << contig
+		
+		nCount++;
+	}
+	return contigs
 }
 
 def getBinContigs(Feature bin, sql) {
@@ -40,7 +120,7 @@ def getBinContigs(Feature bin, sql) {
 			
 		FROM feature f
 		
-			JOIN cvterm type ON f.type_id = type.cvterm_id AND type.name = 'contig'
+			JOIN cvterm type ON f.type_id = type.cvterm_id AND type.name in ('contig', 'region')
 			JOIN featureloc fl ON (f.feature_id = fl.feature_id AND fl.srcfeature_id = (select feature_id from feature where uniqueName = ${bin.uniquename} ) )
 		
 		ORDER BY fl.fmin, fl.fmax;
@@ -132,12 +212,14 @@ def relocateFeatureToContig(Feature bin, Feature contig, Feature feature, Sql sq
 	
 	def newFmin = feature.fmin - contig.fmin
 	def newFmax = feature.fmax - contig.fmin
+	
 	println "${contig.feature_id}, ${feature.feature_id}, ${newFmin}, ${newFmax}, ${feature.phase}, ${feature.strand}"
+	
 	sql.execute("""
 		INSERT INTO featureloc (srcfeature_id, feature_id, fmin, fmax, phase, strand) VALUES
 			(${contig.feature_id}, ${feature.feature_id}, ${newFmin}, ${newFmax}, ${feature.phase}, ${feature.strand})
 	""")
-		
+	
 	
 }
 
@@ -177,11 +259,29 @@ try {
 			System.exit(1)
 		}
 		
+		Boolean containsContigSeparator = (binFeature.residues.indexOf(contigSeparator) == -1) ? false : true ;
 		
 		Cvterm topLevelType = getTopLevelFeatureCvtermId(sql)
 		println topLevelType.cvterm_id
 		
 		def contigs = getBinContigs(binFeature, sql)
+		
+		if (contigs.size() == 0) {
+			
+			println "No contig feature! Attempting to create them."
+			
+			println "Contains contig separators? ${containsContigSeparator}"
+			
+			if (! containsContigSeparator) {
+				println "Could not find any contig separators."
+				System.exit(1)
+			}
+			
+			contigs = generateBinContigs(binFeature, contigSeparator, sql)
+			
+			
+		}
+		
 		
 		for (Feature contig in contigs) {
 			
