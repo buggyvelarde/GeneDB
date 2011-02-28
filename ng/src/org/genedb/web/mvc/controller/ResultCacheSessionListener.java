@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.genedb.querying.core.Query;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.download.ResultEntry;
@@ -72,6 +73,12 @@ public class ResultCacheSessionListener implements HttpSessionListener {
         @SuppressWarnings("unchecked")
         List<HistoryItem> historyItemList = (List<HistoryItem>) session.getAttribute(HttpSessionHistoryManager.HISTORY_LIST);
         if (historyItemList != null) {
+        	
+        	for (HistoryItem historyItem : historyItemList) {
+        		Query q = historyItem.getQuery();
+        		historyItem.cleanup();
+        	}
+        	
         	logger.info("removing " + historyItemList + " from session " + sessionId);
         	session.removeAttribute(HttpSessionHistoryManager.HISTORY_LIST);
         }

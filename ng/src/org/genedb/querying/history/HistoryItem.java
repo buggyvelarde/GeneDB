@@ -26,7 +26,11 @@ public class HistoryItem implements Serializable {
     private List<String> ids;
 
     private HistoryType historyType = HistoryType.QUERY;
-
+    
+    public void cleanup() {
+    	query = null;
+    	ids = null;
+    }
 
     public HistoryItem(String name) {
         this.name = name;
