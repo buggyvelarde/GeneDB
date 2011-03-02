@@ -123,6 +123,8 @@ def getBinContigs(Feature bin, sql) {
 			JOIN cvterm type ON f.type_id = type.cvterm_id AND type.name in ('contig', 'region')
 			JOIN featureloc fl ON (f.feature_id = fl.feature_id AND fl.srcfeature_id = (select feature_id from feature where uniqueName = ${bin.uniquename} ) )
 		
+		WHERE f.uniquename NOT LIKE '%archived:source%'
+		
 		ORDER BY fl.fmin, fl.fmax;
 	
 	""") { row ->
@@ -213,7 +215,7 @@ def relocateFeatureToContig(Feature bin, Feature contig, Feature feature, Sql sq
 	def newFmin = feature.fmin - contig.fmin
 	def newFmax = feature.fmax - contig.fmin
 	
-	println "${contig.feature_id}, ${feature.feature_id}, ${newFmin}, ${newFmax}, ${feature.phase}, ${feature.strand}"
+	println "         ${feature.fmin}, ${feature.fmax} -> ${newFmin}, ${newFmax} (${feature.phase} - ${feature.strand})"
 	
 	sql.execute("""
 		INSERT INTO featureloc (srcfeature_id, feature_id, fmin, fmax, phase, strand) VALUES
@@ -223,10 +225,37 @@ def relocateFeatureToContig(Feature bin, Feature contig, Feature feature, Sql sq
 	
 }
 
+def usage () {
+	println """
+groovy -cp /path/to/psql-driver.jar CleanupBins.groovy config bin_chromsome [rollback|commit]
+	Arguments (in order):
+		config
+			the name of the ant config to be used
+		bin_chromsome
+			the uniquename of the bin chromosome feature
+		rollback|commit
+			instruct a dry run - without committing to the db (defaults to commit)
+"""
+}
+
+if (args.length < 2) {
+	usage()
+	System.exit(101)
+}
+
+
 String config = this.args[0]
 String bin = this.args[1]
 
-Boolean debug = false
+if (args.length >= 3) {
+	String rollarg = this.args[2]
+	if (rollarg != "rollback" && rollarg != "commit") {
+		println "The third argument must be either commit or rollback."
+		usage()
+		System.exit(101)
+	}
+	Boolean rollback = (rollarg == "rollback") ? true : false;
+}
 
 Properties props = new java.util.Properties()
 props.load(new FileInputStream("property-file.${config}"))
@@ -262,7 +291,6 @@ try {
 		Boolean containsContigSeparator = (binFeature.residues.indexOf(contigSeparator) == -1) ? false : true ;
 		
 		Cvterm topLevelType = getTopLevelFeatureCvtermId(sql)
-		println topLevelType.cvterm_id
 		
 		def contigs = getBinContigs(binFeature, sql)
 		
@@ -296,13 +324,14 @@ try {
 			}
 		}
 		
-		if (debug) {
+		if (rollback) {
 			println "Rolling back ..."
 			sql.rollback()
 		}
 	}
 } finally {
 	if (sql != null) {
+		println "Closing connection ..."
 		sql.close()
 	}
 }
