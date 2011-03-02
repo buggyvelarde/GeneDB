@@ -247,14 +247,9 @@ if (args.length < 2) {
 String config = this.args[0]
 String bin = this.args[1]
 
+Boolean rollback = false;
 if (args.length >= 3) {
-	String rollarg = this.args[2]
-	if (rollarg != "rollback" && rollarg != "commit") {
-		println "The third argument must be either commit or rollback."
-		usage()
-		System.exit(101)
-	}
-	Boolean rollback = (rollarg == "rollback") ? true : false;
+	rollback = (this.args[2] == "rollback") ? true : false;
 }
 
 Properties props = new java.util.Properties()
