@@ -72,7 +72,15 @@ def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
 		println contigName
 		
 		String contigSequence = sequence.substring(start, end);
-		println contigSequence
+		Integer contigSequenceLength = contigSequence.length()
+		
+		if (contigSequenceLength >= 50) {
+			println contigSequence.substring(0,25) + " ... " + contigSequence.substring(contigSequenceLength-25,contigSequenceLength) + " (${contigSequenceLength} residues)" 
+		} else {
+			println contigSequence
+		}
+		
+		
 		lastPos = pos
 		
 		Feature contig = new Feature()
