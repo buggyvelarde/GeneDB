@@ -185,8 +185,6 @@ def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, 
 			AND f.feature_id = ${feature.feature_id}
 	""")
 	
-	println "Rows : ${rows}"
-	
 	if (rows.size() > 0) {
 		println "${feature.uniquename} already is a top level feature"		 
 	} else {
@@ -238,11 +236,11 @@ def usage () {
 groovy -cp /path/to/psql-driver.jar CleanupBins.groovy config bin_chromsome [rollback|commit]
 	Arguments (in order):
 		config
-			the name of the ant config to be used
-		bin_chromsome
-			the uniquename of the bin chromosome feature
-		rollback|commit
+			the name of the genedb config to be used
+		action [rollback|commit]
 			instruct a dry run - without committing to the db (defaults to commit)
+		bins
+			the uniquename of the bin chromosome features, comma-separated (if not supplied, this will mean all the bins in the db)
 """
 }
 
@@ -251,14 +249,20 @@ if (args.length < 2) {
 	System.exit(101)
 }
 
-
 String config = this.args[0]
-String bin = this.args[1]
 
 Boolean rollback = false;
-if (args.length >= 3) {
-	rollback = (this.args[2] == "rollback") ? true : false;
+if (this.args[1] == "rollback") {
+	rollback = true;
+} else if (this.args[1] == "commit") {
+	rollback = false;
+} else {
+	println "Invalid instruction - must be either rollback or commit"
+	usage()
+	System.exit(1)
 }
+
+String bins = (args.length >= 3) ? this.args[2] : null; 
 
 Properties props = new java.util.Properties()
 props.load(new FileInputStream("property-file.${config}"))
@@ -275,62 +279,88 @@ Sql sql = Sql.newInstance(
 	"${dbpassword}",
 	"org.postgresql.Driver")
 
+def bin_list = [] 
+
+if (bins == null) {
+	sql.eachRow("""
+		select uniquename 
+			from feature 
+			join feature_cvterm on feature_cvterm.feature_id = feature.feature_id
+			join cvterm on feature_cvterm.cvterm_id = cvterm.cvterm_id and cvterm.name = 'bin_chromosome'
+		""", { row -> bin_list << row.toRowResult().uniquename
+		})
+} else if (bins.contains(",")) {
+	def untrimmed_bins = bins.split(",")
+	for (String bin : untrimmed_bins) {
+		bin_list << bin.trim()
+	}
+} else {
+	bin_list << bins
+}
+
+println "Processing bins:"
+println bin_list
+
 try {
 	
 	sql.withTransaction {
-	
-		Feature binFeature = getFeature(bin, sql)
 		
-		if (binFeature == null) {
-			println "${bin} does not exist"
-			System.exit(1)
-		} 
-		
-		if (binFeature.type != "chromosome") {
-			println "${bin} is not a chromosome, it's a ${binFeature.type}"
-			System.exit(1)
-		}
-		
-		Boolean containsContigSeparator = (binFeature.residues.indexOf(contigSeparator) == -1) ? false : true ;
-		
-		Cvterm topLevelType = getTopLevelFeatureCvtermId(sql)
-		
-		def contigs = getBinContigs(binFeature, sql)
-		
-		if (contigs.size() == 0) {
+		for (String bin : bin_list) {
+			Feature binFeature = getFeature(bin, sql)
 			
-			println "No contig feature! Attempting to create them."
-			
-			println "Contains contig separators? ${containsContigSeparator}"
-			
-			if (! containsContigSeparator) {
-				println "Could not find any contig separators."
+			if (binFeature == null) {
+				println "The bin ${bin} does not exist!"
 				System.exit(1)
 			}
 			
-			contigs = generateBinContigs(binFeature, contigSeparator, sql)
+			if (binFeature.type != "chromosome") {
+				println "${bin} is not a chromosome, it's a ${binFeature.type}"
+				System.exit(1)
+			}
+			
+			Boolean containsContigSeparator = (binFeature.residues.indexOf(contigSeparator) == -1) ? false : true ;
+			
+			Cvterm topLevelType = getTopLevelFeatureCvtermId(sql)
+			
+			def contigs = getBinContigs(binFeature, sql)
+			
+			if (contigs.size() == 0) {
+				
+				println "No contig feature! Attempting to create them."
+				
+				println "Contains contig separators? ${containsContigSeparator}"
+				
+				if (! containsContigSeparator) {
+					println "Could not find any contig separators."
+					System.exit(1)
+				}
+				
+				contigs = generateBinContigs(binFeature, contigSeparator, sql)
+				
+				
+			}
 			
 			
-		}
-		
-		
-		for (Feature contig in contigs) {
+			for (Feature contig in contigs) {
+				
+				promoteContigToTopLevel(binFeature, contig, topLevelType, sql)
+				
+				println ">> ${contig.uniquename} ${contig.feature_id} "
+				
+				def features = getFeaturesSpanningTheInsidesOfAContig(binFeature, contig, sql)
+				for (Feature feature : features ) {
+					println " >>>> ${feature.uniquename} ${feature.type}"
+					relocateFeatureToContig(binFeature, contig, feature, sql)
+				}
+			}
 			
-			promoteContigToTopLevel(binFeature, contig, topLevelType, sql)
-			
-			println ">> ${contig.uniquename} ${contig.feature_id} "
-			
-			def features = getFeaturesSpanningTheInsidesOfAContig(binFeature, contig, sql)
-			for (Feature feature : features ) {
-				println " >>>> ${feature.uniquename} ${feature.type}"
-				relocateFeatureToContig(binFeature, contig, feature, sql)
+			if (rollback) {
+				println "Rolling back ..."
+				sql.rollback()
 			}
 		}
 		
-		if (rollback) {
-			println "Rolling back ..."
-			sql.rollback()
-		}
+		
 	}
 } finally {
 	if (sql != null) {
