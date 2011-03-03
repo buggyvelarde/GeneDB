@@ -168,8 +168,10 @@ if [[ $COPY_PATHOGEN_TO_NIGHTLY_AND_CLEANUP ]]; then
 	
 	cd $SOURCE_HOME
 	echo "Backed up db"
-
-
+	
+	CLEANUP_BINS="groovy -cp $POSTGRES_DRIVER $SOURCE_HOME/scripts/indexing/CleanupBins.groovy $CONFIG commit "
+	doeval $CLEANUP_BINS
+	
 fi
 
 
