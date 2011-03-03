@@ -1,14 +1,7 @@
-delete from organism where 
-    (
-        organism.genus = 'Staphylococcus'
-        and organism.species in ('aureus (EMRSA15)', 'aureus (LGA251)', 'aureus (TW20)')
-    )
-    or (
-        organism.genus = 'Plasmodium'
-        and organism.species in ('berghei (3x coverage)', 'reichenowi')
-    )
-    or (
-        organism.genus = 'Streptococcus'
-        and organism.species in ('pneumoniae TIGR4', 'pneumoniae D39', 'pneumoniae OXC141', 'pneumoniae ATCC 700669')
-    )
-;
+DELETE FROM organism WHERE organism_id IN (
+    SELECT distinct(organism_id) 
+        FROM organismprop 
+        JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name IN ('webservices_public', 'genedb_public') 
+        WHERE value = 'no'
+)
+
