@@ -270,13 +270,9 @@ props.load(new FileInputStream("property-file.${config}"))
 def dbname = props.getProperty('dbname')
 def dbport = props.getProperty('dbport')
 def dbhost = props.getProperty('dbhost')
-def dbuser = props.getProperty('dbuser')
-def dbpassword = props.getProperty('dbpassword')
 
 Sql sql = Sql.newInstance(
 	"jdbc:postgresql://${dbhost}:${dbport}/${dbname}",
-	"${dbuser}",
-	"${dbpassword}",
 	"org.postgresql.Driver")
 
 def bin_list = [] 
