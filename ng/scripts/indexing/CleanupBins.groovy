@@ -233,7 +233,7 @@ def relocateFeatureToContig(Feature bin, Feature contig, Feature feature, Sql sq
 
 def usage () {
 	println """
-groovy -cp /path/to/psql-driver.jar CleanupBins.groovy config bin_chromsome [rollback|commit]
+groovy -cp /path/to/psql-driver.jar CleanupBins.groovy config [rollback|commit] [bins]
 	Arguments (in order):
 		config
 			the name of the genedb config to be used
