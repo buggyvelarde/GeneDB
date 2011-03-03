@@ -190,8 +190,8 @@ if [[ -z $ORGANISMS ]]; then
     if [[ $SINCE ]]; then
         GET_ORGANISMS_SQL="select common_name from organism where organism_id in (select distinct(organism_id) from feature where timelastmodified >= '${SINCE}');"
     else
-    	# get everything
-        GET_ORGANISMS_SQL="select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'"
+    	# get everything... that's genedb public
+        GET_ORGANISMS_SQL="SELECT DISTINCT(organism.organism_id), organism.common_name FROM organismprop JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name = 'genedb_public' JOIN organism ON organism.organism_id = organismprop.organism_id and organism.common_name != 'dummy' JOIN feature ON organism.organism_id = feature.organism_id WHERE value = 'yes' "
         ALL_ORGANISMS=1;
     fi
     
