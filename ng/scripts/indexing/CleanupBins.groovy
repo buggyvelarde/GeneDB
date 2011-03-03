@@ -271,8 +271,15 @@ def dbname = props.getProperty('dbname')
 def dbport = props.getProperty('dbport')
 def dbhost = props.getProperty('dbhost')
 
+// we don't use the config's username and password in this case
+def dbuser = System.getProperty("user.name")
+def dbpassword = ""
+
+
 Sql sql = Sql.newInstance(
 	"jdbc:postgresql://${dbhost}:${dbport}/${dbname}",
+	"${dbuser}",
+	"${dbpassword}",
 	"org.postgresql.Driver")
 
 def bin_list = [] 
