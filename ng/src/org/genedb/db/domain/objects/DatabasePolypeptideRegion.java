@@ -62,8 +62,8 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
     String accession;
     String database;
 
-    public DatabasePolypeptideRegion(String database, String accession, String description, String url, String score, int fmin, int fmax) {
-        super(fmin, fmax, description, score);
+    public DatabasePolypeptideRegion(String database, String accession, String description, String url, String score, String significance, int fmin, int fmax) {
+        super(fmin, fmax, description, score, significance);
         this.database    = database;
         this.accession   = accession;
         this.url         = url;
@@ -79,17 +79,21 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
         }
 
         String score = region.getScore(); // FIXME
+        String significance = null;
         if (!StringUtils.hasLength(score)) {
             AnalysisFeature af = region.getAnalysisFeature();
             if (af != null) {
             	if (af.getRawScore() != null) {
             		score = Double.toString(af.getRawScore());
             	}
+            	if (af.getSignificance() != null) {
+            		significance = Double.toString(af.getSignificance());
+            	}
             }
         }
-
+        
         return new DatabasePolypeptideRegion(dbxref.getDb().getName(), dbxref.getAccession(), dbxref.getDescription(),
-            dbxref.getUrl(), score, domainLoc.getFmin(), domainLoc.getFmax());
+            dbxref.getUrl(), score, significance, domainLoc.getFmin(), domainLoc.getFmax());
     }
 
     String getDatabase() {

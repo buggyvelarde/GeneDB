@@ -53,7 +53,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
         if (!regions.isEmpty()) {
             PolypeptideRegionGroup regionGroup = new SimpleRegionGroup(title, abbreviation);
             for(T region: regions) {
-                regionGroup.addRegion(SimplePolypeptideRegion.build(region, title, null, color));
+                regionGroup.addRegion(SimplePolypeptideRegion.build(region, title, null, null, color));
             }
             regionGroups.add(regionGroup);
         }
@@ -68,7 +68,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
             PolypeptideRegionGroup regionGroup = new SimpleRegionGroup(title, abbreviation);
             for(T region: regions) {
                 SimplePolypeptideRegion simplePolypeptideRegion = new SimplePolypeptideRegion(
-                    region.getFmin(), polypeptide.getSeqLen(), region.getUniqueName(), title, null, color);
+                    region.getFmin(), polypeptide.getSeqLen(), region.getUniqueName(), title, null, null, color);
                 regionGroup.addRegion(simplePolypeptideRegion);
             }
             regionGroups.add(regionGroup);

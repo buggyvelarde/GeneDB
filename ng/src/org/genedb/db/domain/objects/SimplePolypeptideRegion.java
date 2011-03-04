@@ -9,15 +9,15 @@ public class SimplePolypeptideRegion extends PolypeptideRegion {
     private String name;
     private Color color;
 
-    public SimplePolypeptideRegion(int fmin, int fmax, String name, String description, String score, Color color) {
-        super(fmin, fmax, description, score);
+    public SimplePolypeptideRegion(int fmin, int fmax, String name, String description, String score, String significance, Color color) {
+        super(fmin, fmax, description, score, significance);
         this.name = name;
         this.color = color;
     }
 
-    public static SimplePolypeptideRegion build(org.gmod.schema.feature.PolypeptideRegion region, String description, String score, Color color) {
+    public static SimplePolypeptideRegion build(org.gmod.schema.feature.PolypeptideRegion region, String description, String score, String significance, Color color) {
         FeatureLoc regionLoc = region.getRankZeroFeatureLoc();
-        return new SimplePolypeptideRegion(regionLoc.getFmin(), regionLoc.getFmax(), region.getUniqueName(), description, score, color);
+        return new SimplePolypeptideRegion(regionLoc.getFmin(), regionLoc.getFmax(), region.getUniqueName(), description, score, significance, color);
     }
 
     @Override

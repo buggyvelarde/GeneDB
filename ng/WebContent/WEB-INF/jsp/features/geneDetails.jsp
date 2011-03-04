@@ -283,7 +283,8 @@ ${dto.ims.imageMap}
   <tr>
     <td colspan="3"></td>
     <td class="domainPosition">Position</td>
-    <td class="domainScore">E-value</td>
+    <td class="domainScore">Score</td>
+    <td class="domainSignificance">Significance</td>
   </tr>
   <c:forEach var="subsection" varStatus="status" items="${dto.domainInformation}">
     <tr>
@@ -309,6 +310,7 @@ ${dto.ims.imageMap}
         <td>${hit.description}</td>
         <td>${1 + hit.fmin} - ${hit.fmax}</td>
         <td>${hit.score}</td>
+        <td>${hit.significance}</td>
       </tr>
     </c:forEach>
   </c:forEach>

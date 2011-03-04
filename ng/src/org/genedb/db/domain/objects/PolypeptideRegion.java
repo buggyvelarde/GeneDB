@@ -6,12 +6,14 @@ public abstract class PolypeptideRegion extends LocatedFeature {
     private int fmax;
     private String description;
     private String score;
+    private String significance;
 
-    public PolypeptideRegion(int fmin, int fmax, String description, String score) {
+    public PolypeptideRegion(int fmin, int fmax, String description, String score, String significance) {
         this.fmin = fmin;
         this.fmax = fmax;
         this.description = description;
         this.score = score;
+        this.significance = significance;
     }
 
     @Override
@@ -35,5 +37,9 @@ public abstract class PolypeptideRegion extends LocatedFeature {
 
     public String getScore() {
         return score;
+    }
+    
+    public String getSignificance() {
+        return significance;
     }
 }
