@@ -191,12 +191,12 @@ if [[ -z $ORGANISMS ]]; then
         GET_ORGANISMS_SQL="select common_name from organism where organism_id in (select distinct(organism_id) from feature where timelastmodified >= '${SINCE}');"
     else
     	# get everything... that's genedb public
-        GET_ORGANISMS_SQL="SELECT DISTINCT(organism.organism_id), organism.common_name FROM organismprop JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name = 'genedb_public' JOIN organism ON organism.organism_id = organismprop.organism_id and organism.common_name != 'dummy' JOIN feature ON organism.organism_id = feature.organism_id WHERE value = 'yes' "
+        GET_ORGANISMS_SQL="SELECT DISTINCT(organism.common_name) FROM organismprop JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name = 'genedb_public' JOIN organism ON organism.organism_id = organismprop.organism_id and organism.common_name != 'dummy' JOIN feature ON organism.organism_id = feature.organism_id WHERE value = 'yes' "
         ALL_ORGANISMS=1;
     fi
     
     logecho ${GET_ORGANISMS_SQL}
-    ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv1.internal.sanger.ac.uk -U pathdb -c \"${GET_ORGANISMS_SQL}\" pathogens\`"
+    ORGANISMS_COMMAND="ORGANISMS=\`psql -t -h pgsrv2 -c \"${GET_ORGANISMS_SQL}\" nightly\`"
     doeval $ORGANISMS_COMMAND
 fi
 

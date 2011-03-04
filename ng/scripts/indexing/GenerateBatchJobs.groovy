@@ -62,7 +62,7 @@ if (args.length >= 5) {
     def sql = Sql.newInstance("jdbc:postgresql://${dbhost}:${dbport}/${dbname}", "${dbuser}",
                                       "${dbpassword}", "org.postgresql.Driver")
 
-    sql.eachRow("SELECT DISTINCT(organism.organism_id), organism.common_name FROM organismprop JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name = 'genedb_public' JOIN organism ON organism.organism_id = organismprop.organism_id and organism.common_name != 'dummy' JOIN feature ON organism.organism_id = feature.organism_id WHERE value = 'yes' ") { row ->
+    sql.eachRow("SELECT DISTINCT(organism.common_name) FROM organismprop JOIN cvterm ON organismprop.type_id = cvterm.cvterm_id AND cvterm.name = 'genedb_public' JOIN organism ON organism.organism_id = organismprop.organism_id and organism.common_name != 'dummy' JOIN feature ON organism.organism_id = feature.organism_id WHERE value = 'yes' ") { row ->
         def org = row.common_name
         orgs.add(org)
     }
