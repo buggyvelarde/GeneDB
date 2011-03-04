@@ -272,8 +272,8 @@ def dbport = props.getProperty('dbport')
 def dbhost = props.getProperty('dbhost')
 
 // we don't use the config's username and password in this case
-def dbuser = System.getProperty("user.name")
-def dbpassword = ""
+def dbuser = "pathdb"
+def dbpassword = "LongJ!@n"
 
 
 Sql sql = Sql.newInstance(
