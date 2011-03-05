@@ -150,9 +150,10 @@ def getFeaturesSpanningTheInsidesOfAContig(Feature bin, Feature contig, sql) {
 		SELECT f.feature_id, f.uniqueName, type.name as type, fl.phase, fl.strand , fl.fmin, fl.fmax
 		FROM feature f 
 			JOIN featureloc fl ON f.feature_id = fl.feature_id AND fl.srcfeature_id = ${bin.feature_id}
-			JOIN cvterm type ON f.type_id = type.cvterm_id
+			JOIN cvterm type ON f.type_id = type.cvterm_id 
 		WHERE fl.fmin >= ${contig.fmin} AND fl.fmax <= ${contig.fmax}
 		AND f.uniqueName != ${contig.uniquename}
+		AND type.name NOT IN ('contig', 'region')
 
 	""") { row ->
 		Feature feature = new Feature( row.toRowResult() )
