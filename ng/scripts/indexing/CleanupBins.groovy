@@ -369,7 +369,7 @@ try {
 				}
 			}
 			
-			println "Deleting old bin ${bin.feature_id} ${binFeature.uniquename}"
+			println "Deleting old bin ${binFeature.feature_id} ${binFeature.uniquename}"
 			sql.execute("""
 				DELETE FROM feature where feature_id = ${binFeature.feature_id}
 			""")
