@@ -6,6 +6,7 @@ class Feature {
 	Integer feature_id
 	String uniquename
 	String type
+	String featureLocatedOn
 	Integer fmin
 	Integer fmax
 	Boolean is_obsolete
@@ -89,6 +90,7 @@ def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
 		contig.fmin = start
 		contig.fmax = end
 		contig.organism_id = bin.organism_id
+		contig.featureLocatedOn = bin.uniquename
 		
 		Feature existingContigFeature = getFeature(contig.uniquename, sql) 
 		
@@ -137,6 +139,7 @@ def getBinContigs(Feature bin, sql) {
 	
 	""") { row ->
 				Feature contig = new Feature( row.toRowResult() )
+				contig.featureLocatedOn = bin.uniquename
 				contigs << contig
 			}
 	return contigs
@@ -168,7 +171,7 @@ def Cvterm getTopLevelFeatureCvtermId(Sql sql) {
 }
 
 
-def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, Sql sql ) {
+def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, Boolean generated, Sql sql ) {
 	
 	def residues = bin.residues.substring(feature.fmin, feature.fmax)
 	
@@ -185,6 +188,26 @@ def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, 
 			AND fp.type_id = ${topLevelType.cvterm_id} 
 			AND f.feature_id = ${feature.feature_id}
 	""")
+	
+	Integer featureLocId = sql.firstRow("""
+		SELECT fl.featureloc_id FROM featureloc fl
+			WHERE fl.feature_id = ${feature.feature_id} AND fl.srcfeature_id = ${bin.feature_id}
+	""").featureloc_id
+	
+	
+	if (featureLocId != null) {
+		println "Deleting featureloc of ${feature.uniquename} on ${bin.uniquename} with ID ${featureLocId}"
+		sql.execute("""
+			DELETE FROM featureloc WHERE featureloc_id = ${featureLocId}
+		""")
+	} else {
+		println "No featureloc for ${feature.uniquename} on ${bin.uniquename}... "
+		if (generated) {
+			println "	But that's ok because it was just generated."	
+		} else {
+			throw new Exception("No featureloc for ${feature.uniquename} on ${bin.uniquename}... and it should have one!")
+		}
+	}
 	
 	if (rows.size() > 0) {
 		println "${feature.uniquename} already is a top level feature"		 
@@ -327,6 +350,7 @@ try {
 			Cvterm topLevelType = getTopLevelFeatureCvtermId(sql)
 			
 			def contigs = getBinContigs(binFeature, sql)
+			Boolean generated = false
 			
 			if (contigs.size() == 0) {
 				
@@ -340,14 +364,14 @@ try {
 				}
 				
 				contigs = generateBinContigs(binFeature, contigSeparator, sql)
-				
+				generated = true
 				
 			}
 			
 			
 			for (Feature contig in contigs) {
 				
-				promoteContigToTopLevel(binFeature, contig, topLevelType, sql)
+				promoteContigToTopLevel(binFeature, contig, topLevelType, generated, sql)
 				
 				println ">> ${contig.uniquename} ${contig.feature_id} "
 				
