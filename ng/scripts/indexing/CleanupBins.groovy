@@ -369,9 +369,9 @@ try {
 				}
 			}
 			
-			println "Deleting old bin ${bin.feature_id} ${bin.uniquename}"
+			println "Deleting old bin ${bin.feature_id} ${binFeature.uniquename}"
 			sql.execute("""
-				DELETE FROM feature where feature_id = ${bin.feature_id}
+				DELETE FROM feature where feature_id = ${binFeature.feature_id}
 			""")
 			
 			if (rollback) {
