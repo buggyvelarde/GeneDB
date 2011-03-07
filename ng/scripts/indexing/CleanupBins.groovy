@@ -189,26 +189,13 @@ def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, 
 			AND f.feature_id = ${feature.feature_id}
 	""")
 	
-	Integer featureLocId = sql.firstRow("""
-		SELECT fl.featureloc_id FROM featureloc fl
-			WHERE fl.feature_id = ${feature.feature_id} AND fl.srcfeature_id = ${bin.feature_id}
-	""").featureloc_id
 	
-	
-	if (featureLocId != null) {
-		println "Deleting featureloc of ${feature.uniquename} on ${bin.uniquename} with ID ${featureLocId}"
-		sql.execute("""
-			DELETE FROM featureloc WHERE featureloc_id = ${featureLocId}
-		""")
-	} else {
-		println "No featureloc for ${feature.uniquename} on ${bin.uniquename}... "
-		if (generated) {
-			println "	But that's ok because it was just generated."	
-		} else {
-			throw new Exception("No featureloc for ${feature.uniquename} on ${bin.uniquename}... and it should have one!")
-		}
-	}
-	
+	println "Attempting to delete featureloc of ${feature.uniquename} ${feature.feature_id} on ${bin.uniquename} ${bin.feature_id}"
+	sql.execute("""
+		DELETE FROM featureloc WHERE featureloc.feature_id = ${feature.feature_id} AND featureloc.srcfeature_id = ${bin.feature_id}
+	""")
+
+		
 	if (rows.size() > 0) {
 		println "${feature.uniquename} already is a top level feature"		 
 	} else {
@@ -381,6 +368,11 @@ try {
 					relocateFeatureToContig(binFeature, contig, feature, sql)
 				}
 			}
+			
+			println "Deleting old bin ${bin.feature_id} ${bin.uniquename}"
+			sql.execute("""
+				DELETE FROM feature where feature_id = ${bin.feature_id}
+			""")
 			
 			if (rollback) {
 				println "Rolling back ..."
