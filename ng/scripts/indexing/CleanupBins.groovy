@@ -133,7 +133,7 @@ def getBinContigs(Feature bin, sql) {
 			JOIN cvterm type ON f.type_id = type.cvterm_id AND type.name in ('contig', 'region')
 			JOIN featureloc fl ON (f.feature_id = fl.feature_id AND fl.srcfeature_id = (select feature_id from feature where uniqueName = ${bin.uniquename} ) )
 		
-		WHERE f.uniquename NOT LIKE '%archived:source%'
+		WHERE f.uniquename NOT LIKE '%archived:source%' AND f.uniquename NOT LIKE '%archived:misc_feature%'
 		
 		ORDER BY fl.fmin, fl.fmax;
 	
@@ -143,6 +143,19 @@ def getBinContigs(Feature bin, sql) {
 				contigs << contig
 			}
 	return contigs
+}
+
+def Boolean contigHasEMBLQualifierType(Feature contig, Sql sql) {
+	def rows = sql.rows("""
+		SELECT value FROM featureprop 
+			JOIN cvterm ON featureprop.type_id = cvterm.cvterm_id AND cvterm.name = 'EMBL_qualifier' 
+			WHERE feature_id = ${contig.feature_id} 
+			AND value like '/type%';
+	""")
+	if (rows.size() > 0) {
+		return true
+	}
+	return false
 }
 
 def getFeaturesSpanningTheInsidesOfAContig(Feature bin, Feature contig, sql) {
@@ -241,6 +254,10 @@ def relocateFeatureToContig(Feature bin, Feature contig, Feature feature, Sql sq
 	
 	
 }
+
+
+
+
 
 def usage () {
 	println """
@@ -358,20 +375,35 @@ try {
 			
 			for (Feature contig in contigs) {
 				
-				promoteContigToTopLevel(binFeature, contig, topLevelType, generated, sql)
-				
 				println ">> ${contig.uniquename} ${contig.feature_id} "
 				
-				def features = getFeaturesSpanningTheInsidesOfAContig(binFeature, contig, sql)
-				for (Feature feature : features ) {
-					println " >>>> ${feature.uniquename} ${feature.type}"
-					relocateFeatureToContig(binFeature, contig, feature, sql)
+				if (contigHasEMBLQualifierType(contig, sql)) {
+					continue
 				}
+				
+				def features = getFeaturesSpanningTheInsidesOfAContig(binFeature, contig, sql)
+				
+				if (features.size() > 0) {
+					promoteContigToTopLevel(binFeature, contig, topLevelType, generated, sql)
+					
+					for (Feature feature : features) {
+						println " >>>> ${feature.uniquename} ${feature.type}"
+						relocateFeatureToContig(binFeature, contig, feature, sql)
+					}
+				}
+				
+				
 			}
 			
-			println "Deleting old bin ${binFeature.feature_id} ${binFeature.uniquename}"
+			println "Deleting old bin ${binFeature.feature_id} ${binFeature.uniquename} and any remaining subfeatures that have not been promoted to top level features."
 			sql.execute("""
-				DELETE FROM feature where feature_id = ${binFeature.feature_id}
+				DELETE FROM feature WHERE feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id = ${binFeature.feature_id})
+			""")
+			sql.execute("""
+				DELETE FROM featureloc WHERE srcfeature_id = ${binFeature.feature_id}
+			""")
+			sql.execute("""
+				DELETE FROM feature WHERE feature_id = ${binFeature.feature_id}
 			""")
 			
 			if (rollback) {
