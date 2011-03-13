@@ -92,13 +92,15 @@ def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
 		contig.organism_id = bin.organism_id
 		contig.featureLocatedOn = bin.uniquename
 		
+		Integer seqlen = contig.residues.length()
+		
 		Feature existingContigFeature = getFeature(contig.uniquename, sql) 
 		
 		if (existingContigFeature == null) {
 			
 			sql.execute("""
-				INSERT INTO feature (uniqueName, residues, organism_id, type_id) VALUES 
-				(${contig.uniquename}, ${contig.residues}, ${contig.organism_id}, ${contigTypeID})
+				INSERT INTO feature (uniqueName, residues, organism_id, type_id, seqlen) VALUES 
+				(${contig.uniquename}, ${contig.residues}, ${contig.organism_id}, ${contigTypeID}, ${seqlen})
 			""")
 			
 			// run the select again to get the feature_id
