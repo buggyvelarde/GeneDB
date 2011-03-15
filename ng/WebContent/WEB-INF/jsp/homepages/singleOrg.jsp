@@ -7,6 +7,146 @@
 <format:page>
 <br>
 
+<style>
+
+.chromosome, .chromosome_type {
+    padding:10px;
+}
+
+div.chromosomes_container {
+    height: 200px; 
+    overflow-y: auto;
+}
+
+</style>
+
+<script>
+
+function log(message) {
+	if (console) {
+		console.log(message)
+	}
+}
+
+var chromosomeList = [];
+
+function loadChromosomes(organism, handler) {
+	$.ajax({
+        url: "/services/regions/inorganism.json",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            'organism' : organism
+        },
+        success: function(response) {
+        	handler(response);
+        }
+	});
+
+}
+
+
+function getFirstFeature(region, handler) {
+    $.ajax({
+        url: "/services/regions/locations_paged.json",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            'region' : region, 
+            'limit' : '1',
+            'offset' :'0',
+            'exclude' : 'nucleotide_match,repeat_region,region,repeat_unit'
+        },
+        success: function(response) {
+            handler(response);
+        }
+    });
+	
+}
+
+var types = new Object();
+
+$(function(){
+	
+	loadChromosomes('${node.label}', function(returned) {
+		
+		
+		$.each(returned.response.results.regions, function(index, region) {
+			
+			log(region);
+			
+			if (! types[region.type.name]) {
+				types[region.type.name] = 0;
+			}
+			types[region.type.name] += 1 ;
+			
+			$('#chromosomes').append("<div style='display:none' class='ui-widget-content ui-state-default chromosome chromosome_" + region.type.name + "' chromosome_name='"+ region.uniqueName +"' >" + region.uniqueName + "</div>");
+			
+			log (region.type/name);
+		});
+		
+		for (var type_name in types) {
+			var count = types[type_name];
+			$('#chromosome_types').append("<div class='ui-widget-content ui-state-default chromosome_type' chromosome_type='" + type_name + "' >" + type_name + " ("+ count +") </div>" );
+			log(type_name);
+			log(count);
+		}
+		
+		
+		$('.chromosome_type').click(function(event) {
+			$('.chromosome').css('display', 'none');
+			$('.chromosome_type').addClass('ui-state-default').removeClass('ui-state-focus');
+			
+			var chromsome_type = $(event.target).attr('chromosome_type');
+			$(event.target).addClass('ui-state-focus').removeClass('ui-state-default');
+			$('.chromosome_' + chromsome_type).css('display', 'block');
+		}).mouseover(function() {
+            $(this).removeClass('ui-state-default').addClass('ui-state-hover');
+        }).mouseout(function() {
+            $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+        });
+		
+		
+		$('.chromosome').click(function(event) {
+			var chromosome_name = $(event.target).attr('chromosome_name');
+			log(chromosome_name);
+			
+			getFirstFeature(chromosome_name, function(returned_features) {
+				log(returned_features);
+				var feature = returned_features.response.results.locations[0].uniqueName;
+				window.location = getBaseURL() + "gene/" + feature;
+			});
+			
+		}).mouseover(function() {
+            $(this).removeClass('ui-state-default').addClass('ui-state-hover');
+        }).mouseout(function() {
+            $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+        });
+		
+	});
+	
+});
+
+</script>
+
+<div id="col-1-2">
+    
+    
+    <h2>Scaffolds</h2>
+
+    <div class="baby-blue-top"></div>
+        <div class="baby-blue">
+            
+            <div id ="chromosome_types" class="ui-widget ui-widget-header ui-corner-all" ></div>
+            <div class='chromosomes_container'>
+            <div id ="chromosomes" class="ui-widget ui-widget-header ui-corner-all" ></div>
+            </div>
+        </div>
+    <div class="baby-blue-bot"></div>
+    
+
+</div>
+
 
 
 
@@ -15,10 +155,10 @@
     <div class="readableText">
         <h1>${full}</h1>
         <div id="readableContent">${content}</div>
-        
-        
     </div>
 </div>
+
+
 
 
 <div id="activities" style="display:none;" class="ui-state-default ui-corner-all">
