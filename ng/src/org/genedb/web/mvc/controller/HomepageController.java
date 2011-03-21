@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.collect.Maps;
@@ -32,6 +33,7 @@ public class HomepageController extends BaseController {
     private static String HOMEPAGE = "jsp:homepages/";
     private static final String DEFAULT_HOMEPAGE = HOMEPAGE + "frontPage";
     private static final String DEFAULT_SINGLE = HOMEPAGE + "singleOrg";
+    private static final String DEFAULT_SINGLE_CHROMSOME_MAP = HOMEPAGE + "chromosomeMap";
     private static final String DEFAULT_GROUP = HOMEPAGE + "group";
 
     private static final String APP_PREFIX = "app_www_homePage_";
@@ -49,11 +51,13 @@ public class HomepageController extends BaseController {
     public ModelAndView displayRootHomepage(HttpServletRequest request) throws Exception {
         TaxonNodeList root = new TaxonNodeList();
         root.add(getTaxonNodeManager().getTaxonNodeForLabel("Root"));
-        return displayHomepage(request, root);
+        return displayHomepage(request, root, null);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{originalOrg}")
-    public ModelAndView displayHomepage(HttpServletRequest request, @PathVariable("originalOrg") TaxonNodeList originalOrg) throws Exception {
+    public ModelAndView displayHomepage(HttpServletRequest request, 
+    		@PathVariable("originalOrg") TaxonNodeList originalOrg,
+    		@RequestParam(value="region", required=false) String region) throws Exception {
 
         if (originalOrg.getNodes().size() != 1) {
             return new ModelAndView(DEFAULT_HOMEPAGE);
@@ -90,8 +94,14 @@ public class HomepageController extends BaseController {
         }
 
         if (node.isLeaf()) {
-            mav.setViewName(DEFAULT_SINGLE);
-            
+        	
+        	if (region != null) {
+        		mav.setViewName(DEFAULT_SINGLE_CHROMSOME_MAP);
+        		mav.addObject("region", region);
+        	} else {
+        		mav.setViewName(DEFAULT_SINGLE);
+        	}
+        	
             mav.addObject("fulltext", node.getName(TaxonNameType.FULL));
             
             mav.addObject("node", node);

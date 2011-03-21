@@ -4,24 +4,39 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:header title="Homepage for ${fulltext}" />
+
+<script type="text/javascript" src="<misc:url value="/includes/scripts/jquery/Modernizr.js"/>"></script>
+<script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
+
 <format:page>
 <br>
 
 <style>
 
-.chromosome, .chromosome_type {
-    padding:10px;
+.region, .region_type {
+    width:100%;
+    display:block;
 }
 
-div.chromosomes_container {
-    height: 200px; 
-    overflow-y: auto;
-}
 
 </style>
 
 <script>
 
+$(function(){
+    $("#regions").ChromosomePicker({
+        "organism" : "com:${node.label}",
+        "on_select" : function(region) {
+        	window.location = getBaseURL() + "Homepage/${node.label}?region=" + region;	
+        }
+    });
+    
+    
+});
+
+
+
+/* 
 function log(message) {
 	if (console) {
 		console.log(message)
@@ -46,23 +61,7 @@ function loadChromosomes(organism, handler) {
 }
 
 
-function getFirstFeature(region, handler) {
-    $.ajax({
-        url: "/services/regions/locations_paged.json",
-        type: 'GET',
-        dataType: 'json',
-        data: {
-            'region' : region, 
-            'limit' : '1',
-            'offset' :'0',
-            'exclude' : 'nucleotide_match,repeat_region,region,repeat_unit'
-        },
-        success: function(response) {
-            handler(response);
-        }
-    });
-	
-}
+
 
 var types = new Object();
 
@@ -96,6 +95,7 @@ $(function(){
 		$('.chromosome_type').click(function(event) {
 			$('.chromosome').css('display', 'none');
 			$('.chromosome_type').addClass('ui-state-default').removeClass('ui-state-focus');
+			$('chromosomes_container').css('display', 'block');
 			
 			var chromsome_type = $(event.target).attr('chromosome_type');
 			$(event.target).addClass('ui-state-focus').removeClass('ui-state-default');
@@ -111,11 +111,9 @@ $(function(){
 			var chromosome_name = $(event.target).attr('chromosome_name');
 			log(chromosome_name);
 			
-			getFirstFeature(chromosome_name, function(returned_features) {
-				log(returned_features);
-				var feature = returned_features.response.results.locations[0].uniqueName;
-				window.location = getBaseURL() + "gene/" + feature;
-			});
+			window.location = getBaseURL() + "Homepage/${node.label}?region=" + chromosome_name;
+			
+			
 			
 		}).mouseover(function() {
             $(this).removeClass('ui-state-default').addClass('ui-state-hover');
@@ -125,7 +123,7 @@ $(function(){
 		
 	});
 	
-});
+}); */
 
 </script>
 
@@ -137,13 +135,20 @@ $(function(){
     <div class="baby-blue-top"></div>
         <div class="baby-blue">
             
-            <div id ="chromosome_types" class="ui-widget ui-widget-header ui-corner-all" ></div>
-            <div class='chromosomes_container'>
-            <div id ="chromosomes" class="ui-widget ui-widget-header ui-corner-all" ></div>
-            </div>
+            <div id ="regions" ></div>
+            
         </div>
     <div class="baby-blue-bot"></div>
     
+    <!-- <h2>Scaffolds</h2>
+    
+    <div class="light-grey-top"></div>
+    <div class="light-grey">
+        <div class='chromosomes_container'>
+            <div id ="chromosomes" class="ui-widget ui-widget-header" ></div>
+        </div> 
+    </div>
+    <div class="light-grey-bot"></div> -->
 
 </div>
 
