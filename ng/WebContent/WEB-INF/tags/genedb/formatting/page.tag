@@ -92,7 +92,7 @@
 </ul>
 
 </div><!-- end navigation block -->
-<structure:motdMessage />
+
 <structure:flashMessage />
 
 <db:breadcrumb selection="${taxonNodeName}" showingHomepage="${showingHomepage}" />
@@ -127,7 +127,7 @@
 
 <script type="text/javascript">
 _userv=0;
-urchinTracker();
+//urchinTracker();
 </script>
 </body>
 </html>
