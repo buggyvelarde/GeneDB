@@ -23,10 +23,11 @@
  <p>
   The GeneDB project is a core part of the Sanger Institute's Pathogen Genomics activities. Its primary goals are:
  </p>
- <pre>
-  * to provide reliable access to the latest sequence data and annotation/curation for the whole range oforganisms sequenced by the Pathogen group.
-  * to develop the website and other tools to aid the community in accessing and obtaining the maximum value from these data.
- </pre>
+ <ul>
+  <li> to provide reliable access to the latest sequence data and annotation/curation for the whole range oforganisms sequenced by the Pathogen group.
+  <li> to develop the website and other tools to aid the community in accessing and obtaining the maximum value from these data.
+ </ul>
+ <P></P>
  <p>
   GeneDB currently provides access to more than 40 genomes, at various stages of completion, from early access to partial genomes with automatic annotation through to complete genomes with extensive manual curation.
  </p>
