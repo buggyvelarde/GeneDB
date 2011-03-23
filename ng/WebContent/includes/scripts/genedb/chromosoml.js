@@ -161,6 +161,8 @@ function log(message) {
 	
 	function drawAxes(length, oncomplete) {
 		
+		
+		
 		var yscale = getYScale();
 		
 		var row_num = Math.ceil (length / settings.bases_per_row);
@@ -418,7 +420,7 @@ function log(message) {
 	        		return;
 	        	}
 	        	
-	        	$.each(returned.response.Results.features, function(index, feature) {
+	        	$.each(returned.response.results.features, function(index, feature) {
 	        		
 	        		var uniqueName = feature.uniqueName;
 	        		if (feature.uniqueName.contains(":pep")) {
@@ -536,6 +538,9 @@ function log(message) {
 				
 				loadSequence(settings, function(returned) {
 					length = returned.response.results.sequences[0].length;
+					if (settings.bases_per_row >= length) {
+						settings.bases_per_row = length * 5;
+					}
 					drawAxes(length, loadInChunks);
 				});
 				
