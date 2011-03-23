@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.controller;
 
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -7,6 +8,9 @@ import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
+import org.genedb.querying.core.NumericQueryVisibility;
+import org.genedb.querying.core.QueryDetails;
+import org.genedb.querying.core.QueryFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -39,6 +43,12 @@ public class HomepageController extends BaseController {
     private static final String APP_PREFIX = "app_www_homePage_";
 
     protected final Logger logger = Logger.getLogger(this.getClass());
+    
+    private QueryFactory queryFactory;
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -99,6 +109,10 @@ public class HomepageController extends BaseController {
         		mav.setViewName(DEFAULT_SINGLE_CHROMSOME_MAP);
         		mav.addObject("region", region);
         	} else {
+        		
+        		List<QueryDetails> queryDetails = queryFactory.listQueries("", NumericQueryVisibility.PUBLIC );
+                mav.addObject("queries", queryDetails);
+        		
         		mav.setViewName(DEFAULT_SINGLE);
         	}
         	

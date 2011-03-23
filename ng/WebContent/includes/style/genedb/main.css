@@ -166,10 +166,19 @@ br {
 	line-height: 1.5em;
 }
 
+#col-2-2 {
+    float: left;
+    width: 292px;
+    padding-left: 10px;
+    font-size: 1.2em;
+    line-height: 1.5em;
+}
+
 #col-3-1 {
 	float: left;
 	width: 292px;
 	padding-right: 10px;
+	font-size: 1.2em;
 	line-height: 1.5em;
 }
 
@@ -177,6 +186,7 @@ br {
 	float: left;
 	width: 292px;
 	padding-left: 10px;
+	font-size: 1.2em;
 	line-height: 1.5em;
 }
 
@@ -188,7 +198,9 @@ br {
 
 #col-4-2 {
 	float: left;
-	width: 170px;
+    width: 292px;
+    padding-left: 10px;
+    line-height: 1.5em;
 }
 
 #footer {
@@ -716,7 +728,7 @@ div#errorMessage {
 
 
 /* gv1: used for homepages and (can be used for misc pages if needed) */
-.readableText
+/* .readableText
 {
     font-size: 1.2em;
     line-height:1.5em;
@@ -734,7 +746,7 @@ div#errorMessage {
 .readableText div.arrowList {
 	padding-left:1em;
 	margin-left:1em;
-}
+} */
 
 
 /* gv1 these for the quick search query results */

@@ -105,7 +105,17 @@ public class QueryController extends AbstractGeneDBFormController{
         model.addAttribute("query", query);
         populateModelData(model, query);
 
-        model.addAttribute("taxonNodeName", findTaxonName(query));
+        String taxonNodeName = findTaxonName(query);
+        
+        if (taxonNodeName == null || taxonNodeName.length() == 0) {
+        	if (request.getParameter("taxonNodeName") != null) {
+        		taxonNodeName = request.getParameter("taxonNodeName"); 
+        	}
+        }
+        
+        logger.info("TaxonNodeName is "+taxonNodeName);
+        
+        model.addAttribute("taxonNodeName", taxonNodeName);
         return "search/"+queryName;
     }
 
@@ -234,6 +244,7 @@ public class QueryController extends AbstractGeneDBFormController{
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+        	//logger.info(entry.getKey() +" --- " + entry.getValue());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }

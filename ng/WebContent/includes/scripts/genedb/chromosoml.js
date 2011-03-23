@@ -573,13 +573,16 @@ function log(message) {
 		"initial_limit" : 5,
 		"on_select" : function(region) {
 			log(region);
-		}
+		},
+		"spinner" : null
 	};
 	
 	var types = [];
 	
 	var region_types_container = null;
 	var regions_container = null;
+	var offset =0;
+	var limit = 0;
 	
 	$.fn.ChromosomePicker = function(method) {
 		self = this;
@@ -600,22 +603,94 @@ function log(message) {
 			$.error('Method ' + method + ' does not exist on jQuery.tooltip');
 		}
 	};
-
 	
 	var methods = {
 		init : function( options ) {
 			if ( options ) { 
 		       $.extend( settings, options );
 		    }
+			log (options);
+			log (settings);
+			log (settings.spinner);
 			loadRegionTypes();
 		}
 	};
 	
+	function addCall() {
+		log (settings.spinner);
+		if (settings.spinner) {
+			settings.spinner.addCall();
+		}
+	}
+	
+	function removeCall() {
+		if (settings.spinner) {
+			settings.spinner.removeCall();
+		}
+	}
+	
+	function loadRegionTypes() {
+		regions_container.html('');
+		region_types_container.html('');
+		addCall();
+		$.ajax({
+	        url: settings.web_service_root + "regions/typesinorganism.json",
+	        type: 'GET',
+	        dataType: 'json',
+	        data: {
+	            'organism' : settings.organism
+	        },
+	        success: function(returned) {
+	        	$.each(returned.response.results.regions, function(index, region) {
+	        		var type = region.type.name;
+	        		region_types_container.append("<button class='fg-button ui-state-default region_type' region_type='" + type + "' >" + type + "</button>");
+	        	});
+				onLoadTypes();
+	        }
+		});
+	}
+	
+	function loadRegions(type, limit, offset, handler) {
+		addCall();
+		var data = {
+            'organism' : settings.organism
+        };
+		
+		if (type != null) {
+			data["type"] = type;
+		}
+		if (limit != null) {
+			data["limit"] = limit;
+		}
+		if (offset != null) {
+			data["offset"] = offset;
+		}
+		
+		$.ajax({
+	        url: settings.web_service_root + "regions/inorganism.json",
+	        type: 'GET',
+	        dataType: 'json',
+	        data: data,
+	        success: function(returned) {
+	        	var regions = [];
+	        	$.each(returned.response.results.regions, function(index, region) {
+	        		regions.push(region.uniqueName);
+	        	});
+	        	handler(regions);
+	        }
+		});
+
+	}
+	
 	function onLoadTypes() {
+		removeCall();
 		$('.region_type').click(function(event) {
 			var type = $(this).attr("region_type");
 			
-			loadRegions(type, settings.initial_limit, settings.initial_offset, function(regions) {
+			offset = settings.initial_offset;
+			limit = settings.initial_limit;
+			
+			loadRegions(type, limit, offset, function(regions) {
 				//log(regions);
 				
 				region_types_container.html('');
@@ -643,6 +718,7 @@ function log(message) {
 	
 	
 	function onLoadRegions(type) {
+		removeCall();
 		$('button.region').click(function(event) {
 			//log($(event.target));
 			//log($(event.currentTarget));
@@ -653,11 +729,16 @@ function log(message) {
 			if (region != null) {
 				settings.on_select(region);
 			} else if ($(event.currentTarget).hasClass('more')){
-				loadRegions(type, null, null, function(regions) {
+				
+				//offset = offset + limit;
+				limit = limit * 10;
+				
+				loadRegions(type, limit, offset, function(regions) {
 					//log(regions);
 					regions_container.html('');
 					regions_container.append("<button class='ui-state-default fg-button region back' >Back</button>");
 					fillRegions(regions);
+					regions_container.append("<button class='ui-state-default fg-button region more' >More</button>");
 					onLoadRegions(type);
 				});
 			} else if ($(event.currentTarget).hasClass('back')){
@@ -689,57 +770,67 @@ function log(message) {
 		});
 	}
 	
-	function loadRegionTypes() {
-		regions_container.html('');
-		region_types_container.html('');
-		$.ajax({
-	        url: settings.web_service_root + "regions/typesinorganism.json",
-	        type: 'GET',
-	        dataType: 'json',
-	        data: {
-	            'organism' : settings.organism
-	        },
-	        success: function(returned) {
-	        	$.each(returned.response.results.regions, function(index, region) {
-	        		var type = region.type.name;
-	        		region_types_container.append("<button class='fg-button ui-state-default region_type' region_type='" + type + "' >" + type + "</button>");
-	        	});
-				onLoadTypes();
-	        }
-		});
-	}
 	
-	function loadRegions(type, limit, offset, handler) {
-		
-		var data = {
-            'organism' : settings.organism
-        };
-		
-		if (type != null) {
-			data["type"] = type;
-		}
-		if (limit != null) {
-			data["limit"] = limit;
-		}
-		if (offset != null) {
-			data["offset"] = offset;
-		}
-		
-		$.ajax({
-	        url: settings.web_service_root + "regions/inorganism.json",
-	        type: 'GET',
-	        dataType: 'json',
-	        data: data,
-	        success: function(returned) {
-	        	var regions = [];
-	        	$.each(returned.response.results.regions, function(index, region) {
-	        		regions.push(region.uniqueName);
-	        	});
-	        	handler(regions);
-	        }
-		});
-
-	}
 
 	
 })(jQuery);
+
+
+
+function SpinnerManager(selector, options) {
+    
+    var calls = 0;
+    
+    var settings = {
+        height: 11, 
+        width: 43, 
+        position : 'right', 
+        img: '/path/to/image' 
+    
+    };
+    
+    if ( options ) { 
+       $.extend( settings, options );
+    }
+    
+    
+    var calling = false;
+    
+    this.addCall = function () {
+        calls++;
+        log(calls);
+        if (! calling) {
+            var img = "<img src='" + settings.img + "' height='"+ settings.height +"' width='"+ settings.width + "' >";
+            log(img);
+            $(selector).html(img);
+        }
+        calling = true;
+    };
+    
+    this.removeCall = function() {
+        calls--;
+        if (calls < 0) {
+            calls = 0;
+        }
+        log(calls);
+        
+        if (calls == 0) {
+        	
+            $(selector).html('');
+            calling = false;
+        }
+        
+    };
+    
+    this.reset = function() {
+        calls = 0;
+        calling = false;
+    };
+    
+}
+
+
+
+
+
+

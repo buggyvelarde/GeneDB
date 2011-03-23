@@ -111,6 +111,7 @@
   <bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController">
     <property name="taxonNodeManager" ref="taxonNodeManager" />
     <property name="conversionService" ref="conversionService" />
+    <property name="queryFactory" ref="queryFactory" />
   </bean>
 
 
