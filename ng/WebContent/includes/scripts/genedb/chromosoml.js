@@ -588,6 +588,7 @@ function log(message) {
 	var regions_container = null;
 	var offset =0;
 	var limit = 0;
+	var self = null;
 	
 	$.fn.ChromosomePicker = function(method) {
 		self = this;
@@ -780,6 +781,231 @@ function log(message) {
 	
 })(jQuery);
 
+
+(function($) {
+	
+	var settings = {
+		'web_service_root' : "/services/",
+		"organism" : "com:Pfalciparum", 
+		"date" : "2011-01-01", 
+		"defaultDateOffset" : 120, 
+		"baseHREF" : "/",
+		"spinner" : null
+	};
+	
+	var self = null;
+	
+	var methods = {
+		init : function(options) {
+			if ( options ) { 
+		       $.extend( settings, options );
+		    }
+				
+			loadStatistics(settings.organism, getDefaultDate(), onLoadStatistics);
+			
+			return this.each(function() {
+				$(this).html('<div class="activities" style="display:none;" class="ui-state-default ui-corner-all">' +
+					'<div class="datepickercontainer" style="text-align:right">Change date: <input type="text" class="annotation_change_datepicker" ><br><span  class="spinner1" >&nbsp;&nbsp;&nbsp;</span></div>' +
+					'<div style="font-size:small;" class="readableActivity"></div>' +
+					'</div>');
+				
+				var readableActivity = $(this).find('div.readableActivity')[0];
+				var activities = $(this).find('.activities')[0];
+				var annotation_change_datepicker = $(activities).find('input.annotation_change_datepicker')[0];
+				
+				// we need references to these elements later as
+				// the dialog will be moved out of this element
+				$(this).data({
+					readableActivity : readableActivity,
+					activities : activities,
+					annotation_change_datepicker : annotation_change_datepicker
+				});
+				
+				log(this);
+				log($(this).data());
+			});
+			
+			
+		}
+	};
+	
+	$.fn.AnnotationModificationReporter = function(method) {
+		self = this;
+		
+		
+		if (methods[method]) {
+			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+		} else if (typeof method === 'object' || !method) {
+			return methods.init.apply(this, arguments);
+		} else {
+			$.error('Method ' + method + ' does not exist on jQuery.tooltip');
+		}
+	};
+	
+	function loadStatistics(organism, date, handler) {
+		if (settings.spinner) {
+			settings.spinner.addCall();
+		}
+		$.ajax({
+	        url: settings.web_service_root + "features/annotation_changes_statistics.json",
+	        type: 'GET',
+	        dataType: 'json',
+	        data: {
+	            'organism' : settings.organism,
+	            'date' : getDateString(date)
+	        },
+	        success: handler
+		});
+	}
+	
+	function onLoadStatistics(returned) {
+		if (settings.spinner) {
+			settings.spinner.removeCall();
+		}
+		log("onLoadStatistics");
+		log($(self));
+		log($(this));
+		$(self).each(function() {
+			
+			var element = this;
+			//$(element).html('');
+			
+			log("!");
+			log($(element));
+			
+			$(element).append ("<P>Over last "+settings.defaultDateOffset+" days : <br/>");
+			var inserted = false;
+			$.each(returned.response.results.statistics, function(index, statistic) {
+        		$(element).append(" &raquo; " + statistic.name + " : " + statistic.value + " annotations<br>");
+        		inserted = true;
+        	});
+			if (! inserted) {
+				$(element).append ("&raquo; No changes. <br>");
+			}
+			$(element).append ("<a id='showstats' style='cursor:pointer;' >More details...</a> </P>");
+			
+			$('a#showstats').click(function(event) {
+				loadAnnotationChanges(settings.organism, getDefaultDate(), onLoadAnnotationChanges);
+			});
+		});
+	}
+	
+	function loadAnnotationChanges(organism, date, handler) {
+		if (settings.spinner) {
+			settings.spinner.addCall();
+		}
+		$.ajax({
+	        url: settings.web_service_root + "features/annotation_changes.json",
+	        type: 'GET',
+	        dataType: 'json',
+	        data: {
+	            'organism' : settings.organism,
+	            'date' : getDateString(date)
+	        },
+	        success: function (returned) {
+	        	handler(returned, organism, date);
+	        }
+		});
+	}
+	
+	function onLoadAnnotationChanges(returned, organism, date) {
+		if (settings.spinner) {
+			settings.spinner.removeCall();
+		}
+		$(self).each(function() {
+			
+			var element = this;
+			
+			var s = "<table cellpadding=10 cellspacing=10><tr><th>gene</th><th>type</th><th>details</th><th>date</th></tr>";
+			
+			var countFeatures = returned.response.results.features.length;
+			var countAnnotationChanges = 0; 
+			
+			
+			$.each(returned.response.results.features, function(index, feature) {
+				var a = "<tr ><td><a style='text-decoration:underline;' href='" 
+					+ settings.baseHREF + feature.uniqueName + "' >" + feature.uniqueName + "</a></td><td>";
+				
+				$.each(feature.changes, function(index, change) {
+					a += "<tr><td>&nbsp;&raquo;&nbsp;</td>";
+					a += "<td>" + change.type + "</td>";
+					a += "<td>" + change.detail + "</td>";
+					a += "<td>" + change.date + "</td>";
+					a += "</tr>";
+					countAnnotationChanges++;
+				});
+				
+				a += "</tr>";
+				
+                s += a;
+			});
+			
+			s += "</table>";
+			
+			log($(element));
+			var readableActivity = $(element).data('readableActivity');
+			log(readableActivity);
+			$(readableActivity).html(s);
+			
+			var activities = $(element).data('activities');
+			log (activities);
+			
+			$(activities).dialog({ 
+				width: 700, 
+				height: 530 , 
+				title :  "Recent annotation activity (since "  + getDateString(date) + ", features " + countFeatures + ", annotations "+countAnnotationChanges+" )" 
+			});;
+			
+			var annotation_change_datepicker = $(element).data('annotation_change_datepicker');
+			log(annotation_change_datepicker);
+			
+			$(annotation_change_datepicker).datepicker({
+				maxDate: '+0D', 
+				dateFormat: 'yy-mm-dd',  
+				selectedDate: date,
+				onSelect: function(dateText, inst) {
+					var newDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
+					loadAnnotationChanges(organism, newDate, onLoadAnnotationChanges);
+              } 
+			});
+			
+			
+		});
+	}
+	
+	function getDefaultDate() {
+		return getDateAtXDaysAgo(settings.defaultDateOffset);
+	}
+	
+	function getDateAtXDaysAgo(since) {
+		var d = new Date();
+		d.setDate(d.getDate() - since);
+		return d;
+	}
+	
+	function getDateString(date) {
+	    
+	    var year = pad(date.getFullYear(), 4);
+	    var month = pad(date.getMonth() + 1, 2);
+	    var day = pad(date.getDate(), 2);
+	    
+	    var dateString = year + "-" + month + "-" + day;
+	    //log(dateString);
+	    return dateString;
+	    
+	}
+	
+	function pad(number, length) {
+	    var str = '' + number;
+	    while (str.length < length) {
+	        str = '0' + str;
+	    }
+	    return str;
+	}
+
+	
+	
+})(jQuery);
 
 
 function SpinnerManager(selector, options) {
