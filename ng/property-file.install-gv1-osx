@@ -1,0 +1,3 @@
+# dbhost, dbport, dbname, dbuser and dbpassword are intentionally not specified here
+installDir=/Users/gv1/bin/ng/
+indexDir=/tmp
