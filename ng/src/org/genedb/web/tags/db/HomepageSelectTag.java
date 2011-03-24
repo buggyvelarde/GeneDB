@@ -38,10 +38,10 @@ public class HomepageSelectTag extends AbstractHomepageTag {
             });
         }
 
-        out.write(String.format("<select name=\"organism\" onChange=\"if (this.selectedIndex != 0) { document.location.href='%s'+this.value+'%s' ;}\">", baseUrl, suffix));
+        out.write(String.format("<select class='homepageselect' name=\"organism\" onChange=\"if (this.selectedIndex != 0) { document.location.href='%s'+this.value+'%s' ;}\">", baseUrl, suffix));
         if (this.title != null) {
             //out.write(String.format("<option value=\"%s\" disabled=\"disabled\">%s</option>", "none", title));
-            out.write(String.format("<option value=\"%s\">%s</option>", "none", title));
+            out.write(String.format("<option value=\"%s\" >%s</option>", "none", title));
         }
         for (TaxonNode node : nodes) {
         	if (node.isWebLinkable() || alwaysLink) {
