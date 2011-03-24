@@ -1,13 +1,26 @@
+/**
+ * jQuery Log
+ * Fast & safe logging in Firebug console
+ * 
+ * @param mixed - as many parameters as needed
+ * @return void
+ * 
+ * @url http://plugins.jquery.com/project/jQueryLog
+ * @author Amal Samally [amal.samally(at)gmail.com]
+ * @version 1.0
+ * @example:
+ * 		$.log(someObj, someVar);
+ * 		$.log("%s is %d years old.", "Bob", 42);
+ * 		$('div.someClass').log().hide();
+ */
+(function(a){a.log=function(){if(window.console&&window.console.log){console.log.apply(window.console,arguments)}};a.fn.log=function(){a.log(this);return this}})(jQuery);
+
 if(!String.prototype.startsWith){
     String.prototype.startsWith = function (str) { return !this.indexOf(str); };
     String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
 }
 
-function log(message) {
-	if (console) {
-		console.log(message);
-	}
-}
+
 
 
 /*
@@ -68,7 +81,7 @@ function log(message) {
 		'mouseoutFontColor' : "rgb(0,0,0)",
 		'overideUseCanvas' : false,
 		'click' : function(event) {
-			log(event);
+			$.log(event);
 		},
 		'base_position_start' : 0,
 		'web_service_root' : "/services/"
@@ -577,7 +590,7 @@ function log(message) {
 		"initial_offset" : 0,
 		"initial_limit" : 5,
 		"on_select" : function(region) {
-			log(region);
+			$.log(region);
 		},
 		"spinner" : null
 	};
@@ -615,15 +628,15 @@ function log(message) {
 			if ( options ) { 
 		       $.extend( settings, options );
 		    }
-			log (options);
-			log (settings);
-			log (settings.spinner);
+			$.log (options);
+			$.log(settings);
+			$.log (settings.spinner);
 			loadRegionTypes();
 		}
 	};
 	
 	function addCall() {
-		log (settings.spinner);
+		$.log (settings.spinner);
 		if (settings.spinner) {
 			settings.spinner.addCall();
 		}
@@ -821,8 +834,8 @@ function log(message) {
 					annotation_change_datepicker : annotation_change_datepicker
 				});
 				
-				log(this);
-				log($(this).data());
+				$.log(this);
+				$.log($(this).data());
 			});
 			
 			
@@ -862,16 +875,16 @@ function log(message) {
 		if (settings.spinner) {
 			settings.spinner.removeCall();
 		}
-		log("onLoadStatistics");
-		log($(self));
-		log($(this));
+		$.log("onLoadStatistics");
+		$.log($(self));
+		$.log($(this));
 		$(self).each(function() {
 			
 			var element = this;
 			//$(element).html('');
 			
-			log("!");
-			log($(element));
+			$.log("!");
+			$.log($(element));
 			
 			$(element).append ("<P>Over last "+settings.defaultDateOffset+" days : <br/>");
 			var inserted = false;
@@ -942,13 +955,13 @@ function log(message) {
 			
 			s += "</table>";
 			
-			log($(element));
+			$.log($(element));
 			var readableActivity = $(element).data('readableActivity');
-			log(readableActivity);
+			$.log(readableActivity);
 			$(readableActivity).html(s);
 			
 			var activities = $(element).data('activities');
-			log (activities);
+			$.log(activities);
 			
 			$(activities).dialog({ 
 				width: 700, 
@@ -957,7 +970,7 @@ function log(message) {
 			});;
 			
 			var annotation_change_datepicker = $(element).data('annotation_change_datepicker');
-			log(annotation_change_datepicker);
+			$.log(annotation_change_datepicker);
 			
 			$(annotation_change_datepicker).datepicker({
 				maxDate: '+0D', 
@@ -1029,10 +1042,10 @@ function SpinnerManager(selector, options) {
     
     this.addCall = function () {
         calls++;
-        log(calls);
+        $.log(calls);
         if (! calling) {
             var img = "<img src='" + settings.img + "' height='"+ settings.height +"' width='"+ settings.width + "' >";
-            log(img);
+            $.log(img);
             $(selector).html(img);
         }
         calling = true;
@@ -1043,7 +1056,7 @@ function SpinnerManager(selector, options) {
         if (calls < 0) {
             calls = 0;
         }
-        log(calls);
+        $.log(calls);
         
         if (calls == 0) {
         	
