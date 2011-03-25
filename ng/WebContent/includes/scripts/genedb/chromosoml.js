@@ -569,7 +569,177 @@ if(!String.prototype.startsWith){
  */
 (function($) {
 	
-	var settings = {
+	$.fn.ChromosomePicker = function(options) {
+		
+		var settings = $.extend({}, $.fn.ChromosomePicker.defaults, options);
+		
+		return this.each(function() {
+		
+			$(this).append("<div class='region_types'></div>");
+			$(this).append("<div class='regions'></div>");
+			
+			this.region_types_container = $($(this).children('.region_types')[0]);
+			this.region_types_container.addClass('ui-widget-header').addClass('fg-toolbar');
+			
+			this.regions_container = $($(this).children('.regions')[0]);
+			
+			this.offset = settings.initial_offset;
+			this.limit = settings.initial_limit;
+			
+			var self = this;
+			
+			this.loadTypes = function () {
+				self.addCall();
+				
+				$.log(self);
+				self.regions_container.html('');
+				self.region_types_container.html('');
+				
+				$.ajax({
+			        url: settings.web_service_root + "regions/typesinorganism.json",
+			        type: 'GET',
+			        dataType: 'json',
+			        data: {
+			            'organism' : settings.organism
+			        },
+			        success: function(returned) {
+			        	$.each(returned.response.results.regions, function(index, region) {
+			        		var type = region.type.name;
+			        		self.region_types_container.append("<button class='fg-button ui-state-default region_type' region_type='" + type + "' >" + type + "</button>");
+			        	});
+						self.onLoadTypes();
+			        }
+				});
+			};
+			
+			this.onLoadTypes = function() {
+				self.removeCall();
+				
+				$.log("loading types in");
+				$.log(self);
+				
+				
+				$(self).find('.region_type').click(function(event) {
+					var type = $(this).attr("region_type");
+					
+					self.loadRegions(type, self.limit, self.offset);
+					
+				}).button({
+				  icons: {
+					    primary: 'ui-icon-gear',
+					    secondary: "ui-icon-triangle-1-s"
+					  }
+					});
+			};
+			
+			this.loadRegions = function (type, limit, offset) {
+				self.addCall();
+				var data = {
+		            'organism' : settings.organism
+		        };
+				
+				if (type != null) {
+					data["type"] = type;
+				}
+				if (limit != null) {
+					data["limit"] = limit;
+				}
+				if (offset != null) {
+					data["offset"] = offset;
+				}
+				
+				$.ajax({
+			        url: settings.web_service_root + "regions/inorganism.json",
+			        type: 'GET',
+			        dataType: 'json',
+			        data: data,
+			        success: function(returned) {
+			        	var regions = [];
+			        	$.each(returned.response.results.regions, function(index, region) {
+			        		regions.push(region.uniqueName);
+			        	});
+			        	self.onLoadRegions(type, regions);
+			        }
+				});
+
+			};
+			
+			this.onLoadRegions = function (type, regions) {
+				self.removeCall();
+				
+				$.log("putting regions in");
+				$.log(self);
+				
+				self.region_types_container.html('');
+				
+				self.regions_container.html('');
+				
+				var s = "";
+				s += "<button class='ui-state-default fg-button region back' >Back</button>";
+				$.each(regions, function(index, region) {
+					s += "<button class='fg-button ui-state-default region' region='"+region+"' >" + region + "</button>";
+				});
+				
+				if (regions.length == self.limit) {
+					s += "<button class='ui-state-default fg-button region more' >More</button>";
+				}
+				
+				self.regions_container.append(s);
+				
+				$(self).find('button.region').click(function(event) {
+					
+					var region = $(event.currentTarget).attr("region");
+					
+					if (region != null) {
+						settings.on_select(region);
+					} else if ($(event.currentTarget).hasClass('more')) {
+						
+						self.limit = self.limit * 10;
+						
+						self.loadRegions(type, self.limit, self.offset);
+						
+					} else if ($(event.currentTarget).hasClass('back')){
+						self.loadTypes();
+					}
+				}).button({
+					  icons: {
+						    primary: 'ui-icon-document',
+						    secondary: 'ui-icon-triangle-1-e'
+						  }
+						});
+				$('button.back').button({
+				  icons: {
+					    primary: 'ui-icon-triangle-1-w'
+					  }
+					});
+				$('button.more').button({
+				  icons: {
+					    primary: 'ui-icon-triangle-1-s'
+					  }
+					});
+			};
+			
+			this.addCall = function() {
+				if (settings.spinner) {
+					settings.spinner.addCall();
+				}
+			};
+			
+			this.removeCall = function() {
+				if (settings.spinner) {
+					settings.spinner.removeCall();
+				}
+			};
+			
+			this.loadTypes();
+			
+		});
+		
+		
+		
+	};
+	
+	$.fn.ChromosomePicker.defaults = {
 		'web_service_root' : "/services/",
 		"organism" : "com:Pfalciparum",
 		"initial_offset" : 0,
@@ -579,203 +749,8 @@ if(!String.prototype.startsWith){
 		},
 		"spinner" : null
 	};
-	
-	var types = [];
-	
-	var region_types_container = null;
-	var regions_container = null;
-	var offset =0;
-	var limit = 0;
-	var self = null;
-	
-	$.fn.ChromosomePicker = function(method) {
-		self = this;
-		
-		$(self).append("<div class='region_types'></div>");
-		$(self).append("<div class='regions'></div>");
-		
-		region_types_container = $($(self).children('.region_types')[0]);
-		regions_container = $($(self).children('.regions')[0]);
-		
-		region_types_container.addClass('ui-widget-header').addClass('fg-toolbar');
-		
-		if (methods[method]) {
-			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-		} else if (typeof method === 'object' || !method) {
-			return methods.init.apply(this, arguments);
-		} else {
-			$.error('Method ' + method + ' does not exist on jQuery.tooltip');
-		}
-	};
-	
-	var methods = {
-		init : function( options ) {
-			if ( options ) { 
-		       $.extend( settings, options );
-		    }
-			$.log (options);
-			$.log(settings);
-			$.log (settings.spinner);
-			loadRegionTypes();
-		}
-	};
-	
-	function addCall() {
-		$.log (settings.spinner);
-		if (settings.spinner) {
-			settings.spinner.addCall();
-		}
-	}
-	
-	function removeCall() {
-		if (settings.spinner) {
-			settings.spinner.removeCall();
-		}
-	}
-	
-	function loadRegionTypes() {
-		regions_container.html('');
-		region_types_container.html('');
-		addCall();
-		$.ajax({
-	        url: settings.web_service_root + "regions/typesinorganism.json",
-	        type: 'GET',
-	        dataType: 'json',
-	        data: {
-	            'organism' : settings.organism
-	        },
-	        success: function(returned) {
-	        	$.each(returned.response.results.regions, function(index, region) {
-	        		var type = region.type.name;
-	        		region_types_container.append("<button class='fg-button ui-state-default region_type' region_type='" + type + "' >" + type + "</button>");
-	        	});
-				onLoadTypes();
-	        }
-		});
-	}
-	
-	function loadRegions(type, limit, offset, handler) {
-		addCall();
-		var data = {
-            'organism' : settings.organism
-        };
-		
-		if (type != null) {
-			data["type"] = type;
-		}
-		if (limit != null) {
-			data["limit"] = limit;
-		}
-		if (offset != null) {
-			data["offset"] = offset;
-		}
-		
-		$.ajax({
-	        url: settings.web_service_root + "regions/inorganism.json",
-	        type: 'GET',
-	        dataType: 'json',
-	        data: data,
-	        success: function(returned) {
-	        	var regions = [];
-	        	$.each(returned.response.results.regions, function(index, region) {
-	        		regions.push(region.uniqueName);
-	        	});
-	        	handler(regions);
-	        }
-		});
 
-	}
 	
-	function onLoadTypes() {
-		removeCall();
-		$('.region_type').click(function(event) {
-			var type = $(this).attr("region_type");
-			
-			offset = settings.initial_offset;
-			limit = settings.initial_limit;
-			
-			loadRegions(type, limit, offset, function(regions) {
-				//log(regions);
-				
-				region_types_container.html('');
-				regions_container.html('');
-				
-				regions_container.append("<button class='ui-state-default fg-button region back' >Back</button>");
-				
-				fillRegions(regions);
-				//
-				
-				regions_container.append("<button class='ui-state-default fg-button region more' >More</button>");
-				
-				onLoadRegions(type);
-				
-				
-			});
-		}).button({
-		  icons: {
-			    primary: 'ui-icon-gear',
-			    secondary: "ui-icon-triangle-1-s"
-			  }
-			});
-	}
-	
-	
-	
-	function onLoadRegions(type) {
-		removeCall();
-		$('button.region').click(function(event) {
-			//log($(event.target));
-			//log($(event.currentTarget));
-			//log($(this));
-			
-			var region = $(event.currentTarget).attr("region");
-			
-			if (region != null) {
-				settings.on_select(region);
-			} else if ($(event.currentTarget).hasClass('more')){
-				
-				//offset = offset + limit;
-				limit = limit * 10;
-				
-				loadRegions(type, limit, offset, function(regions) {
-					//log(regions);
-					regions_container.html('');
-					regions_container.append("<button class='ui-state-default fg-button region back' >Back</button>");
-					fillRegions(regions);
-					regions_container.append("<button class='ui-state-default fg-button region more' >More</button>");
-					onLoadRegions(type);
-				});
-			} else if ($(event.currentTarget).hasClass('back')){
-				loadRegionTypes();
-			}
-		}).button({
-			  icons: {
-				    primary: 'ui-icon-document',
-				    secondary: 'ui-icon-triangle-1-e'
-				  }
-				});
-		$('button.back').button({
-		  icons: {
-			    primary: 'ui-icon-triangle-1-w'
-			  }
-			});
-		$('button.more').button({
-		  icons: {
-			    primary: 'ui-icon-triangle-1-s'
-			  }
-			});
-	}
-	
-	function fillRegions(regions) {
-		
-		$.each(regions, function(index, region) {
-			regions_container
-				.append("<button class='fg-button ui-state-default region' region='"+region+"' >" + region + "</button>");
-		});
-	}
-	
-	
-
 	
 })(jQuery);
 
