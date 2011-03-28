@@ -721,13 +721,13 @@ if(!String.prototype.startsWith){
 			
 			this.addCall = function() {
 				if (settings.spinner) {
-					settings.spinner.addCall();
+					$(settings.spinner).CallStatusSpinner("addCall");
 				}
 			};
 			
 			this.removeCall = function() {
 				if (settings.spinner) {
-					settings.spinner.removeCall();
+					$(settings.spinner).CallStatusSpinner("removeCall");
 				}
 			};
 			
@@ -817,7 +817,7 @@ if(!String.prototype.startsWith){
 	
 	function loadStatistics(organism, date, handler) {
 		if (settings.spinner) {
-			settings.spinner.addCall();
+			$(settings.spinner).CallStatusSpinner("addCall");
 		}
 		$.ajax({
 	        url: settings.web_service_root + "features/annotation_changes_statistics.json",
@@ -833,7 +833,7 @@ if(!String.prototype.startsWith){
 	
 	function onLoadStatistics(returned) {
 		if (settings.spinner) {
-			settings.spinner.removeCall();
+			$(settings.spinner).CallStatusSpinner("removeCall");
 		}
 		$.log("onLoadStatistics");
 		$.log($(self));
@@ -865,7 +865,7 @@ if(!String.prototype.startsWith){
 	
 	function loadAnnotationChanges(organism, date, handler) {
 		if (settings.spinner) {
-			settings.spinner.addCall();
+			$(settings.spinner).CallStatusSpinner("addCall");
 		}
 		$.ajax({
 	        url: settings.web_service_root + "features/annotation_changes.json",
@@ -883,7 +883,7 @@ if(!String.prototype.startsWith){
 	
 	function onLoadAnnotationChanges(returned, organism, date) {
 		if (settings.spinner) {
-			settings.spinner.removeCall();
+			$(settings.spinner).CallStatusSpinner("removeCall");
 		}
 		$(self).each(function() {
 			
@@ -981,60 +981,87 @@ if(!String.prototype.startsWith){
 })(jQuery);
 
 
-function SpinnerManager(selector, options) {
-    
-    var calls = 0;
-    
-    var settings = {
-        height: 11, 
-        width: 43, 
-        position : 'right', 
+
+
+/**
+ * A simple spinner plugin, which can be told to stack up calls. As long as the call number
+ * is over 0, it will keep on spinning. 
+ * @author gv1
+ */
+(function($) {
+	
+	$.fn.CallStatusSpinner = function(arg) {		
+		return this.each(function() {
+			
+			// if it's a method name we're invoking 
+			if (methods[arg]) {
+				// we use apply to pass the correct "this" to the public methods
+				return methods[arg].apply(this, Array.prototype.slice.call(arguments, 1));
+			} else if (typeof arg === 'object' || !arg) {
+				return methods.init.apply(this, [arg]);
+			}
+			
+		});
+	};
+	
+	// exposed so that default can be changed once globally if desired
+	$.fn.CallStatusSpinner.defaults = {
+        height: 20, 
+        width: 20, 
         img: '/path/to/image' 
-    
     };
-    
-    if ( options ) { 
-       $.extend( settings, options );
-    }
-    
-    
-    var calling = false;
-    
-    this.addCall = function () {
-        calls++;
-        $.log(calls);
-        if (! calling) {
-            var img = "<img src='" + settings.img + "' height='"+ settings.height +"' width='"+ settings.width + "' >";
-            $.log(img);
-            $(selector).html(img);
-        }
-        calling = true;
-    };
-    
-    this.removeCall = function() {
-        calls--;
-        if (calls < 0) {
-            calls = 0;
-        }
-        $.log(calls);
-        
-        if (calls == 0) {
-        	
-            $(selector).html('');
-            calling = false;
-        }
-        
-    };
-    
-    this.reset = function() {
-        calls = 0;
-        calling = false;
-    };
-    
-}
-
-
-
-
-
+	
+	var methods = {
+		addCall : function () {
+			$.log("this");
+	    	$.log(this);
+	    	$.log(this.settings.img);
+	        this.calls++;
+	        $.log(this.calls);
+	        if (! this.calling) {
+	            var img = "<img src='" + this.settings.img + "' height='"+ this.settings.height +"' width='"+ this.settings.width + "' >";
+	            $.log(img);
+	            $(this).html(img);
+	            
+	        }
+	        calling = true;
+	    },
+		removeCall : function() {
+	    	this.calls--;
+	        if (this.calls < 0) {
+	        	this.calls = 0;
+	        }
+	        $.log(this.calls);
+	        
+	        if (this.calls == 0) {
+	            $(this).html('');
+	            this.calling = false;
+	        }
+	        
+	    },
+		reset : function() {
+	    	this.calls = 0;
+	    	this.calling = false;
+	        $(this).html('');
+	    },
+	    init : function(options) {
+	    	
+	    	this.settings = $.extend({}, $.fn.CallStatusSpinner.defaults, options);
+			this.calling = false;
+			this.calls = 0;
+			
+			console.log("options");
+			console.log(options);
+			
+			$.log("this");
+	    	$.log(this);
+	    	$.log(this.settings.img);
+	    }
+	};
+	
+	
+	
+	
+	
+})(jQuery);
 

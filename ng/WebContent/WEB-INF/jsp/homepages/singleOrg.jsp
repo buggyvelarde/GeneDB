@@ -6,11 +6,7 @@
 <format:header title="Homepage for ${fulltext}" />
 
 <script type="text/javascript"
-	src="<misc:url value="/includes/scripts/jquery/Modernizr.js"/>"></script>
-<script type="text/javascript"
 	src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
-<script language="javascript" type="text/javascript"
-	src="<misc:url value="/includes/scripts/jquery/jquery.spinner.js"/>"></script>
 
 <format:page>
 	<br>
@@ -24,63 +20,33 @@
 
 	<script>
 		$(function() {
-
-			var spinMeister1 = new SpinnerManager(".spinner1", {
-				height : 11.5,
-				width : 50,
-				position : 'right',
-				img : '<misc:url value="/includes/image/spinner.gif"/>'
-			});
-
-			$('#annotation_statistics').AnnotationModificationReporter({
-				"organism" : "com:${node.label}",
-				"baseHREF" : '<misc:url value="/gene/"/>',
-				spinner : spinMeister1
-			});
-
-			$('a#about').click(function(event) {
-				$("#readableContent").dialog({
-					width : 700,
-					height : 530,
-					title : "About ${full} on GeneDB"
-				});
-			});
-
-			var spinMeister2 = new SpinnerManager(".spinner2", {
-				height : 11.5,
-				width : 50,
-				position : 'right',
-				img : '<misc:url value="/includes/image/spinner.gif"/>'
-			});
-
-			$("#regions")
-					.ChromosomePicker(
-							{
-								"organism" : "com:${node.label}",
-								"on_select" : function(region) {
-									window.location = getBaseURL()
-											+ "Homepage/${node.label}?region="
-											+ region;
-								},
-								"spinner" : spinMeister2
-							});
 		    
+			// all spinners here will use the same defaults
+			$.fn.CallStatusSpinner.defaults = {
+					height : 11.5,
+	                width : 50,
+	                img : '<misc:url value="/includes/image/spinner.gif"/>'
+			};
 			
+			$('.spinner1').CallStatusSpinner();
+			$('.spinner2').CallStatusSpinner();
 			
-			var imgsrc = "<misc:url value="/"/>includes/image/homepage-${node.label}.jpg";
-	        
-	        var tester=new Image()
-	        tester.onload=function() {
-	            $('#imgcontainer').html("<img class='reflect' width='600' src='" +imgsrc +"' >");
-	            $("#imgcontainer").fadeIn(2000);
-	            $("#imgcontainer img.reflect").reflect({height : 0.25});
-	            
-	        }
-	        tester.onerror=function() {
-	            $.log("could not load img " + imgsrc);
-	        }
-	        tester.src=imgsrc;
-			
+			$('#annotation_statistics').AnnotationModificationReporter({
+				organism : "com:${node.label}",
+				baseHREF : '<misc:url value="/gene/"/>',
+				spinner : ".spinner1"
+			}); 
+		    
+			$("#regions").ChromosomePicker({
+				organism : "com:${node.label}",
+				on_select : function(region) {
+					window.location = getBaseURL()
+						+ "Homepage/${node.label}?region="
+						+ region;
+				},
+				spinner : ".spinner2"
+			}); 
+		    
 			
 		});
 		
@@ -132,10 +98,10 @@
 		<div class="baby-blue-bot"></div>
 
 		<h2>Information</h2>
-
+        
 		<div class="light-grey-top"></div>
 		<div class="light-grey">
-
+                
 			<p class="block-para">
 				About <br /> &raquo; <a id="about">${full} on GeneDB </a> <br />
 
@@ -154,6 +120,7 @@
 		<h2>Blast</h2>
 		<div class="baby-blue-top"></div>
 		<div class="baby-blue">
+		<div id="regions2"></div>
 			<p class="block-para">
 				 &raquo; <a
 					href="${baseUrl}blast/submitblast/GeneDB_${node.label}">Blast
