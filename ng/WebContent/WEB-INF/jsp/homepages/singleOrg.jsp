@@ -45,7 +45,7 @@
 						+ region;
 				},
 				spinner : ".spinner2"
-			}); 
+			});  
 		    
 			
 		});

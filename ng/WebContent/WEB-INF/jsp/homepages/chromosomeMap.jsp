@@ -42,10 +42,6 @@
 
 </style>
 
-<!-- <div style="padding:5px" class="buttons">
-    <button id="previous">previous</button> 
-    <button style="margin-left:750px;" id="next">next</button>
-</div> -->
 <div id="chromosome-container" style="padding-left:50px;" ></div>
 
 <script>
@@ -55,19 +51,11 @@ $(function(){
     	"region" : "${region}", 
     	"overideUseCanvas" : true,
     	'click' : function(event) {
-    		console.log(event.target.title);
     		if (event.target.title) {
     			window.location = getBaseURL() + "gene/" + event.target.title;
     		}
        } 
     });
-	
-	/* $('#next').click(function(event) {
-		$("#chromosome-container").ChromosomeMap('next');
-	}).button();
-	$('#previous').click(function(event) {
-        $("#chromosome-container").ChromosomeMap('previous');
-    }).button(); */
     
 });
 </script>
