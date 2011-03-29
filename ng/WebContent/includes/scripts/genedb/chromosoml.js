@@ -1013,16 +1013,10 @@ if(!String.prototype.startsWith){
 	
 	var methods = {
 		addCall : function () {
-			$.log("this");
-	    	$.log(this);
-	    	$.log(this.settings.img);
 	        this.calls++;
-	        $.log(this.calls);
 	        if (! this.calling) {
 	            var img = "<img src='" + this.settings.img + "' height='"+ this.settings.height +"' width='"+ this.settings.width + "' >";
-	            $.log(img);
 	            $(this).html(img);
-	            
 	        }
 	        calling = true;
 	    },
@@ -1031,8 +1025,6 @@ if(!String.prototype.startsWith){
 	        if (this.calls < 0) {
 	        	this.calls = 0;
 	        }
-	        $.log(this.calls);
-	        
 	        if (this.calls == 0) {
 	            $(this).html('');
 	            this.calling = false;
@@ -1045,17 +1037,9 @@ if(!String.prototype.startsWith){
 	        $(this).html('');
 	    },
 	    init : function(options) {
-	    	
 	    	this.settings = $.extend({}, $.fn.CallStatusSpinner.defaults, options);
 			this.calling = false;
 			this.calls = 0;
-			
-			console.log("options");
-			console.log(options);
-			
-			$.log("this");
-	    	$.log(this);
-	    	$.log(this.settings.img);
 	    }
 	};
 	
