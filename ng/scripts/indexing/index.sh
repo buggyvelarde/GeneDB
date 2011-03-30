@@ -2,7 +2,7 @@
 
 usage() {
 cat <<OPTIONS
-Usage: index.sh -t TMPDIR -p /path/to/psql-driver.jar [-o OUTDIR1,OUTDIR2] [-r org1,org2 | -s 2010-08-10] -c [-0] [-1] [-2] [-3] [-4] [-5]
+Usage: index.sh -t TMPDIR -p /path/to/psql-driver.jar [-o OUTDIR1,OUTDIR2] [-r org1,org2 | -s 2010-08-10] -c [-0] [-1] [-2] [-3] [-4] [-5] [-6] [-7]
 
 You can choose to specify a list of organisms (-r) or a date (-s), if you specify neither then all organisms will be used. There are several actions in the workflow that you can call: 
 
@@ -55,7 +55,11 @@ Options:
     Move the merged cache to the location specified by the config file. Off by default. Stage 5.
     
  -6 COPY_NIGHTLY_TO_STAGING
-    The final automated step. Copies the contents of the nightly database to the staging database. Stage 6. 
+    Copies the contents of the nightly database to the staging database. Stage 6.
+ 
+ -7 RESTART_GENEDB
+ 	The final automated step. Restarts genedb www1 and www2 servers whilst copying the caches and indices.  
+     
  
     
  
@@ -91,7 +95,7 @@ if [ `uname -n` != ${HST} ]; then
     exit 1
 fi
 
-while getopts "s:r:o:t:p:c:0123456v" o ; do  
+while getopts "s:r:o:t:p:c:01234567v" o ; do  
     case $o in  
         s ) SINCE=$OPTARG;;
         r ) ORGANISMS=$(echo $OPTARG | tr "," "\n" );;
@@ -105,6 +109,7 @@ while getopts "s:r:o:t:p:c:0123456v" o ; do
         4 ) DO_MERGE_BERKLEY_CACHE=1;;
         5 ) DO_MOVE_OF_CACHE_TO_CONFIG_LOCATION=1;;
         6 ) COPY_NIGHTLY_TO_STAGING=1;;
+        7 ) RESTART_GENEDB=1;;
         c ) CONFIG=$OPTARG;;
         v ) echo $VERSION  
             exit 0;;
@@ -484,4 +489,12 @@ if [[ $COPY_NIGHTLY_TO_STAGING ]]; then
  	/nfs/pathdb/bin/fix-snapshot 
 fi
 
-
+#
+# Restart genedb
+#
+if [[ $RESTART_GENEDB ]]; then
+	echo "Stage 7"
+	echo Restarting...
+	ssh pcs-genedb1 /nfs/pathdb/bin/copy_and_restart_genedb
+	
+fi
