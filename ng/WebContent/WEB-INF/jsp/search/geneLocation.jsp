@@ -6,7 +6,8 @@
 <format:page>
 <br />
 
-<script language="javascript" type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery.spinner.js"/>"></script>
+<script type="text/javascript"
+    src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
 
 <c:choose>
  <c:when test="${topLevelFeatureName != null}">
@@ -30,20 +31,26 @@
 
 <script>
 
+
+$('.spinner').CallStatusSpinner({
+    height : 11.5,
+    width : 50,
+    img : '<misc:url value="/includes/image/spinner.gif"/>'
+});
+
 var lengths = {};
 var loading = false;
-var opts = { height: 11, width: 43, position : 'right', img: '<misc:url value="/includes/image/spinner.gif"/>"' };
 
 function startedLoading() {
     if (! loading) {
-    	$("#spinner").spinner(opts);
+    	$('.spinner').CallStatusSpinner("addCall");
     	loading = true;
     }
 }
 
 function stoppedLoading() {
     if (loading) {
-    	$("#spinner").spinner('remove');
+    	$('.spinner').CallStatusSpinner("removeCall");
         loading = false;
     }
 }
@@ -211,7 +218,7 @@ $(function(){
             </table>
         </form:form>
     
-    <P>Select an organism from the retrieve its list of contigs or chromosomes. <span id="spinner" style="padding:5px;" >&nbsp;&nbsp;&nbsp;</span></P>
+    <P>Select an organism from the retrieve its list of contigs or chromosomes. <span class="spinner" >&nbsp;&nbsp;&nbsp;</span></P>
     
     </format:genePageSection>
     
