@@ -217,6 +217,11 @@ public class PopulateCaches {
 
     private void populateDtoCache(AbstractGene gene) {
         for (Transcript transcript : gene.getTranscripts()) {
+        	
+        	if (transcript.isObsolete()) {
+        		continue;
+        	}
+        	
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoMap.put(transcript.getFeatureId(), dto);
             //dtoDb.persistDTO(dto, transcript.getFeatureId());
