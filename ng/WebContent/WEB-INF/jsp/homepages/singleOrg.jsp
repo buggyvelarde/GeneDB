@@ -48,6 +48,21 @@
 			});  
 		    
 			
+		    var imgsrc = "<misc:url value="/"/>includes/image/homepage-${node.label}.jpg";
+            
+            var tester=new Image()
+            tester.onload=function() {
+                $('#imgcontainer').html("<img class='reflect' width='600' src='" +imgsrc +"' >");
+                $("#imgcontainer").fadeIn(2000);
+                $("#imgcontainer img.reflect").reflect({height : 0.25});
+                
+            }
+            tester.onerror=function() {
+                $.log("could not load img " + imgsrc);
+            }
+            tester.src=imgsrc;
+            
+			
 		});
 		
 		
