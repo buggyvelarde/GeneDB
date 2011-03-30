@@ -48,7 +48,8 @@
 			});  
 		    
 			
-		    var imgsrc = "<misc:url value="/"/>includes/image/homepage-${node.label}.jpg";
+			// commented out until we have images sorted...
+		    /* var imgsrc = "<misc:url value="/"/>includes/image/homepage-${node.label}.jpg";
             
             var tester=new Image()
             tester.onload=function() {
@@ -61,7 +62,7 @@
                 $.log("could not load img " + imgsrc);
             }
             tester.src=imgsrc;
-            
+             */
 			
 		});
 		
