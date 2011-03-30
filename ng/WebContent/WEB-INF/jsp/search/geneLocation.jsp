@@ -35,116 +35,118 @@
 <script>
 
 
-$('.spinner').CallStatusSpinner({
-    height : 11.5,
-    width : 50,
-    img : '<misc:url value="/includes/image/spinner.gif"/>'
-});
-
-var lengths = {};
-var loading = false;
-
-function startedLoading() {
-    if (! loading) {
-    	$('.spinner').CallStatusSpinner("addCall");
-    	loading = true;
-    }
-}
-
-function stoppedLoading() {
-    if (loading) {
-    	$('.spinner').CallStatusSpinner("removeCall");
-        loading = false;
-    }
-}
-
-function loadTops(organism) {
-	startedLoading();
-	
-	$.ajax({
-        url: getBaseURL() + "service/top",
-        type: 'GET',
-        dataType: 'json',
-        data: {
-            'commonName' : organism
-        },
-        success: function(response) {
-        	$('#topLevelFeatureName').html('');
-
-        	lengths = {};
-
-        	if (jQuery.isArray(response.results.feature)) {
-            
-	       		for (var i in response.results.feature) {
-	
-	       			var result = response.results.feature[i];
-	       			var name = result["@name"];
-	       			var length = result["@length"];
-	       			lengths[name] = length;
-	       		    
-	       			var selected = '';
-	
-	       		    if (topLevelFeatureName == name) {
-	       		    	selected = ' selected ';
-	       		    }
-	       			
-	       			$('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
-	       		}
-	       	    
-        	} else {
-            	
-        		var result = response.results.feature;
-                var name = result["@name"];
-                var length = result["@length"];
-                lengths[name] = length;
-                
-                var selected = '';
-
-                if (topLevelFeatureName == name) {
-                    selected = ' selected ';
-                }
-                
-                $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
-        	}
-
-        	stoppedLoading();
-            
-       	
-        }
-	});
-
-}
-
-function loadOrganisms() {
-	startedLoading();
-	
-	$.ajax({
-        url: getBaseURL() + "service/organisms",
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-           for (var i in response.results.organisms.string) {
-               var result = response.results.organisms.string[i];
-               
-               var selected = " ";
-               
-               if (organism == result) {
-            	    selected = " selected ";
-            	    loadTops(organism);
-               }
-               
-               $('#organisms').append('<option ' + selected + '>' + result + '</option>');
-           }
-
-           stoppedLoading();
-           
-        }
-    });
-}
 
 
 
 $(function(){
+	
+
+	$('.spinner').CallStatusSpinner({
+	    height : 11.5,
+	    width : 50,
+	    img : '<misc:url value="/includes/image/spinner.gif"/>'
+	});
+
+	var lengths = {};
+	var loading = false;
+
+	function startedLoading() {
+	    if (! loading) {
+	        $('.spinner').CallStatusSpinner("addCall");
+	        loading = true;
+	    }
+	}
+
+	function stoppedLoading() {
+	    if (loading) {
+	        $('.spinner').CallStatusSpinner("removeCall");
+	        loading = false;
+	    }
+	}
+
+	function loadTops(organism) {
+	    startedLoading();
+	    
+	    $.ajax({
+	        url: getBaseURL() + "service/top",
+	        type: 'GET',
+	        dataType: 'json',
+	        data: {
+	            'commonName' : organism
+	        },
+	        success: function(response) {
+	            $('#topLevelFeatureName').html('');
+
+	            lengths = {};
+
+	            if (jQuery.isArray(response.results.feature)) {
+	            
+	                for (var i in response.results.feature) {
+	    
+	                    var result = response.results.feature[i];
+	                    var name = result["@name"];
+	                    var length = result["@length"];
+	                    lengths[name] = length;
+	                    
+	                    var selected = '';
+	    
+	                    if (topLevelFeatureName == name) {
+	                        selected = ' selected ';
+	                    }
+	                    
+	                    $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
+	                }
+	                
+	            } else {
+	                
+	                var result = response.results.feature;
+	                var name = result["@name"];
+	                var length = result["@length"];
+	                lengths[name] = length;
+	                
+	                var selected = '';
+
+	                if (topLevelFeatureName == name) {
+	                    selected = ' selected ';
+	                }
+	                
+	                $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
+	            }
+
+	            stoppedLoading();
+	            
+	        
+	        }
+	    });
+
+	}
+
+	function loadOrganisms() {
+	    startedLoading();
+	    
+	    $.ajax({
+	        url: getBaseURL() + "service/organisms",
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(response) {
+	           for (var i in response.results.organisms.string) {
+	               var result = response.results.organisms.string[i];
+	               
+	               var selected = " ";
+	               
+	               if (organism == result) {
+	                    selected = " selected ";
+	                    loadTops(organism);
+	               }
+	               
+	               $('#organisms').append('<option ' + selected + '>' + result + '</option>');
+	           }
+
+	           stoppedLoading();
+	           
+	        }
+	    });
+	}
 
 	$("#topLevelFeatureName").click(function (e) {
 		if (loading) {
