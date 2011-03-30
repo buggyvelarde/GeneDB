@@ -22,6 +22,9 @@
  <c:when test="${organism != null}">
     <script>var organism = "${organism}";</script>
  </c:when>
+ <c:when test="${taxonNodeName != null}">
+    <script>var organism = "${taxonNodeName}";</script>
+ </c:when>
  <c:otherwise>
     <script>var organism = null;</script>
  </c:otherwise>
