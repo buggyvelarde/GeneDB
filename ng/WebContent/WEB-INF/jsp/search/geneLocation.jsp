@@ -211,9 +211,11 @@ $(function(){
                           <br><form:checkbox id="pseudogenes" path="pseudogenes" />
                       </td>
                       <td>&nbsp;&nbsp;&nbsp;</td>
-                    <td>
-                        <br><input type="submit" value="Submit" />
-                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan=7> <input type="submit" value="Submit" /><br><span class="spinner" >&nbsp;&nbsp;&nbsp;</span></td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -223,7 +225,7 @@ $(function(){
             </table>
         </form:form>
     
-    <P>Select an organism from the retrieve its list of contigs or chromosomes. <span class="spinner" >&nbsp;&nbsp;&nbsp;</span></P>
+    <P>Select an organism from the retrieve its list of contigs or chromosomes. </P>
     
     </format:genePageSection>
     
