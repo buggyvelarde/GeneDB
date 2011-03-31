@@ -30,7 +30,9 @@
 .chromosome_feature_text {
     -webkit-transform: rotate(-45deg);
     -moz-transform: rotate(-45deg);
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    /* filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); */
+    filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476)"; /* IE8 */
     position:relative;
     /* border:1px solid black; */
     bottom:5px;

@@ -133,7 +133,7 @@ if(!String.prototype.startsWith){
 				if (useCanvas) {
 					ctx.strokeRect(x,y,w,h);
 				} else {
-					axisHtml += "<hr class='chromosome_axis' style='border:1px solid grey;position:absolute;left:" + x + "px;top:" + y + "px;width:"+ w +"px;'></hr>";
+					axisHtml += "<hr class='chromosome_axis' style='position:absolute;left:" + x + "px;top:" + y + "px;width:"+ w +"px;'></hr>";
 				}
 				
 				axisHtml += "<div class='chromosome_axis_label' style='z-index:100000000;position:absolute;left:" + (x + 5) + "px;top:" + (y) + "px;'>"+text+"</div>";
