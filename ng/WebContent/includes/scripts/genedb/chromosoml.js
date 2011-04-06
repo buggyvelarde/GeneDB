@@ -222,7 +222,8 @@ if(!String.prototype.startsWith){
 			        dataType: 'json',
 			        data: {
 			            'region' : settings.region, 
-			            'exclude' : settings.exclude,
+			            'types' : settings.types,
+			            'exclude' : false,
 			            'start' : start,
 			            'end' : end
 			        },
@@ -533,7 +534,7 @@ if(!String.prototype.startsWith){
 	
 	$.fn.ChromosomeMap.defaults = {
 		'region' : 'Pf3D7_01',
-		'exclude' : 'dinucleotide_repeat_microsatellite_feature,PCR_product,match_part,contig,EST_match,direct_repeat,gap,nucleotide_match,repeat_region,region,repeat_unit,polypeptide,mRNA,exon,polypeptide_motif,pseudogenic_exon,ncRNA,pseudogenic_transcript,three_prime_UTR,five_prime_UTR,repeat',
+		'types' : 'gene,pseudogene,rRNA,snoRNA,snRNA,tRNA,miscRNA', 
 		'bases_per_row' : 10000,
 		'row_height' : 50,
 		'row_width' : 800,
