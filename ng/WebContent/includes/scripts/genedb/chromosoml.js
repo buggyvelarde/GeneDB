@@ -119,7 +119,7 @@ if(!String.prototype.startsWith){
 				} else {
 					
 					var html = "<div title='"+label +"' class='chromosome_feature "+label+"' style='border:1px solid #bbb;background-color:"+color+";position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;width:"+ w +"px;'>";
-					html += "<div class='chromosome_feature_text' >"+text+"</div>";
+					html += "<div class='chromosome_feature_text' >" + text.substring(0,15) + "</div>";
 					html += "</div>";
 					
 					return html;
