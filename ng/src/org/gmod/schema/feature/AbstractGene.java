@@ -60,6 +60,24 @@ public abstract class AbstractGene extends TopLevelFeature {
 
         return ret;
     }
+    
+    /**
+     * Get a collection of this gene's transcripts. that aren't obsolete.
+     * @return a collection of this gene's transcripts that aren't obsolete
+     */
+    @Transient
+    public Collection<Transcript> getNonObsoleteTranscripts() {
+        Collection<Transcript> ret = new ArrayList<Transcript>();
+
+        for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
+            Feature transcript = relationship.getSubjectFeature();
+            if (transcript instanceof Transcript && transcript.isObsolete() == false) {
+                ret.add((Transcript) transcript);
+            }
+        }
+
+        return ret;
+    }
 
     @Transient
     public Transcript getFirstTranscript() {

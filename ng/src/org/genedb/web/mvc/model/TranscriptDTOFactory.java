@@ -205,7 +205,7 @@ public class TranscriptDTOFactory {
 
         // =-----------------------------
 
-        if (gene.getTranscripts().size()>1) {
+        if (gene.getNonObsoleteTranscripts().size()>1) {
             ret.setAnAlternateTranscript(true);
         }
         logger.trace("** About to populate names");
