@@ -141,7 +141,7 @@ for (org in orgs) {
 		}
 	}
 	
-	def processExecLine = "bsub -q ${queueName} -R 'select[mem>2000] rusage=[mem=2000]' -M 2000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+	def processExecLine = "bsub -q ${queueName} -R 'select[mem>2000] rusage[mem=2000]' -M 2000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 	println processExecLine 
     Process p = ["ssh", "pcs4a", processExecLine].execute()
     def sout = new StringBuffer()
