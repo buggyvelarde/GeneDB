@@ -47,6 +47,9 @@
 				spinner : ".spinner2"
 			});  
 		    
+			$('a#about').click (function(event) {
+		        $("#readableContent").dialog({ width: 700, height: 530 , title :  "About ${full} on GeneDB" });
+		    });
 			
 			// commented out until we have images sorted...
 		    /* var imgsrc = "<misc:url value="/"/>includes/image/homepage-${node.label}.jpg";
