@@ -9,7 +9,7 @@
 <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
 
 
-<h2><center>High-Level map of ${full} region ${region}</center></h2>
+<center><h2>High-Level map of ${full} region ${region}</h2></center>
 
 <style>
 

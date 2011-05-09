@@ -115,11 +115,11 @@ if(!String.prototype.startsWith){
 					ctx.fillStyle = color;
 					ctx.fillRect(x,y,w,h);
 					
-					return "<div title='"+label +"' class='chromosome_feature "+label+"' style='position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;'>"+text+"</div>";
+					return "<div title='"+label +"' class='chromosome_feature "+label+"' style='position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;'></div>";
 				} else {
 					
 					var html = "<div title='"+label +"' class='chromosome_feature "+label+"' style='border:1px solid #bbb;background-color:"+color+";position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;width:"+ w +"px;'>";
-					html += "<div class='chromosome_feature_text' >" + text.substring(0,15) + "</div>";
+					//html += "<div class='chromosome_feature_text' >" + text.substring(0,15) + "</div>";
 					html += "</div>";
 					
 					return html;
@@ -535,7 +535,7 @@ if(!String.prototype.startsWith){
 	$.fn.ChromosomeMap.defaults = {
 		'region' : 'Pf3D7_01',
 		'types' : 'gene,pseudogene,rRNA,snoRNA,snRNA,tRNA,miscRNA', 
-		'bases_per_row' : 10000,
+		'bases_per_row' : 50000,
 		'row_height' : 50,
 		'row_width' : 800,
 		'row_vertical_space_sep' : 50,
