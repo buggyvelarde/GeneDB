@@ -218,14 +218,14 @@
   <bean name="proteinLength" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
   <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
   <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
-  <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" />
-  <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />
+  <!-- <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" /> -->
+  <!-- <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" /> -->
   <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
   <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
   <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
   <bean name="proteinNumTM" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" scope="prototype" />
   <bean name="product" class="org.genedb.querying.tmpquery.ProductQuery" scope="prototype" />
-  <bean name="simpleName" class="org.genedb.querying.tmpquery.SimpleNameQuery" scope="prototype" />
+  <!-- <bean name="simpleName" class="org.genedb.querying.tmpquery.SimpleNameQuery" scope="prototype" /> -->
   <bean name="go" class="org.genedb.querying.tmpquery.GoQuery" scope="prototype" />
   <bean name="ec" class="org.genedb.querying.tmpquery.EcQuery" scope="prototype" />
   <bean name="pfam" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
@@ -258,14 +258,17 @@
             <entry key="proteinLength" value-ref="proteinLength" />
             <entry key="proteinMass" value-ref="proteinMass" />
             <entry key="geneType" value-ref="geneType" />
-            <entry key="nameProduct" value-ref="nameProduct" />
-            <entry key="controlledCuration" value-ref="controlledCuration" />
+            
+            <!-- these are of no obvious use  -->
+            <!-- <entry key="nameProduct" value-ref="nameProduct" /> -->
+            <!-- <entry key="controlledCuration" value-ref="controlledCuration" /> -->
+            
             <entry key="date" value-ref="date" />
             <entry key="geneLocation" value-ref="geneLocation" />
             <entry key="proteinTargetingSeq" value-ref="proteinTargetingSeq" />
             <entry key="proteinNumTM" value-ref="proteinNumTM" />
             <entry key="product" value-ref="product" />
-            <entry key="simpleName" value-ref="simpleName" />
+            <!-- <entry key="simpleName" value-ref="simpleName" /> -->
             <entry key="go" value-ref="go" />
             <entry key="ec" value-ref="ec" />
             <entry key="pfam" value-ref="pfam" />
