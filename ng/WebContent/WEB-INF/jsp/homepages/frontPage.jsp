@@ -59,6 +59,25 @@
 </div><!-- end main content column -left -->
 
 <div id="col-1-2">
+
+<h1>Workshops</h1><br></br>
+<div class="baby-blue-top"></div>
+<div class="baby-blue">
+
+
+<p>
+
+Upcoming workshop (Hinxton, 3-7 October) :
+
+<br>
+
+&raquo; <a href="http://www.genedb.org/workshops/Working%20with%20Parasite%20Database%20Resources%202011.pdf">Working with Parasite Database Resources</a>
+</p>
+
+
+</div>
+<div class="baby-blue-bot"></div>
+
 <h1>Sequence searches</h1>
 <div class="light-grey-top"></div>
 <div class="light-grey">
@@ -76,9 +95,10 @@
 <div class="light-grey-bot"></div>
 
 
-<h1>New Mailing List</h1><br></br>
+<h1>New mailing list</h1><br></br>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
+
 <p>There's a mailing list for announcing new releases of the GeneDB
 website, service interruptions etc. To subscribe please see <br>
 <a href="http://lists.sanger.ac.uk/mailman/listinfo/genedb-info">http://lists.sanger.ac.uk/mailman/listinfo/genedb-info</a></p>
