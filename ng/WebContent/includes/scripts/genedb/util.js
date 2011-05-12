@@ -127,10 +127,16 @@ $(function(){
     	if (firstOption != null) {
     		$(firstOption).attr("selected", "selected");
     	}
-    }).click(function(e) {
-    	this.style("width" , "200px");
-    }).blur(function(e) {
-    	this.style("width" , "");
     });
+    
+    if ($.browser.msie && $.browser.version < 9) {
+    	$('select.wide')
+    	.bind('focus mouseover', function() { $(this).addClass('expand').removeClass('clicked'); })
+        .bind('click', function() { $(this).toggleClass('clicked'); })
+        .bind('mouseout', function() { if (!$(this).hasClass('clicked')) { $(this).removeClass('expand'); }})
+        .bind('blur', function() { $(this).removeClass('expand clicked'); });
+    }
+    
+
     
 });

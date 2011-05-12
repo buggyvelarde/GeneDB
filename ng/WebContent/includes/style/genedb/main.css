@@ -769,3 +769,13 @@ div.breadcrumb-container {
     padding-bottom:0px;
 }
 
+
+
+/* ie select resizing */
+
+select {
+    width: 260px; 
+}
+select.expand {
+    width: auto;
+}
