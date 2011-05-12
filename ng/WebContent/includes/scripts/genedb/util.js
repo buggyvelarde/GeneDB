@@ -128,7 +128,7 @@ $(function(){
     		$(firstOption).attr("selected", "selected");
     	}
     }).click(function(e) {
-    	this.style("width" , "100px");
+    	this.style("width" , "200px");
     }).blur(function(e) {
     	this.style("width" , "");
     });
