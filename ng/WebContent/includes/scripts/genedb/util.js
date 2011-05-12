@@ -127,6 +127,10 @@ $(function(){
     	if (firstOption != null) {
     		$(firstOption).attr("selected", "selected");
     	}
+    }).click(function(e) {
+    	this.style("width" , "100px");
+    }).blur(function(e) {
+    	this.style("width" , "");
     });
     
 });
