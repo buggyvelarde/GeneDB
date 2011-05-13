@@ -135,6 +135,7 @@ $(function(){
     	$('select.taxons').bind('mousedown', function(event) {
     		this.style.position='absolute';
     		this.style.width='500';
+    		$("select.taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     	}).bind('blur', function(event) {
     		this.style.position='';
     		this.style.width='200';
