@@ -130,28 +130,28 @@ $(function(){
     		this.style.width='260';
     		this.focused=true;
     		
-    		$('#debug').text('mousedown' + this.focused);
+    		$('#debug').text('mousedown ' + this);
     		
     	}).bind('blur', function(event) {
     		//this.style.position='';
     		//this.style.width='260';
     		this.focused = false;
-    		$('#debug').text('blur' + this.focused);
+    		$('#debug').text('blur ' + this);
     	}).bind('focus', function(event) {
     		this.focused=true;
     		
-    		$('#debug').text('focus' + this.focused);
-    	}).bind('mouseleave', function(event) {
+    		$('#debug').text('focus ' + this);
+    	}).bind('mouseout', function(event) {
     		if(!this.focused) {
     			alert (event.target);
     			this.style.width='auto';
     		}
     		
-    		$('#debug').text('mouseleave' + this.focused);
+    		$('#debug').text('mouseout ' + this);
     		
-    	}).bind('mouseenter', function(event) {
+    	}).bind('mouseover', function(event) {
     		this.focused=true;
-    		$('#debug').text('mouseenter' + this.focused);
+    		$('#debug').text('mouseover ' + this);
     	});
     }
     
