@@ -155,7 +155,7 @@ $(function(){
     		
     		this.style.position='absolute';
     		this.style.top=top;
-    		this.style.left=left;
+    		this.style.left=left + 32;
     		
     		$('#debug').text('focus ' + event.target);
     	})
