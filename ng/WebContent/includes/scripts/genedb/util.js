@@ -130,7 +130,7 @@ $(function(){
     		this.style.width='260';
     		this.focused=true;
     		
-    		$('#debug').text('mousedown ' + this);
+    		$('#debug').text('mousedown ' + event.target);
     		
     	}).bind('blur', function(event) {
     		//this.style.position='';
@@ -138,22 +138,22 @@ $(function(){
     		this.focused = false;
     		this.style.width='auto';
     		
-    		$('#debug').text('blur ' + this);
+    		$('#debug').text('blur ' + event.target);
     	}).bind('focus', function(event) {
     		this.focused=true;
     		
-    		$('#debug').text('focus ' + this);
+    		$('#debug').text('focus ' + event.target);
     	}).bind('mouseout', function(event) {
     		if(!this.focused) {
     			alert (event.target);
     			this.style.width='auto';
     		}
     		
-    		$('#debug').text('mouseout ' + this);
+    		$('#debug').text('mouseout ' + event.target);
     		
     	}).bind('mouseover', function(event) {
     		this.focused=true;
-    		$('#debug').text('mouseover ' + this);
+    		$('#debug').text('mouseover ' + event.target);
     	});
     }
     
