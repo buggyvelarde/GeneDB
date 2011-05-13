@@ -774,7 +774,7 @@ div.breadcrumb-container {
 /* ie select resizing */
 
 select {
-    width: 260px; 
+    width: 300px; 
 }
 /* select.expand {
     width: auto;
