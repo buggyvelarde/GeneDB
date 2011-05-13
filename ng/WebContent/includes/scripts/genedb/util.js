@@ -141,17 +141,17 @@ $(function(){
     		this.focused=true;
     		
     		$('#debug').text('focus' + this.focused);
-    	}).bind('mouseout', function(event) {
+    	}).bind('mouseleave', function(event) {
     		if(!this.focused) {
     			alert (event.target);
     			this.style.width='auto';
     		}
     		
-    		$('#debug').text('mouseout' + this.focused);
+    		$('#debug').text('mouseleave' + this.focused);
     		
-    	}).bind('mouseover', function(event) {
+    	}).bind('mouseenter', function(event) {
     		this.focused=true;
-    		$('#debug').text('mouseover' + this.focused);
+    		$('#debug').text('mouseenter' + this.focused);
     	});
     }
     
