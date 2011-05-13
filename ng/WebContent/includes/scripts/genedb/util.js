@@ -136,6 +136,8 @@ $(function(){
     		//this.style.position='';
     		//this.style.width='260';
     		this.focused = false;
+    		this.style.width='auto';
+    		
     		$('#debug').text('blur ' + this);
     	}).bind('focus', function(event) {
     		this.focused=true;
