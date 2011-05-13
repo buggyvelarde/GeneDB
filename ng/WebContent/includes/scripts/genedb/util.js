@@ -137,9 +137,11 @@ $(function(){
     		this.focused=true;
     	}).bind('mouseout', function(event) {
     		alert (event.target);
-    		//if(!this.focused) {
+    		if(!this.focused) {
     			this.style.width='auto';
-    		//}
+    		}
+    	}).bind('mouseover', function(event) {
+    		this.focused=true;
     	});
     }
     
