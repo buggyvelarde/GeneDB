@@ -144,7 +144,7 @@ $(function(){
     	}).bind('focus', function(event) {
     		this.focused=true;
     		this.style.width='260';
-    		this.style.position='absolute';
+    		this.style.position='relative';
     		this.style.left=0;
     		this.style.top=0;
     		$('#debug').text('focus ' + event.target);
