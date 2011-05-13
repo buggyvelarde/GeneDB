@@ -60,7 +60,7 @@
 
 <div id="col-1-2">
 
-<h1>Workshops</h1><br></br>
+<h1>Workshops</h1>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
 
