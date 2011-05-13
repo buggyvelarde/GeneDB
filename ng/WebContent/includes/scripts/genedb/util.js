@@ -127,13 +127,21 @@ $(function(){
     
     if ($.browser.msie && $.browser.version < 9) {
     	$('select#taxons,select#homepageselect')
-//    	.bind('mousedown', function(event) {
-//    		this.style.width='260';
-//    		this.focused=true;
-//    		
-//    		$('#debug').text('mousedown ' + event.target);
-//    		
-//    	})
+    	.bind('mousedown', function(event) {
+    		this.focused=true;
+    		
+    		this.style.width='260';
+    		
+    		var top = $(this).offset().top;
+    		var left = $(this).offset().left;
+    		
+    		this.style.position='absolute';
+    		this.style.top=top;
+    		this.style.left=left + 28;
+    		
+    		$('#debug').text('mousedown ' + event.target);
+    		
+    	})
     	.bind('blur', function(event) {
     		this.style.position='';
     		//this.style.width='260';
@@ -155,7 +163,7 @@ $(function(){
     		
     		this.style.position='absolute';
     		this.style.top=top;
-    		this.style.left=left + 32;
+    		this.style.left=left + 28;
     		
     		$('#debug').text('focus ' + event.target);
     	})
