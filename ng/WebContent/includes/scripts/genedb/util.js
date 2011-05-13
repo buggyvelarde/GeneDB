@@ -128,16 +128,17 @@ $(function(){
     if ($.browser.msie && $.browser.version < 9) {
     	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
     		this.style.width='260';
+    		this.focused=true;
     	}).bind('blur', function(event) {
     		//this.style.position='';
-    		this.style.width='260';
+    		//this.style.width='260';
     		this.focused = false;
     	}).bind('focus', function(event) {
     		this.focused=true;
     	}).bind('mouseout', function(event) {
-    		if(!this.focused) {
+    		//if(!this.focused) {
     			this.style.width='auto';
-    		}
+    		//}
     	});
     }
     
