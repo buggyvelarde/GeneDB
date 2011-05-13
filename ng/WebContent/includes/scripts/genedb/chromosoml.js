@@ -649,10 +649,10 @@ if(!String.prototype.startsWith){
 			        dataType: 'json',
 			        data: data,
 			        success: function(regions) {
-			        	var regions = [];
-			        	$.each(regions, function(index, region) {
-			        		regions.push(region.uniqueName);
-			        	});
+//			        	var regions = [];
+//			        	$.each(regions, function(index, region) {
+//			        		regions.push(region.uniqueName);
+//			        	});
 			        	self.onLoadRegions(type, regions);
 			        }
 				});
@@ -668,7 +668,7 @@ if(!String.prototype.startsWith){
 				var s = "";
 				s += "<button class='ui-state-default fg-button region back' >Back</button>";
 				$.each(regions, function(index, region) {
-					s += "<button class='fg-button ui-state-default region' region='"+region+"' >" + region + "</button>";
+					s += "<button class='fg-button ui-state-default region' region='"+region.uniqueName+"' >" + region.uniqueName + "</button>";
 				});
 				
 				if (regions.length == self.limit) {
