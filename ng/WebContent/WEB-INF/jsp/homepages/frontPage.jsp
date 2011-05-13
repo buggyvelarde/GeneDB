@@ -95,7 +95,7 @@ Upcoming workshop (Hinxton, 3-7 October) :
 <div class="light-grey-bot"></div>
 
 
-<h1>New mailing list</h1><br></br>
+<h1>New mailing list</h1>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
 
