@@ -127,7 +127,7 @@ $(function(){
     
     if ($.browser.msie && $.browser.version < 9) {
     	$('select#taxons,select#homepageselect')
-    	.bind('mousedown', function(event) {
+    	.bind('mousedown focus', function(event) {
     		this.focused=true;
     		
     		this.style.width='260';
@@ -139,56 +139,20 @@ $(function(){
     		this.style.top=top;
     		this.style.left=left;
     		
-    		$('#debug').text('mousedown ' + event.target);
+    		$('#debug').text('click ' + event.target);
     		
     	})
     	.bind('blur', function(event) {
     		this.style.position='';
-    		//this.style.width='260';
     		
-    		//this.focused = false;
     		this.style.width='';
     		this.style.position='';
     		
     		
     		
     		$('#debug').text('blur ');
-    	}).bind('focus', function(event) {
-    		this.focused=true;
-    		
-    		this.style.width='260';
-    		
-    		var top = $(this).offset().top;
-    		var left = $(this).offset().left;
-    		
-    		this.style.position='absolute';
-    		this.style.top=top;
-    		this.style.left=left;
-    		
-    		$('#debug').text('focus ' + event.target);
-    	})
-//    	.bind('mouseout', function(event) {
-//    		if(!this.focused) {
-//    			alert (event.target);
-//    			this.style.width='auto';
-//    		}
-//    		
-//    		$('#debug').text('mouseout ' + event.target);
-//    		
-//    	}).bind('mouseover', function(event) {
-//    		this.focused=true;
-//    		$('#debug').text('mouseover ' + event.target);
-//    	})
-    	;
+    	});
     }
-    
-    
-//    if ($.browser.msie && $.browser.version < 9) $('select#taxons,select#homepageselect')
-//    .bind('focus mouseover', function() { $(this).addClass('expand').removeClass('clicked'); })
-//    .bind('click', function() { $(this).toggleClass('clicked'); })
-//    .bind('mouseout', function() { if (!$(this).hasClass('clicked')) { $(this).removeClass('expand'); }})
-//    .bind('blur', function() { $(this).removeClass('expand clicked'); });
-
     
     
 });
