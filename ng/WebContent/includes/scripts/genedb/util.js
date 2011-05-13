@@ -132,12 +132,12 @@ $(function(){
     // <select onmousedown="if($.browser.msie){this.style.position='absolute';this.style.width='auto'}" onblur="this.style.position='';this.style.width=''">
     
     if ($.browser.msie && $.browser.version < 9) {
-    	$('select.homepageselect,select.taxons').bind('mousedown', function(event) {
+    	$('select.taxons').bind('mousedown', function(event) {
     		this.style.position='absolute';
-    		this.style.width='auto';
+    		this.style.width='500';
     	}).bind('blur', function(event) {
     		this.style.position='';
-    		this.style.width='';
+    		this.style.width='200';
     	});
     }
     

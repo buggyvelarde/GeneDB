@@ -770,13 +770,3 @@ div.breadcrumb-container {
 }
 
 
-
-/* ie select resizing */
-
-select {
-    width: 300px; 
-}
-/* select.expand {
-    width: auto;
-}
- */
