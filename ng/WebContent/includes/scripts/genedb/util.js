@@ -132,8 +132,11 @@ $(function(){
     // <select onmousedown="if($.browser.msie){this.style.position='absolute';this.style.width='auto'}" onblur="this.style.position='';this.style.width=''">
     
     //$("select#taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    $.log($("select#taxons option:first"));
+    //$.log($("select#taxons option:first"));
     alert($('select#taxons'));
+    alert($.browser.msie);
+    alert($.browser.version < 9);
+    
     if ($.browser.msie && $.browser.version < 9) {
     	alert($('select#taxons'));
     	$('select#taxons').bind('mousedown', function(event) {
