@@ -130,7 +130,14 @@ $(function(){
     		this.style.width='260';
     	}).bind('blur', function(event) {
     		//this.style.position='';
-    		this.style.width='';
+    		this.style.width='260';
+    		this.focused = false;
+    	}).bind('focus', function(event) {
+    		this.focussed=true;
+    	}).bind('mouseout', function(event) {
+    		if(!this.focussed) {
+    			this.style.width='';
+    		}
     	});
     }
     
