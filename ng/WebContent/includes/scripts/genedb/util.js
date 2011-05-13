@@ -135,9 +135,13 @@ $(function(){
     $.log($("select#taxons option:first"));
     
     if ($.browser.msie && $.browser.version < 9) {
-    	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
+    	alert($('select#taxons'));
+    	$('select#taxons').bind('mousedown', function(event) {
     		this.style.position='absolute';
     		this.style.width='500';
+    		alert($(this));
+    		$.log($(this));
+    		$(this).text("!!!");
     	}).bind('blur', function(event) {
     		this.style.position='';
     		this.style.width='';
