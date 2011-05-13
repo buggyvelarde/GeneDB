@@ -133,18 +133,18 @@ $(function(){
     
     //$("select#taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     //$.log($("select#taxons option:first"));
-    alert($('select#taxons'));
-    alert($.browser.msie);
-    alert($.browser.version < 9);
+//    alert($('select#taxons'));
+//    alert($.browser.msie);
+//    alert($.browser.version < 9);
     
     if ($.browser.msie && $.browser.version < 9) {
     	alert($('select#taxons'));
     	$('select#taxons').bind('mousedown', function(event) {
     		this.style.position='absolute';
-    		this.style.width='500';
-    		alert($(this));
-    		$.log($(this));
-    		$(this).text("!!!");
+    		this.style.width='260';
+//    		alert($(this));
+//    		$.log($(this));
+//    		$(this).text("!!!");
     	}).bind('blur', function(event) {
     		this.style.position='';
     		this.style.width='';
