@@ -97,7 +97,7 @@
 
 <db:breadcrumb selection="${taxonNodeName}" showingHomepage="${showingHomepage}" />
 
-
+<span id='debug'></span>
 
 <jsp:doBody />
 
