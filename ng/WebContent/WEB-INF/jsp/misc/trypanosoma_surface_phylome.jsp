@@ -60,9 +60,9 @@ $(function(){
     //}
     
 	if ($.browser.safari) {
-		$('#surface_phylome').html("<iframe src='http://www.genedb.org/cgi-bin/surface_phylome/surface_phylome.pl' frameborder=0 height='900' width='800'></iframe> ");
+		$('#surface_phylome').html("<iframe src='/cgi-bin/surface_phylome/surface_phylome.pl' frameborder=0 height='900' width='800'></iframe> ");
 	} else  {
-		$('#surface_phylome').load('http://www.genedb.org/cgi-bin/surface_phylome/surface_phylome.pl');
+		$('#surface_phylome').load('/cgi-bin/surface_phylome/surface_phylome.pl');
 	}
 	
 	
