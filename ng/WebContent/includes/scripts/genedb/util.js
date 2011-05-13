@@ -128,10 +128,10 @@ $(function(){
     if ($.browser.msie && $.browser.version < 9) {
     	$('select#taxons,select#homepageselect')
     	.bind('mousedown focus', function(event) {
-    		this.focused=true;
     		
     		this.style.width='260';
     		
+    		// grab the element's coordinates
     		var top = $(this).offset().top;
     		var left = $(this).offset().left;
     		
@@ -143,12 +143,10 @@ $(function(){
     		
     	})
     	.bind('blur', function(event) {
-    		this.style.position='';
     		
+    		this.style.position='';
     		this.style.width='';
     		this.style.position='';
-    		
-    		
     		
     		$('#debug').text('blur ');
     	});
