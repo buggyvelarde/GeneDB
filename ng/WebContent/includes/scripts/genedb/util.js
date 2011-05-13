@@ -131,20 +131,16 @@ $(function(){
     
     // <select onmousedown="if($.browser.msie){this.style.position='absolute';this.style.width='auto'}" onblur="this.style.position='';this.style.width=''">
     
-    $("select.taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    
-    
-    $.log($("select.taxons option:first"));
+    //$("select#taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    $.log($("select#taxons option:first"));
     
     if ($.browser.msie && $.browser.version < 9) {
-    	$('select.taxons').bind('mousedown', function(event) {
+    	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
     		this.style.position='absolute';
     		this.style.width='500';
-    		
-    		
     	}).bind('blur', function(event) {
     		this.style.position='';
-    		this.style.width='200';
+    		this.style.width='';
     	});
     }
     
