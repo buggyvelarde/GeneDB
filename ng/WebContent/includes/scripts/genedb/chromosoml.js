@@ -227,7 +227,7 @@ if(!String.prototype.startsWith){
 			            'start' : start,
 			            'end' : end
 			        },
-			        success: function(returned) {
+			        success: function(locations) {
 			        	
 			        	var base_position_end = base_position_start + settings.loading_interval;
 			        	
@@ -242,7 +242,7 @@ if(!String.prototype.startsWith){
 		        		var buffer = '';
 		        		var max_height = 0;
 		                
-		        		$.each(returned.response.results.locations, function(index, feature) {
+		        		$.each(locations, function(index, feature) {
 		        			
 		        			
 		        			var actual_height  = 0;
@@ -396,13 +396,13 @@ if(!String.prototype.startsWith){
 			            'features' : bin,
 			            'types' : "colour"
 			        },
-			        success: function(returned) {
+			        success: function(features) {
 			        	
-			        	if (! returned.response) {
+			        	if (! features) {
 			        		return;
 			        	}
 			        	
-			        	$.each(returned.response.results.features, function(index, feature) {
+			        	$.each(features, function(index, feature) {
 			        		
 			        		var uniqueName = feature.uniqueName;
 			        		if (feature.uniqueName.contains(":pep")) {
@@ -500,8 +500,8 @@ if(!String.prototype.startsWith){
 			    
 			
 				
-				this.loadSequence(settings, function(returned) {
-					length = returned.response.results.sequences[0].length;
+				this.loadSequence(settings, function(sequences) {
+					length = sequences[0].length;
 					if (settings.bases_per_row >= length) {
 						settings.bases_per_row = length * 5;
 					}
@@ -601,8 +601,8 @@ if(!String.prototype.startsWith){
 			        data: {
 			            'organism' : settings.organism
 			        },
-			        success: function(returned) {
-			        	$.each(returned.response.results.regions, function(index, region) {
+			        success: function(regions) {
+			        	$.each(regions, function(index, region) {
 			        		var type = region.type.name;
 			        		self.region_types_container.append("<button class='fg-button ui-state-default region_type' region_type='" + type + "' >" + type + "</button>");
 			        	});
@@ -648,9 +648,9 @@ if(!String.prototype.startsWith){
 			        type: 'GET',
 			        dataType: 'json',
 			        data: data,
-			        success: function(returned) {
+			        success: function(regions) {
 			        	var regions = [];
-			        	$.each(returned.response.results.regions, function(index, region) {
+			        	$.each(regions, function(index, region) {
 			        		regions.push(region.uniqueName);
 			        	});
 			        	self.onLoadRegions(type, regions);
@@ -793,14 +793,14 @@ if(!String.prototype.startsWith){
 				});
 			};
 			
-			this.onLoadStatistics = function (returned) {
+			this.onLoadStatistics = function (statistics) {
 				if (settings.spinner) {
 					$(settings.spinner).CallStatusSpinner("removeCall");
 				}
 				
 				$(self).append ("<P>Over last "+settings.defaultDateOffset+" days : <br/>");
 				var inserted = false;
-				$.each(returned.response.results.statistics, function(index, statistic) {
+				$.each(statistics, function(index, statistic) {
 	        		$(self).append(" &raquo; " + statistic.name + " : " + statistic.value + " annotations<br>");
 	        		inserted = true;
 	        	});
@@ -828,13 +828,13 @@ if(!String.prototype.startsWith){
 			            'organism' : settings.organism,
 			            'date' : getDateString(date)
 			        },
-			        success: function (returned) {
-			        	handler(returned, organism, date);
+			        success: function (changes) {
+			        	handler(changes, organism, date);
 			        }
 				});
 			};
 			
-			this.onLoadAnnotationChanges = function (returned, organism, date) {
+			this.onLoadAnnotationChanges = function (features, organism, date) {
 				if (settings.spinner) {
 					$(settings.spinner).CallStatusSpinner("removeCall");
 					$('.modifiedReporterPopupSpinner').CallStatusSpinner("removeCall");
@@ -842,10 +842,10 @@ if(!String.prototype.startsWith){
 				
 				var s = "<table cellpadding=10 cellspacing=10><tr><th>gene</th><th>type</th><th>details</th><th>date</th></tr>";
 				
-				var countFeatures = returned.response.results.features.length;
+				var countFeatures = features.length;
 				var countAnnotationChanges = 0; 
 				
-				$.each(returned.response.results.features, function(index, feature) {
+				$.each(features, function(index, feature) {
 					var a = "<tr ><td><a style='text-decoration:underline;' href='" 
 						+ settings.baseHREF + feature.uniqueName + "' >" + feature.uniqueName + "</a></td><td>";
 					
