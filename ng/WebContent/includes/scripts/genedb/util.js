@@ -137,16 +137,20 @@ $(function(){
     	.bind('blur', function(event) {
     		this.style.position='';
     		//this.style.width='260';
+    		
     		this.focused = false;
     		this.style.width='';
+    		this.style.position='';
     		
     		$('#debug').text('blur ' + event.target);
     	}).bind('focus', function(event) {
     		this.focused=true;
+    		
     		this.style.width='260';
     		this.style.position='relative';
     		this.style.left=0;
     		this.style.top=0;
+    		
     		$('#debug').text('focus ' + event.target);
     	})
 //    	.bind('mouseout', function(event) {
