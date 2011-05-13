@@ -116,11 +116,6 @@ $(function(){
     });
     
     
-//    $('homepageselect option').change(function(event) {
-//    	
-//    });
-//    
-    //$.log();//.get(0).attr('selected', 'selected');
     
     $('.homepageselect').each(function() {
     	var firstOption = $(this).children("option").get(0);
@@ -129,38 +124,17 @@ $(function(){
     	}
     });
     
-    // <select onmousedown="if($.browser.msie){this.style.position='absolute';this.style.width='auto'}" onblur="this.style.position='';this.style.width=''">
-    
-    //$("select#taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //$.log($("select#taxons option:first"));
-//    alert($('select#taxons'));
-//    alert($.browser.msie);
-//    alert($.browser.version < 9);
     
     if ($.browser.msie && $.browser.version < 9) {
-    	//alert($('select#taxons,select#homepageselect'));
     	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
-    		//this.style.position='absolute';
     		this.style.width='260';
-//    		alert($(this));
-//    		$.log($(this));
-//    		$(this).text("!!!");
     	}).bind('blur', function(event) {
     		//this.style.position='';
+    		this.style.width='';
+    	}).bind('mouseout', function(event) {
     		this.style.width='';
     	});
     }
     
-    //$('select.homepageselect')
-    
-//    if ($.browser.msie && $.browser.version < 9) {
-//    	$('select.wide')
-//    	.bind('focus mouseover', function() { $(this).addClass('expand').removeClass('clicked'); })
-//        .bind('click', function() { $(this).toggleClass('clicked'); })
-//        .bind('mouseout', function() { if (!$(this).hasClass('clicked')) { $(this).removeClass('expand'); }})
-//        .bind('blur', function() { $(this).removeClass('expand clicked'); });
-//    }
-    
-
     
 });
