@@ -129,24 +129,28 @@ $(function(){
     	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
     		this.style.width='260';
     		this.focused=true;
-    		window.title = this.focused;
+    		
+    		$('#debug').text(this.focused);
+    		
     	}).bind('blur', function(event) {
     		//this.style.position='';
     		//this.style.width='260';
     		this.focused = false;
-    		window.title = this.focused;
+    		$('#debug').text(this.focused);
     	}).bind('focus', function(event) {
     		this.focused=true;
-    		window.title = this.focused;
+    		
+    		$('#debug').text(this.focused);
     	}).bind('mouseout', function(event) {
     		if(!this.focused) {
     			alert (event.target);
     			this.style.width='auto';
     		}
-    		window.title = this.focused;
+    		
+    		$('#debug').text(this.focused);
     	}).bind('mouseover', function(event) {
     		this.focused=true;
-    		window.title = this.focused;
+    		$('#debug').text(this.focused);
     	});
     }
     
