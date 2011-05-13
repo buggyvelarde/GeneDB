@@ -770,3 +770,9 @@ div.breadcrumb-container {
 }
 
 
+select {
+    width: 260px; /* Or whatever width you want. */
+}
+select.expand {
+    width: auto;
+}

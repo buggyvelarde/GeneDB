@@ -125,16 +125,23 @@ $(function(){
     });
     
     
-    if ($.browser.msie && $.browser.version < 9) {
-    	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
-    		this.style.width='260';
-    	}).bind('blur', function(event) {
-    		//this.style.position='';
-    		this.style.width='';
-    	}).bind('mouseout', function(event) {
-    		this.style.width='';
-    	});
-    }
+//    if ($.browser.msie && $.browser.version < 9) {
+//    	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
+//    		this.style.width='260';
+//    	}).bind('blur', function(event) {
+//    		//this.style.position='';
+//    		this.style.width='';
+//    	}).bind('mouseout', function(event) {
+//    		this.style.width='';
+//    	});
+//    }
+    
+    if ($.browser.msie && $.browser.version < 9) $('select#taxons,select#homepageselect')
+    .bind('focus mouseover', function() { $(this).addClass('expand').removeClass('clicked'); })
+    .bind('click', function() { $(this).toggleClass('clicked'); })
+    .bind('mouseout', function() { if (!$(this).hasClass('clicked')) { $(this).removeClass('expand'); }})
+    .bind('blur', function() { $(this).removeClass('expand clicked'); });
+
     
     
 });
