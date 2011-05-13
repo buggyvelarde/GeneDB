@@ -131,12 +131,15 @@ $(function(){
     
     // <select onmousedown="if($.browser.msie){this.style.position='absolute';this.style.width='auto'}" onblur="this.style.position='';this.style.width=''">
     
+    $("select.taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    alert($("select.taxons option:first"));
+    
     if ($.browser.msie && $.browser.version < 9) {
     	$('select.taxons').bind('mousedown', function(event) {
     		this.style.position='absolute';
     		this.style.width='500';
-    		$("select.taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    		alert($("select.taxons option:first"));
+    		
+    		
     	}).bind('blur', function(event) {
     		this.style.position='';
     		this.style.width='200';
