@@ -133,10 +133,10 @@ $(function(){
     		this.style.width='260';
     		this.focused = false;
     	}).bind('focus', function(event) {
-    		this.focussed=true;
+    		this.focused=true;
     	}).bind('mouseout', function(event) {
-    		if(!this.focussed) {
-    			this.style.width='';
+    		if(!this.focused) {
+    			this.style.width='auto';
     		}
     	});
     }
