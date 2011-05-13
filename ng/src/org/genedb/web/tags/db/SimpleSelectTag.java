@@ -25,7 +25,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
 	@Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
 
-        out.write("\n<select name=\"taxons wide\">");
+        out.write("\n<select name=\"taxons\">");
 
         String indentSpaces = "&nbsp;&nbsp;";
         displayImmediateChildren(root, out, 0, indentSpaces, selection);

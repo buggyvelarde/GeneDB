@@ -776,6 +776,7 @@ div.breadcrumb-container {
 select {
     width: 260px; 
 }
-select.expand {
+/* select.expand {
     width: auto;
 }
+ */
