@@ -133,7 +133,7 @@ $(function(){
     
     //$("select#taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     $.log($("select#taxons option:first"));
-    
+    alert($('select#taxons'));
     if ($.browser.msie && $.browser.version < 9) {
     	alert($('select#taxons'));
     	$('select#taxons').bind('mousedown', function(event) {
