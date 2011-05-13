@@ -140,13 +140,13 @@ $(function(){
     if ($.browser.msie && $.browser.version < 9) {
     	//alert($('select#taxons,select#homepageselect'));
     	$('select#taxons,select#homepageselect').bind('mousedown', function(event) {
-    		this.style.position='absolute';
+    		//this.style.position='absolute';
     		this.style.width='260';
 //    		alert($(this));
 //    		$.log($(this));
 //    		$(this).text("!!!");
     	}).bind('blur', function(event) {
-    		this.style.position='';
+    		//this.style.position='';
     		this.style.width='';
     	});
     }
