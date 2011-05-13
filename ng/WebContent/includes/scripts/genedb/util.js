@@ -142,15 +142,20 @@ $(function(){
     		this.style.width='';
     		this.style.position='';
     		
+    		
+    		
     		$('#debug').text('blur ');
     	}).bind('focus', function(event) {
     		this.focused=true;
     		
     		this.style.width='260';
     		
+    		var top = $(this).offset().top;
+    		var left = $(this).offset().left;
+    		
     		this.style.position='absolute';
-    		this.style.left=0;
-    		this.style.top=0;
+    		this.style.top=top;
+    		this.style.left=left;
     		
     		$('#debug').text('focus ' + event.target);
     	})
