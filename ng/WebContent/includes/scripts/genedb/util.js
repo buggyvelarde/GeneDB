@@ -134,7 +134,7 @@ $(function(){
     $("select.taxons option:first").text("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
     
-    log($("select.taxons option:first"));
+    $.log($("select.taxons option:first"));
     
     if ($.browser.msie && $.browser.version < 9) {
     	$('select.taxons').bind('mousedown', function(event) {
