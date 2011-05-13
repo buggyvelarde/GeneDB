@@ -137,7 +137,7 @@ $(function(){
     		
     		this.style.position='absolute';
     		this.style.top=top;
-    		this.style.left=left + 28;
+    		this.style.left=left;
     		
     		$('#debug').text('mousedown ' + event.target);
     		
@@ -163,7 +163,7 @@ $(function(){
     		
     		this.style.position='absolute';
     		this.style.top=top;
-    		this.style.left=left + 28;
+    		this.style.left=left;
     		
     		$('#debug').text('focus ' + event.target);
     	})
