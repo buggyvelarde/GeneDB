@@ -149,8 +149,8 @@ $(function(){
     		this.style.width='260';
     		
     		this.style.position='absolute';
-//    		this.style.left=0;
-//    		this.style.top=0;
+    		this.style.left=0;
+    		this.style.top=0;
     		
     		$('#debug').text('focus ' + event.target);
     	})
