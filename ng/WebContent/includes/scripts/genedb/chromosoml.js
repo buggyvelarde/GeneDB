@@ -244,6 +244,9 @@ if(!String.prototype.startsWith){
 		                
 		        		$.each(locations, function(index, feature) {
 		        			
+			        		if (feature.isObsolete) {
+			        			return;
+	                        }
 		        			
 		        			var actual_height  = 0;
 		        			
