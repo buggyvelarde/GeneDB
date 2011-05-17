@@ -219,7 +219,7 @@
   <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
   <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
   <!-- <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" /> -->
-  <!-- <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" /> -->
+  <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" /> 
   <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
   <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
   <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
@@ -247,6 +247,8 @@
 
   <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC"
     class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+    <bean id="org.genedb.querying.core.NumericQueryVisibility.PUBLIC_BUT_NO_FORMS"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
     <bean id="org.genedb.querying.core.NumericQueryVisibility.PRIVATE"
     class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
 
@@ -261,7 +263,8 @@
             
             <!-- these are of no obvious use  -->
             <!-- <entry key="nameProduct" value-ref="nameProduct" /> -->
-            <!-- <entry key="controlledCuration" value-ref="controlledCuration" /> -->
+            
+            
             
             <entry key="date" value-ref="date" />
             <entry key="geneLocation" value-ref="geneLocation" />
@@ -274,6 +277,12 @@
             <entry key="pfam" value-ref="pfam" />
             <entry key="curation" value-ref="curation" />
             <entry key="dbxref" value-ref="dbxref" />
+          </map>
+        </entry>
+        <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC_BUT_NO_FORMS">
+          <map>
+            <!-- used for the 53 others link (RT ticket [Hinxton #215860] ) -->
+            <entry key="controlledCuration" value-ref="controlledCuration" />
           </map>
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">

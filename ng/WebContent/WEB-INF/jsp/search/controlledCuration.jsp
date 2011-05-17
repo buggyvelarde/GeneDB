@@ -5,6 +5,9 @@
 <format:header title="Category List" />
 <format:page>
 <br />
+
+<!-- this is used by "53 others" links on the gene pages -->
+
 <misc:url value="BrowseTerm" var="url">
 	<spring:param name="category" value="${category}"/>
 </misc:url>

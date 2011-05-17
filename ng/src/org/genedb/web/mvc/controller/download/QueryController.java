@@ -255,7 +255,7 @@ public class QueryController extends AbstractGeneDBFormController{
         	logger.error("Unable to identify which query to use");
         	return null;
         }
-        Query query = queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC);
+        Query query = queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC_BUT_NO_FORMS);
         if (query == null) {
         	WebUtils.setFlashMessage("Unable to find query called '" + queryName + "'", session);
         	logger.error("Unable to find query called '" + queryName + "'");

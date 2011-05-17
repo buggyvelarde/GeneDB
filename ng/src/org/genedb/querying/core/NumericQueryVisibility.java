@@ -8,7 +8,9 @@ package org.genedb.querying.core;
  */
 public enum NumericQueryVisibility implements QueryVisibility {
 
-    PRIVATE(0), PUBLIC(1);
+    PRIVATE(0), 
+    PUBLIC_BUT_NO_FORMS(1), 
+    PUBLIC(2);
 
     Integer index;
 
