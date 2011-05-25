@@ -1,18 +1,24 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.displaytag.pagination.PaginatedList;
+import org.displaytag.properties.SortOrderEnum;
+import org.displaytag.tags.TableTagParameters;
+import org.displaytag.util.ParamEncoder;
+import org.genedb.querying.core.PagedQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.core.NumericQueryVisibility;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.history.HistoryType;
+import org.genedb.querying.history.QueryHistoryItem;
 import org.genedb.querying.tmpquery.GeneSummary;
-import org.genedb.util.MutableInteger;
+import org.genedb.querying.tmpquery.QuickSearchQuery;
+import org.genedb.querying.tmpquery.SuggestQuery;
+import org.genedb.util.Pair;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.apache.log4j.Logger;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -26,13 +32,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 
 @Controller
@@ -41,12 +45,12 @@ public class QueryController extends AbstractGeneDBFormController{
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
-    //@Autowired
     @SuppressWarnings("unchecked")
 	private QueryFactory queryFactory;
 
     private HistoryManagerFactory hmFactory;
-
+    
+    public static final int DEFAULT_LENGTH = 30;
 
 
     public void setHmFactory(HistoryManagerFactory hmFactory) {
@@ -59,14 +63,13 @@ public class QueryController extends AbstractGeneDBFormController{
     }
 
 
-    private Map<String, MutableInteger> numQueriesRun = Maps.newHashMap();
-
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
         return "redirect:/QueryList";
     }
 
-    @RequestMapping(method = RequestMethod.GET , value="/{queryName}")
+    @SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET , value="/{queryName}")
     public String chooseFormHandling(
             @PathVariable(value="queryName") String queryName,
             @RequestParam(value="suppress", required=false) String suppress,
@@ -78,6 +81,17 @@ public class QueryController extends AbstractGeneDBFormController{
     	
     	model.addAttribute("actionName" , request.getContextPath() + "/Query/" + queryName);
     	
+    	
+    	Map<String, String[]> parameters = request.getParameterMap();
+    	for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+    		for (String value : entry.getValue()) {
+    			logger.info(entry.getKey() + " : " + value);
+    		}
+    	}
+    	
+    	logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
+    	
+    	// FIXME determine if this check for parameter count is the best way to decide whether or not to perform the query 
         if (request.getParameterMap().size() > 1) {
             return processForm(queryName, suppress, request, session, model);
         } else {
@@ -97,7 +111,6 @@ public class QueryController extends AbstractGeneDBFormController{
         Query query = findQueryType(queryName, session);
         if (query==null){
         	logger.warn("No query, redirecting to the list");
-        	//return "jsp:debug/debug";
             return "redirect:/QueryList";
         }
         
@@ -120,28 +133,40 @@ public class QueryController extends AbstractGeneDBFormController{
     }
 
 
-    public String processForm(
+    @SuppressWarnings("unchecked")
+	public String processForm(
             String queryName,
             String suppress,
-            ServletRequest request,
+            HttpServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
 
     	logger.info("PROCESSING FORM");
+    	
+    	HistoryManager hm = hmFactory.getHistoryManager(session);
+    	
+        String key = generateKey(session.getId(), (Map<String, String[]>) request.getParameterMap());
+        logger.info("Query key: " + key);
         
-        //Find query for request
-        Query query = findQueryType(queryName, session);
-        if (query==null){
-            logger.error(String.format("Unable to find query of name '%s'", queryName));
-            return "redirect:/Query";
+        PagedQuery query = null;
+        QueryHistoryItem item = hm.getQueryHistoryItem(key);
+        
+        if (item == null) {
+        	logger.info("Could not find existing query for this session, creating ...");
+        	
+        	query = findQueryType(queryName, session);
+            if (query==null){
+                logger.error(String.format("Unable to find query of name '%s'", queryName));
+                return "redirect:/Query";
+            }
+            
+        } else {
+        	query = item.getQuery();
         }
-
-        //Initialise model data somehow
-        model.addAttribute("query", query);
-        logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
-        populateModelData(model, query);
-
-        //Initialise query form
+        
+        logger.info("Using query " + query.getQueryName());
+        
+        // Initialise query form
         Errors errors = initialiseQueryForm(query, request);
         if (errors.hasErrors()) {
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
@@ -151,111 +176,231 @@ public class QueryController extends AbstractGeneDBFormController{
             }
             return "search/"+queryName;
         }
-
-        MutableInteger count;
-        if (numQueriesRun.containsKey(queryName)) {
-            count = numQueriesRun.get(queryName);
-        } else {
-            count = new MutableInteger(0);
-        }
-        count.increment(1);
-
-        //Validate initialised form
+        
+        // Validate initialised form
         query.validate(query, errors);
         if (errors.hasErrors()) {
             logger.debug("Validator found errors");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
             return "search/"+queryName;
         }
-
         logger.debug("Validator found no errors");
-        @SuppressWarnings("unchecked") List<Object> results = query.getResults();
-
-        //Suppress item in results
-        suppressResultItem(suppress, results);
-
-        //Dispatch request to appropriate view
-        return findDestinationView(queryName, query, model, results, session);
-    }
-
-
-    /**
-     * Work out the correct view destination
-     * @param queryName
-     * @param query
-     * @param taxonName
-     * @param model
-     * @param results
-     * @param session
-     * @return
-     */
-    private String findDestinationView(
-            String queryName, Query query, Model model, List<Object> results, HttpSession session){
-
-        //System.err.println("Got into findDestinationView");
-        logger.info("FINAL DESTINATION VIEW " + queryName );
-
-        //Get the current taxon name
+        
+        // Initialise model data 
+        populateModelData(model, query);
+        
+        item = hm.addQueryHistoryItem(key, query );
+        
+        model.addAttribute("query", query);
+        
+        
+        Bounds bounds = getQueryBounds(request);
+        logger.info("Query page " + bounds.page + ", length " + bounds.length);
+        List<GeneSummary> results = query.getResultsSummaries(bounds.page -1, bounds.length);;
+        
+        // Suppress item in results
+        // suppressResultItem(suppress, results);
+        
         String taxonName = findTaxonName(query);
-        String resultsKey = null;
-
-        logger.info("TaxonNodeName is '"+taxonName+"', results size: " + results.size());
-        switch (results.size()) {
-        case 0:
-            logger.debug("No results found for query");
-            model.addAttribute("noResultFound", Boolean.TRUE);
-            model.addAttribute("taxonNodeName", taxonName);
-            return "search/"+queryName;
-
-        case 1:
-            List<GeneSummary> gs = possiblyConvertList(results);
-            resultsKey = cacheResults(gs, query, queryName, session.getId());
-            HistoryManager hm = hmFactory.getHistoryManager(session);
-            logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            
-            HistoryItem hitem = hm.addHistoryItem("query"+resultsKey, HistoryType.QUERY, gs.get(0).getSystematicId());
-            hitem.setQuery(query);
-            
-            return "redirect:/gene/" + gs.get(0).getSystematicId();
-
-        default:
-            List<GeneSummary> gs2 = possiblyConvertList(results);
-            resultsKey = cacheResults(gs2, query, queryName, session.getId());
-            HistoryManager hm2 = hmFactory.getHistoryManager(session);
-            List<String> ids = Lists.newArrayList();
-            for (GeneSummary geneSummary : gs2) {
-                ids.add(geneSummary.getSystematicId());
-            }
-            logger.error(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            System.err.println(String.format("Trying to store '%s' in history", "query"+resultsKey));
-            
-            HistoryItem hitem2 = hm2.addHistoryItem("query"+resultsKey, HistoryType.QUERY, ids);
-            hitem2.setQuery(query);
-            
-            //model.addAttribute("key", resultsKey);
-            model.addAttribute("taxonNodeName", taxonName);
-            logger.debug("Found results for query (Size: '"+gs2.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
-            return "redirect:/Results/"+resultsKey;
+        logger.info("TaxonNodeName is " + taxonName);
+        model.addAttribute("taxonNodeName", taxonName);
+        
+        int totalResultsSize = query.getTotalResultsSize();
+        logger.info("Total result size " + totalResultsSize);
+    	model.addAttribute("resultsSize", totalResultsSize);
+        
+    	if (queryName.equals("quickSearch")) {
+        	QuickSearchQuery quickSearchQuery = (QuickSearchQuery) query;
+        	logger.info("Fetching quick search taxons");
+        	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults(bounds.page -1, bounds.length).getTaxonGroup());
         }
+    	
+    	if (results.size() == 1) {
+    		
+    		GeneSummary geneSummary = results.get(0);
+    		return "redirect:/gene/" + geneSummary.getSystematicId();
+    		
+    	} else if (results.size() > 0) {
+        	
+        	model.addAttribute("results", results);
+            model.addAttribute("queryName", queryName);
+            model.addAttribute("actionName" , request.getContextPath() + "/Query/" + queryName);
+            
+            return "search/"+ queryName;
+            
+        } 
+    	
+    	// no point in hanging onto this
+        hm.removeItem(key);
+        logger.warn("No results found for query");
+		model.addAttribute("noResultFound", Boolean.TRUE);
+		
+    	if (queryName.equals("quickSearch")) {
+        	
+        	QuickSearchQuery quickSearchQuery = (QuickSearchQuery) query;
+        	logger.info("Running suggest query as no result found");
+        	SuggestQuery squery = (SuggestQuery) queryFactory.retrieveQuery("suggest", NumericQueryVisibility.PRIVATE);
+        	squery.setSearchText(quickSearchQuery.getSearchText());
+        	squery.setTaxons(quickSearchQuery.getTaxons());
+        	squery.setMax(30);
+        	
+			List<String> sResults = squery.getResults();
+			model.addAttribute("suggestions", sResults);
+			
+        }
+        
+		return "search/" + queryName;
+        
+
     }
+    
+    class Bounds {
+    	int page;
+    	int length;
+    	Bounds(int page, int length) {
+    		this.page = page;
+    		this.length = length;
+    	}
+    }
+    
+    private Bounds getQueryBounds(HttpServletRequest request) {
+        String startString = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
+        // Use 1-based index for start and end
+        int page = 1;
+        if (startString != null) {
+            //start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH + 1;
+        	page = Integer.parseInt(startString);
+        	logger.info("startString is not null, setting page to " + page);
+        }
+        
+        return new Bounds(page,DEFAULT_LENGTH);
+    }
+    
+    /*private final String displayResults (
+            HttpServletRequest request,
+            Model model,
+            HistoryItem item,
+            Bounds bounds,
+            List<GeneSummary> results) throws QueryException {
+    	
+        String pName = new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE);
+        logger.debug("pName is '"+pName+"'");
+        String startString = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
+        logger.debug("The start string is '"+startString+"'");
+        
+        // Use 1-based index for start and end
+        int start = 1;
+        if (startString != null) {
+            start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH + 1;
+        }
+        
+//        MyPaginatedList summaries = new MyPaginatedList<GeneSummary>();
+//        summaries.fullListSize = results.size();
+//        summaries.list = results;
+//        summaries.objectsPerPage = DEFAULT_LENGTH;
+//        summaries.pageNumber = bounds.getFirst();
+//        summaries.searchId = "xxx";
+//        summaries.sortDirection = SortOrderEnum.ASCENDING;
+//        summaries.sortCriterion = "systematicId";
+        
+        //logger.info(summaries.list);
+        
+        model.addAttribute("results", results);
+        model.addAttribute("resultsSize", item.getQuery().getResultsSize());
+        
+        int end = start + DEFAULT_LENGTH;
+        
+        int resultSize = item.getQuery().getResultsSize();
+        
+        logger.debug("The number of results retrieved is '"+resultSize+"'");
+        logger.debug("The end marker, before adjustment, is '"+end+"'");
 
+        if (end > resultSize + 1) {
+            end = resultSize + 1;
+        }
+        
+        model.addAttribute("firstResultIndex", start);
+        
+        Query query = item.getQuery();
+        
+        	
+    	String queryName = queryFactory.getRealName(query);
+    	
+    	model.addAttribute("queryName", queryName);
+    	
+        populateModelData(model, query);
+        
+        model.addAttribute("query", query);
+        
+        
+        if (queryName.equals("quickSearch")) {
+        	
+        	QuickSearchQuery quickSearchQuery = (QuickSearchQuery) query;
+        	//model.addAttribute("query", quickSearchQuery);
+        	logger.info("taxonGroup : " + quickSearchQuery.getQuickSearchQueryResults(bounds.page, bounds.length).getTaxonGroup());
+        	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults(bounds.page, bounds.length).getTaxonGroup());
+        	
+        	if (resultSize == 0) {
+            	SuggestQuery squery = (SuggestQuery) queryFactory.retrieveQuery("suggest", NumericQueryVisibility.PRIVATE);
+            	squery.setSearchText(quickSearchQuery.getSearchText());
+            	squery.setTaxons(quickSearchQuery.getTaxons());
+            	squery.setMax(30);
+            	
+				List sResults = squery.getResults();
+				model.addAttribute("suggestions", sResults);
+        	}
+        	
+        } 
 
+        
+        model.addAttribute("actionName" , request.getContextPath() + "/Query/" + queryName);
+        
+        return "search/"+ queryName;
+        //return "list/results2";
+    }
+    */
+    
+    private String generateKey(String sessionId, Map<String, String[]> parameters) {
+    	
+    	int hashcode = 0;
+    	
+    	for (Entry<String, String[]> entry : parameters.entrySet()) {
+    		
+    		// ignore display tag pagination parameters
+    		if (entry.getKey().equals("d-16544-p")) {
+    			continue;
+    		}
+    		
+    		hashcode += entry.getKey().hashCode();
+    		for (String value : entry.getValue()) {
+    			hashcode += value.hashCode();
+    		}
+    	}
+    	
+    	String key = "query:"+ sessionId + ":"+ hashcode; 
+    	return key;
+    }
+    
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
-        	//logger.info(entry.getKey() +" --- " + entry.getValue());
+        	logger.info(entry.getKey() +" --- " + entry.getValue());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }
 
-    protected Query findQueryType(String queryName, HttpSession session){
+    protected PagedQuery findQueryType(String queryName, HttpSession session){
         if (!StringUtils.hasText(queryName)) {
         	WebUtils.setFlashMessage("Unable to identify which query to use", session);
         	logger.error("Unable to identify which query to use");
         	return null;
         }
-        Query query = queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC_BUT_NO_FORMS);
+        
+        /*
+         * Queries that the QueryController can handle must be public. PUBLIC_BUT_NO_FORMS is a special case 
+         * where links on gene pages (or elsewhere) are pointing here, rather than forms themeselves. 
+         */
+        PagedQuery query = (PagedQuery) queryFactory.retrieveQuery(queryName, NumericQueryVisibility.PUBLIC_BUT_NO_FORMS);
         if (query == null) {
         	WebUtils.setFlashMessage("Unable to find query called '" + queryName + "'", session);
         	logger.error("Unable to find query called '" + queryName + "'");
@@ -270,7 +415,6 @@ public class QueryController extends AbstractGeneDBFormController{
      */
     @SuppressWarnings("unchecked")
     protected void suppressResultItem(String suppress, List results){
-
         if (StringUtils.hasLength(suppress)) {
             int index = results.indexOf(suppress);
             if (index != -1) {
@@ -280,10 +424,52 @@ public class QueryController extends AbstractGeneDBFormController{
             }
         }
     }
+    
+    class MyPaginatedList<T> implements PaginatedList {
+    	
+    	private int fullListSize;
+    	private List<T> list;
+    	private int objectsPerPage;
+    	private int pageNumber;
+    	private String searchId;
+    	private String sortCriterion;
+    	private SortOrderEnum sortDirection;
+    	
+		@Override
+		public int getFullListSize() {
+			return fullListSize;
+		}
 
-    @ManagedAttribute(description="The no. of times each query has been attempted to be run")
-    public Map<String, MutableInteger> getNumQueriesRun() {
-        return numQueriesRun;
+		@Override
+		public List<T> getList() {
+			return list;
+		}
+
+		@Override
+		public int getObjectsPerPage() {
+			return objectsPerPage;
+		}
+
+		@Override
+		public int getPageNumber() {
+			return pageNumber;
+		}
+
+		@Override
+		public String getSearchId() {
+			return searchId;
+		}
+
+		@Override
+		public String getSortCriterion() {
+			return sortCriterion;
+		}
+
+		@Override
+		public SortOrderEnum getSortDirection() {
+			return sortDirection;
+		}
+    	
     }
-
+    
 }

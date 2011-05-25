@@ -21,7 +21,7 @@ package org.genedb.web.mvc.controller;
 
 
 import org.genedb.web.mvc.controller.download.ResultEntry;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
+//import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
@@ -63,19 +63,21 @@ public class GeneDBSessionListener implements HttpSessionListener {
         ServletContext context = session.getServletContext();
         WebApplicationContext wac =
             WebApplicationContextUtils.getWebApplicationContext(context);
-        ResultsCacheFactory rcf = (ResultsCacheFactory) wac.getBean("resultsCacheFactory");
         
-        List<String> keys = Lists.newArrayList();
-        StoredMap<String, ResultEntry> cache = rcf.getResultsCacheMap();
-        for (String k : cache.keySet()) {
-            if (k.startsWith(prefix)) {
-                keys.add(k);
-            }
-        }
-        for (String k : keys) {
-            logger.trace("Removing entry "+k);
-            cache.remove(k);
-        }
+        
+//        ResultsCacheFactory rcf = (ResultsCacheFactory) wac.getBean("resultsCacheFactory");
+//        
+//        List<String> keys = Lists.newArrayList();
+//        StoredMap<String, ResultEntry> cache = rcf.getResultsCacheMap();
+//        for (String k : cache.keySet()) {
+//            if (k.startsWith(prefix)) {
+//                keys.add(k);
+//            }
+//        }
+//        for (String k : keys) {
+//            logger.trace("Removing entry "+k);
+//            cache.remove(k);
+//        }
     }
 
 }

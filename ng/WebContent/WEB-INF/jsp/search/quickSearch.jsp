@@ -47,7 +47,7 @@
 
                         </form:form>
                         </td>
-
+                        
                         <td valign="center" align="left" width="100%">
 
                         <table border=0 width="100%">
@@ -65,8 +65,7 @@
                                     </td>
                                     
                                </c:if>
-
-                              <c:if test="${fn:length(taxonGroup)>1}">
+                                <c:if test="${fn:length(taxonGroup)>1}">
                                       <td align=right>
                                         <div id="taxonFrameId" class="taxonIFrame">
                                           <db:quicksearchtaxons
@@ -84,14 +83,12 @@
 
                                         </td>
                               </c:if>
-                                   <td align="left">
+                                <td align="left">
                                     <db:quicksearchmessage taxonGroup="${taxonGroup}" currentTaxonName="${taxonNodeName}" />
                                  </td>
-
+                               
                             </tr>
-
-                        </table>
-                        </td>
+                       </table>
                     </tr>
                 </table>
                 </format:genePageSection>
@@ -104,18 +101,18 @@
         </td>
     </tr>
 </table>
-<c:if test="${empty resultsSize && ! empty suggestions}">
+<c:if test="${! empty suggestions}">
     <table id="row" cellpadding="4" class="ui-widget " cellspacing="0">
-		<tr>
-			<td style="width: 150px;" >Did you mean one of the following terms?</td>
-			 <td> 
-			   <c:forEach items="${suggestions}" var="suggestion">
-				  <div class="did-you-mean-result ui-state-default ui-corner-all" style="float:left; padding:5px;margin:5px;"  >
-				     <a style="width: 150px;" href="<misc:url value="/QuickSearchQuery"/>?taxons=${taxonNodeName}&searchText=${suggestion}&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${suggestion}</a>
-				  </div>
-			   </c:forEach>
+        <tr>
+            <td style="width: 150px;" >Did you mean one of the following terms?</td>
+             <td> 
+               <c:forEach items="${suggestions}" var="suggestion">
+                  <div class="did-you-mean-result ui-state-default ui-corner-all" style="float:left; padding:5px;margin:5px;"  >
+                     <a style="width: 150px;" href="<misc:url value="/Query/quickSearch"/>?taxons=${taxonNodeName}&searchText=${suggestion}&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">${suggestion}</a>
+                  </div>
+               </c:forEach>
              </td>
-		</tr>
+        </tr>
     </table>
 </c:if>
 

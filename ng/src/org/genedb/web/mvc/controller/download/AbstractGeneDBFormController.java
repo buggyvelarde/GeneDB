@@ -1,18 +1,16 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.servlet.ServletRequest;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
-import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.TaxonQuery;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
+//import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -21,22 +19,21 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.collect.Lists;
-import com.sleepycat.collections.StoredMap;
 
 public class AbstractGeneDBFormController {
 
     private Logger logger = Logger.getLogger(AbstractGeneDBFormController.class);
 
     //@Autowired
-    private ResultsCacheFactory resultsCacheFactory;
+    //private ResultsCacheFactory resultsCacheFactory;
 
     private ConversionService conversionService;
 
     //private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
-
-    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
-        this.resultsCacheFactory = resultsCacheFactory;
-    }
+//
+//    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+//        this.resultsCacheFactory = resultsCacheFactory;
+//    }
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -53,53 +50,75 @@ public class AbstractGeneDBFormController {
 //    //@Autowired
 //    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
-    protected List<GeneSummary> possiblyConvertList(List results) {
-        List<GeneSummary> gs;
-        Object firstItem =  results.get(0);
-        if (firstItem instanceof GeneSummary) {
-            gs = results;
-        } else {
-            gs = Lists.newArrayListWithExpectedSize(results.size());
-            for (Object o  : results) {
-                gs.add(new GeneSummary((String) o));
-            }
+    public static List<GeneSummary> fromIDs(List<String> results) {
+        List<GeneSummary> gs = Lists.newArrayListWithExpectedSize(results.size());
+        for (Object o  : results) {
+            gs.add(new GeneSummary((String) o));
         }
         return gs;
     }
-
-
-    protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, String sessionId) {
-        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
-        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
-        ResultEntry re = new ResultEntry();
-        re.numOfResults = gs.size();
-        re.query = q;
-        re.results = gs;
-        re.queryName = queryName;
-        if (q instanceof LuceneQuery){
-            re.expanded = true;
-        }
-        map.put(key, re);
-        return key;
+    
+//    public static List<String> possiblyConvertListToIds(List results) {
+//        List<String> ids = Lists.newArrayListWithExpectedSize(results.size());
+//        Object firstItem = results.get(0);
+//        if (firstItem instanceof GeneSummary) {
+//        	
+//        	for (Object s : results) {
+//        		GeneSummary summary = (GeneSummary) s;
+//        		ids.add(summary.getSystematicId());
+//        		summary = null;
+//        	}
+//            
+//        } else if (firstItem instanceof String ) {
+//            
+//            for (Object o  : results) {
+//                GeneSummary summary = new GeneSummary((String) o);
+//                ids.add(summary.getSystematicId());
+//                summary = null;
+//            }
+//        } else {
+//        	throw new RuntimeException("Do not know how to convert an array of " + firstItem.getClass().toString());
+//        }
+//        return ids;
+//    }
+    
+    protected static GeneSummary fromID(String result) {
+		return new GeneSummary(result);
     }
 
-    protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, TreeMap<String, Integer> taxonGroup, String sessionId) {
-        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
-        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
-        ResultEntry re = new ResultEntry();
-        re.numOfResults = gs.size();
-        re.query = q;
-        re.results = gs;
-        re.queryName = queryName;
-        if (q instanceof LuceneQuery){
-            re.expanded = true;
-        }
-        if (taxonGroup != null) {
-            re.taxonGroup = taxonGroup;
-        }
-        map.put(key, re);
-        return key;
-    }
+
+//    protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, String sessionId) {
+//        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
+//        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
+//        ResultEntry re = new ResultEntry();
+//        re.numOfResults = gs.size();
+//        re.query = q;
+//        re.results = gs;
+//        re.queryName = queryName;
+//        if (q instanceof LuceneQuery){
+//            re.expanded = true;
+//        }
+//        map.put(key, re);
+//        return key;
+//    }
+//
+//    protected String cacheResults(List<GeneSummary> gs, Query q, String queryName, TreeMap<String, Integer> taxonGroup, String sessionId) {
+//        String key = sessionId + ":"+ Integer.toString(System.identityHashCode(gs)); // CHECKME
+//        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
+//        ResultEntry re = new ResultEntry();
+//        re.numOfResults = gs.size();
+//        re.query = q;
+//        re.results = gs;
+//        re.queryName = queryName;
+//        if (q instanceof LuceneQuery){
+//            re.expanded = true;
+//        }
+//        if (taxonGroup != null) {
+//            re.taxonGroup = taxonGroup;
+//        }
+//        map.put(key, re);
+//        return key;
+//    }
 
     protected String findTaxonName(Query query) {
         String taxonName = null;

@@ -26,8 +26,6 @@ import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryController;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
-import javax.mail.MessagingException;
-
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,13 +45,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.io.BufferedInputStream;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -119,19 +116,23 @@ public class DownloadController {
 		logger.info("URL:: " + downloadLinkUrl);
 		
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
-        List<HistoryItem> historyItems = historyManager.getHistoryItems();
+        LinkedHashMap<String, HistoryItem> historyItems = historyManager.getHistoryItems();
         if (historyItem > historyItems.size()) {
             response.sendError(511);
             return null;
         }
-        
         
         List<OutputOption> outputOptions = Lists.newArrayList();
         for (String custField : custFields) {
             outputOptions.add(OutputOption.valueOf(custField));
         }
 
-        HistoryItem hItem = historyItems.get(historyItem-1);
+        HistoryItem hItem = historyManager.getHistoryItemByID(historyItem-1);
+        if (hItem == null) {
+        	logger.error("Could not find the history item " + historyItem);
+            response.sendError(511);
+            return null;
+        }
         
         String description = HistoryController.getFormattedParameterMap(hItem);
         

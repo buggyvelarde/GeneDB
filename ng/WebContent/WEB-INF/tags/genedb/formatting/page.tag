@@ -23,7 +23,7 @@
 <div class="float-right" >
 <div class="baby-blue-top"></div>
 <div id="search" class="baby-blue">
-<form action="<misc:url value="/QuickSearchQuery"/>" name="quicksearch" method="get">
+<form action="<misc:url value="/Query/quickSearch"/>" name="quicksearch" method="get">
 <table cellpadding="0" cellspacing="0" width="100%" class="search-table">
 <tr>
 <td>
@@ -61,7 +61,7 @@
 <li><a href="<misc:url value="/Query/proteinMass"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By Molecular Mass</a></li>
 <li><a href="<misc:url value="/Query/proteinNumTM"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By No. TM domains</a></li>
 <li><a href="<misc:url value="/Query/proteinTargetingSeq"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">By Targeting Seqs.</a></li>
-<li><a href="<misc:url value="/Query/simpleName"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Gene names</a></li>
+<%-- <li><a href="<misc:url value="/Query/simpleName"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Gene names</a></li> --%>
 <li><a href="<misc:url value="/Query/product"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Product</a></li>
 <%-- <li><a href="<misc:url value="/Query/curation"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">Curated annotations [comments & notes]</a></li> --%>
 <li><a href="<misc:url value="/Query/go"><spring:param name="taxons" value="${taxonNodeName}"/></misc:url>">GO term/id</a></li>

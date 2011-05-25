@@ -63,6 +63,22 @@ public class QueryFactory<T extends QueryVisibility> {
         }
         return applicationContext.getBean(queryName, Query.class);
     }
+    
+    public String getRealName(Query query) {
+    	
+    	for (Map.Entry<T, List<QueryDetails>> entry : visibilityQueryDetails.entrySet()) {
+    		// entry.getValue().getRealName();
+    		for (QueryDetails details : entry.getValue()) {
+    			if (details.getQueryName().equals(query.getQueryName())) {
+    				return details.getRealName();
+    			}
+    		}
+    		
+         
+    	}
+    	
+		return null;
+    }
 
     /**
      *

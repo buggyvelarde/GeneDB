@@ -92,13 +92,23 @@
    <name>simpleselect</name>
    <tag-class>org.genedb.web.tags.db.SimpleSelectTag</tag-class>
    <body-content>empty</body-content>
-       <attribute>
+    <attribute>
        <name>top</name>
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
     <attribute>
        <name>selection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>unlinkgroups</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>id</name>
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>

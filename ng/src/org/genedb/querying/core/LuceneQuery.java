@@ -27,6 +27,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.genedb.querying.tmpquery.GeneSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -41,7 +42,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 @Configurable
-public abstract class LuceneQuery implements Query {
+public abstract class LuceneQuery implements PagedQuery {
 
     private static transient final Logger logger = Logger.getLogger(LuceneQuery.class);
 
@@ -72,7 +73,98 @@ public abstract class LuceneQuery implements Query {
     public String getParseableDescription() {
         return QueryUtils.makeParseableDescription(getQueryName(), getParamNames(), this);
     }
-
+    
+    public abstract class Pager <T> {
+    	abstract public T convert(Document doc);
+    	
+    	public List<T> getResults(int page, int length) throws QueryException {
+        	
+        	List<T> res = new ArrayList<T>();
+            try {
+                TopDocs topDocs = lookupInLucene();
+                ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+                
+                // while we have a handle on the scoredocs, let's store the total size
+                totalResultSize= scoreDocs.length;
+                
+                int start = page * length;
+                int end = start + length;
+                
+                int max = scoreDocs.length - 1;
+                
+                if (max <= 0) {
+                	return res;
+                }
+                
+                if (end > max) {
+                	end = max;
+                }
+                
+                logger.info("Querying " + start + "-" +end);
+                
+                for (int i = start; i < end; i++) {
+                	ScoreDoc scoreDoc = scoreDocs[i];
+                	Document document = fetchDocument(scoreDoc.doc);
+                	res.add(convert(document));
+                }
+                
+                if(luceneIndex.getMaxResults() == res.size()){
+                    isActualResultSizeSameAsMax = true;
+                }
+                
+                return res;
+            } catch (CorruptIndexException exp) {
+                throw new QueryException(exp);
+            } catch (IOException exp) {
+                throw new QueryException(exp);
+            }
+        }
+        
+    }
+    
+    protected Pager<GeneSummary> geneSummaryPager = new Pager<GeneSummary>() {
+		@Override public GeneSummary convert(Document doc) {
+			return new GeneSummary(
+					doc.get("uniqueName"), // systematic
+					doc.get("organism.commonName"), // taxon-name,
+					doc.get("product"), // product
+					doc.get("chr"), // toplevename
+                    Integer.parseInt(doc.get("start")) // leftpos
+			);
+		}
+	};
+	
+	protected Pager<String> uniqueNamePager = new Pager<String>() {
+		@Override public String convert(Document doc) {
+			return doc.get("uniqueName");
+		}
+	};
+    
+    @Override
+    public List<GeneSummary> getResultsSummaries(int page, int length) throws QueryException {
+    	return geneSummaryPager.getResults(page, length);
+    	
+    }
+    
+    @Override
+    public List<String> getResults(int page, int length) throws QueryException {
+    	return uniqueNamePager.getResults(page, length);
+    }
+    
+    private int totalResultSize = -1;
+    
+    @Override
+	public int getTotalResultsSize() {
+    	// this might have already been calculated by a pager
+    	// no need to count them more than once (query parameters should not change)
+    	if (totalResultSize == -1) {
+    		TopDocs topDocs = lookupInLucene();
+    		totalResultSize = topDocs.totalHits;
+    	}
+        return totalResultSize;
+	}
+	
+    
     public <T extends Comparable<? super T>> List<T> getResults(Class<T> clazz) throws QueryException {
         List<T> names = new ArrayList<T>();
         try {
@@ -147,7 +239,7 @@ public abstract class LuceneQuery implements Query {
     }
 
     public Map<String, Object> prepareModelData() {
-        return Collections.emptyMap();
+    	return Collections.emptyMap();
     }
 
 

@@ -24,9 +24,9 @@ import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
 import org.genedb.util.Pair;
-import org.genedb.web.mvc.controller.download.ResultEntry;
+//import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
+//import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.Transcript;
@@ -81,7 +81,7 @@ public class TranscriptFeatureController {
     private ModelBuilder modelBuilder;
     private HistoryManagerFactory hmFactory;
 
-    private ResultsCacheFactory resultsCacheFactory;
+    //private ResultsCacheFactory resultsCacheFactory;
 
 
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
@@ -108,10 +108,11 @@ public class TranscriptFeatureController {
             logger.warn("There is no session - redirecting to force one.");
             return new ModelAndView("redirect:/gene/"+name);
         }
-        if (!isCurrentCacheValid(nlb.getKey(), session)){
-            logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
-            return new ModelAndView("redirect:/gene/"+name);
-        }
+        
+//        if (!isCurrentCacheValid(nlb.getKey(), session)){
+//            logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
+//            return new ModelAndView("redirect:/gene/"+name);
+//        }
 
         Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
         if (feature == null) {
@@ -217,19 +218,19 @@ public class TranscriptFeatureController {
      * @return true, if there is no key, or if the key exists and is from the
      * correct session and is in the results cache
      */
-    private boolean isCurrentCacheValid(String key, HttpSession session){
-        if (!StringUtils.hasLength(key)) {
-            return true;
-        }
-        if (session == null) {
-            return false;
-        }
-        if (!key.startsWith(session.getId())) {
-            return false;
-        }
-        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();
-        return storedMap.containsKey(key);
-    }
+//    private boolean isCurrentCacheValid(String key, HttpSession session){
+//        if (!StringUtils.hasLength(key)) {
+//            return true;
+//        }
+//        if (session == null) {
+//            return false;
+//        }
+//        if (!key.startsWith(session.getId())) {
+//            return false;
+//        }
+//        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();
+//        return storedMap.containsKey(key);
+//    }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
@@ -330,13 +331,13 @@ public class TranscriptFeatureController {
         this.formView = formView;
     }
 
-    public ResultsCacheFactory getResultsCacheFactory() {
-        return resultsCacheFactory;
-    }
-
-    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
-        this.resultsCacheFactory = resultsCacheFactory;
-    }
+//    public ResultsCacheFactory getResultsCacheFactory() {
+//        return resultsCacheFactory;
+//    }
+//
+//    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+//        this.resultsCacheFactory = resultsCacheFactory;
+//    }
 
 	public void setValidExtensions(Set<String> validExtensions) {
 		this.validExtensions = validExtensions;

@@ -8,6 +8,10 @@
 
 <script type="text/javascript"
     src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
+<script type="text/javascript"
+    src="<misc:url value="/includes/scripts/genedb/geneLocation.js"/>"></script>
+
+
 
 <c:choose>
  <c:when test="${topLevelFeatureName != null}">
@@ -34,179 +38,82 @@
 
 <script>
 
-
-
-
-
 $(function(){
-	
-
 	$('.spinner').CallStatusSpinner({
-	    height : 11.5,
-	    width : 50,
-	    img : '<misc:url value="/includes/image/spinner.gif"/>'
-	});
-
-	var lengths = {};
-	var loading = false;
-
-	function startedLoading() {
-	    if (! loading) {
-	        $('.spinner').CallStatusSpinner("addCall");
-	        loading = true;
-	    }
-	}
-
-	function stoppedLoading() {
-	    if (loading) {
-	        $('.spinner').CallStatusSpinner("removeCall");
-	        loading = false;
-	    }
-	}
-
-	function loadTops(organism) {
-	    startedLoading();
-	    
-	    $.ajax({
-	        url: getBaseURL() + "service/top",
-	        type: 'GET',
-	        dataType: 'json',
-	        data: {
-	            'commonName' : organism
-	        },
-	        success: function(response) {
-	            $('#topLevelFeatureName').html('');
-
-	            lengths = {};
-
-	            if (jQuery.isArray(response.results.feature)) {
-	            
-	                for (var i in response.results.feature) {
-	    
-	                    var result = response.results.feature[i];
-	                    var name = result["@name"];
-	                    var length = result["@length"];
-	                    lengths[name] = length;
-	                    
-	                    var selected = '';
-	    
-	                    if (topLevelFeatureName == name) {
-	                        selected = ' selected ';
-	                    }
-	                    
-	                    $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
-	                }
-	                
-	            } else {
-	                
-	                var result = response.results.feature;
-	                var name = result["@name"];
-	                var length = result["@length"];
-	                lengths[name] = length;
-	                
-	                var selected = '';
-
-	                if (topLevelFeatureName == name) {
-	                    selected = ' selected ';
-	                }
-	                
-	                $('#topLevelFeatureName').append('<option length="'+length+'" ' + selected + ' value='+ name + ' >' + name + ' ('+length+' residues) </option>');
-	            }
-
-	            stoppedLoading();
-	            
-	        
-	        }
-	    });
-
-	}
-
-	function loadOrganisms() {
-	    startedLoading();
-	    
-	    $.ajax({
-	        url: getBaseURL() + "service/organisms",
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(response) {
-	           for (var i in response.results.organisms.string) {
-	               var result = response.results.organisms.string[i];
-	               
-	               var selected = " ";
-	               
-	               if (organism == result) {
-	                    selected = " selected ";
-	                    loadTops(organism);
-	               }
-	               
-	               $('#organisms').append('<option ' + selected + '>' + result + '</option>');
-	           }
-
-	           stoppedLoading();
-	           
-	        }
-	    });
-	}
-
-	$("#topLevelFeatureName").click(function (e) {
-		if (loading) {
-		    alert("Currently loading");
-		}
-		var val = $(e.currentTarget).val();
-		var length = lengths[val];
-		$("#maxLocation").val(length);
-	});
-    
-    $("#organisms").change(function (e) {
-    	if (loading) {
-            alert("Currently loading");
-        }
-        var val = $(e.currentTarget).val();
-        organism = val;
-        loadTops(organism, true);
-    }); 
-
-    loadOrganisms();
-    
+        height : 11.5,
+        width : 50,
+        img : '<misc:url value="/includes/image/spinner.gif"/>'
+    });
+	
+	$('select#geneLocationTaxons').GeneLocations("${topLevelFeatureName}", "#topLevelFeatureName", ".spinner", "#minLocation", "#maxLocation", '#slider-text', '#toggle-text');
+	
 });
 
-
-
 </script>
+
+
 
 
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
         <form:form id="geneLocationQueryForm" commandName="query" action="${actionName}" method="GET">
-            <table border=0>
+        
+        
+        
+        
+            <table border=0 width="100%">
+                <tr>
+                    <td width="180px">
+                        <br><big><b>Gene Location Search:</b></big>
+                        <br><span class="spinner" >&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                    <td >
+                     <b>Organism:</b>
+                        <br><db:simpleselect selection="${taxonNodeName}" unlinkgroups="true" id="geneLocationTaxons" />
+                        <br><font color="red"><form:errors path="taxons" /></font>
+                    </td>
+                </tr>
                 <tr>
                     <td>
-                        <br><big><b>Gene Location Search:</b></big>
-                        
+                        &nbsp;
                     </td>
-                    <td>
-                     <b>Organism:</b>
-                        <select id="organisms" name="organisms">
-                            
-                        </select>
-                    </td>
-                    
-                    <td>
-                        <b>Parent feature:&nbsp;</b>
+                    <td>    
+                        <b>Region:</b><br>
                         <select id="topLevelFeatureName" name="topLevelFeatureName"></select>
                     </td>
+                </tr>
+                <tr>
                     <td>
-                        <b>Start:</b>
-                        <br><form:input id="minLocation" path="min"/>
-                        <br><font color="red"><form:errors path="min" /></font>
+                        &nbsp;
                     </td>
                     <td>
-                        <b>End:</b>
-                        <br><form:input id="maxLocation" path="max"/>
-                        <br><font color="red"><form:errors path="max" /></font>
+                        <div style="float:right">
+                        <input type="checkbox" checked="checked" id="toggle-text" /><label title="Click to show inputs" for="toggle-text"></label>
+                        </div>
+                        <b>Boundaries:  </b> <label id="boundaries"></label>
+                        <br>
+                        
+                        <div id="slider-range"></div>
+                        
+                        <div id='slider-text'>
+                        <div style="float:left">
+                        <form:input id="minLocation" path="min"/>
+                        <font color="red"><form:errors path="min" /></font>
+                        </div>
+                        <div style="float:right">
+                        <form:input id="maxLocation" path="max"/>
+                        <font color="red"><form:errors path="max" /></font>
+                        </div>
+                        </div>
+                        <div style="clear:both;height:1px;" ></div>
+                        
                     </td>
-
-                     <td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
                          <b>Pseudogene:</b>
                           <br><form:checkbox id="pseudogenes" path="pseudogenes" />
                       </td>
@@ -214,7 +121,7 @@ $(function(){
                 </tr>
                 <tr>
                     <td></td>
-                    <td colspan=7> <input type="submit" value="Submit" /><br><span class="spinner" >&nbsp;&nbsp;&nbsp;</span></td>
+                    <td colspan=7> <input type="submit" value="Submit" /></td>
                     <td></td>
                 </tr>
                 <tr>

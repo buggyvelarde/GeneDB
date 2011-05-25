@@ -373,10 +373,10 @@ public class RestController {
 	
 	    	query.setTaxons(taxons);
 	
-	    	QuickSearchQueryResults results = query.getReallyQuickSearchQueryResults(max);
-	    	List<GeneSummary> geneResults = results.getResults();
+	    	//QuickSearchQueryResults results = query.getQuickSearchQueryResults(0, max);
+	    	List<GeneSummary> geneResults = query.getResultsSummaries(0, max);
 	
-	    	qsr.totalHits = results.getTotalHits();
+	    	qsr.totalHits = query.getTotalResultsSize();
 	
 	
 	    	int i = 0;

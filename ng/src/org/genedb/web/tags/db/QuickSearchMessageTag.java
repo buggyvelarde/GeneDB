@@ -39,27 +39,34 @@ public class QuickSearchMessageTag extends SimpleTagSupport {
         //= (String)getJspContext().findAttribute("taxonNodeName");
 
         currentTaxonName = checkForHtmlShortName(currentTaxonName);
-
-        logger.error("resultsSize = '"+resultsSize+"'");
-        logger.error("taxonGroup = '"+taxonGroup+"'");
-        logger.error("currentTaxonName = '"+currentTaxonName+"'");
-
-        String message = null;
-        if (noResultsFound(resultsSize, taxonGroup)){
-            message = printNoResultsFound(query, currentTaxonName);
-
-        }else if (noResultsFound(resultsSize) && taxonGroup.size()>0){
-            message = printTaxonResultsFound(query, currentTaxonName, taxonGroup);
-
-        } else if (!noResultsFound(resultsSize) && taxonGroup.size() == 1) {
-            message = printResultsFound(query, currentTaxonName, resultsSize);
-
-        }else if(!noResultsFound(resultsSize) && taxonGroup.size() > 1){
-            message = printManyTaxonResultsFound(resultsSize, taxonGroup);
-        }
-
-        if (!StringUtils.isEmpty(message)){
-            getJspContext().getOut().write(message);
+        
+        logger.error("query = '" + query + "'");
+        logger.error("resultsSize = '" + resultsSize + "'");
+        logger.error("taxonGroup = '" + taxonGroup + "'");
+        logger.error("currentTaxonName = '" + currentTaxonName + "'");
+        
+        try {
+        
+	        String message = null;
+	        if (noResultsFound(resultsSize, taxonGroup)){
+	            message = printNoResultsFound(query, currentTaxonName);
+	
+	        }else if (noResultsFound(resultsSize) && taxonGroup.size()>0){
+	            message = printTaxonResultsFound(query, currentTaxonName, taxonGroup);
+	
+	        } else if (!noResultsFound(resultsSize) && taxonGroup.size() == 1) {
+	            message = printResultsFound(query, currentTaxonName, resultsSize);
+	
+	        }else if(!noResultsFound(resultsSize) && taxonGroup.size() > 1){
+	            message = printManyTaxonResultsFound(resultsSize, taxonGroup);
+	        }
+	
+	        if (!StringUtils.isEmpty(message)){
+	            getJspContext().getOut().write(message);
+	        }
+        } catch (Exception e) {
+        	logger.error(e.getMessage());
+        	e.printStackTrace();
         }
     }
 

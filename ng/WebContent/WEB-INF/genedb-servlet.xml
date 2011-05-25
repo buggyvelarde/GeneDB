@@ -149,7 +149,7 @@
 
   <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
     <property name="queryFactory" ref="queryFactory" />
-    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <!-- <property name="resultsCacheFactory" ref="resultsCacheFactory" /> -->
     <property name="hmFactory" ref="historyManagerFactory" />
     <property name="conversionService" ref="conversionService" />
   </bean>
@@ -214,6 +214,8 @@
     ========================= QUERY CONFIGURATION
     =========================
   -->
+  
+  
 
   <bean name="proteinLength" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
   <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
@@ -239,6 +241,7 @@
   <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
   <bean name="topLevelFeatures" class="org.genedb.querying.tmpquery.TopLevelFeaturesQuery" scope="prototype" />
+  <bean name="proteinMatchClusterOrthologue" class="org.genedb.querying.tmpquery.ProteinMatchClusterOrthologueQuery" scope="prototype" />
 
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
@@ -277,12 +280,19 @@
             <entry key="pfam" value-ref="pfam" />
             <entry key="curation" value-ref="curation" />
             <entry key="dbxref" value-ref="dbxref" />
+            
+            <entry key="quickSearch" value-ref="quickSearch" />
+            
           </map>
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PUBLIC_BUT_NO_FORMS">
           <map>
+            
             <!-- used for the 53 others link (RT ticket [Hinxton #215860] ) -->
             <entry key="controlledCuration" value-ref="controlledCuration" />
+            
+            <!-- used to display orthologue cluster list pages -->
+            <entry key="proteinMatchClusterOrthologue" value-ref="proteinMatchClusterOrthologue" />
           </map>
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
@@ -290,7 +300,7 @@
             <entry key="annotationStatus" value-ref="annotationStatus" />
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
             <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
-            <entry key="quickSearch" value-ref="quickSearch" />
+            
             <entry key="dateCount" value-ref="dateCount" />
             <entry key="geneByDb" value-ref="geneByDb" />
             <entry key="suggest" value-ref="suggest" />
@@ -411,10 +421,10 @@
 
   <bean id="HistoryController" class="org.genedb.web.mvc.controller.HistoryController">
     <property name="historyManagerFactory" ref="historyManagerFactory" />
-    <property name="sequenceDao" ref="sequenceDao" />
+    <!-- <property name="sequenceDao" ref="sequenceDao" /> -->
     <property name="historyView" value="history/historyIndex" />
     <property name="downloadView" value="download/download" />
-    <property name="editView" value="history/editHistory" />
+    <!-- <property name="editView" value="history/editHistory" /> -->
   </bean>
 
   <bean id="Root" class="org.genedb.web.mvc.controller.RootController" />
@@ -456,21 +466,24 @@
 
   <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
-  <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
-    <property name="queryFactory" ref="queryFactory" />
-    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-    <property name="hmFactory" ref="historyManagerFactory" />
+  <!-- <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController"> -->
+    <!-- <property name="queryFactory" ref="queryFactory" /> -->
+    <!-- <property name="hmFactory" ref="historyManagerFactory" /> -->
+    
+    <!-- <property name="resultsCacheFactory" ref="resultsCacheFactory" /> -->
     <!-- <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
-  </bean>
+  <!-- </bean>  -->
 
   <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController">
-    <property name="queryFactory" ref="queryFactory" />
-    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <!-- <property name="queryFactory" ref="queryFactory" /> -->
+    <!-- <property name="hmFactory" ref="historyManagerFactory" /> -->
+    
+<!--     <property name="resultsCacheFactory" ref="resultsCacheFactory" /> -->
   </bean>
 
-  <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController">
+ <!--  <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController">
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-  </bean>
+  </bean> -->
 
   <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
@@ -489,7 +502,7 @@
     <property name="historyManagerFactory" ref="historyManagerFactory" />
     <!-- <property name="taxonNodeListFormatter" ref="taxonNodeListFormatter" />
     <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" /> -->
-    <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    <!-- <property name="resultsCacheFactory" ref="resultsCacheFactory" /> -->
     <property name="validExtensions">
       <set>
         <value>jsp</value>
@@ -529,12 +542,14 @@
     <!-- <property name="cacheSeconds" value="86400" /> -->
   <!--</bean>
 
-  --><bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
+  -->
+  
+  <!-- <bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
     <property name="sequenceDao" ref="sequenceDao" />
     <property name="listResultsView" value="list/results2" />
     <property name="genePage" value="redirect:NamedFeature" />
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
-  </bean>
+  </bean> -->
 
   <bean id="ComplexQueryController" class="org.genedb.web.mvc.controller.ComplexQueryController" />
 

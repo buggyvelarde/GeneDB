@@ -96,7 +96,7 @@ public class SuggestQuery extends OrganismLuceneQuery {
     /**
      * Currently does not do any taxon-filtering.
      */
-	public List getResults() throws QueryException {
+	public List<String> getResults() throws QueryException {
 
 		List<String> results = new ArrayList<String>();
 		logger.info("Searching for " + searchText);

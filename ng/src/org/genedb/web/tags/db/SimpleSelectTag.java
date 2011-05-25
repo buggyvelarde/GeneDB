@@ -16,16 +16,26 @@ public class SimpleSelectTag extends AbstractHomepageTag {
 
 	private static final Logger logger = Logger.getLogger(SimpleSelectTag.class);
 	private String selection;
+	private boolean unlinkgroups = false;
+	private String id;
 
     public void setSelection(String selection) {
 		this.selection = selection;
 	}
+    
+    public void setUnlinkgroups(boolean linkToGroups) {
+    	this.unlinkgroups = linkToGroups;
+    }
+    
+    public void setId(String id) {
+    	this.id = id;
+    }
 
 
 	@Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
 
-        out.write("\n<select name=\"taxons\" id=\"taxons\">");
+        out.write("\n<select name=\"taxons\" id=\""+id+"\">");
 
         String indentSpaces = "&nbsp;&nbsp;";
         displayImmediateChildren(root, out, 0, indentSpaces, selection);
@@ -53,11 +63,15 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         out.write(" value=\"");
         out.write(node.getLabel());
         out.write("\"");
-
-        if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())) {
+        
+        if (! node.isWebLinkable() && unlinkgroups ) {
+        	out.write(" disabled=\"disabled\" ");
+        }
+        else if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())) {
             out.write(" selected ");
         }
         out.write(">");
+        
         if (indent > 7) {
             indent=8;
         }

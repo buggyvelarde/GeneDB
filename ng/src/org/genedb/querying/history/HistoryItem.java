@@ -1,13 +1,16 @@
 package org.genedb.querying.history;
 
-import org.genedb.querying.core.Query;
+import org.apache.log4j.Logger;
+import org.genedb.querying.core.PagedQuery;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryItem implements Serializable {
-
+	
+	private Logger logger = Logger.getLogger(HistoryItem.class);
+	
     private String name;
 
     /*
@@ -17,13 +20,13 @@ public class HistoryItem implements Serializable {
      */
     private String internalName;
 
-    private Query query;
+    protected PagedQuery query;
 
-    public void setQuery(Query query) {
+    public void setQuery(PagedQuery query) {
         this.query = query;
     }
 
-    private List<String> ids;
+    protected List<String> ids = new ArrayList<String>();
 
     private HistoryType historyType = HistoryType.QUERY;
     
@@ -55,7 +58,7 @@ public class HistoryItem implements Serializable {
         this.name = historyItem.name;
         this.ids = new ArrayList<String>(historyItem.getIds());
     }
-
+    
     public List<String> getIds() {
         return ids;
     }
@@ -73,7 +76,7 @@ public class HistoryItem implements Serializable {
     }
 
     public int getNumberItems() {
-        return ids.size();
+        return getIds().size();
     }
 
     public void addResult(String id) {
@@ -92,7 +95,7 @@ public class HistoryItem implements Serializable {
         this.ids.retainAll(i.getIds());
     }
 
-    public Query getQuery() {
+    public PagedQuery getQuery() {
         return query;
     }
 

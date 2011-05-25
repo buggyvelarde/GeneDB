@@ -31,6 +31,7 @@ import org.genedb.db.taxon.TaxonNodeList;
 import org.genedb.query.sql.SqlQuery;
 import org.genedb.querying.tmpquery.OrganismHqlQuery;
 import org.genedb.querying.tmpquery.OrganismLuceneQuery;
+import org.genedb.querying.tmpquery.ProteinMatchClusterOrthologueQuery;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.StringUtils;
 
@@ -93,6 +94,10 @@ public class QueryUtils {
     		if (hqlQuery instanceof OrganismHqlQuery) {
     			taxons = ((OrganismHqlQuery) hqlQuery).getTaxons();
     		}
+    	
+    	} else if (query instanceof ProteinMatchClusterOrthologueQuery) {
+    		ProteinMatchClusterOrthologueQuery pQuery = (ProteinMatchClusterOrthologueQuery) query;
+    		paramNames = pQuery.getParamNames();
     		
     	} else if (query instanceof SqlQuery) {
     		logger.warn ("skipping sql query for now...");

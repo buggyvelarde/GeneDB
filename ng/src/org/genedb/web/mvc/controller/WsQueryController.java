@@ -1,17 +1,17 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.taxon.TaxonNode;
+//import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeList;
-import org.genedb.querying.core.LuceneQuery;
+//import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.util.MutableInteger;
-import org.genedb.web.mvc.controller.WebConstants;
-import org.genedb.web.mvc.controller.download.ResultEntry;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
+//import org.genedb.web.mvc.controller.WebConstants;
+//import org.genedb.web.mvc.controller.download.ResultEntry;
+//import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -23,25 +23,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
-import org.springframework.util.StringUtils;
+//import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
-import org.springframework.validation.Errors;
+//import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+//import java.util.Map.Entry;
 
-import javax.servlet.ServletRequest;
+//import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.sleepycat.collections.StoredMap;
+//import com.sleepycat.collections.StoredMap;
 
 
 @Controller
@@ -55,7 +55,7 @@ public class WsQueryController implements ApplicationContextAware {
     //@Autowired
     private QueryFactory queryFactory;
 
-    private ResultsCacheFactory resultsCacheFactory;
+    //private ResultsCacheFactory resultsCacheFactory;
 
     public void setQueryFactory(QueryFactory queryFactory) {
         this.queryFactory = queryFactory;

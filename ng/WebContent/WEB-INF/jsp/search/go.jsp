@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:header title="Name/Product Search" />
+<format:header title="Go Search" />
 <format:page>
 <br>
 

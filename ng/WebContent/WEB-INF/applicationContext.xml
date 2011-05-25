@@ -54,12 +54,12 @@
 
 
 
-    <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
+<!--     <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
         <property name="rootDirectory" value="${resultsCacheDirectory}"/>
         <property name="readOnly" value="false" />
         <property name="allowCreate" value="true" />
     </bean>
-
+ -->
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />

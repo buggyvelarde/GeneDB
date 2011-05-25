@@ -8,6 +8,7 @@ import org.genedb.querying.core.QueryParam;
 import org.gmod.schema.cfg.OrganismHeirachy;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
@@ -23,6 +24,8 @@ import java.util.List;
 public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQuery {
 
     private static final long serialVersionUID = -1581819678507010911L;
+    
+    private static final Logger logger = Logger.getLogger(OrganismLuceneQuery.class);
 
     protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
 
@@ -70,7 +73,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
      * @see org.genedb.querying.tmpquery.TaxonQuery#setTaxons(org.genedb.db.taxon.TaxonNode[])
      */
     public void setTaxons(TaxonNodeList taxons) {
-        System.err.println("The taxons in setTaxons is '"+taxons.getNodes().get(0)+"'");
+        logger.info("The taxons in setTaxons is '"+taxons.getNodes().get(0)+"'");
         this.taxons = taxons;
     }
 
@@ -90,7 +93,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
 
 
     private void makeQueryForOrganisms(TaxonNodeList taxons, List<org.apache.lucene.search.Query> queries) {
-        System.err.println("The taxons in makeQueryFO is '"+taxons.getNodes().get(0)+"'");
+        logger.info("The taxons in makeQueryFO is '"+taxons.getNodes().get(0)+"'");
         List<String> taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
         if (taxonNames.size() == 0) {
             return;
