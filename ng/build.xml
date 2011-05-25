@@ -66,6 +66,8 @@
         <include name="ivy.timestamp.txt"/>
       </fileset>
     </delete>
+  	<echo message="Deleting ${classes.dir}/*.class"/>
+  	<echo message="Deleting ${classes.dir}/*.properties"/>
     <delete>
       <fileset dir="${classes.dir}">
         <include name="**/*.class"/>
