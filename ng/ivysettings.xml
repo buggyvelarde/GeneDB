@@ -23,6 +23,15 @@
             <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/>
             <ibiblio name="lab.public.rel" root="http://ulisse.pin.unifi.it:8080/archiva/repository/lab.public.rel" m2compatible="true"/>
             <ibiblio name="public" m2compatible="true"/>
+             <ibiblio name="sonata" root="http://repository.sonatype.org/content/repositories/central" 
+                m2compatible="true" />
+            <ibiblio name="sonata-releases" root="http://oss.sonatype.org/content/repositories/releases/" 
+                m2compatible="true" />
+            <ibiblio name="java.net2" root="http://download.java.net/maven/2/" 
+                m2compatible="true"/>
+            <ibiblio name="jboss" root="http://repository.jboss.org/maven2" 
+                m2compatible="true" />
+                
         </chain>
     </resolvers>
     <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
