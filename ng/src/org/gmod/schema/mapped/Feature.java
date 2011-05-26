@@ -1389,7 +1389,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         }
     }
 
-
+    
     /**
      * Get the AnalysisFeature object associated with this feature, assuming there is at most one.
      * @return the associated AnalysisFeature object, or <code>null</code> if there isn't one.
@@ -1453,6 +1453,46 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
             return analysisFeature;
         }
     }
+    
+    
+    @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    @Field(name = "dbxrefs", index = Index.TOKENIZED, store = Store.YES)
+    public String getDbxrefsAsSpaceSeparatedString() {
+    	List<String> dbxrefs = new ArrayList<String>();
+    	
+    	addDbxref(dbxrefs, this.dbXRef);
+    	
+    	for (FeatureDbXRef fdbx : this.getFeatureDbXRefs()) {
+    		addDbxref(dbxrefs, fdbx.getDbXRef());
+    	}
+    	
+    	for (FeaturePub fp : this.getFeaturePubs()) {
+    		for (PubDbXRef pd : fp.getPub().getPubDbXRefs()) {
+    			addDbxref(dbxrefs, pd.getDbXRef());
+    		}
+    	}
+    	
+    	for (FeatureCvTerm fct : this.getFeatureCvTerms()) {
+    		for (FeatureCvTermPub fctp : fct.getFeatureCvTermPubs()) {
+    			for (PubDbXRef pd : fctp.getPub().getPubDbXRefs())
+    			{
+    				addDbxref(dbxrefs, pd.getDbXRef());
+    			}
+    		}
+    	}
+    	
+    	return StringUtils.collectionToDelimitedString(dbxrefs, " ");
+    }
+    
+    @Transient
+    private void addDbxref(List<String> dbxrefs, DbXRef dbXRef ) {
+    	dbxrefs.add(this.dbXRef.getDb().getName()+ ":" +this.dbXRef.getAccession());
+    	dbxrefs.add(this.dbXRef.getAccession());
+    }
+    
+    
+    
     @Override
     public String toString() {
         return String.format("feature '%s' (ID=%d)", getUniqueName(), getFeatureId());
