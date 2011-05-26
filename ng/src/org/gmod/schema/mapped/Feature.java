@@ -1457,7 +1457,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     
     @Transient
     @Analyzer(impl = AllNamesAnalyzer.class)
-    @Field(name = "dbxrefs", index = Index.TOKENIZED, store = Store.YES)
+    @Field(name = "dbxref", index = Index.TOKENIZED, store = Store.YES)
     public String getDbxrefsAsSpaceSeparatedString() {
     	List<String> dbxrefs = new ArrayList<String>();
     	
