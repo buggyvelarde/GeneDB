@@ -140,6 +140,10 @@ $(function(){
 					val1 = 1;
 				}
 				
+				if (val1 < 1) {
+					val1 = 1;
+				}
+				
 				$.log(val1,val2,min,max);
 				
 				$("#slider-range").slider({
