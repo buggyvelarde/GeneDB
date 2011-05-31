@@ -1487,15 +1487,22 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     }
     
     @Transient
-    private void addDbxref(List<String> dbxrefs, DbXRef dbXRef ) {
-    	if (dbXRef == null) {
+    private void addDbxref(List<String> dbxrefs, DbXRef dbxref ) {
+    	if (dbxref == null) {
     		return;
     	}
-    	if (dbXRef.getDb() == null) {
+    	if (dbxref.getAccession() == null) {
     		return;
     	}
-    	dbxrefs.add(this.dbXRef.getDb().getName()+ ":" +this.dbXRef.getAccession());
-    	dbxrefs.add(this.dbXRef.getAccession());
+    	if (dbxref.getDb() == null) {
+    		return;
+    	}
+    	if (dbxref.getDb().getName() == null) {
+    		return;
+    	}
+    	
+    	dbxrefs.add(dbxref.getDb().getName()+ ":" +dbxref.getAccession());
+    	dbxrefs.add(dbxref.getAccession());
     }
     
     
