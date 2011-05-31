@@ -26,13 +26,19 @@ import org.genedb.querying.history.HistoryType;
 import org.genedb.util.Pair;
 //import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
+import org.genedb.web.mvc.model.DTOFactory;
+import org.genedb.web.mvc.model.GeneDTO;
+import org.genedb.web.mvc.model.PolypeptideDTO;
 //import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
+import org.aspectj.lang.annotation.Around;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -55,6 +61,7 @@ import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.hazelcast.core.Hazelcast;
 import com.sleepycat.collections.StoredMap;
 
 /**
@@ -62,6 +69,7 @@ import com.sleepycat.collections.StoredMap;
  *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
+ * @author gv1
  */
 @Controller
 @RequestMapping("/gene")
@@ -82,13 +90,153 @@ public class TranscriptFeatureController {
     private HistoryManagerFactory hmFactory;
 
     //private ResultsCacheFactory resultsCacheFactory;
-
+    
+    DTOFactory factory=new DTOFactory();
 
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
+    
+	public TranscriptDTO getDtoByName(Feature feature) {
+		logger.info("Getting dto " + feature.getUniqueName());
+		
+		TranscriptDTO dto = null;
+		
+		logger.info("Feature type = " + feature.getClass());
+		
+		if (feature instanceof AbstractGene) {
+			GeneDTO gdto = factory.make((AbstractGene) feature);
+			// for (Transcript transcript : gene.getTranscripts()) {
+			// TranscriptDTO tdto = factory.make(transcript);
+			// gdto.getTranscripts().add(tdto);
+			// }
+			dto = gdto;
+		} else if (feature instanceof Transcript) {
+			TranscriptDTO tdto = factory.make((Transcript) feature);
+			dto = tdto;
+			
+			// Polypeptide polypeptide = ((Transcript) feature)
+			// .getPolypeptide();
+			//
+			// if (polypeptide != null) {
+			// PolypeptideDTO pdto = factory.make(polypeptide);
+			// tdto.setPolypeptide(pdto);
+			// logger.info(pdto);
+			// dto = tdto;
+			// }
 
+		} else if (feature instanceof Polypeptide) {
+			dto = factory.make((Polypeptide) feature);
+		}
+		
+		logger.info("Dto type = " + dto.getClass());
+
+		return dto;
+	}
+	    
+    public TranscriptDTO saveDto(TranscriptDTO dto) {
+    	logger.info("Saving dto " + dto.getUniqueName());
+    	return dto;
+    }
+    
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
+	public ModelAndView getByName(NameLookupBean nlb, @PathVariable("name") String name) throws Exception {
+		
+		logger.info("name : " + name);
+		
+		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
+		AbstractGene gene = sequenceDao.getGene(feature);
+		
+		TranscriptDTO dto = getDtoByName(feature);
+		saveDto(dto);
+		
+		//TranscriptDTO dto = fetcher.getDtoByName(name); // (TranscriptDTO) Hazelcast.getMap("dto").get(name);
+//		
+//		if (dto == null) {
+//			
+//			if (feature instanceof AbstractGene) {
+//				GeneDTO gdto = factory.make((AbstractGene) feature);
+//				for (Transcript transcript : gene.getTranscripts()) {
+//					TranscriptDTO tdto = factory.make(transcript);
+//					gdto.getTranscripts().add(tdto);
+//				}
+//				dto = gdto;
+//			} else if (feature instanceof Transcript) {
+//				TranscriptDTO tdto = factory.make((Transcript) feature);
+//
+//				Polypeptide polypeptide = ((Transcript) feature)
+//						.getPolypeptide();
+//
+//				if (polypeptide != null) {
+//					PolypeptideDTO pdto = factory.make(polypeptide);
+//					tdto.setPolypeptide(pdto);
+//					logger.info(pdto);
+//					dto = tdto;
+//				}
+//
+//			} else if (feature instanceof Polypeptide) {
+//				dto = factory.make((Polypeptide) feature);
+//			}
+//			
+//			Hazelcast.getMap("dto").put(name, dto);
+//			
+//		}
+		
+		HashMap<String, Object> model = Maps.newHashMap();
+		model.put("taxonNodeName", feature.getOrganism().getCommonName());
+		model.put("dto", dto);
+		model.put("organismContext", dto.getOrganismCommonName());
+		model.put("inBasket", Boolean.FALSE);
+		model.put("geneUniaueName", gene.getUniqueName());
+		model.put("gene", gene);
+		
+		List<String> publicOrthologues = new ArrayList<String>();
+        for (String ortho : dto.getOrthologueNames()) {
+        	Feature ortho_f = sequenceDao.getFeatureByUniqueName(ortho, Feature.class);
+        	if (ortho_f != null) {
+        		publicOrthologues.add(ortho);
+        	}
+        }
+        model.put("orthologues", publicOrthologues);
+        
+//        // get the hierarachy
+//		//GeneDTO geneDTO = factory.make(gene);
+//		for (Transcript transcript : gene.getTranscripts()) {
+//			
+//			//TranscriptDTO tdto = factory.make(transcript);
+//			//geneDTO.getTranscripts().add(tdto);
+//			//logger.info(tdto);
+//			//logger.info(tdto.getTypeDescription());
+//			//geneDTO.setTypeDescription(tdto.getTypeDescription());
+//			//logger.info(geneDTO.getTypeDescription());
+//			
+//			Polypeptide polypeptide = transcript.getPolypeptide();
+//			
+////			if (polypeptide == null) {
+////				continue;
+////			}
+////			
+////			PolypeptideDTO pdto = factory.make(polypeptide);
+////			tdto.setPolypeptide(pdto);
+////			logger.info(pdto);
+//		}
+//		
+		
+//
+//		//model.put("dtos", dtos);
+		
+		logger.info("isDetailsOnly? " + nlb.isDetailsOnly());
+		
+		String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+		logger.info("viewName? " + viewName);
+		
+		ModelAndView mav = new ModelAndView(viewName, model);
+		//mav.addObject("sequenceDao", sequenceDao);
+		return mav;
+
+	}
+    
+    @RequestMapping(method=RequestMethod.GET, value="/transcript/{name}")
     public ModelAndView lookUpFeature(HttpServletRequest request,
             HttpServletResponse response,
             HttpSession session,
@@ -234,6 +382,7 @@ public class TranscriptFeatureController {
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
+        factory.setSequenceDao(sequenceDao);
     }
 
     public void setGeneView(String geneView) {

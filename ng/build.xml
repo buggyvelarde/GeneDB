@@ -3,7 +3,7 @@
 <project name="ng" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile-all">
   <description>This build file describes a set of classpaths and targets "exported"
     from this project, and common properties</description>
-
+    <echo>${java.io.tmpdir}</echo>
   <property file="property-file.${config}" />
 
   <dirname property="ng.directory" file="${ant.file.ng}"/>
@@ -273,8 +273,11 @@
         <include name="json-lib-2.2.1-jdk15.jar"/>
         <include name="json-lib-ext-spring-1.0.1.jar"/>
       </fileset>
-      <fileset dir="lib-repos/artemis">
+      <fileset dir="${ng.directory}/lib-repos/artemis">
         <include name="artemis_mac_20100311.jar"/>
+      </fileset>
+      <fileset dir="${ng.directory}/lib-repos/hazelcast">
+        <include name="hazelcast-all-1.9.3.jar"/>
       </fileset>
     </copy>
     <!--

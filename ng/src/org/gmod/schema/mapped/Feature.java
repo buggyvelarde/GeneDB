@@ -586,7 +586,8 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
             return this.featureCvTerms;
         }
     }
-
+    
+    
     public void addFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         synchronized (featureCvTermsLock) {
             if (this.featureCvTerms == null) {

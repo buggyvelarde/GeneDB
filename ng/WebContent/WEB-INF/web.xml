@@ -69,6 +69,11 @@
     <listener>
         <listener-class>org.genedb.web.mvc.controller.ResultCacheSessionListener</listener-class>
     </listener>
+    
+    <listener>
+        <listener-class>org.genedb.web.mvc.controller.HazelCastServletContextListener</listener-class>
+    </listener>
+    
 <!--
     <filter>
         <filter-name>UriSessionIdFilter</filter-name>

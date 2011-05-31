@@ -88,6 +88,29 @@ public class Transcript extends Region {
         return gene;
     }
     
+    @Transient
+    protected Polypeptide polypeptide;
+    
+    @Transient
+    public Polypeptide getPolypeptide() {
+        if (polypeptide != null) {
+            return polypeptide;
+        }
+        for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
+            Feature polypeptideFeature = relation.getSubjectFeature();
+            logger.error(String.format("?? %s %s", polypeptideFeature.getUniqueName(), polypeptideFeature.getClass()));
+            if (polypeptideFeature instanceof Polypeptide) {
+            	polypeptide = (Polypeptide) polypeptideFeature;
+                break;
+            }
+        }
+        if (polypeptide == null) {
+            logger.error(String.format("The transcript '%s' has no associated polypeptide", getUniqueName()));
+            return null;
+        }
+        return polypeptide;
+    }
+    
     /**
      * Overrides to add the gene name to the names list.
      */

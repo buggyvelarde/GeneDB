@@ -1,41 +1,62 @@
 <ivysettings>
-    <settings defaultResolver="chain"/>
-    <resolvers>
-        <chain name="chain">"
-            <url name="com.springsource.repository.bundles.release">
-                <ivy pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-                <artifact pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-            </url>
-            <url name="com.springsource.repository.bundles.external">
-                <ivy pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-                <artifact pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-            </url>
-            <url name="com.springsource.repository.bundles.milestone">
-                <ivy pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-                <artifact pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-            </url>
-            <!--
-            <url name="com.springsource.repository.bundles.snapshot">
-                <ivy pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-                <artifact pattern="http://repository.springsource.com/ivy/bundles/snapshot/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-            </url>
-            -->
-            <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/>
-            <ibiblio name="lab.public.rel" root="http://ulisse.pin.unifi.it:8080/archiva/repository/lab.public.rel" m2compatible="true"/>
-            <ibiblio name="public" m2compatible="true"/>
-             <ibiblio name="sonata" root="http://repository.sonatype.org/content/repositories/central" 
-                m2compatible="true" />
-            <ibiblio name="sonata-releases" root="http://oss.sonatype.org/content/repositories/releases/" 
-                m2compatible="true" />
-            <ibiblio name="java.net2" root="http://download.java.net/maven/2/" 
-                m2compatible="true"/>
-            <ibiblio name="jboss" root="http://repository.jboss.org/maven2" 
-                m2compatible="true" />
-                
-        </chain>
-    </resolvers>
-    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+
+	<include url="${ivy.default.settings.dir}/ivysettings-public.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-shared.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-local.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml" />
+	<settings defaultResolver="default" />
+
+	<resolvers>
+		<packager name="roundup" buildRoot="${user.home}/.ivy2/packager/build"
+			resourceCache="${user.home}/.ivy2/packager/cache">
+			<ivy
+				pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/ivy.xml" />
+			<artifact
+				pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/packager.xml" />
+		</packager>
+
+		<url name="com.springsource.repository.bundles.release">
+			<ivy
+				pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			<artifact
+				pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		</url>
+		<url name="com.springsource.repository.bundles.external">
+			<ivy
+				pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			<artifact
+				pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		</url>
+		<url name="com.springsource.repository.bundles.milestone">
+            <ivy
+                pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+            <artifact
+                pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+        </url>
+		
+		
+		<chain name="spring">
+			<resolver ref="com.springsource.repository.bundles.release" />
+			<resolver ref="com.springsource.repository.bundles.external" />
+			<resolver ref="com.springsource.repository.bundles.milestone" />
+		</chain>
+		<ibiblio name="jboss" root="http://repository.jboss.org/"
+			m2compatible="true" />
+		<ibiblio name="sonatype"
+			root="http://oss.sonatype.org/content/repositories/releases"
+			m2compatible="true" />
+		<chain name="main" dual="true">
+			<resolver ref="shared" />
+			<resolver ref="public" />
+			<resolver ref="spring" />
+			<resolver ref="jboss" />
+			<resolver ref="sonatype" />
+		</chain>
+		<chain name="default" returnFirst="true">
+			<resolver ref="local" />
+			<resolver ref="main" />
+		</chain>
+	</resolvers>
+
 </ivysettings>

@@ -18,302 +18,391 @@
 // */
 //
 package org.genedb.web.mvc.controller;
-//
-//import org.genedb.db.dao.SequenceDao;
+
+
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+
+import org.genedb.db.dao.SequenceDao;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+//import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 //import org.genedb.querying.history.HistoryItem;
 //import org.genedb.querying.history.HistoryManager;
 //import org.genedb.querying.history.HistoryType;
 //import org.genedb.util.Pair;
-//import org.genedb.web.mvc.controller.download.ResultEntry;
 //import org.genedb.web.mvc.model.BerkeleyMapFactory;
-//import org.genedb.web.mvc.model.ResultsCacheFactory;
-//import org.genedb.web.mvc.model.TranscriptDTO;
-//
-//import org.gmod.schema.feature.Transcript;
-//import org.gmod.schema.mapped.Feature;
-//
-//import org.apache.log4j.Logger;
+import org.genedb.web.mvc.model.TranscriptDTOFactory;
+import org.genedb.web.mvc.model.TranscriptDTO;
+
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.Feature;
+
 //import org.springframework.jmx.export.annotation.ManagedAttribute;
-//import org.springframework.stereotype.Controller;
 //import org.springframework.util.StringUtils;
 //import org.springframework.validation.BindingResult;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
-//import org.springframework.web.servlet.ModelAndView;
-//
-//import java.util.HashMap;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
 //import java.util.Iterator;
+import java.util.List;
 //import java.util.Set;
 //import java.util.Map.Entry;
-//
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import javax.servlet.http.HttpSession;
-//
-//import com.google.common.collect.Maps;
+
+import com.google.common.collect.Maps;
 //import com.google.common.collect.Sets;
-//import com.sleepycat.collections.StoredMap;
-//
-///**
-// * Looks up a feature by unique name
-// *
-// * @author Chinmay Patel (cp2)
-// * @author Adrian Tivey (art)
-// */
-//@Controller
-//@RequestMapping("/feature")
-////@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
+
+//@ManagedResource(objectName="bean:name=namedFeatureController",description="NamedFeature Controller")
+
+/**
+ * Looks up a feature by unique name
+ * 
+ * @author Chinmay Patel (cp2)
+ * @author Adrian Tivey (art)
+ * @author gv1
+ */
+@Controller
+@RequestMapping("genes")
 public class NamedFeatureController {
-//     private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
+	
+	private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
+	
+	private SequenceDao sequenceDao;
+	private String geneDetailsView;
+	//private HistoryManagerFactory hmFactory;
+	
+	//TranscriptDTOFactory transcriptDTOFactory = new TranscriptDTOFactory();
+	
+//	public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
+//		this.hmFactory = hmFactory;
+//	}
+	
+//	public void setTranscriptDTOFactory(TranscriptDTOFactory transcriptDTOFactory) {
+//		logger.info(transcriptDTOFactory);
+//		this.transcriptDTOFactory = transcriptDTOFactory;
+//	}
+	
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		logger.info(sequenceDao);
+		this.sequenceDao = sequenceDao;
+	}
+
+
+	public void setGeneDetailsView(String geneDetailsView) {
+		logger.info(geneDetailsView);
+		this.geneDetailsView = geneDetailsView;
+	}
+	
+	
+	
+	
+	
+	@RequestMapping(method=RequestMethod.GET, value="/{name}")
+	public ModelAndView name(@PathVariable("name") String name) throws Exception {
+		
+		logger.info("name : " + name);
+		
+		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
+		
+		AbstractGene gene = sequenceDao.getGene(feature);
+
+		HashMap<String, Object> model = Maps.newHashMap();
+
+		model.put("taxonNodeName", gene.getOrganism().getCommonName());
+
+		List<TranscriptDTO> dtos = new ArrayList<TranscriptDTO>();
+
+//		TranscriptDTO gdto = transcriptDTOFactory.make(gene);
+//		dtos.add(gdto);
+//		logger.info(gdto);
 //
-//    private SequenceDao sequenceDao;
-//    private String formView;
-//    private String geneView;
-//    private String geneDetailsView;
-//    private Set<String> validExtensions = Sets.newHashSet();
-//    private int cacheHit = 0;
-//    private int cacheMiss = 0;
+		for (Transcript transcript : gene.getTranscripts()) {
+			
+			String type = transcript.getType().getName();
+	        if ("mRNA".equals(type)) {
+	            type = "Protein coding gene";
+	        } else {
+	            if ("pseudogenic_transcript".equals(type)) {
+	                type = "Pseudogene";
+	            }
+	        }
+			
+//			
+//			TranscriptDTO tdto = transcriptDTOFactory.make(transcript);
+//			dtos.add(tdto);
+//			logger.info(tdto);
 //
-//    private BerkeleyMapFactory bmf;
-//    private ModelBuilder modelBuilder;
-//    private HistoryManagerFactory hmFactory;
+//			Polypeptide polypeptide = transcript.getPolypeptide();
+//			TranscriptDTO pdto = transcriptDTOFactory.make(polypeptide);
+//			dtos.add(pdto);
+//			logger.info(pdto);
+		}
+
+		model.put("dtos", dtos);
+		
+		ModelAndView mav = new ModelAndView(geneDetailsView, model);
+		
+		mav.addObject("sequenceDao", sequenceDao);
+		return mav;
+
+	}
+
+	
+	
+	//private String formView;
+	//private String geneView;
+	
+//	private Set<String> validExtensions = Sets.newHashSet();
+//	private int cacheHit = 0;
+//	private int cacheMiss = 0;
 //
-//    private ResultsCacheFactory resultsCacheFactory;
+//	private BerkeleyMapFactory bmf;
+//	private ModelBuilder modelBuilder;
+	
+	
+
+	// private ResultsCacheFactory resultsCacheFactory;
+
+	
+
+	// @RequestMapping(method=RequestMethod.GET, value="/{name}")
+//	public ModelAndView lookUpFeature(HttpServletRequest request,
+//			HttpServletResponse response, HttpSession session,
+//			NameLookupBean nlb, BindingResult be,
+//			/*@PathVariable("name") */ String nameAndExtension) throws Exception {
 //
-//    public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
-//        this.hmFactory = hmFactory;
-//    }
+//		Pair<String, String> pair = GeneDBWebUtils.parseExtension(
+//				nameAndExtension, validExtensions);
+//		String name = pair.getFirst();
+//		String extension = pair.getSecond();
+//		logger.warn("Trying to find NamedFeature of '" + name + "'");
 //
-//    @RequestMapping(method=RequestMethod.GET, value="/{name}")
-//    public ModelAndView lookUpFeature(HttpServletRequest request,
-//            HttpServletResponse response,
-//            HttpSession session,
-//            NameLookupBean nlb,
-//            BindingResult be,
-//            @PathVariable("name") String nameAndExtension
-//            ) throws Exception {
+//		// If a new session, redirect to same page (like a POSTBACK), dropping
+//		// invalidated params
+//		if (session == null) {
+//			logger.warn("There is no session - redirecting to force one.");
+//			return new ModelAndView("redirect:/feature/" + name);
+//		}
+////		if (!isCurrentCacheValid(nlb.getKey(), session)) {
+////			logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
+////			return new ModelAndView("redirect:/feature/" + name);
+////		}
 //
+//		Feature feature = sequenceDao.getFeatureByUniqueName(name,
+//				Feature.class);
+//		if (feature == null) {
+//			logger.warn(String.format("Failed to find feature '%s'", name));
+//			be.reject("no.results");
+//			return new ModelAndView("redirect:/feature/notFound.jsp");
+//		}
 //
-//        Pair<String, String> pair = GeneDBWebUtils.parseExtension(nameAndExtension, validExtensions);
-//        String name = pair.getFirst();
-//        String extension = pair.getSecond();
-//        logger.warn("Trying to find NamedFeature of '"+name+"'");
+//		Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
+//		if (transcript == null) {
+//			// If feature isn't transcript redirect - include model
+//			// is it part of a gene
+//			logger.warn(String.format(
+//					"Failed to find transcript for an id of '%s'", name));
+//			be.reject("no.results");
+//			return new ModelAndView("redirect:/feature/notFound.jsp");
+//		}
 //
-//        //If a new session, redirect to same page (like a POSTBACK), dropping invalidated params
-//        if (session == null) {
-//            logger.warn("There is no session - redirecting to force one.");
-//            return new ModelAndView("redirect:/feature/"+name);
-//        }
-//        if (!isCurrentCacheValid(nlb.getKey(), session)){
-//            logger.warn("It appears as though the current session has expired, hence some URL parameters are no longer valid");
-//            return new ModelAndView("redirect:/feature/"+name);
-//        }
+//		String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 //
-//        Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-//        if (feature == null) {
-//            logger.warn(String.format("Failed to find feature '%s'", name));
-//            be.reject("no.results");
-//            return new ModelAndView("redirect:/feature/notFound.jsp");
-//        }
+//		TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
 //
-//        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
-//        if (transcript == null) {
-//            // If feature isn't transcript redirect - include model
-//            // is it part of a gene
-//            logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
-//            be.reject("no.results");
-//            return new ModelAndView("redirect:/feature/notFound.jsp");
-//        }
+//		if (dto == null) {
+//			cacheMiss++;
+//			logger.error(String.format(
+//					"dto cache miss for '%s'. Looked for featureId of '%d'",
+//					feature.getUniqueName(), feature.getFeatureId()));
+//			Iterator<Entry<Integer, TranscriptDTO>> it = bmf.getDtoMap()
+//					.entrySet().iterator();
+//			logger.error(it.getClass().getName());
 //
-//        String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+//			throw new RuntimeException(String.format(
+//					"Unable to find '%s' in cache", feature.getUniqueName()));
+//		}
 //
-//        TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
+//		cacheHit++;
+//		logger.trace("dto cache hit for '" + feature.getUniqueName());
+//		HistoryManager hm = hmFactory.getHistoryManager(session);
+//		HistoryItem autoBasket = hm
+//				.getHistoryItemByType(HistoryType.AUTO_BASKET);
+//		logger.debug(String.format("Basket is '%s'", autoBasket));
+//		hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
+//		// if (nlb.isAddToBasket()) {
+//		// hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+//		// // Add message here
+//		// }
 //
-//        if (dto == null) {
-//            cacheMiss++;
-//            logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
-//            Iterator<Entry<Integer, TranscriptDTO>> it = bmf.getDtoMap().entrySet().iterator();
-//            logger.error(it.getClass().getName());
+//		HashMap<String, Object> model = Maps.newHashMap();
 //
-//            throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
-//        }
+//		model.put("taxonNodeName", dto.getOrganismCommonName());
+//		model.put("dto", dto);
 //
-//        cacheHit++;
-//        logger.trace("dto cache hit for '"+feature.getUniqueName());
-//        HistoryManager hm = hmFactory.getHistoryManager(session);
-//        HistoryItem autoBasket = hm.getHistoryItemByType(HistoryType.AUTO_BASKET);
-//        logger.debug(String.format("Basket is '%s'", autoBasket));
-//        hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
-////                if (nlb.isAddToBasket()) {
-////                    hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
-////                // Add message here
-////            }
+//		if (StringUtils.hasText(nlb.getKey()) && (nlb.getResultsLength() > 0)
+//				&& (nlb.getIndex() > 0)
+//				&& nlb.getIndex() <= nlb.getResultsLength()) {
 //
-//        HashMap<String, Object> model = Maps.newHashMap();
+//			model.put("key", nlb.getKey());
+//			model.put("index", nlb.getIndex());
+//			model.put("resultsLength", nlb.getResultsLength());
+//		}
 //
-//        model.put("taxonNodeName", dto.getOrganismCommonName());
-//        model.put("dto", dto);
+//		HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
+//		logger.debug(String.format("Basket is '%s'", basket));
+//		if (basket != null && basket.containsEntry(feature.getUniqueName())) {
+//			logger.trace(String.format("Setting inBasket to true for '%s'",
+//					feature.getUniqueName()));
+//			model.put("inBasket", Boolean.TRUE);
+//		} else {
+//			logger.trace(String.format("Setting inBasket to false for '%s'",
+//					feature.getUniqueName()));
+//			model.put("inBasket", Boolean.FALSE);
+//		}
 //
+//		ModelAndView mav;
+//		if (StringUtils.hasLength(extension)) {
+//			mav = new ModelAndView(extension + ":", "dto", dto);
+//		} else {
+//			mav = new ModelAndView(viewName, model);
+//		}
+//		// FIXME Should need to inject DAO into view
+//		mav.addObject("sequenceDao", sequenceDao);
+//		return mav;
+//	}
+
+	/**
+	 * This is to help verify if the current session key used to access the
+	 * GeneSummary search results is still alive
+	 * 
+	 * @param session
+	 *            the current session ,possibly null
+	 * @param key
+	 * @return true, if there is no key, or if the key exists and is from the
+	 *         correct session and is in the results cache
+	 */
+	// private boolean isCurrentCacheValid(String key, HttpSession session){
+	// if (!StringUtils.hasLength(key)) {
+	// return true;
+	// }
+	// if (session == null) {
+	// return false;
+	// }
+	// if (!key.startsWith(session.getId())) {
+	// return false;
+	// }
+	// StoredMap<String, ResultEntry> storedMap =
+	// resultsCacheFactory.getResultsCacheMap();
+	// return storedMap.containsKey(key);
+	// }
+
+
+	
+//	public void setGeneView(String geneView) {
+//		this.geneView = geneView;
+//	}
+
+
+//	public void setModelBuilder(ModelBuilder modelBuilder) {
+//		this.modelBuilder = modelBuilder;
+//	}
+
+//	@ManagedAttribute(description = "The no. of times the controller found the entry in the cache")
+//	public int getCacheHit() {
+//		return cacheHit;
+//	}
 //
-//        if (StringUtils.hasText(nlb.getKey()) &&
-//                (nlb.getResultsLength() > 0) &&
-//                (nlb.getIndex() > 0) &&
-//                nlb.getIndex() <= nlb.getResultsLength()) {
+//	@ManagedAttribute(description = "The no. of times the controller didn't find the entry in the cache")
+//	public int getCacheMiss() {
+//		return cacheMiss;
+//	}
 //
-//            model.put("key", nlb.getKey());
-//            model.put("index", nlb.getIndex());
-//            model.put("resultsLength", nlb.getResultsLength());
-//        }
+//	public static class NameLookupBean {
+//		private boolean detailsOnly = false;
+//		private boolean addToBasket = false;
+//		private String key;
+//		private int index;
+//		private int resultsLength;
 //
+//		public String getKey() {
+//			return key;
+//		}
 //
-//        HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
-//        logger.debug(String.format("Basket is '%s'", basket));
-//        if (basket != null && basket.containsEntry(feature.getUniqueName())) {
-//            logger.trace(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
-//            model.put("inBasket", Boolean.TRUE);
-//        } else {
-//            logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
-//            model.put("inBasket", Boolean.FALSE);
-//        }
-//        
-//        ModelAndView mav;
-//        if (StringUtils.hasLength(extension)) {
-//            mav = new ModelAndView(extension + ":", "dto", dto);
-//        } else {
-//        	mav = new ModelAndView(viewName, model);
-//        }
-//        // FIXME Should need to inject DAO into view
-//        mav.addObject("sequenceDao", sequenceDao);
-//        return mav;
-//    }
+//		public void setKey(String key) {
+//			this.key = key;
+//		}
 //
-//    /**
-//     * This is to help verify if the current session key used to access the GeneSummary search results is still alive
-//     * @param session the current session ,possibly null
-//     * @param key
-//     * @return true, if there is no key, or if the key exists and is from the
-//     * correct session and is in the results cache
-//     */
-//    private boolean isCurrentCacheValid(String key, HttpSession session){
-//        if (!StringUtils.hasLength(key)) {
-//            return true;
-//        }
-//        if (session == null) {
-//            return false;
-//        }
-//        if (!key.startsWith(session.getId())) {
-//            return false;
-//        }
-//        StoredMap<String, ResultEntry> storedMap = resultsCacheFactory.getResultsCacheMap();
-//        return storedMap.containsKey(key);
-//    }
+//		public int getIndex() {
+//			return index;
+//		}
 //
-//    public void setSequenceDao(SequenceDao sequenceDao) {
-//        this.sequenceDao = sequenceDao;
-//    }
+//		public void setIndex(int index) {
+//			this.index = index;
+//		}
 //
-//    public void setGeneView(String geneView) {
-//        this.geneView = geneView;
-//    }
+//		public int getResultsLength() {
+//			return resultsLength;
+//		}
 //
-//    public void setGeneDetailsView(String geneDetailsView) {
-//        this.geneDetailsView = geneDetailsView;
-//    }
+//		public void setResultsLength(int resultsLength) {
+//			this.resultsLength = resultsLength;
+//		}
 //
-//    public void setModelBuilder(ModelBuilder modelBuilder) {
-//        this.modelBuilder = modelBuilder;
-//    }
+//		public boolean isAddToBasket() {
+//			return addToBasket;
+//		}
 //
+//		public void setAddToBasket(boolean addToBasket) {
+//			this.addToBasket = addToBasket;
+//		}
 //
-//    @ManagedAttribute(description="The no. of times the controller found the entry in the cache")
-//    public int getCacheHit() {
-//        return cacheHit;
-//    }
+//		public boolean isDetailsOnly() {
+//			return detailsOnly;
+//		}
 //
-//    @ManagedAttribute(description="The no. of times the controller didn't find the entry in the cache")
-//    public int getCacheMiss() {
-//        return cacheMiss;
-//    }
+//		public void setDetailsOnly(boolean detailsOnly) {
+//			this.detailsOnly = detailsOnly;
+//		}
 //
+//		/*
+//		 * We need this because the form that is shown when the feature can't be
+//		 * found (search/nameLookup.jsp) expects an 'organism' property.
+//		 */
+//		public String getOrganism() {
+//			return null;
+//		}
+//	}
 //
+//	public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+//		this.bmf = bmf;
+//	}
+
+//	public String getFormView() {
+//		return formView;
+//	}
 //
-//    public static class NameLookupBean {
-//        private boolean detailsOnly = false;
-//        private boolean addToBasket = false;
-//        private String key;
-//        private int index;
-//        private int resultsLength;
+//	public void setFormView(String formView) {
+//		this.formView = formView;
+//	}
+
+//	public ResultsCacheFactory getResultsCacheFactory() {
+//		return resultsCacheFactory;
+//	}
 //
-//        public String getKey() {
-//            return key;
-//        }
-//
-//        public void setKey(String key) {
-//            this.key = key;
-//        }
-//
-//        public int getIndex() {
-//            return index;
-//        }
-//
-//        public void setIndex(int index) {
-//            this.index = index;
-//        }
-//
-//        public int getResultsLength() {
-//            return resultsLength;
-//        }
-//
-//        public void setResultsLength(int resultsLength) {
-//            this.resultsLength = resultsLength;
-//        }
-//
-//        public boolean isAddToBasket() {
-//            return addToBasket;
-//        }
-//
-//        public void setAddToBasket(boolean addToBasket) {
-//            this.addToBasket = addToBasket;
-//        }
-//
-//        public boolean isDetailsOnly() {
-//            return detailsOnly;
-//        }
-//
-//        public void setDetailsOnly(boolean detailsOnly) {
-//            this.detailsOnly = detailsOnly;
-//        }
-//
-//        /*
-//         * We need this because the form that is shown when the feature
-//         * can't be found (search/nameLookup.jsp) expects an 'organism'
-//         * property.
-//         */
-//        public String getOrganism() {
-//            return null;
-//        }
-//    }
-//
-//
-//    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
-//        this.bmf = bmf;
-//    }
-//
-//    public String getFormView() {
-//        return formView;
-//    }
-//
-//    public void setFormView(String formView) {
-//        this.formView = formView;
-//    }
-//
-//    public ResultsCacheFactory getResultsCacheFactory() {
-//        return resultsCacheFactory;
-//    }
-//
-//    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
-//        this.resultsCacheFactory = resultsCacheFactory;
-//    }
-//
+//	public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+//		this.resultsCacheFactory = resultsCacheFactory;
+//	}
+
 }
