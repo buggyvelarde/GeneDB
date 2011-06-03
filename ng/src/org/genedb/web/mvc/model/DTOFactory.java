@@ -198,101 +198,139 @@ public class DTOFactory {
 			map.put(key, value);
 		}
 	}
-
-	public GeneDTO make(AbstractGene gene) {
-		GeneDTO ret = new GeneDTO();
+	
+	
+	
+	public TranscriptDTO make(Feature feature) {
+		logger.info("Populating feature without any trawling...");
+		TranscriptDTO ret = new TranscriptDTO();
+		ret.setProteinCoding(false);
+		populateNames(ret, feature);
+		populateUsingFeature(ret, feature);
+		return ret;
+	}
+	
+	public TranscriptDTO make(AbstractGene gene) {
+		TranscriptDTO ret = new TranscriptDTO();
 		
 		populateNames(ret, gene);
+		populateUsingGene(ret, gene);
+		
+		// if there is a transcript, return its details
+		if (gene.getTranscripts().size() > 0) {
+			for (Transcript transcript : gene.getTranscripts()) {
+				logger.info("Populating gene using transcript");
+				Polypeptide polypeptide = transcript.getPolypeptide();
+				if (polypeptide != null) {
+					logger.info("Populating transcript using polypeptide");
+					populateUsingFeature(ret, polypeptide);
+					populateUsingPolypeptide(ret, polypeptide);
+				} else {
+					logger.info("Populating transcript using transcript");
+					populateUsingFeature(ret, transcript);
+				}
+				
+				// we only do this for the first transcript
+				break;
+			}
+		} else {
+			populateUsingFeature(ret, gene);
+		}
+		
+		return ret;
+	}
 
+	public TranscriptDTO make(Transcript transcript, AbstractGene gene) {
+		TranscriptDTO ret = new TranscriptDTO();
+		
+		populateNames(ret, gene);
+		populateUsingGene(ret, gene);
+		
+		Polypeptide polypeptide = transcript.getPolypeptide();
+		if (polypeptide != null) {
+			logger.info("Populating transcript using polypeptide");
+			populateUsingFeature(ret, polypeptide);
+			populateUsingPolypeptide(ret, polypeptide);
+		} else {
+			logger.info("Populating transcript using transcript");
+			populateUsingFeature(ret, transcript);
+		}
+		
+		logger.info("returning ?" +ret);
+		
+		return ret;
+	}
+		
+	public TranscriptDTO make(Polypeptide polypeptide, AbstractGene gene) {
+		TranscriptDTO ret = new PolypeptideDTO();
+		populateNames(ret, gene);
+		populateUsingGene(ret, gene);
+		populateUsingFeature(ret, polypeptide);
+		populateUsingPolypeptide (ret, polypeptide);
+		return ret;
+	}
+	
+	
+	private void populateUsingGene(TranscriptDTO ret, AbstractGene gene) {
 		String geneName = gene.getName();
 		if (geneName == null || geneName == "") {
 			geneName = gene.getUniqueName();
 		}
 		ret.setGeneName(geneName);
-		
-		populateParentDetails(ret, gene);
-		
-		populateOrganismDetails(ret, gene);
-		populateLastModified(ret, gene);
-		
-		ret.setProteinCoding(false);
-		
-		return ret;
+		if (gene.getNonObsoleteTranscripts().size()>1) {
+            ret.setAnAlternateTranscript(true);
+        }
 	}
-
-	public TranscriptDTO make(Transcript transcript) {
-		TranscriptDTO ret = new TranscriptDTO();
-
-		populateParentDetails(ret, transcript);
-		populateNames(ret, transcript);
-		populateMisc(ret, transcript);
-		
-		ret.setProducts(populateFromFeatureCvTerms(transcript,
-				"genedb_products"));
-
-		logger.info(ret.getProducts());
-		
-		populateFromFeatureProps(ret, transcript);
-		logger.info(ret.getNotes());
-		logger.info(ret.getComments());
-
-		populateFromFeaturePubs(ret, transcript);
-		
-		populateLastModified(ret, transcript);
-		
-		ret.setProteinCoding(false);
-
-		return ret;
-	}
-
 	
-	public PolypeptideDTO make(Polypeptide polypeptide) {
-		PolypeptideDTO ret = new PolypeptideDTO();
-		
-		populateParentDetails(ret, polypeptide);
-		populateNames(ret, polypeptide);
-
+	private void populateUsingPolypeptide(TranscriptDTO ret, Polypeptide polypeptide) {
 		logger.info("** About to set algorithm data");
 		ret.setAlgorithmData(prepareAlgorithmData(polypeptide));
 		logger.info("** About to set p. props");
 		ret.setPolypeptideProperties(polypeptide.calculateStats());
-		logger.info("** About to set from feature props");
-		populateFromFeatureProps(ret, polypeptide);
-
-		logger.info("** About to set from products");
-		ret.setProducts(populateFromFeatureCvTermsIncludingCount(polypeptide,
-				"genedb_products"));
-		logger.info("** About to set from CC");
-		ret.setControlledCurations(populateFromFeatureCvTerms(polypeptide,
-				"CC_"));
-		logger.info("** About to set from bio. process");
-		ret.setGoBiologicalProcesses(populateFromFeatureCvTerms(polypeptide,
-				"biological_process"));
-		logger.info("** About to set from mol. function");
-		ret.setGoMolecularFunctions(populateFromFeatureCvTerms(polypeptide,
-				"molecular_function"));
-		logger.info("** About to set from cell. component");
-		ret.setGoCellularComponents(populateFromFeatureCvTerms(polypeptide,
-				"cellular_component"));
-		logger.info("** About to set from feature dbxref");
-		populateFromFeatureDbXrefs(ret, polypeptide);
-
-		logger.info("** About to set feature rels");
-		populateFromFeatureRelationships(ret, polypeptide);
-
-		logger.info("** About to set feature pubs");
-		populateFromFeaturePubs(ret, polypeptide);
-
 		logger.info("** About to set domain info");
 		ret.setDomainInformation(prepareDomainInformation(polypeptide));
-		// model.put("domainInformation", domainInformation);
-		
-		populateLastModified(ret, polypeptide);
-		
 		ret.setProteinCoding(true);
-
-		return ret;
 	}
+	
+	private void populateUsingFeature(TranscriptDTO ret, Feature feature) {
+		
+		populateOrganismDetails(ret, feature);
+		populateParentDetails(ret, feature);
+		
+		populateType(ret, feature);
+		
+		logger.info("** About to set from feature props");
+		populateFromFeatureProps(ret, feature);
+
+		logger.info("** About to set from products");
+		ret.setProducts(populateFromFeatureCvTermsIncludingCount(feature,
+				"genedb_products"));
+		logger.info("** About to set from CC");
+		ret.setControlledCurations(populateFromFeatureCvTerms(feature,
+				"CC_"));
+		logger.info("** About to set from bio. process");
+		ret.setGoBiologicalProcesses(populateFromFeatureCvTerms(feature,
+				"biological_process"));
+		logger.info("** About to set from mol. function");
+		ret.setGoMolecularFunctions(populateFromFeatureCvTerms(feature,
+				"molecular_function"));
+		logger.info("** About to set from cell. component");
+		ret.setGoCellularComponents(populateFromFeatureCvTerms(feature,
+				"cellular_component"));
+		logger.info("** About to set from feature dbxref");
+		populateFromFeatureDbXrefs(ret, feature);
+
+		logger.info("** About to set feature rels");
+		populateFromFeatureRelationships(ret, feature);
+
+		logger.info("** About to set feature pubs");
+		populateFromFeaturePubs(ret, feature);
+		
+		populateLastModified(ret, feature);
+		
+	}
+	
+	
 
 	
 
@@ -353,7 +391,7 @@ public class DTOFactory {
 	}
 
 	private void populateFromFeatureRelationships(TranscriptDTO transcriptDTO,
-			Polypeptide polypeptide) {
+			Feature polypeptide) {
 
 		List<String> clusterIds = Lists.newArrayList();
 		List<String> orthologueNames = Lists.newArrayList();
@@ -378,7 +416,7 @@ public class DTOFactory {
 	}
 
 	private void populateFromFeatureDbXrefs(TranscriptDTO transcriptDTO,
-			Polypeptide polypeptide) {
+			Feature polypeptide) {
 		List<DbXRefDTO> dbXRefDTOs = new ArrayList<DbXRefDTO>();
 		for (FeatureDbXRef fdx : polypeptide.getFeatureDbXRefs()) {
 			dbXRefDTOs.add(new DbXRefDTO(fdx.getDbXRef().getDb().getName(), fdx
@@ -487,18 +525,31 @@ public class DTOFactory {
 		}
 		return null;
 	}
-
-	private void populateMisc(TranscriptDTO ret, Transcript transcript) {
-		String type = transcript.getType().getName();
-		if ("mRNA".equals(type)) {
+	
+	private void populateType(TranscriptDTO ret, Feature feature) {
+		String type = feature.getType().getName();
+		
+		if (feature instanceof Transcript || feature instanceof Polypeptide) {
 			type = "Protein coding gene";
-		} else {
-			if ("pseudogenic_transcript".equals(type)) {
-				type = "Pseudogene";
-			}
+		} else if (type.contains("pseudo")) {
+			type = "Pseudogene";
 		}
+		
 		ret.setTypeDescription(type);
 	}
+
+	
+//	private void populateMisc(TranscriptDTO ret, Transcript transcript) {
+//		String type = transcript.getType().getName();
+//		if ("mRNA".equals(type)) {
+//			type = "Protein coding gene";
+//		} else {
+//			if ("pseudogenic_transcript".equals(type)) {
+//				type = "Pseudogene";
+//			}
+//		}
+//		ret.setTypeDescription(type);
+//	}
 
 	private void populateParentDetails(TranscriptDTO ret, Feature gene) {
 		FeatureLoc top = gene.getRankZeroFeatureLoc();

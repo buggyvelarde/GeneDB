@@ -47,12 +47,12 @@ import javax.persistence.Transient;
 @FeatureType(cv="sequence", term="polypeptide")
 @Indexed
 public class Polypeptide extends Region {
+	
+	
     private static Logger logger = Logger.getLogger(Polypeptide.class);
-    @Transient
-    private Transcript transcript;
+    
 
-    @Transient
-    private AbstractGene gene;
+    
 
     Polypeptide() {
         // empty
@@ -67,51 +67,6 @@ public class Polypeptide extends Region {
         this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
 
-    public Transcript getTranscript() {
-        if (transcript != null) {
-            return transcript;
-        }
-
-        for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
-            Feature transcriptFeature = relation.getObjectFeature();
-            if (transcriptFeature instanceof Transcript) {
-                transcript = (Transcript) transcriptFeature;
-                break;
-            }
-        }
-        if (transcript == null) {
-            logger.error(String.format("The polypeptide '%s' has no associated transcript", getUniqueName()));
-            return null;
-        }
-        return transcript;
-    }
-
-    public AbstractGene getGene() {
-        if (gene != null) {
-            return gene;
-        }
-
-        Transcript transcript = getTranscript();
-        if (transcript == null) {
-            return null;
-        }
-
-        gene = transcript.getGene();
-        return gene;
-    }
-    
-    
-    /**
-     * Overrides to add the gene name to the names list.
-     */
-    @Override protected List<String> generateNamesList() {
-    	List<String> names = super.generateNamesList();
-    	AbstractGene gene = getGene();
-        if (gene != null) {
-    		names.add(gene.getUniqueName());
-    	}
-    	return names;
-    }
     
     
 

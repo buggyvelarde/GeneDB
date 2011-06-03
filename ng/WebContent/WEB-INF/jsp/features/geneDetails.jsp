@@ -19,7 +19,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
-<div><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
+<%-- <div><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
 <c:forEach var="transcript" items="${gene.transcripts}">
     <div><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
        <div><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></div>
@@ -27,12 +27,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 </c:forEach>
 </div>
 
-<p style="text-align:right"><span style="color: #8b031b">New!</span> View in :
-<span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
-<a target="web-artemis" href="http://www.genedb.org/web-artemis/?src=${dto.topLevelFeatureUniqueName}&base=${dto.min-100}&bases=${dto.max-dto.min +200}">Web-Artemis (alpha)</a>
-</span>
-</p>
-
+ --%>
 
 <h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
 <div id="col-4-1">

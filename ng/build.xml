@@ -1,173 +1,173 @@
 <?xml version="1.0"?>
 
 <project name="ng" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile-all">
-  <description>This build file describes a set of classpaths and targets "exported"
+	<description>This build file describes a set of classpaths and targets "exported"
     from this project, and common properties</description>
-    <echo>${java.io.tmpdir}</echo>
-  <property file="property-file.${config}" />
 
-  <dirname property="ng.directory" file="${ant.file.ng}"/>
-  <property name="lib.dir" value="${ng.directory}/WebContent/WEB-INF/lib" />
-  <property name="classes.dir" value="${lib.dir}/../classes" />
-  <property name="lib-compiletime.dir" value="${ng.directory}/lib-compiletime" />
+	<property file="property-file.${config}" />
 
-
-  <!-- Paths/Properties -->
-  <property name="build.dir" value="${ng.directory}/ant-build" />
-  <property name="dist.dir" value="${build.dir}/dist" />
-  <property name="ng.jar" value="${build.dir}/dist/ng.jar" />
-  <property name="test-classes.dir" value="${build.dir}/test-classes" />
-    
-  <!-- Classpaths -->
-  <path id="aspect.path">
-    <pathelement location="${lib.dir}/*.jar"/>
-  </path>
-
-  <path id="compile-classpathref">
-    <fileset dir="${lib.dir}">
-      <include name="*.jar"/>
-      <exclude name="*-sources-*.jar" />
-    </fileset>
-    <fileset dir="${lib-compiletime.dir}">
-      <include name="*.jar"/>
-      <exclude name="*-sources-*.jar" />
-    </fileset>
-  </path>
+	<dirname property="ng.directory" file="${ant.file.ng}"/>
+	<property name="lib.dir" value="${ng.directory}/WebContent/WEB-INF/lib" />
+	<property name="classes.dir" value="${lib.dir}/../classes" />
+	<property name="lib-compiletime.dir" value="${ng.directory}/lib-compiletime" />
 
 
-  <path id="aspectpathref">
-    <fileset dir="${lib.dir}">
-      <include name="*aspects*.jar"/>
-      <exclude name="*-sources-*.jar" />
-    </fileset>
-  </path>
+	<!-- Paths/Properties -->
+	<property name="build.dir" value="${ng.directory}/ant-build" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="ng.jar" value="${build.dir}/dist/ng.jar" />
+	<property name="test-classes.dir" value="${build.dir}/test-classes" />
 
-  <path id="run-classpathref">
-    <path refid="compile-classpathref"/>
-    <pathelement location="${ng.jar}"/>
-  </path>
+	<!-- Classpaths -->
+	<path id="aspect.path">
+		<pathelement location="${lib.dir}/*.jar"/>
+	</path>
 
-
-  <path id="allandtest">
-    <path refid="run-classpathref"/>
-    <pathelement location="${dist.dir}/test.jar"/>
-  </path>
-
-  <!-- <import file="test.xml"/> -->
-
-  <!-- General targets -->
-  <target name="clean-all">
-    <echo message="Deleting ${lib.dir}/*.jar"/>
-    <echo message="Deleting ${lib.dir}/license-*.txt"/>
-    <delete>
-      <fileset dir="${lib.dir}">
-        <include name="*.jar"/>
-        <include name="license-*.txt"/>
-        <include name="ivy.timestamp.txt"/>
-      </fileset>
-    </delete>
-  	<echo message="Deleting ${classes.dir}/*.class"/>
-  	<echo message="Deleting ${classes.dir}/*.properties"/>
-    <delete>
-      <fileset dir="${classes.dir}">
-        <include name="**/*.class"/>
-        <include name="**/*.properties"/>
-      </fileset>
-    </delete>
-  </target>
+	<path id="compile-classpathref">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+			<exclude name="*-sources-*.jar" />
+		</fileset>
+		<fileset dir="${lib-compiletime.dir}">
+			<include name="*.jar"/>
+			<exclude name="*-sources-*.jar" />
+		</fileset>
+	</path>
 
 
-  <target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
-    <echo>About to delete ${finaldest.webapps}.old</echo>
-    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
-    <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
-    <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
-    <delete dir="${finaldest.webapps}.old" failonerror="false"/>
-    <!-- temp hack -->
-  </target>
+	<path id="aspectpathref">
+		<fileset dir="${lib.dir}">
+			<include name="*aspects*.jar"/>
+			<exclude name="*-sources-*.jar" />
+		</fileset>
+	</path>
 
-  <target name="deploy" depends="check-config, compile-all">
-    <filter token="webAppRootKey" value="${webAppRootKey}" />
-    <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
-    <mkdir dir="${finaldest.webapps}.tmp"/>
-    <copy todir="${finaldest.webapps}.tmp">
-      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
-    </copy>
-    <echo message="About to filter web.xml" />
-    <delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
-    <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
-    <echo message="Done filtering web.xml" />
-    <copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
-    <!--
+	<path id="run-classpathref">
+		<path refid="compile-classpathref"/>
+		<pathelement location="${ng.jar}"/>
+	</path>
+
+
+	<path id="allandtest">
+		<path refid="run-classpathref"/>
+		<pathelement location="${dist.dir}/test.jar"/>
+	</path>
+
+	<!-- <import file="test.xml"/> -->
+
+	<!-- General targets -->
+	<target name="clean-all">
+		<echo message="Deleting ${lib.dir}/*.jar"/>
+		<echo message="Deleting ${lib.dir}/license-*.txt"/>
+		<delete>
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+				<include name="license-*.txt"/>
+				<include name="ivy.timestamp.txt"/>
+			</fileset>
+		</delete>
+		<echo message="Deleting ${classes.dir}/*.class"/>
+		<echo message="Deleting ${classes.dir}/*.properties"/>
+		<delete>
+			<fileset dir="${classes.dir}">
+				<include name="**/*.class"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</delete>
+	</target>
+
+
+	<target name="final-deploy" depends="deploy" description="Deployment step once server is shut down">
+		<echo>About to delete ${finaldest.webapps}.old</echo>
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+		<move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+		<move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+		<!-- temp hack -->
+	</target>
+
+	<target name="deploy" depends="check-config,compile-all,get-web-artemis">
+		<filter token="webAppRootKey" value="${webAppRootKey}" />
+		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+		<mkdir dir="${finaldest.webapps}.tmp"/>
+		<copy todir="${finaldest.webapps}.tmp">
+			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
+		</copy>
+		<echo message="About to filter web.xml" />
+		<delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
+		<echo message="Done filtering web.xml" />
+		<copy file="property-file.${config}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
+		<!--
       <echo message="Copying libraries"/>
       <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
         <path refid="web-deploy-classpath" />
       </copy>
       -->
-  </target>
-    
-	
+	</target>
+
+
 	<target name="stop-tomcat" >
 		<fail unless="finaldest.server.bin" message="The property --finaldest.server.bin must be specified"/>
 		<exec executable="${finaldest.server.bin}/shutdown.sh" />
 	</target>
-	
+
 	<target name="start-tomcat" >
 		<fail unless="finaldest.server.bin" message="The property --finaldest.server.bin must be specified"/>
-        <exec executable="${finaldest.server.bin}/startup.sh" />
-    </target>
-	
+		<exec executable="${finaldest.server.bin}/startup.sh" />
+	</target>
+
 	<!-- gv1 - I use this for quick redeployments on test environments -->
 	<target name="restart-and-deploy" depends="stop-tomcat,final-deploy,start-tomcat" />
-	
-
-
-  <target name="check-config">
-    <fail message="The 'config' property must be set" unless="config"/>
-    <available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
-    <fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
-    <copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
-  </target>
 
 
 
-  <!-- Sorted targets -->
-  <target name="fulljar" depends="compile-all"
+	<target name="check-config">
+		<fail message="The 'config' property must be set" unless="config"/>
+		<available file="${ng.directory}/property-file.${config}" property="config-file-exists"/>
+		<fail message="The file ${ng.directory}/property-file.${config} does not exist" unless="config-file-exists"/>
+		<copy file="${ng.directory}/property-file.${config}" tofile="${ng.directory}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+	</target>
+
+
+
+	<!-- Sorted targets -->
+	<target name="fulljar" depends="compile-all"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-    <delete file="${ng.jar}" />
-    <copy todir="${classes.dir}">
-      <fileset dir="resources/classpath">
-        <include name="**/*.xml"/>
-        <include name="**/*.properties"/>
-      </fileset>
-    </copy>
+		<delete file="${ng.jar}" />
+		<copy todir="${classes.dir}">
+			<fileset dir="resources/classpath">
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
 
-    <copy todir="${classes.dir}" overwrite="true">
-      <fileset dir="resources/misc" />
-    </copy>
+		<copy todir="${classes.dir}" overwrite="true">
+			<fileset dir="resources/misc" />
+		</copy>
 
-    <jar jarfile="${ng.jar}" basedir="${classes.dir}"
+		<jar jarfile="${ng.jar}" basedir="${classes.dir}"
                excludes="**/*Test.class">
-      <manifest>
-        <attribute name="Implementation-Title" value="Chado Interface"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-      </manifest>
-    </jar>
-  </target>
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado Interface"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+	</target>
 
-  <property name="host" value="https://developer.genedb.org"/>     
-  <property name="prefix" value="ci-web/"/>
-  <!-- Include trailing slash -->
+	<property name="host" value="https://developer.genedb.org"/>
+	<property name="prefix" value="ci-web/"/>
+	<!-- Include trailing slash -->
 
-  <target name="test-deployment">
-    <taskdef name="groovy"
+	<target name="test-deployment">
+		<taskdef name="groovy"
              classname="org.codehaus.groovy.ant.Groovy"
              classpathref="compile-classpathref"/>
-    <groovy>
-      <arg value="${host}"/>
-      <arg value="${prefix}" />
-      <![CDATA[
+		<groovy>
+			<arg value="${host}"/>
+			<arg value="${prefix}" />
+			<![CDATA[
           try {
               downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
               downloadAndGrep("${args[0]}/${args[1]}gene/PF07_0048:pep", "Duffy")
@@ -185,135 +185,135 @@
             }
           }
         ]]>
-    </groovy>
-  </target>
+		</groovy>
+	</target>
 
-  <target name="wait">
-    <sleep minutes="3" />
-  </target>
-
-
-  <target name="restart-ci-web">
-    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
-      <arg value="ci-web" />
-      <arg value="stop" />
-    </exec>
-    <sleep seconds="5" />
-    <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
-    <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
-    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
-      <env key="BUILD_ID" value="dontKillMe" />
-      <arg value="ci-web" />
-      <arg value="start" />
-    </exec>
-    <sleep minutes="3" />
-  </target>
-
-	  <target name="init" description="Create initial build structure">
-	    <mkdir dir="${build.dir}" />
-	    <mkdir dir="${build.dir}/resources" />
-	    <mkdir dir="${dist.dir}" />
-	    <mkdir dir="${classes.dir}" />
-	    <mkdir dir="${test-classes.dir}" />
-	    <mkdir dir="test/access-data" />
-	    <!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
-	    <available property="ivy-timestamp-exists" file="${lib.dir}/ivy.timestamp.txt" />
-	  </target>
+	<target name="wait">
+		<sleep minutes="3" />
+	</target>
 
 
-  <target name="check.lib-uptodate" depends="init" if="ivy-timestamp-exists">
-    <uptodate property="lib-uptodate" srcfile="${ng.directory}/ivy.xml" targetfile="${lib.dir}/ivy.timestamp.txt" />
-  </target>
+	<target name="restart-ci-web">
+		<exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
+			<arg value="ci-web" />
+			<arg value="stop" />
+		</exec>
+		<sleep seconds="5" />
+		<delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
+		<mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
+		<exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+			<env key="BUILD_ID" value="dontKillMe" />
+			<arg value="ci-web" />
+			<arg value="start" />
+		</exec>
+		<sleep minutes="3" />
+	</target>
+
+	<target name="init" description="Create initial build structure">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/resources" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${test-classes.dir}" />
+		<mkdir dir="test/access-data" />
+		<!-- <mkdir dir="@{topdir}/${lib.dir}" /> -->
+		<available property="ivy-timestamp-exists" file="${lib.dir}/ivy.timestamp.txt" />
+	</target>
 
 
-  <target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
-    <ivy:settings file="${ng.directory}/ivysettings.xml" />
-    <delete failonerror="false">
-      <fileset dir="${lib.dir}">
-        <include name="*.jar"/>
-        <include name="license-*.txt"/>
-        <include name="ivy.timestamp.txt"/>
-      </fileset>
-    </delete>
-    <mkdir dir="${lib.dir}" />
-    <property name="ivy.lib.dir"  value="${lib.dir}"/>
-    <property name="ivy.dep.file" value="${ng.directory}/ivy.xml"/>
-    <ivy:retrieve conf="default" />
-    <touch file="${lib.dir}/ivy.timestamp.txt" />
+	<target name="check.lib-uptodate" depends="init" if="ivy-timestamp-exists">
+		<uptodate property="lib-uptodate" srcfile="${ng.directory}/ivy.xml" targetfile="${lib.dir}/ivy.timestamp.txt" />
+	</target>
 
-    <move todir="${lib-compiletime.dir}">
-      <fileset dir="${lib.dir}">
-        <include name="com.springsource.javax.servlet-2.5.0.jar"/>
-        <include name="com.springsource.javax.servlet-sources-2.5.0.jar"/>
-        <include name="com.springsource.javax.servlet-3.0.0.jar"/>
-        <include name="com.springsource.javax.servlet-sources-3.0.0.jar"/>
-        <include name="com.springsource.javax.servlet.jsp-2.1.0.jar"/>
-        <include name="com.springsource.javax.servlet.jsp-sources-2.1.0.jar"/>
-        <include name="com.springsource.javax.el-1.0.0.jar"/>
-        <include name="com.springsource.javax.el-sources-1.0.0.jar"/>
-      </fileset>
-    </move>
 
-    <copy todir="${lib.dir}">
-      <fileset dir="${ng.directory}/lib-repos/biojava">
-        <include name="biojava-1.6.jar"/>
-        <include name="bytecode-0.91.jar"/>
-      </fileset>
-      <fileset dir="${ng.directory}/lib-repos/misc">
-        <include name="displaytag-1.2.jar"/>
-        <include name="jewelcli-0.53.jar"/>
-        <include name="jgraph.jar"/>
-        <include name="jgrapht-jdk1.6.jar"/>
-      </fileset>
+	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
+		<ivy:settings file="${ng.directory}/ivysettings.xml" />
+		<delete failonerror="false">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+				<include name="license-*.txt"/>
+				<include name="ivy.timestamp.txt"/>
+			</fileset>
+		</delete>
+		<mkdir dir="${lib.dir}" />
+		<property name="ivy.lib.dir"  value="${lib.dir}"/>
+		<property name="ivy.dep.file" value="${ng.directory}/ivy.xml"/>
+		<ivy:retrieve conf="default" />
+		<touch file="${lib.dir}/ivy.timestamp.txt" />
+
+		<move todir="${lib-compiletime.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="com.springsource.javax.servlet-2.5.0.jar"/>
+				<include name="com.springsource.javax.servlet-sources-2.5.0.jar"/>
+				<include name="com.springsource.javax.servlet-3.0.0.jar"/>
+				<include name="com.springsource.javax.servlet-sources-3.0.0.jar"/>
+				<include name="com.springsource.javax.servlet.jsp-2.1.0.jar"/>
+				<include name="com.springsource.javax.servlet.jsp-sources-2.1.0.jar"/>
+				<include name="com.springsource.javax.el-1.0.0.jar"/>
+				<include name="com.springsource.javax.el-sources-1.0.0.jar"/>
+			</fileset>
+		</move>
+
+		<copy todir="${lib.dir}">
+			<fileset dir="${ng.directory}/lib-repos/biojava">
+				<include name="biojava-1.6.jar"/>
+				<include name="bytecode-0.91.jar"/>
+			</fileset>
+			<fileset dir="${ng.directory}/lib-repos/misc">
+				<include name="displaytag-1.2.jar"/>
+				<include name="jewelcli-0.53.jar"/>
+				<include name="jgraph.jar"/>
+				<include name="jgrapht-jdk1.6.jar"/>
+			</fileset>
 			<fileset dir="${ng.directory}/lib-repos/db">
-        <include name="je-3.3.75.jar"/>
-      </fileset>
-      <fileset dir="${ng.directory}/lib-repos/json">
-        <include name="ezmorph-1.0.4.jar"/>
-        <include name="json-lib-2.2.1-jdk15.jar"/>
-        <include name="json-lib-ext-spring-1.0.1.jar"/>
-      </fileset>
-      <fileset dir="${ng.directory}/lib-repos/artemis">
-        <include name="artemis_mac_20100311.jar"/>
-      </fileset>
-      <fileset dir="${ng.directory}/lib-repos/hazelcast">
+				<include name="je-3.3.75.jar"/>
+			</fileset>
+			<fileset dir="${ng.directory}/lib-repos/json">
+				<include name="ezmorph-1.0.4.jar"/>
+				<include name="json-lib-2.2.1-jdk15.jar"/>
+				<include name="json-lib-ext-spring-1.0.1.jar"/>
+			</fileset>
+			<fileset dir="${ng.directory}/lib-repos/artemis">
+				<include name="artemis_mac_20100311.jar"/>
+			</fileset>
+			<!--<fileset dir="${ng.directory}/lib-repos/hazelcast">
         <include name="hazelcast-all-1.9.3.jar"/>
-      </fileset>
-    </copy>
-    <!--
+      </fileset>-->
+		</copy>
+		<!--
     <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
     <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-sources-1.2.2.jar" />
 -->
 
-  </target>
+	</target>
 
-  <target name="hibernate-instrumentation">
-    <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
-    <taskdef name="instrument"
+	<target name="hibernate-instrumentation">
+		<!-- This task is used to instrument the Feature class to enable lazy property fetching -->
+		<taskdef name="instrument"
             classname="org.hibernate.tool.instrument.javassist.InstrumentTask"
             classpathref="compile-classpathref"/>
 
-    <instrument verbose="false">
-      <fileset dir="${classes.dir}">
-        <include name="org/gmod/schema/mapped/Feature.class"/>
-        <include name="org/gmod/schema/mapped/Organism.class"/>
-        <include name="org/gmod/schema/feature/*.class"/>
-      </fileset>
-    </instrument>
-  </target>
+		<instrument verbose="false">
+			<fileset dir="${classes.dir}">
+				<include name="org/gmod/schema/mapped/Feature.class"/>
+				<include name="org/gmod/schema/mapped/Organism.class"/>
+				<include name="org/gmod/schema/feature/*.class"/>
+			</fileset>
+		</instrument>
+	</target>
 
-  <path id="aspectj-tools-classpath">
-    <!--<pathelement location="${lib.dir}/com.springsource.org.aspectj.weaver-1.6.8.RELEASE.jar"/>
+	<path id="aspectj-tools-classpath">
+		<!--<pathelement location="${lib.dir}/com.springsource.org.aspectj.weaver-1.6.8.RELEASE.jar"/>
     <pathelement location="${lib.dir}/com.springsource.org.aspectj.runtime-1.6.8.RELEASE.jar"/> -->
-    <pathelement location="${lib.dir}/com.springsource.org.aspectj.tools-1.6.8.RELEASE.jar"/>
-  </path>
+		<pathelement location="${lib.dir}/com.springsource.org.aspectj.tools-1.6.8.RELEASE.jar"/>
+	</path>
 
-  <target name="iajc-compile">
-    <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-      <classpath refid="aspectj-tools-classpath"/>
-    </taskdef>
+	<target name="iajc-compile">
+		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+			<classpath refid="aspectj-tools-classpath"/>
+		</taskdef>
 
-    <!--<iajc
+		<!--<iajc
     verbose="true" nowarn="false"
     inpath="${classes.dir}"
     aspectpathref="aspectpathref"
@@ -324,7 +324,7 @@
     </iajc>
   </target>-->
 
-    <iajc
+		<iajc
     verbose="true" nowarn="false"
     inpath="${classes.dir}"
     aspectpathref="compile-classpathref"
@@ -332,60 +332,90 @@
     showWeaveInfo="true"
     destdir="${classes.dir}" maxmem="1024M" fork="true">
 
-      <forkclasspath refid="aspectj-tools-classpath"/>
-    </iajc>
-  </target>
+			<forkclasspath refid="aspectj-tools-classpath"/>
+		</iajc>
+	</target>
 
 
 
-  <target name="compile-javac" depends="populate-lib-dirs"
+	<target name="compile-javac" depends="populate-lib-dirs"
           description="--> Compile classes" >
 
-    <!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{compile-classpathref}'" /> -->
-    <javac srcdir="${ng.directory}/src"
+		<!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{compile-classpathref}'" /> -->
+		<javac srcdir="${ng.directory}/src"
            includes="**/*.java"
            debug="true" source="1.6" target="1.6"
                  destdir="${classes.dir}"
            classpathref="compile-classpathref" />
 
-    <uptodate property="web.iajc-uptodate" targetfile="${ng.directory}/iajc_run">
-      <srcfiles dir="${classes.dir}" />
-    </uptodate>
-  </target>
+		<uptodate property="web.iajc-uptodate" targetfile="${ng.directory}/iajc_run">
+			<srcfiles dir="${classes.dir}" />
+		</uptodate>
+	</target>
 
-  <target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
-
-
-
-  <target name="install" depends="fulljar">
-    <fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
-    <delete dir="${installDir}/lib"/>
-    <delete dir="${installDir}/bin/loaders"/>
-    <copy flatten="true" todir="${installDir}/lib" verbose="true">
-      <path refid="run-classpathref"/>
-    </copy>
-    <copy tofile="${installDir}/lib/project.properties"  file="property-file.loader" />
-    <copy todir="${installDir}/bin">
-      <fileset dir="${ng.directory}/scripts" />
-    </copy>
-    <chmod perm="ugo+rx" maxparallel="100">
-      <fileset dir="${installDir}/bin"/>
-    </chmod>
-  </target>
+	<target name="compile-all" depends="compile-javac, hibernate-instrumentation, iajc-compile" />
 
 
-  <target name="javadoc" depends="compile-all">
-    <fail message="The 'doc.dir' property must be set, either in your config or on the command line." unless="doc.dir"/>
-      <javadoc destdir="${doc.dir}" sourcepath="${basedir}/src" packagenames="org.*" >
-          <classpath>
-            <path refid="compile-classpathref"/>
-          </classpath>
-      </javadoc>
-      <javadoc destdir="${doc.dir}" sourcepath="${basedir}/src" packagenames="org.*" >
-          <classpath>
-            <path refid="compile-classpathref"/>
-          </classpath>
-      </javadoc>
-  </target>
+
+	<target name="install" depends="fulljar">
+		<fail message="The property installDir must be specified (typically in the property file)." unless="installDir" />
+		<delete dir="${installDir}/lib"/>
+		<delete dir="${installDir}/bin/loaders"/>
+		<copy flatten="true" todir="${installDir}/lib" verbose="true">
+			<path refid="run-classpathref"/>
+		</copy>
+		<copy tofile="${installDir}/lib/project.properties"  file="property-file.loader" />
+		<copy todir="${installDir}/bin">
+			<fileset dir="${ng.directory}/scripts" />
+		</copy>
+		<chmod perm="ugo+rx" maxparallel="100">
+			<fileset dir="${installDir}/bin"/>
+		</chmod>
+	</target>
+
+
+	<target name="javadoc" depends="compile-all">
+		<fail message="The 'doc.dir' property must be set, either in your config or on the command line." unless="doc.dir"/>
+		<javadoc destdir="${doc.dir}" sourcepath="${basedir}/src" packagenames="org.*" >
+			<classpath>
+				<path refid="compile-classpathref"/>
+			</classpath>
+		</javadoc>
+		<javadoc destdir="${doc.dir}" sourcepath="${basedir}/src" packagenames="org.*" >
+			<classpath>
+				<path refid="compile-classpathref"/>
+			</classpath>
+		</javadoc>
+	</target>
+	
+	
+	<!-- checkout web artemis -->
+
+	<property name="javascriptprojectdir" value="${ng.directory}/WebContent/includes/scripts" />
+	<property name="webartemisdir" value="${javascriptprojectdir}/web-artemis" />
+	
+	<target name="clean-web-artemis">
+		<delete dir="${webartemisdir}" failonerror="false"/>
+	</target>
+    	
+	<target name="git-get-web-artemis" if="usegithub">
+		<mkdir dir="${webartemisdir}" />
+		<exec executable="git" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
+			<arg value="clone" />
+			<arg value="git://github.com/sanger-pathogens/Web-Artemis.git" />
+		</exec>
+	</target>
+
+	<target name="svn-get-web-artemis" unless="usegithub">
+		<!-- we use svn export to not pull in .svn folders -->
+		<exec executable="svn" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
+			<arg value="export" />
+			<arg value="svn+ssh://svn.internal.sanger.ac.uk/repos/svn/pathsoft/psu/trunk/genlib/javascript/web-artemis" />
+		</exec>
+	</target>
+
+	<target name="get-web-artemis" depends="clean-web-artemis,svn-get-web-artemis,git-get-web-artemis" />
+	
+	
 
 </project>

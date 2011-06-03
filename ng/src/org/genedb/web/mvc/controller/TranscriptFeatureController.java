@@ -33,6 +33,7 @@ import org.genedb.web.mvc.model.PolypeptideDTO;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Exon;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
@@ -96,41 +97,31 @@ public class TranscriptFeatureController {
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
-    
+            
 	public TranscriptDTO getDtoByName(Feature feature) {
+		
 		logger.info("Getting dto " + feature.getUniqueName());
+		logger.info("Feature type = " + feature.getClass());
+		 
+		AbstractGene gene = sequenceDao.getGene(feature);
+		logger.info("Gene found " + gene);
 		
 		TranscriptDTO dto = null;
-		
-		logger.info("Feature type = " + feature.getClass());
-		
-		if (feature instanceof AbstractGene) {
-			GeneDTO gdto = factory.make((AbstractGene) feature);
-			// for (Transcript transcript : gene.getTranscripts()) {
-			// TranscriptDTO tdto = factory.make(transcript);
-			// gdto.getTranscripts().add(tdto);
-			// }
-			dto = gdto;
+		if  (feature instanceof AbstractGene) {
+			dto = factory.make((AbstractGene) feature);
 		} else if (feature instanceof Transcript) {
-			TranscriptDTO tdto = factory.make((Transcript) feature);
-			dto = tdto;
-			
-			// Polypeptide polypeptide = ((Transcript) feature)
-			// .getPolypeptide();
-			//
-			// if (polypeptide != null) {
-			// PolypeptideDTO pdto = factory.make(polypeptide);
-			// tdto.setPolypeptide(pdto);
-			// logger.info(pdto);
-			// dto = tdto;
-			// }
-
+			dto = factory.make((Transcript) feature, gene);
 		} else if (feature instanceof Polypeptide) {
-			dto = factory.make((Polypeptide) feature);
+			dto = factory.make((Polypeptide) feature, gene);
+		} else if (feature instanceof Exon) {	
+			dto = factory.make(((Exon)feature).getTranscript());
+		} else {
+			dto = factory.make(feature);
 		}
 		
+		logger.info("Dto generated = " + dto);
 		logger.info("Dto type = " + dto.getClass());
-
+		
 		return dto;
 	}
 	    
@@ -145,10 +136,12 @@ public class TranscriptFeatureController {
 		logger.info("name : " + name);
 		
 		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-		AbstractGene gene = sequenceDao.getGene(feature);
+		//
 		
 		TranscriptDTO dto = getDtoByName(feature);
 		saveDto(dto);
+		
+		
 		
 		//TranscriptDTO dto = fetcher.getDtoByName(name); // (TranscriptDTO) Hazelcast.getMap("dto").get(name);
 //		
@@ -187,8 +180,14 @@ public class TranscriptFeatureController {
 		model.put("dto", dto);
 		model.put("organismContext", dto.getOrganismCommonName());
 		model.put("inBasket", Boolean.FALSE);
-		model.put("geneUniaueName", gene.getUniqueName());
-		model.put("gene", gene);
+		
+		
+//		AbstractGene gene = sequenceDao.getGene(feature);
+//		if (gene != null) {
+//			model.put("geneUniaueName", gene.getUniqueName());
+//			model.put("gene", gene);
+//		}
+		
 		
 		List<String> publicOrthologues = new ArrayList<String>();
         for (String ortho : dto.getOrthologueNames()) {

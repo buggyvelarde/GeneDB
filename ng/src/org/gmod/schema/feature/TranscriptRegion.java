@@ -1,13 +1,18 @@
 package org.gmod.schema.feature;
 
 
+import org.apache.log4j.Logger;
 import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * SO:0000833 (but we don't use it directly, which is why it's an
@@ -17,7 +22,15 @@ import javax.persistence.Entity;
  */
 @Entity
 public abstract class TranscriptRegion extends Region {
-
+	
+	private static Logger logger = Logger.getLogger(TranscriptRegion.class);
+	
+	@Transient
+    private AbstractGene gene;
+	
+	@Transient
+    private Transcript transcript;
+	
     TranscriptRegion() {
         // empty
     }
@@ -49,6 +62,55 @@ public abstract class TranscriptRegion extends Region {
             throw new RuntimeException("Internal error: failed to instantiate region", e);
         }
     }
+    
+    public Transcript getTranscript() {
+        if (transcript != null) {
+            return transcript;
+        }
+
+        for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
+            Feature transcriptFeature = relation.getObjectFeature();
+            if (transcriptFeature instanceof Transcript) {
+                transcript = (Transcript) transcriptFeature;
+                break;
+            }
+        }
+        if (transcript == null) {
+            logger.error(String.format("The polypeptide '%s' has no associated transcript", getUniqueName()));
+            return null;
+        }
+        return transcript;
+    }
+
+    public AbstractGene getGene() {
+        if (gene != null) {
+            return gene;
+        }
+
+        Transcript transcript = getTranscript();
+        if (transcript == null) {
+            return null;
+        }
+
+        gene = transcript.getGene();
+        return gene;
+    }
+    
+
+    
+    
+    /**
+     * Overrides to add the gene name to the names list.
+     */
+    @Override protected List<String> generateNamesList() {
+    	List<String> names = super.generateNamesList();
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+    		names.add(gene.getUniqueName());
+    	}
+    	return names;
+    }
+    
 
 
 }
