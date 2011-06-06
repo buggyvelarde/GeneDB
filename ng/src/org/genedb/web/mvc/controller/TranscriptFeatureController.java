@@ -97,32 +97,22 @@ public class TranscriptFeatureController {
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
-            
-	public TranscriptDTO getDtoByName(Feature feature) {
+       
+    
+    public TranscriptDTO getDtoByName(Feature feature) {
 		
 		logger.info("Getting dto " + feature.getUniqueName());
 		logger.info("Feature type = " + feature.getClass());
-		 
-		AbstractGene gene = sequenceDao.getGene(feature);
-		logger.info("Gene found " + gene);
 		
-		TranscriptDTO dto = null;
-		if  (feature instanceof AbstractGene) {
-			dto = factory.make((AbstractGene) feature);
-		} else if (feature instanceof Transcript) {
-			dto = factory.make((Transcript) feature, gene);
-		} else if (feature instanceof Polypeptide) {
-			dto = factory.make((Polypeptide) feature, gene);
-		} else if (feature instanceof Exon) {	
-			dto = factory.make(((Exon)feature).getTranscript());
-		} else {
-			dto = factory.make(feature);
+		if (feature instanceof Transcript) {
+			return factory.make((Transcript) feature);
+		} else if (feature instanceof AbstractGene) {
+			return factory.make((AbstractGene) feature);
 		}
 		
-		logger.info("Dto generated = " + dto);
-		logger.info("Dto type = " + dto.getClass());
+		return factory.make(feature);
 		
-		return dto;
+		
 	}
 	    
     public TranscriptDTO saveDto(TranscriptDTO dto) {
@@ -138,7 +128,21 @@ public class TranscriptFeatureController {
 		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
 		//
 		
-		TranscriptDTO dto = getDtoByName(feature);
+		if (feature == null) {
+            logger.warn(String.format("Failed to find feature '%s'", name));
+            //return new ModelAndView("redirect:/feature/notFound.jsp");
+            return new ModelAndView("redirect:/QueryList");
+        }
+		
+		TranscriptDTO dto = null;
+		Transcript transcript = sequenceDao.getTranscript(feature);
+		if (transcript != null) {
+			feature = transcript;
+			dto = getDtoByName(transcript);
+		} else {
+			dto = getDtoByName(feature);
+		}
+		
 		saveDto(dto);
 		
 		
@@ -182,11 +186,11 @@ public class TranscriptFeatureController {
 		model.put("inBasket", Boolean.FALSE);
 		
 		
-//		AbstractGene gene = sequenceDao.getGene(feature);
-//		if (gene != null) {
-//			model.put("geneUniaueName", gene.getUniqueName());
-//			model.put("gene", gene);
-//		}
+		AbstractGene gene = sequenceDao.getGene(feature);
+		if (gene != null) {
+			model.put("geneUniaueName", gene.getUniqueName());
+			model.put("gene", gene);
+		}
 		
 		
 		List<String> publicOrthologues = new ArrayList<String>();

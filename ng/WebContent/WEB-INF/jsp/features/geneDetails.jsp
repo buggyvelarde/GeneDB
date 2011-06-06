@@ -19,15 +19,29 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
-<%-- <div><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
-<c:forEach var="transcript" items="${gene.transcripts}">
-    <div><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
-       <div><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></div>
-    </div>
-</c:forEach>
-</div>
+<style>
+ul {
+    margin-left:10px;
+}
+li {
+    margin-left:10px;
+}
+</style>
 
- --%>
+<div><ul><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
+<c:forEach var="transcript" items="${gene.transcripts}">
+    <li><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
+        <ul>
+        <c:forEach var="exon" items="${transcript.exons}">
+            <li><a href="./${exon.uniqueName}">${exon.uniqueName}</a></li>
+        </c:forEach>
+        </ul>
+       <li><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></li>
+    </li>
+</c:forEach>
+</ul></div>
+
+ 
 
 <h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
 <div id="col-4-1">
@@ -179,7 +193,7 @@ should be obtained before publishing analyses of the sequence/open reading frame
 
 <br class="clear" /><br />
 
-<c:if test="${dto.proteinCoding}">
+
 <style>
 div.comment {
     display:list-item;
@@ -233,6 +247,8 @@ div.comment {
   </table>
   </format:genePageSection>
 </c:if>
+
+<c:if test="${dto.proteinCoding}">
 
 <h2 style="padding-top:0px;margin-top:0px;">Protein Data</h2>
 

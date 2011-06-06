@@ -11,6 +11,7 @@ import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.feature.PolypeptideRegion;
 import org.gmod.schema.feature.SignalPeptide;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TransmembraneRegion;
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.CvTerm;
@@ -145,6 +146,32 @@ public class SequenceDao extends BaseDao {
     		}
     	}
     	
+    	
+    	return null;
+    }
+    
+    public Transcript getTranscript(Feature f) {
+    	if (f == null) {
+    		return null;
+    	}
+    	logger.info("getTranscript("+ f.getUniqueName() +")");
+    	
+    	if (f instanceof Transcript) {
+    		logger.info("      FOUND!");
+    		return (Transcript)f;
+    	}
+    	
+    	for (FeatureRelationship fr : f.getFeatureRelationshipsForSubjectId()) {
+    		if ((fr.getType().getName().equals("part_of") && fr.getType().getCv().getName().equals("relationship")) 
+    				|| (fr.getType().getName().equals("derives_from") && fr.getType().getCv().getName().equals("sequence"))) {
+    			
+    			Transcript t = getTranscript(fr.getObjectFeature());
+    			if (t != null) {
+    				return t;
+    			}
+    			
+    		}
+    	}
     	
     	return null;
     }
