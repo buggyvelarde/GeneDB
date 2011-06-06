@@ -18,7 +18,8 @@
     <script type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery-genePage-combined-new.js"/>"></script>
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/util.js"/>"></script>
     
-
+    <link rel="SHORTCUT ICON" href="<misc:url value="/includes/image/favicon.png"/>" >
+    
     <script type="text/javascript">
 	    
         $(function(){
