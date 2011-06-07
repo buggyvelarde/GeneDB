@@ -16,10 +16,10 @@
 
  
     
-	<link rel="stylesheet" type="text/css" href="${wa}/css/superfish.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="${wa}/css/tablesorter.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="${wa}/js/jquery.contextMenu-1.01/jquery.contextMenu.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="${wa}/css/artemis.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="${wa}/css/superfish.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="${wa}/css/tablesorter.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="${wa}/js/jquery.contextMenu-1.01/jquery.contextMenu.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="${wa}/css/artemis.css" media="screen">
     
     <%-- <script type="text/javascript" src="${wa}/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="${wa}/js/jquery-ui-1.8.4.custom.min.js"></script>
@@ -56,7 +56,7 @@
     <style>
         
         div.wacontainer {
-            position:relative;
+
             height:230px;
         }
         
@@ -73,15 +73,15 @@
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/webArtemisEmbedder.js"/>"></script>
     <script>
         $(document).ready(function() { 
-        	embedWebArtemis(
-    			"${dto.topLevelFeatureUniqueName}", 
-    			"${dto.uniqueName}",
-    			"${dto.min-1000}",
-    			"${dto.max-dto.min +2000}", 
-    			"${wa}", 
-    			"/services");
-        	
-        	$("#chromosome-container").ChromosomeMap({
+            embedWebArtemis(
+                "${dto.topLevelFeatureUniqueName}", 
+                "${dto.uniqueName}",
+                "${dto.min-1000}",
+                "${dto.max-dto.min +2000}", 
+                "${wa}", 
+                "/services");
+            
+            $("#chromosome-container").ChromosomeMap({
                 region : "${dto.topLevelFeatureUniqueName}", 
                 overideUseCanvas : false,
                 bases_per_row: parseInt("${dto.topLevelFeatureLength}"),
@@ -92,7 +92,7 @@
                 axisLabels : false
             });
 
-    	});
+        });
     </script>
    
 <%-- initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFeatureUniqueName}', ${dto.topLevelFeatureLength}, ${dto.min}, ${dto.max}, '${dto.uniqueName}'); --%>

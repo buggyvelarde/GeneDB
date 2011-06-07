@@ -22,7 +22,6 @@ if(!String.prototype.startsWith){
  * Therefore, for the time being the canvas option should be treated as essentially broken, and the div-version 
  * should be used instead. 
  * 
- * Depends on the web services, and also on Modernizr.js (to detect canvas ability).
  * 
  * @author gv1
  * 
@@ -71,17 +70,21 @@ if(!String.prototype.startsWith){
 		       '255,191,191'
 		   ];
 			
-			
 			this.reset = function () {
 				$(self).html('');
 				
-				if (Modernizr.canvas && !settings.overideUseCanvas) {
+				if (!settings.overideUseCanvas) {
 					
-			    	useCanvas = true;
+			    	
 			    	
 			    	$(self).append("<canvas class='chromosome_canvas' style='position:absolute;' ></canvas>");
 			    	chromosomeCanvas = $(self).children('.chromosome_canvas')[0];
-			    	ctx = chromosomeCanvas.getContext("2d");
+			    	
+			    	if (chromosomeCanvas.getContext && chromosomeCanvas.getContext('2d')) {
+			    		ctx = chromosomeCanvas.getContext("2d");
+			    		useCanvas = true;
+			    	}
+			    	
 			    	
 			    }
 			    
@@ -118,7 +121,7 @@ if(!String.prototype.startsWith){
 					return "<div title='"+label +"' class='chromosome_feature "+label+"' style='position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;'></div>";
 				} else {
 					
-					var html = "<div title='"+label +"' class='chromosome_feature "+label+"' style='border:1px solid #bbb;background-color:"+color+";position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;width:"+ w +"px;'>";
+					var html = "<div title='"+label +"' class='chromosome_feature "+label+"' style='background-color:"+color+";position:absolute;left:" + x + "px;top:" + y + "px;height:"+ h +"px;width:"+ w +"px;'>";
 					//html += "<div class='chromosome_feature_text' >" + text.substring(0,15) + "</div>";
 					html += "</div>";
 					
@@ -183,17 +186,20 @@ if(!String.prototype.startsWith){
 				
 				var row =0;
 				
-				var max_base_pair = base_position_start + settings.loading_interval ;
+				var max_base_pair = length ;
 				
-				if (max_base_pair > length) {
-					max_base_pair = length;
-				}
+//				if (max_base_pair > length) {
+//					max_base_pair = length;
+//				}
 				
 				var buffer = "";
-				for (var base_position = base_position_start; base_position <= max_base_pair; base_position += settings.bases_per_row) {
+				for (var base_position = base_position_start; base_position < max_base_pair; base_position += settings.bases_per_row) {
 					row_y = (settings['row_vertical_space_sep'] + settings["row_height"]) * row / yscale;
 					row_y += settings["row_height"] / 2;
-					buffer += this.drawGraphLines(0,row_y,settings.row_width, 0, "", base_position);
+					
+					var text = (settings.axisLabels) ? base_position : "";
+					
+					buffer += this.drawGraphLines(0,row_y,settings.row_width, 0, "", text);
 					row++;
 				}
 				
@@ -214,7 +220,7 @@ if(!String.prototype.startsWith){
 				return 1;
 			};
 			
-			this.loadChunk=function(start, end) {
+			this.loadChunk=function(start, end, onComplete) {
 				$.ajax({
 			        url: settings.web_service_root + "regions/locations.json",
 			        type: 'GET',
@@ -247,6 +253,11 @@ if(!String.prototype.startsWith){
 			        			return;
 	                        }
 		        			
+			        		if (aleadyLoaded[feature.uniqueName]) {
+		        				return;
+	        				}
+			        		aleadyLoaded[feature.uniqueName] = 1;
+			        		
 		        			var actual_height  = 0;
 		        			
 		        			var coordsFmin = self.getGridCoordinate(feature.fmin);
@@ -254,12 +265,12 @@ if(!String.prototype.startsWith){
 		        			
 		        			var color = settings.mouseoutColor;
 		        			
-		        			if (aleadyLoaded[feature.uniqueName]) {
-		        				return;
-	        				}
+		        			var propcolor = feature.properties[0].value;
+		        			if (propcolor != null) {
+		        				color = "rgb(" + colours[propcolor] + ")";
+		        			}
 		        			
-		        			aleadyLoaded[feature.uniqueName] = 1;
-		        			
+		        					        			
 		        			var text = feature.uniqueName ;
 		        			
 		        			if (coordsFmin.row_number != coordsFmax.row_number) {
@@ -351,112 +362,141 @@ if(!String.prototype.startsWith){
 		        		
 		        		// $('chromosome_feature').fadeTo(500,0.5);
 		        		
-		        		self.loadColors();
+		        		//self.loadColors();
 		        		
 		        	
 			        	
-			        	
+		        		onComplete();	
 			        	
 			        }
+			        
+			        
+			        
 			    });
-			};
-			
-			this.loadColors = function() {
-				
-				var bin = [];
-				var n = 0;
-				var max = 20;
-				
-				$.each (aleadyLoaded, function(featureNameAsIndex, number) {
-					
-					
-					if (n > max) {
-						n = 0;
-						self.loadColorSet(bin);
-						bin = [];
-					}
-					
-					bin.push(featureNameAsIndex, featureNameAsIndex + ":pep");
-					
-					n++;
-					
-				});
-				
-				if (bin.length > 0) {
-					self.loadColorSet(bin);
-				}
 				
 			};
 			
-			this.loadColorSet=function(bin) {
-				$.ajax({
-					traditional : true, // we're sending non string delimited arrays here, and we don't want [] either.
-			        url: settings.web_service_root + "features/properties.json",
-			        type: 'GET',
-			        dataType: 'json',
-			        data: {
-			            'features' : bin,
-			            'types' : "colour"
-			        },
-			        success: function(features) {
-			        	
-			        	if (! features) {
-			        		return;
-			        	}
-			        	
-			        	$.each(features, function(index, feature) {
-			        		
-			        		var uniqueName = feature.uniqueName;
-			        		if (feature.uniqueName.contains(":pep")) {
-			        			uniqueName = feature.uniqueName.replace("\:pep", "");
-			        		} else if (feature.uniqueName.contains(":mRNA")) {
-			        			uniqueName = feature.uniqueName.replace("\:mRNA", "");
-			        		}
-			        		
-			        		var elements = $('.' + self.escapeClassName(uniqueName));
-			        		
-			        		if (elements.length > 0) {
-			        			
-			        			$.each(feature.properties, function(index, prop) {
-				        			if (prop.name == "colour") {
-				        				var colour = "rgb(" + colours[prop.value] + ")";
-				        				elements.css('backgroundColor', colour);
-				        				coloured = true;
-				        				return;
-				        			}
-				        		});
-			        			
-			        			//elements.css('opacity', 0.5);
-			        		}
-			        	});
-			        	
-			        }
-				});
-			};
+//			this.loadColors = function() {
+//				
+//				var bin = [];
+//				var n = 0;
+//				var max = 20;
+//				
+//				$.each (aleadyLoaded, function(featureNameAsIndex, number) {
+//					
+//					
+//					if (n > max) {
+//						n = 0;
+//						self.loadColorSet(bin);
+//						bin = [];
+//					}
+//					
+//					bin.push(featureNameAsIndex, featureNameAsIndex + ":pep");
+//					
+//					n++;
+//					
+//				});
+//				
+//				if (bin.length > 0) {
+//					self.loadColorSet(bin);
+//				}
+//				
+//			};
+			
+//			this.loadColorSet=function(bin) {
+//				$.ajax({
+//					traditional : true, // we're sending non string delimited arrays here, and we don't want [] either.
+//			        url: settings.web_service_root + "features/properties.json",
+//			        type: 'GET',
+//			        dataType: 'json',
+//			        data: {
+//			            'features' : bin,
+//			            'types' : "colour"
+//			        },
+//			        success: function(features) {
+//			        	
+//			        	if (! features) {
+//			        		return;
+//			        	}
+//			        	
+//			        	$.each(features, function(index, feature) {
+//			        		
+//			        		var uniqueName = feature.uniqueName;
+//			        		if (feature.uniqueName.contains(":pep")) {
+//			        			uniqueName = feature.uniqueName.replace("\:pep", "");
+//			        		} else if (feature.uniqueName.contains(":mRNA")) {
+//			        			uniqueName = feature.uniqueName.replace("\:mRNA", "");
+//			        		}
+//			        		
+//			        		var elements = $('.' + self.escapeClassName(uniqueName));
+//			        		
+//			        		if (elements.length > 0) {
+//			        			
+//			        			$.each(feature.properties, function(index, prop) {
+//				        			if (prop.name == "colour") {
+//				        				var colour = "rgb(" + colours[prop.value] + ")";
+//				        				elements.css('backgroundColor', colour);
+//				        				coloured = true;
+//				        				return;
+//				        			}
+//				        		});
+//			        			
+//			        			//elements.css('opacity', 0.5);
+//			        		}
+//			        	});
+//			        	
+//			        }
+//				});
+//			};
+			
+//			function setColor(feature) {
+//				var uniqueName = feature.uniqueName;
+//        		if (feature.uniqueName.contains(":pep")) {
+//        			uniqueName = feature.uniqueName.replace("\:pep", "");
+//        		} else if (feature.uniqueName.contains(":mRNA")) {
+//        			uniqueName = feature.uniqueName.replace("\:mRNA", "");
+//        		}
+//        		
+//        		var elements = $('.' + self.escapeClassName(uniqueName));
+//        		
+//        		if (elements.length > 0) {
+//        			
+//        			$.each(feature.properties, function(index, prop) {
+//	        			if (prop.name == "colour") {
+//	        				var colour = "rgb(" + colours[prop.value] + ")";
+//	        				elements.css('backgroundColor', colour);
+//	        				coloured = true;
+//	        				return;
+//	        			}
+//	        		});
+//        			
+//        			//elements.css('opacity', 0.5);
+//        		}
+//			}
 			
 			
-			this.next = function() {
-				
-				this.reset();
-				base_position_start = base_position_start + settings.loading_interval;				
-				this.drawAxes(length, function() {
-					self.loadChunk(base_position_start, base_position_start + settings.loading_interval);
-				});
-			
-			};
-			
-			this.previous = function() {
-				
-				this.reset();
-				base_position_start = base_position_start - settings.loading_interval;
-				if (base_position_start < 0) {
-					base_position_start = 0;
-				}
-				this.drawAxes(length, function() {
-					self.loadChunk(base_position_start, base_position_start + settings.loading_interval);
-				});
-			
-			};
+//			this.next = function() {
+//				
+//				this.reset();
+//				base_position_start = base_position_start + settings.loading_interval;				
+//				this.drawAxes(length, function() {
+//					self.loadChunk(base_position_start, base_position_start + settings.loading_interval);
+//				});
+//			
+//			};
+//			
+//			this.previous = function() {
+//				
+//				this.reset();
+//				base_position_start = base_position_start - settings.loading_interval;
+//				if (base_position_start < 0) {
+//					base_position_start = 0;
+//				}
+//				this.drawAxes(length, function() {
+//					self.loadChunk(base_position_start, base_position_start + settings.loading_interval);
+//				});
+//			
+//			};
 			
 			this.init = function( options ) {
 				
@@ -504,11 +544,30 @@ if(!String.prototype.startsWith){
 				
 				this.loadSequence(settings, function(sequences) {
 					length = sequences[0].length;
-					if (settings.bases_per_row >= length) {
-						settings.bases_per_row = length * 5;
-					}
+//					if (settings.bases_per_row >= length) {
+//						settings.bases_per_row = length * 5;
+//					}
+					
+					var Chunker = function(chunks) {
+						var index = 0;
+						var self_chunker = this;
+						this.next = function () {
+							console.log("Loading chunk" + index);
+							if (index < chunks.length) {
+								var chunk = chunks[index];
+								index++;
+								self.loadChunk(chunk[0], chunk[1], self_chunker.next);
+							}
+						};
+					};
+					
 					self.drawAxes(length, function() {
-						self.loadChunk(base_position_start, base_position_start + settings.loading_interval);
+						var chunks = [];
+						for (var base_position = base_position_start; base_position <= length ; base_position += settings.loading_interval) {
+							//self.loadChunk(base_position, base_position + settings.loading_interval);
+							chunks.push([base_position, base_position + settings.loading_interval]);
+						}
+						new Chunker(chunks).next();
 					});
 				});
 				
@@ -536,7 +595,7 @@ if(!String.prototype.startsWith){
 	
 	$.fn.ChromosomeMap.defaults = {
 		'region' : 'Pf3D7_01',
-		'types' : 'gene,pseudogene,rRNA,snoRNA,snRNA,tRNA,miscRNA', 
+		'types' : 'polypeptide,rRNA,snoRNA,snRNA,tRNA,miscRNA', 
 		'bases_per_row' : 50000,
 		'row_height' : 50,
 		'row_width' : 800,
@@ -547,6 +606,7 @@ if(!String.prototype.startsWith){
 		'mouseoverFontColor' : "rgb(50,50,50)",
 		'mouseoutFontColor' : "rgb(0,0,0)",
 		'overideUseCanvas' : false,
+		'axisLabels' : true,
 		'click' : function(event) {
 			$.log(event);
 		},

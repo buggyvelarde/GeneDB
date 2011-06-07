@@ -922,7 +922,7 @@ e*2;b.animate(c,f,a.options.easing);for(e=1;e<l;e++)b.animate(i,f,a.options.easi
 b.dequeue()})})}})(jQuery);
 ;
 jQuery.extend({historyCurrentHash:undefined,historyCallback:undefined,historyIframeSrc:undefined,historyInit:function(callback,src){jQuery.historyCallback=callback;if(src)jQuery.historyIframeSrc=src;var current_hash=location.hash.replace(/\?.*$/,'');jQuery.historyCurrentHash=current_hash;if(jQuery.browser.msie){if(jQuery.historyCurrentHash==''){jQuery.historyCurrentHash='#';}
-jQuery("body").prepend('<iframe id="jQuery_history" style="display: none;"'+
+jQuery("body").append('<iframe id="jQuery_history" style="display: none;"'+
 (jQuery.historyIframeSrc?' src="'+jQuery.historyIframeSrc+'"':'')
 +'></iframe>');var ihistory=jQuery("#jQuery_history")[0];var iframe=ihistory.contentWindow.document;iframe.open();iframe.close();iframe.location.hash=current_hash;}
 else if(jQuery.browser.safari){jQuery.historyBackStack=[];jQuery.historyBackStack.length=history.length;jQuery.historyForwardStack=[];jQuery.lastHistoryLength=history.length;jQuery.isFirst=true;}

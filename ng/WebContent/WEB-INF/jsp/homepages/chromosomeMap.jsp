@@ -50,13 +50,14 @@
 
 $(function(){
 	$("#chromosome-container").ChromosomeMap({
-    	"region" : "${region}", 
-    	"overideUseCanvas" : true,
-    	'click' : function(event) {
+    	region : "${region}", 
+    	overideUseCanvas : true,
+    	loading_interval : 100000,
+    	click : function(event) {
     		if (event.target.title) {
     			window.location = getBaseURL() + "gene/" + event.target.title;
     		}
-       } 
+       }
     });
     
 });

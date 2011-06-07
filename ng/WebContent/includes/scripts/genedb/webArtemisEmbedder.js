@@ -2,8 +2,8 @@
 
 
 // reset these globally scoped arrays declared in web-artemis
-excludes = ['match_part', 'repeat_region', 'repeat_unit', 'direct_repeat', 'EST_match', 'region', 'contig' ];
-includes = ['gene', 'exon', 'polypeptide', 'mRNA', 'pseudogenic_transcript', 'pseudogene', 'nucleotide_match', 'pseudogenic_exon', 'gap', 'ncRNA', 'tRNA', 'five_prime_UTR', 'three_prime_UTR', 'polypeptide_motif'];
+//excludes = ['match_part', 'repeat_region', 'repeat_unit', 'direct_repeat', 'EST_match', 'region', 'contig' ];
+//includes = ['gene', 'exon', 'polypeptide', 'mRNA', 'pseudogenic_transcript', 'pseudogene', 'nucleotide_match', 'pseudogenic_exon', 'gap', 'ncRNA', 'tRNA', 'five_prime_UTR', 'three_prime_UTR', 'polypeptide_motif'];
 
 	
 var waLinkText = ["View" , "in a new window"];

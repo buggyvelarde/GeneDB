@@ -51,7 +51,8 @@ public class Polypeptide extends Region {
 	
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     
-
+	@Transient
+    private Transcript transcript;
     
 
     Polypeptide() {
@@ -66,8 +67,26 @@ public class Polypeptide extends Region {
     public Polypeptide(Organism organism, String uniqueName) {
         this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
-
     
+    @Transient
+    public Transcript getTranscript() {
+        if (transcript != null) {
+            return transcript;
+        }
+
+        for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
+            Feature transcriptFeature = relation.getObjectFeature();
+            if (transcriptFeature instanceof Transcript) {
+                transcript = (Transcript) transcriptFeature;
+                break;
+            }
+        }
+        if (transcript == null) {
+            logger.error(String.format("The polypeptide '%s' has no associated transcript", getUniqueName()));
+            return null;
+        }
+        return transcript;
+    }
     
 
     @Transient

@@ -134,6 +134,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/web-artemis/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/genedb/*</url-pattern>
     </servlet-mapping>
     <!--

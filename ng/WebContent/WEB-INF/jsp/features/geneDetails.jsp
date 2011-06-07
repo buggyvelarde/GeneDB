@@ -28,20 +28,24 @@ li {
 }
 </style>
 
-<div><ul><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
-<c:forEach var="transcript" items="${gene.transcripts}">
-    <li><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
-        <ul>
-        <c:forEach var="exon" items="${transcript.exons}">
-            <li><a href="./${exon.uniqueName}">${exon.uniqueName}</a></li>
-        </c:forEach>
-        </ul>
-       <li><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></li>
-    </li>
-</c:forEach>
-</ul></div>
+<div>
+	<a href="./${gene.uniqueName}">${gene.uniqueName}</a>
+	<c:forEach var="transcript" items="${gene.transcripts}">
+		<ul>
+			<li><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
+				<ul>
+					<c:forEach var="exon" items="${transcript.exons}">
+						<li><a href="./${exon.uniqueName}">${exon.uniqueName}</a>
+						</li>
+					</c:forEach>
+					<li><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></li>
+				</ul>
+			</li>
+		</ul>
+	</c:forEach>
+</div>
 
- 
+
 
 <h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
 <div id="col-4-1">
