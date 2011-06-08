@@ -60,9 +60,13 @@
             height:230px;
         }
         
-        #chromosome-container {
+        #chromosome-container, #chromosome-map-slider {
             margin-left:25px;
-            margin-top:-15px;
+            margin-top:35px;
+        }
+        
+        #chromosome-map-slider {
+            margin-top:-66px;
         }
     
         .chromosome_feature {
@@ -73,13 +77,6 @@
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/webArtemisEmbedder.js"/>"></script>
     <script>
         $(document).ready(function() { 
-        	embedWebArtemis(
-    			"${dto.topLevelFeatureUniqueName}", 
-    			"${dto.uniqueName}",
-    			"${dto.min-1000}",
-    			"${dto.max-dto.min +2000}", 
-    			"${wa}", 
-    			"/services");
         	
         	$("#chromosome-container").ChromosomeMap({
                 region : "${dto.topLevelFeatureUniqueName}", 
@@ -91,7 +88,37 @@
                 loading_interval : 100000,
                 axisLabels : false
             });
-
+        	
+        	
+        	$('#chromosome-map-slider').ChromosomeMapSlider({
+        		windowWidth : 870,
+        		max : "${dto.topLevelFeatureLength}", 
+        		observers : [new ChromosomeMapToWebArtemis()],
+        		pos : "${dto.min-1000}",
+        		width : "${dto.max-dto.min +2000}"
+        	});
+        	
+        	
+        	$('#webartemis').WebArtemis({
+                source : "${dto.topLevelFeatureUniqueName}",
+                start : "${dto.min-1000}",
+                bases : "${dto.max-dto.min +2000}",
+                showFeatureList : false,
+                width : 950,
+                directory : "${wa}",
+                showOrganismsList : false,
+                webService : "/services",
+                draggable : false,
+                mainMenu : false
+            });
+            
+            
+            setTimeout(function() { 
+                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver("${dto.topLevelFeatureUniqueName}", "${dto.min-1000}", "${dto.max-dto.min +2000}"));
+                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
+            }, 500);
+        	
+            
     	});
     </script>
    
@@ -113,19 +140,21 @@
 
 
 
+<div style="margin-top:15px;text-align:right">
+<span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
+ <a target="web-artemis" id="web-artemis-link">View<span style="color: rgb(139, 3, 27);"> Web Artemis </span>in a new window</a>
+</span>
+</div>
 
+<div id="chromosome-container"  ></div>
+<div id="chromosome-map-slider"  ></div>
 
 <div class="wacontainer">
     <div id="webartemis"></div>
 </div>
 
-<div id="chromosome-container"  ></div>
 
-<div style="text-align:right">
-<span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
- <a target="web-artemis" id="web-artemis-link">View<span style="color: rgb(139, 3, 27);"> Web Artemis </span>in a new window</a>
-</span>
-</div>
+
 
 
 

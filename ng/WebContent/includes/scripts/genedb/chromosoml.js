@@ -552,7 +552,7 @@ if(!String.prototype.startsWith){
 						var index = 0;
 						var self_chunker = this;
 						this.next = function () {
-							console.log("Loading chunk" + index);
+							//console.log("Loading chunk" + index);
 							if (index < chunks.length) {
 								var chunk = chunks[index];
 								index++;
@@ -618,8 +618,241 @@ if(!String.prototype.startsWith){
 	
 })(jQuery);
 
-
+(function($) {
 	
+	$.fn.ChromosomeMapSlider = function(arg) {
+			
+			var userArguments = arguments; 
+			
+			return this.each(function() {
+				
+				this.pos = 0;
+				this.width = 100;
+				
+				this.down = false;
+				
+				this.init = function(options) {
+			    	this.settings = $.extend({}, $.fn.ChromosomeMapSlider.defaults, options);
+					
+					$(this).append("<div class='chromosomeMapSliderButton'></div>");
+					
+					$(this)
+						.css('position' , 'relative')
+						.css('width', this.settings.windowWidth)
+						.css('height', this.settings.windowHeight);
+						
+					
+					$('.chromosomeMapSliderButton')
+						.css('position', 'absolute')
+						.css('height', this.settings.windowHeight)
+						.css('border', this.settings.border);
+						//.css('zIndex' , $(this).css('zIndex') - 100);
+					
+					$('.chromosomeMapSliderButton').bind('dragstart', function(event) {
+					    event.preventDefault();
+					});
+
+					
+					$('.chromosomeMapSliderButton').hover(
+						function(e) {
+							
+							$(".chromosomeMapSliderButton").stop(true, true).animate({
+								borderTopColor: "#FF0000",
+								borderBottomColor: "#FF0000",
+								borderLeftColor: "#FF0000",
+								borderRightColor: "#FF0000"
+							}, 'fast');
+						},
+						function(e) {
+							
+							if (this.down) {
+								return;
+							}
+							$(".chromosomeMapSliderButton").stop(true, true).animate({
+								borderTopColor: "#000",
+								borderBottomColor: "#000",
+								borderLeftColor: "#000",
+								borderRightColor: "#000"
+							}, 'slow');
+						}
+					);
+					
+					this.pos = parseInt(this.settings.pos);
+					this.width = parseInt(this.settings.width);
+					this.set(this.pos,this.width);
+					
+					$(this).mousedown(function(event) {
+						this.notify('down');
+						this.down = true;
+					});
+					
+					$(this).mouseup(function(event) {
+						this.notify('up');
+						if (this.down) {
+							this.redraw(event.pageX - this.offsetLeft);
+						}
+						this.down = false;
+						
+					});
+					
+					$(this).mousemove(function(event) {
+						if (this.down) {
+							this.redraw(event.pageX - this.offsetLeft);
+						}
+					});
+					
+			    };
+			    
+			    this.redraw=function(x) {
+			    	
+			    	this.pos = this.windowWindowToPos(x) - parseInt(this.width / 2);
+					//var winWidth = this.posToWindow(this.width);
+					
+					this.set(this.pos,this.width);
+					
+					//console.log("?", x, winWidth);
+					//this.setUsingWindowCoordinates(x,winWidth);
+					this.notify('move',this.pos,this.width);
+					this.down = true;
+			    };
+			    
+			    this.notify = function() {
+			    	var notificationArgs = arguments;
+			    	$.each(this.settings.observers, function(n,observer) {
+			    		observer[notificationArgs[0]].apply(this, Array.prototype.slice.call(notificationArgs, 1));
+			    	});
+			    	
+			    };
+			    
+			    this.windowWindowToPos=function(value) {
+			    	var scaledValue = value / this.settings.windowWidth;
+			    	var pos = (scaledValue * (this.settings.max - this.settings.min)) - this.settings.min;
+			    	//console.log([value, this.settings.windowWidth,scaledValue, pos]);
+			    	return parseInt(pos);
+			    };
+			    
+			    this.posToWindow=function(value) {
+			    	var scaledValue = (value + this.settings.min) / (this.settings.max - this.settings.min);
+			    	//console.log(scaledValue);
+			    	var windowValue = scaledValue * this.settings.windowWidth;
+			    	return windowValue;
+			    };
+			    
+			    
+			    /**
+			     * The only public method (other than init). 
+			     */
+			    this.set = function(start,witdh) {
+			    	this.pos = parseInt(start);
+			    	this.width = parseInt(witdh);
+			    	
+			    	var wStart = this.posToWindow(start);
+			    	var wWidth = this.posToWindow(witdh) ;
+			    	//console.log([start,witdh,wStart,wWidth]);
+			    	//console.log("!", this.pos,this.width);
+			    	this.setUsingWindowCoordinates(wStart,wWidth);
+			    	
+			    	
+			    };
+			    
+			    this.setUsingWindowCoordinates = function(start,width) {
+			    	
+			    	//console.log(":", start,width);
+			    	
+			    	$('.chromosomeMapSliderButton')
+			    		.css('left' , start)
+			    		.css('width', width);
+			    	
+			    };
+				
+			    /**
+			     * Public methods.
+			     */
+				var methods = {
+				    init:this.init,
+				    set:this.set
+				};
+				
+				
+				if (methods[arg]) {
+					return methods[arg].apply(this, Array.prototype.slice.call(userArguments, 1));
+				} else if (typeof arg === 'object' || !arg) {
+					// we don't pass the arguments of this inner function, but instead the ones sent to the ChromosomeMap
+					return methods.init.apply(this, [arg]);
+				} 
+			
+			});
+		
+	};
+	
+	
+	
+	$.fn.ChromosomeMapSlider.defaults = {
+		border : '1px solid black',
+		windowWidth : 500,
+		windowHeight :20,
+		buttonMinWidth : 20,
+		min : 1,
+		max : 100,
+		pos : 1,
+		width : 100,
+		observers : []
+	};
+	
+	
+	
+})(jQuery);
+
+
+/**
+ * Observes the chromosome map, reporting any changes to Web-Artemis.
+ * @returns {ChromosomeMapToWebArtemis}
+ */
+function ChromosomeMapToWebArtemis() {
+	
+	this.move = function(leftBase, bases) {
+		var fDisplay = featureDisplayObjs[0];
+        fDisplay.leftBase = leftBase;
+        fDisplay.basesDisplayWidth = bases;
+        drawAndScroll(fDisplay, fDisplay.lastLeftBase); 
+        $('#slider'+fDisplay.index).slider('option', 'value', leftBase);
+        
+	};
+	
+	this.down = function() {
+		var fDisplay = featureDisplayObjs[0];
+		fDisplay.minimumDisplay = true;
+	};
+	
+	this.up = function() {
+		var fDisplay = featureDisplayObjs[0];
+        fDisplay.minimumDisplay = false;
+	};
+};
+
+
+/**
+ * Observes Web-Artemis, reporting any changes to the chromosome map.
+ * @param selector
+ * @returns {WebArtemisToChromosomeMap}
+ */
+function WebArtemisToChromosomeMap(selector) {
+    this.redraw = function redraw(start, end) {
+        $(selector).ChromosomeMapSlider('set', start, end - start);
+    };
+    this.select = function(feature, fDisplay) {};
+};
+
+
+
+
+
+
+
+
+
+
+
 /**
  * 
  * A simple chromosome picker. Uses buttons.

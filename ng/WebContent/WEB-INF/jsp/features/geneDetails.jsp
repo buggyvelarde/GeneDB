@@ -28,7 +28,7 @@ li {
 }
 </style>
 
-<div>
+<%-- <div>
 	<a href="./${gene.uniqueName}">${gene.uniqueName}</a>
 	<c:forEach var="transcript" items="${gene.transcripts}">
 		<ul>
@@ -43,7 +43,7 @@ li {
 			</li>
 		</ul>
 	</c:forEach>
-</div>
+</div> --%>
 
 
 
