@@ -697,7 +697,9 @@ if(!String.prototype.startsWith){
 					
 					$(this).mousemove(function(event) {
 						if (this.down) {
-							this.redraw(event.pageX - this.offsetLeft);
+							//this.redraw(event.pageX - this.offsetLeft);
+							this.pos = this.windowWindowToPos(event.pageX - this.offsetLeft) - parseInt(this.width / 2);
+							this.set(this.pos,this.width);
 						}
 					});
 					
