@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:header title="Chromosome view" />
 <format:page>
-<script type="text/javascript" src="<misc:url value="/includes/scripts/jquery/Modernizr.js"/>"></script>
+
 <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
 
 

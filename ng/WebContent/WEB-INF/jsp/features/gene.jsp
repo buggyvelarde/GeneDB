@@ -50,25 +50,49 @@
             height:230px;
         }
         
-        #chromosome-container, #chromosome-map-slider {
-            margin-left:25px;
-            margin-top:35px;
-        }
-        
-        #chromosome-map-slider {
-            margin-top:-66px;
-        }
-    
         .chromosome_feature {
             border:0px;
         }
+        
+        #chromosome-map-container {
+            margin-top:30px;
+        }
+        
+        #chromosome-map {
+            margin-left:25px;
+        }
+        
+        #chromosome-map-slider-container {
+            margin-top:-66px;
+            height:22px;
+            margin-left:25px;
+        }
+        
+        #chromosome-map-background {
+            height:22px;
+            margin-top:-66px;
+            background:rgb(240,240,228);
+            float:left;
+            width:100%;
+            margin-top:-7px;
+        } 
+        
         
     </style>
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
     <script>
         $(document).ready(function() { 
         	
-        	$("#chromosome-container").ChromosomeMap({
+        	var topLevelFeatureLength = parseInt("${dto.topLevelFeatureLength}");
+            var max = 100000;
+            var needsSlider = true;
+            if (max > topLevelFeatureLength) {
+                max = topLevelFeatureLength;
+                needsSlider = false;
+            }
+            var zoomMaxRatio = max / parseInt("${dto.topLevelFeatureLength}");
+        	
+        	$("#chromosome-map").ChromosomeMap({
                 region : "${dto.topLevelFeatureUniqueName}", 
                 overideUseCanvas : false,
                 bases_per_row: parseInt("${dto.topLevelFeatureLength}"),
@@ -78,15 +102,6 @@
                 loading_interval : 100000,
                 axisLabels : false
             });
-        	
-        	
-        	$('#chromosome-map-slider').ChromosomeMapSlider({
-        		windowWidth : 870,
-        		max : "${dto.topLevelFeatureLength}", 
-        		observers : [new ChromosomeMapToWebArtemis()],
-        		pos : "${dto.min-1000}",
-        		width : "${dto.max-dto.min +2000}"
-        	});
         	
         	$('#webartemis').WebArtemis({
                 source : "${dto.topLevelFeatureUniqueName}",
@@ -99,14 +114,24 @@
                 webService : "/services",
                 draggable : false,
                 mainMenu : false, 
-                zoomMaxRatio : 100000 / parseInt("${dto.topLevelFeatureLength}")
+                zoomMaxRatio : zoomMaxRatio
             });
             
-            
-            setTimeout(function() { 
-                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver("${dto.topLevelFeatureUniqueName}", "${dto.min-1000}", "${dto.max-dto.min +2000}"));
-                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
-            }, 500);
+        	if (needsSlider) {
+        		
+        		$('#chromosome-map-slider').ChromosomeMapSlider({
+                    windowWidth : 870,
+                    max : parseInt("${dto.topLevelFeatureLength}"), 
+                    observers : [new ChromosomeMapToWebArtemis()],
+                    pos : "${dto.min-1000}",
+                    width : "${dto.max-dto.min +2000}"
+                });
+        		
+	            setTimeout(function() { 
+	                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver("${dto.topLevelFeatureUniqueName}", "${dto.min-1000}", "${dto.max-dto.min +2000}"));
+	                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
+	            }, 500);
+        	}
         	
             
     	});
@@ -121,7 +146,7 @@
 </div> --%>
 
 
-<div id="col-2-1">
+
 <div id="navigatePages">
     <query:navigatePages />
 </div>
@@ -135,8 +160,16 @@
 </span>
 </div>
 
-<div id="chromosome-container"  ></div>
-<div id="chromosome-map-slider"  ></div>
+
+<div id="chromosome-map-container"  >
+    <div id="chromosome-map-background"></div>
+    <div id="chromosome-map" ></div> 
+    <div id="chromosome-map-slider-container">
+        <div id="chromosome-map-slider"   ></div>
+    </div>
+</div>
+
+<br class="clear">
 
 <div class="wacontainer">
     <div id="webartemis"></div>
@@ -152,7 +185,6 @@
     <jsp:include page="geneDetails.jsp"/>
 </div>
 
-</div>
 
  
 

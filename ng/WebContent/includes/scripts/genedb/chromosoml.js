@@ -628,24 +628,29 @@ if(!String.prototype.startsWith){
 				
 				this.pos = 0;
 				this.width = 100;
-				
 				this.down = false;
+				
+				var self = this;
 				
 				this.init = function(options) {
 			    	this.settings = $.extend({}, $.fn.ChromosomeMapSlider.defaults, options);
 					
-					$(this).append("<div class='chromosomeMapSliderButton'></div>");
 					
 					$(this)
 						.css('position' , 'relative')
+						.css('cursor', 'pointer')
 						.css('width', this.settings.windowWidth)
 						.css('height', this.settings.windowHeight);
-						
+					
+					$(this).append("<div class='chromosomeMapSliderButton'></div>");
+					
 					
 					$('.chromosomeMapSliderButton')
 						.css('position', 'absolute')
-						.css('height', this.settings.windowHeight)
-						.css('border', this.settings.border);
+						.css('height', this.settings.windowHeight -2)
+						.css('border', '1px solid')
+						.css('cursor', 'move')
+						.css('borderColor', this.settings.border);
 						//.css('zIndex' , $(this).css('zIndex') - 100);
 					
 					$('.chromosomeMapSliderButton').bind('dragstart', function(event) {
@@ -656,11 +661,11 @@ if(!String.prototype.startsWith){
 					$('.chromosomeMapSliderButton').hover(
 						function(e) {
 							
-							$(".chromosomeMapSliderButton").stop(true, true).animate({
-								borderTopColor: "#FF0000",
-								borderBottomColor: "#FF0000",
-								borderLeftColor: "#FF0000",
-								borderRightColor: "#FF0000"
+							$(".chromosomeMapSliderButton").stop().animate({
+								borderTopColor: self.settings.borderHover,
+								borderBottomColor: self.settings.borderHover,
+								borderLeftColor: self.settings.borderHover,
+								borderRightColor: self.settings.borderHover
 							}, 'fast');
 						},
 						function(e) {
@@ -668,11 +673,12 @@ if(!String.prototype.startsWith){
 							if (this.down) {
 								return;
 							}
-							$(".chromosomeMapSliderButton").stop(true, true).animate({
-								borderTopColor: "#000",
-								borderBottomColor: "#000",
-								borderLeftColor: "#000",
-								borderRightColor: "#000"
+							
+							$(".chromosomeMapSliderButton").stop().animate({
+								borderTopColor: self.settings.border,
+								borderBottomColor: self.settings.border,
+								borderLeftColor: self.settings.border,
+								borderRightColor: self.settings.border
 							}, 'slow');
 						}
 					);
@@ -684,6 +690,7 @@ if(!String.prototype.startsWith){
 					$(this).mousedown(function(event) {
 						this.notify('down');
 						this.down = true;
+						$(this).css('cursor', 'move');
 					});
 					
 					$(this).mouseup(function(event) {
@@ -692,7 +699,7 @@ if(!String.prototype.startsWith){
 							this.redraw(event.pageX - this.offsetLeft);
 						}
 						this.down = false;
-						
+						$(this).css('cursor', 'pointer');
 					});
 					
 					$(this).mousemove(function(event) {
@@ -748,8 +755,18 @@ if(!String.prototype.startsWith){
 			    	this.pos = parseInt(start);
 			    	this.width = parseInt(witdh);
 			    	
-			    	var wStart = this.posToWindow(start);
-			    	var wWidth = this.posToWindow(witdh) ;
+//			    	if (this.pos < this.settings.min) {
+//			    		this.pos = this.settings.min; 
+//			    	}
+//			    	
+//			    	if (this.width > this.settings.max) {
+//			    		this.width = this.settings.max; 
+//			    	}
+//			    	
+//			    	console.log([start,witdh,this.pos,this.width,this.settings.min,this.settings.max]);
+			    	
+			    	var wStart = this.posToWindow(this.pos);
+			    	var wWidth = this.posToWindow(this.width) ;
 			    	//console.log([start,witdh,wStart,wWidth]);
 			    	//console.log("!", this.pos,this.width);
 			    	this.setUsingWindowCoordinates(wStart,wWidth);
@@ -758,6 +775,12 @@ if(!String.prototype.startsWith){
 			    };
 			    
 			    this.setUsingWindowCoordinates = function(start,width) {
+			    	
+			    	//console.log(":", start,width);
+			    	
+			    	if (width < this.settings.minButtonWidth) {
+			    		width = this.settings.minButtonWidth;
+			    	}
 			    	
 			    	//console.log(":", start,width);
 			    	
@@ -790,10 +813,11 @@ if(!String.prototype.startsWith){
 	
 	
 	$.fn.ChromosomeMapSlider.defaults = {
-		border : '1px solid black',
+		border : "rgb(0,53,130)",
+		borderHover : "rgb(192,0,8)",
 		windowWidth : 500,
-		windowHeight :20,
-		buttonMinWidth : 20,
+		windowHeight : 22,
+		minButtonWidth : 1,
 		min : 1,
 		max : 100,
 		pos : 1,
