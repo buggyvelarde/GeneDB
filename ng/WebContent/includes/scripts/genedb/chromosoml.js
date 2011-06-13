@@ -697,9 +697,9 @@ if(!String.prototype.startsWith){
 					
 					$(this).mousemove(function(event) {
 						if (this.down) {
-							//this.redraw(event.pageX - this.offsetLeft);
-							this.pos = this.windowWindowToPos(event.pageX - this.offsetLeft) - parseInt(this.width / 2);
-							this.set(this.pos,this.width);
+							this.redraw(event.pageX - this.offsetLeft);
+							//this.pos = this.windowWindowToPos(event.pageX - this.offsetLeft) - parseInt(this.width / 2);
+							//this.set(this.pos,this.width);
 						}
 					});
 					
@@ -818,7 +818,6 @@ function ChromosomeMapToWebArtemis() {
         fDisplay.basesDisplayWidth = bases;
         drawAndScroll(fDisplay, fDisplay.lastLeftBase); 
         $('#slider'+fDisplay.index).slider('option', 'value', leftBase);
-        
 	};
 	
 	this.down = function() {

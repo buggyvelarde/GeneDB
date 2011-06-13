@@ -7,23 +7,13 @@
 <misc:url value="/includes/scripts/web-artemis" var="wa"/>
 <misc:url value="/" var="base"/>
 
-<!--<script language="javascript" type="text/javascript" src="<misc:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
---><%-- <script language="javascript" type="text/javascript" src="<misc:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
- --%>
-
-
 <format:header title="Feature: ${dto.uniqueName}">
-
- 
-    
+        
 	<link rel="stylesheet" type="text/css" href="${wa}/css/superfish.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="${wa}/css/tablesorter.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="${wa}/js/jquery.contextMenu-1.01/jquery.contextMenu.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="${wa}/css/artemis.css" media="screen">
     
-    <%-- <script type="text/javascript" src="${wa}/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="${wa}/js/jquery-ui-1.8.4.custom.min.js"></script>
-     --%>
     <script type="text/javascript" src="${wa}/js/jquery.drawinglibrary/js/jquery.svg.js"></script>
     <script type="text/javascript" src="${wa}/js/jquery.drawinglibrary/js/jquery.drawinglibrary.js"></script>
     <script type="text/javascript" src="${wa}/js/jquery.flot.min.js"></script>
@@ -74,7 +64,7 @@
         }
         
     </style>
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/webArtemisEmbedder.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
     <script>
         $(document).ready(function() { 
         	
@@ -98,7 +88,6 @@
         		width : "${dto.max-dto.min +2000}"
         	});
         	
-        	
         	$('#webartemis').WebArtemis({
                 source : "${dto.topLevelFeatureUniqueName}",
                 start : "${dto.min-1000}",
@@ -109,7 +98,8 @@
                 showOrganismsList : false,
                 webService : "/services",
                 draggable : false,
-                mainMenu : false
+                mainMenu : false, 
+                zoomMaxRatio : 100000 / parseInt("${dto.topLevelFeatureLength}")
             });
             
             
@@ -122,7 +112,6 @@
     	});
     </script>
    
-<%-- initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFeatureUniqueName}', ${dto.topLevelFeatureLength}, ${dto.min}, ${dto.max}, '${dto.uniqueName}'); --%>
 
 <format:page >
 

@@ -43,17 +43,3 @@ function GeneDBPageWebArtemisObserver(source,start,bases) {
     changeLink(source,start,bases);
 };
 
-
-function embedWebArtemis(source,uniqueName,start,bases,directory,webService, webArtemisObserver) {
-	
-	
-	
-    	
-    	
-    
-    
-    
-}
-
-
- 
