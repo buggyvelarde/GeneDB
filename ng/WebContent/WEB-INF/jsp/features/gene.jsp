@@ -35,6 +35,7 @@
     <script type="text/javascript" src="${wa}/js/zoom.js"></script>
     <script type="text/javascript" src="${wa}/js/featureCvTerm.js"></script>
     <script type="text/javascript" src="${wa}/js/bam.js"></script>
+    <script type="text/javascript" src="${wa}/js/vcf.js"></script>
     <script type="text/javascript" src="${wa}/js/featureList.js"></script>
     <script type="text/javascript" src="${wa}/js/navigate.js"></script>
     <script type="text/javascript" src="${wa}/js/genome.js"></script>
@@ -48,6 +49,9 @@
         div.wacontainer {
             position:relative;
             height:230px;
+            margin:0px;
+            padding:0px;
+            margin-top:-25px;
         }
         
         .chromosome_feature {
@@ -55,27 +59,16 @@
         }
         
         #chromosome-map-container {
-            margin-top:30px;
-        }
-        
-        #chromosome-map {
+            margin-top:15px;
             margin-left:25px;
         }
         
-        #chromosome-map-slider-container {
-            margin-top:-66px;
+        #chromosome-map-slider {
+            margin-top:-26px;
             height:22px;
-            margin-left:25px;
+            z-index:100;
         }
         
-        #chromosome-map-background {
-            height:22px;
-            margin-top:-66px;
-            background:rgb(240,240,228);
-            float:left;
-            width:100%;
-            margin-top:-7px;
-        } 
         
         
     </style>
@@ -88,7 +81,7 @@
             var needsSlider = true;
             if (max > topLevelFeatureLength) {
                 max = topLevelFeatureLength;
-                needsSlider = false;
+                //needsSlider = false;
             }
             var zoomMaxRatio = max / parseInt("${dto.topLevelFeatureLength}");
         	
@@ -100,7 +93,8 @@
                 row_width : 870,
                 overideUseCanvas : true,
                 loading_interval : 100000,
-                axisLabels : false
+                axisLabels : false,
+                row_vertical_space_sep : 10
             });
         	
         	$('#webartemis').WebArtemis({
@@ -133,6 +127,15 @@
 	            }, 500);
         	}
         	
+        	$('.wacontainer').hover(
+        		function(e) {
+        			$("#web-artemis-link-container").show();        			
+        		}, function(e) {
+        			$("#web-artemis-link-container").hide();
+        		}
+        	);
+        	
+        	
             
     	});
     </script>
@@ -154,25 +157,19 @@
 
 
 
-<div style="margin-top:15px;text-align:right">
-<span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
- <a target="web-artemis" id="web-artemis-link">View<span style="color: rgb(139, 3, 27);"> Web Artemis </span>in a new window</a>
-</span>
-</div>
+
 
 
 <div id="chromosome-map-container"  >
-    <div id="chromosome-map-background"></div>
-    <div id="chromosome-map" ></div> 
-    <div id="chromosome-map-slider-container">
-        <div id="chromosome-map-slider"   ></div>
-    </div>
+    <div id="chromosome-map" ></div>
+    <div id="chromosome-map-slider" ></div> 
 </div>
-
-<br class="clear">
 
 <div class="wacontainer">
     <div id="webartemis"></div>
+    <div id="web-artemis-link-container" style="display:none;position:absolute;right:20px;top:30px;">
+         <a title="View this region in a new Web-Artemis window" target="web-artemis" id="web-artemis-link"><span style="color: rgb(139, 3, 27);"><img src="<misc:url value="/includes/image/popup-web-artemis.png"/>" border="0"></span></a>
+    </div>
 </div>
 
 
