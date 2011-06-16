@@ -32,11 +32,12 @@ import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Configurable
-public abstract class HqlQuery implements Query {
+public abstract class HqlQuery implements PagedQuery {
 	
 	private static final Logger logger = Logger.getLogger(HqlQuery.class);
 	
@@ -61,40 +62,121 @@ public abstract class HqlQuery implements Query {
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
-
+    
+    protected String featureSelector = "f.uniqueName";
+    protected String countSelector = "count(*)";
+    
     public String getParseableDescription() {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
+    
+    @Override
+	public List<String> getResults() throws QueryException {
+		
+		Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
-    protected List runQuery() {
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
-
-        String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
+		Map<String,String> map = new HashMap<String,String>();
+        map.put("ORGANISM", getOrganismHql());
+        map.put("SELECTOR", featureSelector);
+        map.put("ORDERBY", getOrderBy());
+        
+        String hql = restrictQuery(getHql(), map);
         
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
         
         logger.debug(query.getQueryString());
-
-        //Set max result to prevent max memory error
-        query.setMaxResults(maxResults);
-
+        
         //Run query
-        List ret = query.list();
+        List<String> ret = query.setMaxResults(maxResults).list();
 
         //Get the result size
-        if (ret!= null && maxResults==ret.size()){
+        if (ret!= null && getMaxResults()==ret.size()){
             isActualResultSizeSameAsMax = true;
         }
 
         return ret;
-    }
+		
+	}
+    
+    
+    @Override
+	public List<String> getResults(int start, int end) throws QueryException {
+		
+		Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+
+		Map<String,String> map = new HashMap<String,String>();
+        map.put("ORGANISM", getOrganismHql());
+        map.put("SELECTOR", featureSelector);
+        map.put("ORDERBY", getOrderBy());
+        
+        String hql = restrictQuery(getHql(), map);
+        
+        org.hibernate.Query query = session.createQuery(hql);
+        populateQueryWithParams(query);
+        
+        logger.debug(query.getQueryString());
+        
+        //int start = page * length;
+        
+        logger.info(getQueryName() + " getResults() paging " + start + "-" + end);
+        
+        //Run query
+        @SuppressWarnings("unchecked")
+		List<String> ret = query.setFirstResult(start).setMaxResults(end-start).list();
+
+        //Get the result size
+        if (ret!= null && getMaxResults()==ret.size()){
+            isActualResultSizeSameAsMax = true;
+        }
+
+        return ret;
+		
+	}
+
+	@Override
+	public int getTotalResultsSize() {
+		
+		Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+        
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("ORGANISM", getOrganismHql());
+        map.put("SELECTOR", countSelector);
+        map.put("ORDERBY", "");// we don't use order by here
+        
+        String hql = restrictQuery(getHql(), map);
+        
+        org.hibernate.Query query = session.createQuery(hql);
+        populateQueryWithParams(query);
+        
+        logger.debug(query.getQueryString());
+        
+        long longCount = (Long) query.uniqueResult();
+        
+        if (longCount < Integer.MIN_VALUE || longCount > Integer.MAX_VALUE) {
+        	throw new IllegalArgumentException(longCount + " cannot be cast to int without changing its value.");
+        }
+        
+        int count = (int) longCount;
+        
+        logger.info(String.format("%d == %d", longCount, count));
+        
+        return count;
+
+	}
 
     @Override
     public boolean isMaxResultsReached() {
         return isActualResultSizeSameAsMax;
     }
-
+    
+    protected String restrictQuery(String hql, Map<String,String> map) {
+    	for (String key : map.keySet()) {
+    		hql = hql.replace("@" + key + "@", map.get(key));
+    	}
+    	return hql;
+    }
+    
     protected String restrictQueryByOrganism(String hql, String organismClause) {
         if (!StringUtils.hasLength(organismClause)) {
             return hql.replace("@ORGANISM@", "");
@@ -104,15 +186,13 @@ public abstract class HqlQuery implements Query {
 
     protected abstract void populateQueryWithParams(org.hibernate.Query query);
 
-    public List getResults() throws QueryException {
-        return runQuery();
-    }
-
     protected abstract String getHql();
 
     protected abstract String getOrganismHql();
 
     protected abstract String[] getParamNames();
+    
+    protected abstract String getOrderBy();
 
     public List<HtmlFormDetails> getFormDetails() {
         List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();

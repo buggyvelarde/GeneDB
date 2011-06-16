@@ -569,11 +569,16 @@ public class DTOFactory {
 		Organism org = feature.getOrganism();
 		List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
 		
-		Long count = sequenceDao.getFeatureCvTermCountInOrganism(cvNamePrefix, org);
+		
 		
 		for (FeatureCvTerm featureCvTerm : feature
 				.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
 			FeatureCvTermDTO fctd = new FeatureCvTermDTO(featureCvTerm);
+			
+			Long count = sequenceDao.getFeatureCvTermCountInOrganism(fctd.getTypeName(), org);
+			logger.warn(cvNamePrefix + "! " + fctd.getTypeName()  + " - count : " + count);
+			
+			
 			fctd.setCount(count);
 			dtos.add(fctd);
 		}

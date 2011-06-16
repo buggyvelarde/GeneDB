@@ -1,6 +1,7 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.LuceneQuery;
+import org.genedb.querying.core.QueryException;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -28,35 +29,7 @@ public class IdsToGeneDetailQuery extends LuceneQuery {
         return "Ids2BasketEntry";
     }
 	
-	@Override
-	protected GeneDetail convertDocumentToReturnType(Document document) {
-		
-		String location = document.get("start") + " - " + document.get("stop");
-		
-		int strand = Integer.parseInt(document.get("strand"));
-		if (strand < 0) {
-			location += " (reverse strand)";
-		}
-		
-		List<String> synonyms = new ArrayList<String>();
-		for (Field field : document.getFields("synonym")) {
-			synonyms.add(field.stringValue());
-		}
-		
-		
-		GeneDetail ret = new GeneDetail(
-            document.get("uniqueName"), 
-            document.get("organism.commonName"), 
-            document.get("product"), 
-            document.get("chr"), 
-            location,
-            synonyms,
-            document.get("type.name"),
-            document.get("featureId"),
-            document.get("name")
-        );
-        return ret;
-	}
+	
 
 	@Override
 	protected void extraValidation(Errors errors) {
@@ -90,6 +63,40 @@ public class IdsToGeneDetailQuery extends LuceneQuery {
 
     public void setIds(List<String> ids) {
         this.ids = ids;
+    }
+    
+    protected Pager<GeneDetail> geneDetailPager = new Pager<GeneDetail>() {
+		@Override public GeneDetail convert(Document document) {
+			String location = document.get("start") + " - " + document.get("stop");
+			
+			int strand = Integer.parseInt(document.get("strand"));
+			if (strand < 0) {
+				location += " (reverse strand)";
+			}
+			
+			List<String> synonyms = new ArrayList<String>();
+			for (Field field : document.getFields("synonym")) {
+				synonyms.add(field.stringValue());
+			}
+			
+			
+			GeneDetail ret = new GeneDetail(
+	            document.get("uniqueName"), 
+	            document.get("organism.commonName"), 
+	            document.get("product"), 
+	            document.get("chr"), 
+	            location,
+	            synonyms,
+	            document.get("type.name"),
+	            document.get("featureId"),
+	            document.get("name")
+	        );
+	        return ret;
+		}
+	};
+	
+    public List<GeneDetail> getGeneDetails(int page, int length) throws QueryException {
+    	return geneDetailPager.getResults(page, length);
     }
     
 	

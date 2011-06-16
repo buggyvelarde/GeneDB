@@ -212,7 +212,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 	/**
 	 * This is an unpaged query to work out all the taxon matches.
 	 */
-	public QuickSearchQueryResults getQuickSearchQueryResults(int page, int length) throws QueryException {
+	public QuickSearchQueryResults getQuickSearchQueryResults() throws QueryException {
 		QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();
 		
 		// first get the paged gene summaries list

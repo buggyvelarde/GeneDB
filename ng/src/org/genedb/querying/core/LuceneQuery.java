@@ -77,22 +77,24 @@ public abstract class LuceneQuery implements PagedQuery {
     public abstract class Pager <T> {
     	abstract public T convert(Document doc);
     	
-    	public List<T> getResults(int page, int length) throws QueryException {
+    	public List<T> getResults(int start, int end) throws QueryException {
         	
         	List<T> res = new ArrayList<T>();
             try {
+            	
+            	logger.info(getQueryName() + " pager looking up in lucene");
                 TopDocs topDocs = lookupInLucene();
                 ScoreDoc[] scoreDocs = topDocs.scoreDocs;
                 
                 // while we have a handle on the scoredocs, let's store the total size
                 totalResultSize= scoreDocs.length;
                 
-                int start = page * length;
-                int end = start + length;
+//                int start = page * length;
+//                int end = start + length;
                 
                 int max = scoreDocs.length - 1;
                 
-                if (max <= 0) {
+                if (max < 0) {
                 	return res;
                 }
                 
@@ -100,9 +102,9 @@ public abstract class LuceneQuery implements PagedQuery {
                 	end = max;
                 }
                 
-                logger.info("Querying " + start + "-" +end);
+                logger.info(getQueryName() + " pager paging " + start + "-" +end + " of " + scoreDocs.length);
                 
-                for (int i = start; i < end; i++) {
+                for (int i = start; i <= end; i++) {
                 	ScoreDoc scoreDoc = scoreDocs[i];
                 	Document document = fetchDocument(scoreDoc.doc);
                 	res.add(convert(document));
@@ -112,6 +114,7 @@ public abstract class LuceneQuery implements PagedQuery {
                     isActualResultSizeSameAsMax = true;
                 }
                 
+                //logger.info(getQueryName() + " pager paged results for page " + page + ", length " +length + ", size : " + res.size());
                 return res;
             } catch (CorruptIndexException exp) {
                 throw new QueryException(exp);
@@ -122,17 +125,7 @@ public abstract class LuceneQuery implements PagedQuery {
         
     }
     
-    protected Pager<GeneSummary> geneSummaryPager = new Pager<GeneSummary>() {
-		@Override public GeneSummary convert(Document doc) {
-			return new GeneSummary(
-					doc.get("uniqueName"), // systematic
-					doc.get("organism.commonName"), // taxon-name,
-					doc.get("product"), // product
-					doc.get("chr"), // toplevename
-                    Integer.parseInt(doc.get("start")) // leftpos
-			);
-		}
-	};
+    
 	
 	protected Pager<String> uniqueNamePager = new Pager<String>() {
 		@Override public String convert(Document doc) {
@@ -140,11 +133,7 @@ public abstract class LuceneQuery implements PagedQuery {
 		}
 	};
     
-    @Override
-    public List<GeneSummary> getResultsSummaries(int page, int length) throws QueryException {
-    	return geneSummaryPager.getResults(page, length);
-    	
-    }
+
     
     @Override
     public List<String> getResults(int page, int length) throws QueryException {
@@ -165,39 +154,40 @@ public abstract class LuceneQuery implements PagedQuery {
 	}
 	
     
-    public <T extends Comparable<? super T>> List<T> getResults(Class<T> clazz) throws QueryException {
-        List<T> names = new ArrayList<T>();
-        try {
-            TopDocs topDocs = lookupInLucene();
-
-            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                Document document = fetchDocument(scoreDoc.doc);
-                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                //T t = convertDocumentToReturnType(document, clazz);
-                Object t = convertDocumentToReturnType(document);
-                names.add((T)t);
-            }
-            Collections.sort(names);
-            return names;
-        } catch (CorruptIndexException exp) {
-            throw new QueryException(exp);
-        } catch (IOException exp) {
-            throw new QueryException(exp);
-        }
-    }
+//    public <T extends Comparable<? super T>> List<T> getResults(Class<T> clazz) throws QueryException {
+//        List<T> names = new ArrayList<T>();
+//        try {
+//            TopDocs topDocs = lookupInLucene();
+//
+//            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+//                Document document = fetchDocument(scoreDoc.doc);
+//                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+//                //T t = convertDocumentToReturnType(document, clazz);
+//                Object t = convertDocumentToReturnType(document);
+//                names.add((T)t);
+//            }
+//            Collections.sort(names);
+//            return names;
+//        } catch (CorruptIndexException exp) {
+//            throw new QueryException(exp);
+//        } catch (IOException exp) {
+//            throw new QueryException(exp);
+//        }
+//    }
 
     @SuppressWarnings("unchecked")
-    public List getResults() throws QueryException {
-        List names = new ArrayList();
+    public List<String> getResults() throws QueryException {
+        List<String> names = new ArrayList();
         try {
             TopDocs topDocs = lookupInLucene();
 
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = fetchDocument(scoreDoc.doc);
-                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                //T t = convertDocumentToReturnType(document, clazz);
-                Object t = convertDocumentToReturnType(document);
-                names.add(t);
+//                doc.get("uniqueName");
+//                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+//                //T t = convertDocumentToReturnType(document, clazz);
+//                Object t = convertDocumentToReturnType(document);
+                names.add(document.get("uniqueName"));
             }
             Collections.sort(names);
 
@@ -220,7 +210,7 @@ public abstract class LuceneQuery implements PagedQuery {
 
 
     //    protected abstract <T> T convertDocumentToReturnType(Document document, Class<T> clazz);
-    protected abstract Object convertDocumentToReturnType(Document document);
+    //protected abstract Object convertDocumentToReturnType(Document document);
 
     protected abstract String[] getParamNames();
 

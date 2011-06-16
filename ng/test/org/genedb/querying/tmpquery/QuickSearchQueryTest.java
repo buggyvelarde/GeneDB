@@ -71,17 +71,17 @@ public class QuickSearchQueryTest {
     	
     	
     	
-    	QuickSearchQueryResults queryResults = quickSearchQuery.getQuickSearchQueryResults(0, 10);
+    	QuickSearchQueryResults queryResults = quickSearchQuery.getQuickSearchQueryResults();
     	
     	logger.info(queryResults);
     	
-    	List<GeneSummary> results = quickSearchQuery.getResultsSummaries(0, 10);
+    	List<String> results = quickSearchQuery.getResults(0, 10);
     	
     	logger.info(queryResults.getQuickResultType());
     	
     	logger.info("Fetching results in " + results + "???????");
         
-    	for (GeneSummary result : results) {
+    	for (String result : results) {
     		logger.info(result);
     	}
     }

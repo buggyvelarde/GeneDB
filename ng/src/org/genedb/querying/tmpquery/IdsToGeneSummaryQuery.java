@@ -1,22 +1,28 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.LuceneQuery;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.LuceneQuery.Pager;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.validation.Errors;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IdsToGeneSummaryQuery extends LuceneQuery {
 
     private List<String> ids;
 
-    @Override
-    protected GeneSummary convertDocumentToReturnType(Document document) {
+    protected GeneSummary getGeneSummary(Document document) {
         GeneSummary ret = new GeneSummary(
                 document.get("uniqueName"), // systematic
                 document.get("organism.commonName"), // taxon-name,
@@ -69,6 +75,46 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
 
     public void setIds(List<String> ids) {
         this.ids = ids;
+    }
+    
+    protected GeneSummary docToGeneSummary(Document doc) {
+		return new GeneSummary(
+				doc.get("uniqueName"), // systematic
+				doc.get("organism.commonName"), // taxon-name,
+				doc.get("product"), // product
+				doc.get("chr"), // toplevename
+                Integer.parseInt(doc.get("start")) // leftpos
+		);
+    }
+    
+    protected Pager<GeneSummary> geneSummaryPager = new Pager<GeneSummary>() {
+		@Override public GeneSummary convert(Document doc) {
+			return docToGeneSummary(doc);
+		}
+	};
+	
+    public List<GeneSummary> getResultsSummaries(int page, int length) throws QueryException {
+    	return geneSummaryPager.getResults(page, length);
+    }
+    
+    public List<GeneSummary> getResultsSummaries() throws QueryException {
+    	
+    	List<GeneSummary> summaries= new ArrayList<GeneSummary>();
+    	
+        TopDocs topDocs = lookupInLucene();
+        
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+        	try {
+				summaries.add(
+						docToGeneSummary(
+								fetchDocument(scoreDoc.doc)));
+			} catch (CorruptIndexException e) {
+				throw new QueryException(e);
+			} catch (IOException e) {
+				throw new QueryException(e);
+			}
+        }
+    	return summaries;
     }
     
 }

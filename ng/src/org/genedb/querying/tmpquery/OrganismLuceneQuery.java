@@ -105,17 +105,17 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
         queries.add(organismQuery);
     }
 
-    @Override
-    protected GeneSummary convertDocumentToReturnType(Document document) {
-        GeneSummary ret = new GeneSummary(
-                document.get("uniqueName"), // systematic
-                document.get("organism.commonName"), // taxon-name,
-                document.get("product"), // product
-                document.get("chr"), // toplevename
-                Integer.parseInt(document.get("start")) // leftpos
-                );
-        return ret;
-    }
+//    @Override
+//    protected GeneSummary convertDocumentToReturnType(Document document) {
+//        GeneSummary ret = new GeneSummary(
+//                document.get("uniqueName"), // systematic
+//                document.get("organism.commonName"), // taxon-name,
+//                document.get("product"), // product
+//                document.get("chr"), // toplevename
+//                Integer.parseInt(document.get("start")) // leftpos
+//                );
+//        return ret;
+//    }
 
 
     @Override

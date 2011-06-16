@@ -12,6 +12,7 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery.QuickSearchQueryResults;
@@ -372,10 +373,21 @@ public class RestController {
 	    	TaxonNodeList taxons = new TaxonNodeList(taxonNode);
 	
 	    	query.setTaxons(taxons);
-	
+	    	
+	    	List<String> ids = query.getResults(0, max);
+	    	
+	    	IdsToGeneSummaryQuery idsToGeneSummaryQuery = (IdsToGeneSummaryQuery) applicationContext.getBean("idsToGeneSummary", IdsToGeneSummaryQuery.class);
+	    	idsToGeneSummaryQuery.setIds(ids);
+	    	
+	    	logger.info(ids);
+	    	logger.info(ids.size());
+	    	
 	    	//QuickSearchQueryResults results = query.getQuickSearchQueryResults(0, max);
-	    	List<GeneSummary> geneResults = query.getResultsSummaries(0, max);
-	
+	    	List<GeneSummary> geneResults = idsToGeneSummaryQuery.getResultsSummaries(0, max) ; //query.getResultsSummaries(0, max);
+	    	
+	    	logger.info(geneResults);
+	    	logger.info(geneResults.size());
+	    	
 	    	qsr.totalHits = query.getTotalResultsSize();
 	
 	

@@ -26,8 +26,7 @@ public class QueryHistoryItem extends HistoryItem {
     			try {
     				ids = query.getResults(0, max);
     			} catch (QueryException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
+    				throw new RuntimeException(e);
     			}
     		}
     		

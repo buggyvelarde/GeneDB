@@ -233,14 +233,21 @@
     =========================
   -->
   
-  
+  <!-- which one of these should we move over to? 
+   
+  <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
+  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
+  <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+  <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
+   -->
+    
+    <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />  
 
   <bean name="proteinLength" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
   <bean name="proteinMass" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype" />
   <bean name="geneType" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
   <!-- <bean name="nameProduct" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" /> -->
-  <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" /> 
-  <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
+  
   <bean name="geneLocation" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
   <bean name="proteinTargetingSeq" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
   <bean name="proteinNumTM" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" scope="prototype" />
@@ -249,12 +256,11 @@
   <bean name="go" class="org.genedb.querying.tmpquery.GoQuery" scope="prototype" />
   <bean name="ec" class="org.genedb.querying.tmpquery.EcQuery" scope="prototype" />
   <bean name="pfam" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
-  <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
+  
   <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
   <bean name="idsToGeneDetail" class="org.genedb.querying.tmpquery.IdsToGeneDetailQuery" scope="prototype" />
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
-  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
-  <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
+  
   <bean name="curation" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
   <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
@@ -287,7 +293,7 @@
             
             
             
-            <entry key="date" value-ref="date" />
+            <!-- <entry key="date" value-ref="date" /> -->
             <entry key="geneLocation" value-ref="geneLocation" />
             <entry key="proteinTargetingSeq" value-ref="proteinTargetingSeq" />
             <entry key="proteinNumTM" value-ref="proteinNumTM" />
@@ -315,12 +321,13 @@
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
           <map>
-            <entry key="annotationStatus" value-ref="annotationStatus" />
+            <!-- <entry key="annotationStatus" value-ref="annotationStatus" /> -->
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
             <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
             
-            <entry key="dateCount" value-ref="dateCount" />
-            <entry key="geneByDb" value-ref="geneByDb" />
+            <!-- <entry key="dateCount" value-ref="dateCount" /> -->
+            <!-- <entry key="geneByDb" value-ref="geneByDb" /> -->
+            
             <entry key="suggest" value-ref="suggest" />
             <entry key="topLevelFeatures" value-ref="topLevelFeatures" />
           </map>
