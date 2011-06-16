@@ -11,7 +11,7 @@
 
 <c:set var="others" value="${count - 1}" />
 <c:set var="phrase" value="Other" />
-<c:if test="${others > 2}">
+<c:if test="${others > 1}">
   <c:set var="phrase" value="Others" />
 </c:if>
 <c:if test="${others >= 1}">
