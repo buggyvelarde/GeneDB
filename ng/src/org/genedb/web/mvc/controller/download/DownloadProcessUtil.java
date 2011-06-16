@@ -139,10 +139,7 @@ public class DownloadProcessUtil {
     	IdsToGeneDetailQuery query = (IdsToGeneDetailQuery) queryFactory.retrieveQuery("idsToGeneDetail",  NumericQueryVisibility.PRIVATE);
         query.setIds(uniqueNames);
         
-        @SuppressWarnings("unchecked")
-        List<GeneDetail> results = query.getResults();
-        
-        return results;
+        return query.getGeneDetails(0, uniqueNames.size());
     }
     
 	public String getTime() {

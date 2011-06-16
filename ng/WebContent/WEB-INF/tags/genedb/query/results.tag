@@ -9,48 +9,64 @@
 
 
 
-<%--
-<h2>RESULTS????</h2>
- <c:forEach items="${results}" var="result">
-<p>${result.displayId}</p>
-</c:forEach>
 
-<p>${resultsSize}</p>
-<p>${queryName}</p>
- --%>
+
 <c:if test="${not empty resultsSize}">
-	<div id="col-2-1">
-		<c:if test="${isMaxResultsReached}">
-			<font color="red">Please note that these search results are
-				limited by a maximum of ${resultsSize}.</font>
-			<br />
-		</c:if>
+    <div id="col-2-1">
+        <c:if test="${isMaxResultsReached}">
+            <font color="red">Please note that these search results are
+                limited by a maximum of ${resultsSize}.</font>
+            <br />
+        </c:if>
 
-		<!-- requestURI="/Query/${key}" 
-		      partialList="true"
+        <!--  sort="external" -->
+        <display:table 
+                name="results" 
+                id="row" 
+                pagesize="${bounds.length}"
+                size="${resultsSize}" 
+                 
+                partialList="true"
+                class="search-data-table" 
+                requestURI="/Query/${queryName}"
+                cellspacing="0" 
+                cellpadding="4">
+            <display:column title="Systematic ids" style="width: 100px;">
+                <a
+                    href="<misc:url value="/gene/${row.displayId}"/>">${row.displayId}</a>
+            </display:column>
+            <display:column title="Organism" style="width: 150px;">
+                <i><db:taxonname label="${row.taxonDisplayName}"
+                        taxonNameType="HTML_SHORT" /> </i>
+            </display:column>
+            <display:column title="Product">
+                 <c:if test="${row.product}">
+                     ${row.product}
+                 </c:if>
+                
+            </display:column>
+
+        </display:table>
+    </div>
+</c:if>
+
+
+
+
+
+
+
+
+
+
+<%-- requestURI="/Query/${key}" 
+              partialList="true"
               size="${resultsSize}"
               requestURI="/Query/${queryName}"
               sort="external" 
-              -->
-		<display:table name="results" id="row" pagesize="30"
-			size="${resultsSize}" sort="external" partialList="true"
-			class="search-data-table" requestURI="/Query/${queryName}"
-			cellspacing="0" cellpadding="4">
-			<display:column title="Systematic ids" style="width: 100px;">
-				<a
-					href="<misc:url value="/gene/${row.displayId}"/>">${row.displayId}</a>
-			</display:column>
-			<display:column title="Organism" style="width: 150px;">
-				<i><db:taxonname label="${row.taxonDisplayName}"
-						taxonNameType="HTML_SHORT" /> </i>
-			</display:column>
-			<display:column title="Product">
-			     <c:if test="${row.product}">
-			         ${row.product}
-			     </c:if>
-                
-            </display:column>
-			<%--
+ --%>              
+
+            <%--
     <display:column title="Contig">
       <i>${row.topLevelFeatureName}</i>
     </display:column>
@@ -58,6 +74,53 @@
       <i>${row.left}</i>
     </display:column>
     --%>
-		</display:table>
-	</div>
-</c:if>
+
+
+
+
+<%-- 
+<h2></h2>
+
+<table class="search-data-table" cellspacing="0" cellpadding="4">
+<thead>
+<tr>
+<th>Systematic ids</th>
+<th>Organism</th>
+<th>Product</th></tr></thead>
+<c:set var="cls" value="even" />
+<c:forEach items="${results}" var="result">
+    
+    <c:choose>
+        <c:when test="${cls == 'odd' }">
+            <c:set var="cls" value="even" />
+        </c:when>
+        <c:otherwise>
+            <c:set var="cls" value="odd" />
+        </c:otherwise>
+    </c:choose>
+    
+    
+    <c:if test="${odd == true}">
+        
+    </c:if>
+    
+    <tr class="${cls}">
+        <td style="width: 100px;" ><a href="<misc:url value="/gene/${result.displayId}"/>">${result.displayId}</a></td>
+        <td style="width: 150px;">${result.taxonDisplayName}</td>
+        <td>${result.product}</td>
+    
+    </tr>
+</c:forEach>
+
+
+
+</table>
+
+<p>${resultsSize}</p>
+<p>${queryName}</p> 
+
+<p>${bounds.page}</p>
+<p>${bounds.length}</p>
+
+--%>
+

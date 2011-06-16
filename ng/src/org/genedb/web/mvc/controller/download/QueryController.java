@@ -13,6 +13,7 @@ import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.QueryHistoryItem;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.util.Pair;
@@ -196,7 +197,21 @@ public class QueryController extends AbstractGeneDBFormController{
         
         Bounds bounds = getQueryBounds(request);
         logger.info("Query page " + bounds.page + ", length " + bounds.length);
-        List<GeneSummary> results = query.getResultsSummaries(bounds.page -1, bounds.length);;
+        
+        int start = bounds.page * bounds.length;
+        int end = start + bounds.length;
+        
+        List<String> ids = query.getResults(start, end);
+        
+        model.addAttribute("bounds",bounds);
+        
+        logger.info("Size :: ");
+        
+        logger.info(ids.size());
+        
+        List<GeneSummary> results = summaries(ids);
+        
+        logger.info(results.size());
         
         // Suppress item in results
         // suppressResultItem(suppress, results);
@@ -212,7 +227,7 @@ public class QueryController extends AbstractGeneDBFormController{
     	if (queryName.equals("quickSearch")) {
         	QuickSearchQuery quickSearchQuery = (QuickSearchQuery) query;
         	logger.info("Fetching quick search taxons");
-        	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults(bounds.page -1, bounds.length).getTaxonGroup());
+        	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults().getTaxonGroup());
         }
     	
     	if (results.size() == 1) {
@@ -254,23 +269,34 @@ public class QueryController extends AbstractGeneDBFormController{
 
     }
     
-    class Bounds {
-    	int page;
-    	int length;
-    	Bounds(int page, int length) {
+    private List<GeneSummary> summaries (List<String> ids) throws QueryException {
+    	IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery("idsToGeneSummary", NumericQueryVisibility.PRIVATE);
+    	idsToGeneSummary.setIds(ids);
+    	List<GeneSummary> summaries = idsToGeneSummary.getResultsSummaries();
+    	for (GeneSummary summary : summaries) {
+    		logger.info(summary.getDisplayId());
+    	}
+    	return summaries;
+    }
+    
+    public class Bounds {
+    	private int page;
+    	private int length;
+    	public Bounds(int page, int length) {
     		this.page = page;
     		this.length = length;
     	}
+    	public int getPage(){return page;}
+    	public int getLength(){return length;}
     }
     
     private Bounds getQueryBounds(HttpServletRequest request) {
         String startString = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
         // Use 1-based index for start and end
-        int page = 1;
+        int page = 0;
         if (startString != null) {
             //start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH + 1;
-        	page = Integer.parseInt(startString);
-        	logger.info("startString is not null, setting page to " + page);
+        	page = Integer.parseInt(startString) - 1 ;
         }
         
         return new Bounds(page,DEFAULT_LENGTH);
