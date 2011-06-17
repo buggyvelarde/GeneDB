@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryUtils;
@@ -21,7 +22,7 @@ import org.springframework.validation.Errors;
 
 import com.google.common.collect.Lists;
 
-public class ProteinMatchClusterOrthologueQuery implements Query {
+public class ProteinMatchClusterOrthologueQuery extends OrganismHqlQuery {
 	
 	private static final Logger logger = Logger.getLogger(ProteinMatchClusterOrthologueQuery.class);
 	
@@ -55,6 +56,7 @@ public class ProteinMatchClusterOrthologueQuery implements Query {
 		return "Returns orthologues in a protein match cluster";
 	}
 
+	/*
 	@Override
 	public List getResults() throws QueryException {
 		List<GeneSummary> orthologs = Lists.newArrayList();
@@ -90,7 +92,7 @@ public class ProteinMatchClusterOrthologueQuery implements Query {
         }
         
         return orthologs;
-	}
+	}*/
 
 	@Override
 	public String getParseableDescription() {
@@ -115,13 +117,35 @@ public class ProteinMatchClusterOrthologueQuery implements Query {
 	}
 
 
-	@Override
-	public boolean supports(Class<?> arg0) {
-		return true;
-	}
 	
 	public String[] getParamNames() {
 		return new String[]{ "clusterName" };
 	}
+
+	//queries.add(
+//			" select f.uniqueName from FeatureDbXRef fd  " +
+//				" inner join fd.feature f " + 
+//				" inner join fd.dbXRef dx " +
+//				" inner join dx.db d " +
+//				" where dx.accession = :dbxref :appendage " +
+//				" @ORGANISM@ " +
+//				RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES_AND_POLYPEPTIDES +
+//				" order by f.organism, f.uniqueName ");
+//	
+	@Override
+	protected String getHql() {
+		return "select @SELECTOR@ from FeatureRelationship fr join fr.subjectFeature f join fr.objectFeature fo where fo.uniqueName=:clusterName " + RESTRICT_TO_TRANSCRIPTS_AND_PSEUDOGENES_AND_POLYPEPTIDES ;
+	}
+
+	
+	@Override
+	protected String getOrderBy() {
+		return null;
+	}
+
+	protected void populateQueryWithParams(org.hibernate.Query query) {
+        super.populateQueryWithParams(query);
+        query.setString("clusterName", clusterName);
+    }
 
 }

@@ -209,6 +209,10 @@ public class QueryController extends AbstractGeneDBFormController{
         
         logger.info(ids.size());
         
+        for (String id : ids) {
+    		logger.info(id);
+    	}
+        
         List<GeneSummary> results = summaries(ids);
         
         logger.info(results.size());
