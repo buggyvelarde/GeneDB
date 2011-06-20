@@ -49,6 +49,9 @@ public class LuceneIndexBuilder {
     public static void main(String[] args)
         throws IOException, ClassNotFoundException, SQLException, ProcessingException
     {
+    	
+    	PropertyConfigurator.configure("resources/classpath/log4j.index.properties");
+    	
         String jdbcConnectionString = args[0];
         String databaseUser = args[1];
         String indexDirectory = args[2];
@@ -62,7 +65,7 @@ public class LuceneIndexBuilder {
         Connection conn = DriverManager.getConnection(
             jdbcConnectionString, databaseUser, databasePassword);
         conn.setAutoCommit(false); // Autocommit must be off to use cursors
-        configureLog4j();
+        //configureLog4j();
 
         LuceneIndexBuilder luceneIndexBuilder = new LuceneIndexBuilder(new File(indexDirectory));
 
@@ -76,12 +79,12 @@ public class LuceneIndexBuilder {
         luceneIndexBuilder.addOrganism(conn, organismCommonName);
     }
 
-    private static void configureLog4j() {
-        String log4jprops = "/log4j.lucene.properties";
-        URL url = LuceneIndexBuilder.class.getResource(log4jprops);
-        System.out.printf("Configuring Log4J from '%s'\n", url);
-        PropertyConfigurator.configure(url);
-    }
+//    private static void configureLog4j() {
+//        String log4jprops = "/log4j.lucene.properties";
+//        URL url = LuceneIndexBuilder.class.getResource(log4jprops);
+//        System.out.printf("Configuring Log4J from '%s'\n", url);
+//        PropertyConfigurator.configure(url);
+//    }
 
     private File indexDirectory;
     // Defaults for new index directories
