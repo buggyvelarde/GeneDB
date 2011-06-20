@@ -34,7 +34,7 @@ def getFeature(String uniquename, Sql sql) {
 def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
 	
 	String sequence = bin.residues;
-	String sequenceName = bin.uniquename + ":";
+	String sequenceName = bin.uniquename + "_";
 	
 	def contigs = []
 	Integer nCount = 0
@@ -69,7 +69,7 @@ def generateBinContigs(Feature bin, String contigSeparator, Sql sql) {
 			end = pos
 		}
 		
-		String contigName = "${sequenceName}:${nCount}:${start}-${end}"
+		String contigName = "${sequenceName}${nCount}_${start}-${end}"
 		println contigName
 		
 		String contigSequence = sequence.substring(start, end);
