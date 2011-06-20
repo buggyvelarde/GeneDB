@@ -124,40 +124,28 @@ $(function(){
     	}
     });
     
-    
-    if ($.browser.msie && $.browser.version < 9) {
-    	$('select#taxons,select#homepageselect')
-    	.bind('mousedown focus', function(event) {
-    		
-    		$(this)
-            	.data("origWidth", $(this).css("width"))
-            	.css("width", "auto");
-    		
-//    		this.style.width='260';
-//    		
-//    		// grab the element's coordinates
-//    		var top = $(this).offset().top;
-//    		var left = $(this).offset().left;
-//    		
-//    		this.style.position='absolute';
-//    		this.style.top=top;
-//    		this.style.left=left;
-//    		
-//    		$('#debug').text('click ' + event.target);
-    		
-    	})
-    	.bind('blur mouseout', function(event) {
-    		
-    		$(this)
-    			.css("width", $(this).data("origWidth"));
-    		
-//    		this.style.position='';
-//    		this.style.width='';
-//    		this.style.position='';
-//    		
-//    		$('#debug').text('blur ');
-    	});
-    }
+    // used this http://stackoverflow.com/questions/206997/jquery-javascript-ie-hover-doesnt-cover-select-box-options
+	if ($.browser.msie && $.browser.version < 9) {
+	    
+		$('select.homepageselect').each(function(n,i){
+			var top = $(i).offset().top;
+			var left = $(i).offset().left;
+			$(i).css("position",'absolute').css("top", top).css("left", left);
+		});
+	    
+	   var expand   = function(){ $(this).css("width", "auto"); };
+       var contract = function(){ if (!this.noHide) $(this).css("width", ""); };
+       var focus    = function(){ this.noHide = true; };
+       var blur     = function(){ this.noHide = false; contract.call(this); };
+		
+		$('select.homepageselect')
+               .hover(expand, contract)
+               .focus(focus)
+               .click(focus)
+               .blur(blur)
+               .change(blur);
+
+	  }
     
     
 });
