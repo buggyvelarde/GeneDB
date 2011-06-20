@@ -361,7 +361,7 @@ public class DTOFactory {
 		ret.setProducts(populateFromFeatureCvTermsIncludingCount(feature,
 				"genedb_products"));
 		logger.info("** About to set from CC");
-		ret.setControlledCurations(populateFromFeatureCvTerms(feature,
+		ret.setControlledCurations(populateFromFeatureCvTermsIncludingCount(feature,
 				"CC_"));
 		logger.info("** About to set from bio. process");
 		ret.setGoBiologicalProcesses(populateFromFeatureCvTerms(feature,
