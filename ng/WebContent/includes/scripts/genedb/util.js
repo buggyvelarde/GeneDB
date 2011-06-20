@@ -129,26 +129,33 @@ $(function(){
     	$('select#taxons,select#homepageselect')
     	.bind('mousedown focus', function(event) {
     		
-    		this.style.width='260';
+    		$(this)
+            	.data("origWidth", $(this).css("width"))
+            	.css("width", "auto");
     		
-    		// grab the element's coordinates
-    		var top = $(this).offset().top;
-    		var left = $(this).offset().left;
-    		
-    		this.style.position='absolute';
-    		this.style.top=top;
-    		this.style.left=left;
-    		
-    		$('#debug').text('click ' + event.target);
+//    		this.style.width='260';
+//    		
+//    		// grab the element's coordinates
+//    		var top = $(this).offset().top;
+//    		var left = $(this).offset().left;
+//    		
+//    		this.style.position='absolute';
+//    		this.style.top=top;
+//    		this.style.left=left;
+//    		
+//    		$('#debug').text('click ' + event.target);
     		
     	})
-    	.bind('blur', function(event) {
+    	.bind('blur mouseout', function(event) {
     		
-    		this.style.position='';
-    		this.style.width='';
-    		this.style.position='';
+    		$(this)
+    			.css("width", $(this).data("origWidth"));
     		
-    		$('#debug').text('blur ');
+//    		this.style.position='';
+//    		this.style.width='';
+//    		this.style.position='';
+//    		
+//    		$('#debug').text('blur ');
     	});
     }
     
