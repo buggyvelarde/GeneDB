@@ -128,7 +128,7 @@ $(function(){
 	if ($.browser.msie && $.browser.version < 9) {
 	    
 		$('select.homepageselect').each(function(n,i){
-			var top = $(i).offset().top;
+			var top = $(i).offset().top - $(i).height();
 			var left = $(i).offset().left;
 			$(i).css("position",'absolute').css("top", top).css("left", left);
 		});
