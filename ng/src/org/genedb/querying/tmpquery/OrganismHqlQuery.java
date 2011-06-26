@@ -29,7 +29,7 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
     @Override
     protected String getOrganismHql() {
         if (taxons==null || taxons.getNodeCount()==0) {
-            return null;
+            return " " ;
         }
         return "and f.organism.abbreviation in (:organismList)";
     }
