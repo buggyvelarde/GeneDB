@@ -104,9 +104,7 @@ public class TranscriptFeatureController {
 		logger.info("Getting dto " + feature.getUniqueName());
 		logger.info("Feature type = " + feature.getClass());
 		
-		if (feature instanceof Transcript) {
-			return factory.make((Transcript) feature);
-		} else if (feature instanceof AbstractGene) {
+		if (feature instanceof AbstractGene) {
 			return factory.make((AbstractGene) feature);
 		}
 		
@@ -126,7 +124,7 @@ public class TranscriptFeatureController {
 		logger.info("name : " + name);
 		
 		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-		//
+		AbstractGene gene = sequenceDao.getGene(feature);
 		
 		if (feature == null) {
             logger.warn(String.format("Failed to find feature '%s'", name));
@@ -135,13 +133,49 @@ public class TranscriptFeatureController {
         }
 		
 		TranscriptDTO dto = null;
-		Transcript transcript = sequenceDao.getTranscript(feature);
-		if (transcript != null) {
-			feature = transcript;
-			dto = getDtoByName(transcript);
+		
+		if (gene != null) {
+			
+			GeneDTO gdto =(GeneDTO) getDtoByName(gene);
+				
+			for (TranscriptDTO tdto : gdto.getTranscripts()) {
+				logger.info(tdto.getUniqueName() + " == " + name);
+				if (tdto.getUniqueName().equals(name)) {
+					logger.info("Found transcript dto matching the user request, using this transcript.");
+					dto = tdto;
+					break;
+				}
+				
+				if (tdto.getPolypeptide() != null) {
+					logger.info(tdto.getPolypeptide().getUniqueName() + " == " + name);
+					if (tdto.getPolypeptide().getUniqueName().equals(name)) {
+						logger.info("Found polypeptide dto matching the user request, using its transcript.");
+						dto = tdto;
+						break;
+					}
+				}
+				
+			}
+			
+			if (dto == null) {
+				if (gdto.getTranscripts().size() > 0) {
+					logger.info("Did not find a transcript matching the user request, but transcripts exist, using the first one.");
+					dto = gdto.getTranscripts().get(0);
+				} else {
+					logger.info("This gene appears not to have any transcripts, using the gene dto.");
+					dto = gdto;
+				}
+			}
+			
+			
+				
+			
 		} else {
+			logger.info("No gene, using a dto of the feature.");
 			dto = getDtoByName(feature);
 		}
+		
+		
 		
 		saveDto(dto);
 		
@@ -186,7 +220,7 @@ public class TranscriptFeatureController {
 		model.put("inBasket", Boolean.FALSE);
 		
 		
-		AbstractGene gene = sequenceDao.getGene(feature);
+		//AbstractGene gene = sequenceDao.getGene(feature);
 		if (gene != null) {
 			model.put("geneUniaueName", gene.getUniqueName());
 			model.put("gene", gene);

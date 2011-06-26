@@ -210,79 +210,107 @@ public class DTOFactory {
 //		return ret;
 //	}
 	
-	public TranscriptDTO make(Transcript transcript) {
-		
-		TranscriptDTO ret = new TranscriptDTO();
-		AbstractGene gene = sequenceDao.getGene(transcript);
-		
-		populateUsingGene(ret, gene);
-		
-		Polypeptide polypeptide = transcript.getPolypeptide();
-		if (polypeptide != null) {
-			logger.info("Populating polypeptide... " + polypeptide.getClass() + " : " + polypeptide.getUniqueName());
-			populateUsingFeature(ret, polypeptide);
-			populateUsingPolypeptide(ret, polypeptide);
-		} else {
-			logger.info("Populating transcript... " + transcript.getClass() + " : " + transcript.getUniqueName());
-			populateUsingFeature(ret, transcript);
-		}
-		
-		// bodge to make sure we always use the transcript name as key
-		ret.setUniqueName(transcript.getUniqueName());
-		
-		return ret;
-	}
+//	public TranscriptDTO make(Transcript transcript) {
+//		
+//		TranscriptDTO ret = new TranscriptDTO();
+//		AbstractGene gene = sequenceDao.getGene(transcript);
+//		
+//		populateUsingGene(ret, gene);
+//		
+//		Polypeptide polypeptide = transcript.getPolypeptide();
+//		if (polypeptide != null) {
+//			logger.info("Populating polypeptide... " + polypeptide.getClass() + " : " + polypeptide.getUniqueName());
+//			populateUsingFeature(ret, polypeptide);
+//			populateUsingPolypeptide(ret, polypeptide);
+//		} else {
+//			logger.info("Populating transcript... " + transcript.getClass() + " : " + transcript.getUniqueName());
+//			populateUsingFeature(ret, transcript);
+//		}
+//		
+//		// bodge to make sure we always use the transcript name as key
+//		ret.setUniqueName(transcript.getUniqueName());
+//		
+//		return ret;
+//	}
 	
-	public TranscriptDTO make(AbstractGene gene) {
-		logger.info("Populating gene... " + gene.getClass() + " : " + gene.getUniqueName());
-		if (gene.getNonObsoleteTranscripts().size() > 0) {
-			return make(gene.getFirstTranscript());
-		}
-		return make((Feature)gene);
-	}
+//	public TranscriptDTO make(AbstractGene gene) {
+//		logger.info("Populating gene... " + gene.getClass() + " : " + gene.getUniqueName());
+//		if (gene.getNonObsoleteTranscripts().size() > 0) {
+//			return make(gene.getFirstTranscript());
+//		}
+//		return make((Feature)gene);
+//	}
 	
 	public TranscriptDTO make(Feature feature) {
 		
 		TranscriptDTO ret = new TranscriptDTO();
 		logger.info("Populating feature... " + feature.getClass() + " : " + feature.getUniqueName());
 		
-		AbstractGene gene = sequenceDao.getGene(feature);
-		
-		populateUsingGene(ret, gene);
 		populateUsingFeature(ret, feature);
+		
+		logger.info("generated " + ret.getUniqueName());
 		
 		return ret;
 	}
 	
-//	public TranscriptDTO make(AbstractGene gene) {
-//		TranscriptDTO ret = new TranscriptDTO();
-//		
-//		populateNames(ret, gene);
-//		populateUsingGene(ret, gene);
-//		
-//		// if there is a transcript, return its details
-//		if (gene.getTranscripts().size() > 0) {
-//			for (Transcript transcript : gene.getTranscripts()) {
-//				logger.info("Populating gene using transcript");
-//				Polypeptide polypeptide = transcript.getPolypeptide();
-//				if (polypeptide != null) {
-//					logger.info("Populating transcript using polypeptide");
-//					populateUsingFeature(ret, polypeptide);
-//					populateUsingPolypeptide(ret, polypeptide);
-//				} else {
-//					logger.info("Populating transcript using transcript");
-//					populateUsingFeature(ret, transcript);
-//				}
-//				
-//				// we only do this for the first transcript
-//				break;
-//			}
-//		} else {
-//			populateUsingFeature(ret, gene);
-//		}
-//		
-//		return ret;
-//	}
+	public GeneDTO make(AbstractGene gene) {
+		GeneDTO gdto = new GeneDTO();
+		
+		String uniqueName = gene.getUniqueName();
+		String name = gene.getName();
+		
+		gdto.setGeneName(name);
+		gdto.setUniqueName(uniqueName);
+		
+//		if (gene.getNonObsoleteTranscripts().size()>1) {
+//			gdto.setAnAlternateTranscript(true);
+//        }
+		
+		// if there is a transcript, return its details
+		if (gene.getTranscripts().size() > 0) {
+			
+			gdto.setAnAlternateTranscript(true);
+			
+			for (Transcript transcript : gene.getTranscripts()) {
+				
+				TranscriptDTO tdto = new TranscriptDTO();
+				gdto.transcripts.add(tdto);
+				
+				tdto.setUniqueName(transcript.getUniqueName());
+				tdto.setGeneName(name);
+				
+				Polypeptide polypeptide = transcript.getPolypeptide();
+				if (polypeptide != null) {
+					
+					PolypeptideDTO pdto = new PolypeptideDTO();
+					tdto.setPolypeptide(pdto);
+					
+					pdto.setUniqueName(polypeptide.getUniqueName());
+					pdto.setGeneName(name);
+					
+					logger.info("Populating transcript using polypeptide");
+					
+					populateUsingFeature(tdto, polypeptide);
+					populateUsingPolypeptide(tdto, polypeptide);
+					
+				} else {
+					
+					logger.info("No polypeptide, populating using transcript");
+					populateUsingFeature(tdto, transcript);
+					
+				}
+			}
+		} else {
+			
+			logger.info("No transcripts, populating using gene");
+			populateUsingFeature(gdto, gene);
+			
+		}
+		
+		logger.info("generated " + gdto.getUniqueName());
+		
+		return gdto;
+	}
 
 //	public TranscriptDTO make(Transcript transcript, AbstractGene gene) {
 //		TranscriptDTO ret = new TranscriptDTO();
@@ -318,22 +346,22 @@ public class DTOFactory {
 //	}
 	
 	
-	private void populateUsingGene(TranscriptDTO ret, AbstractGene gene) {
-		if (gene == null) {
-			return;
-		}
-		
-		String geneName = gene.getName();
-		if (geneName == null || geneName == "") {
-			geneName = gene.getUniqueName();
-		}
-		ret.setGeneName(geneName);
-		
-		if (gene.getNonObsoleteTranscripts().size()>1) {
-            ret.setAnAlternateTranscript(true);
-        }
-		
-	}
+//	private void populateUsingGene(TranscriptDTO ret, AbstractGene gene) {
+//		if (gene == null) {
+//			return;
+//		}
+//		
+//		String geneName = gene.getName();
+//		if (geneName == null || geneName == "") {
+//			geneName = gene.getUniqueName();
+//		}
+//		ret.setGeneName(geneName);
+//		
+//		if (gene.getNonObsoleteTranscripts().size()>1) {
+//            ret.setAnAlternateTranscript(true);
+//        }
+//		
+//	}
 	
 	private void populateUsingPolypeptide(TranscriptDTO ret, Polypeptide polypeptide) {
 		logger.info("** About to set algorithm data");
@@ -343,6 +371,9 @@ public class DTOFactory {
 		logger.info("** About to set domain info");
 		ret.setDomainInformation(prepareDomainInformation(polypeptide));
 		ret.setProteinCoding(true);
+		
+		// Get the map of lists of synonyms
+		ret.setProteinSynonymsByTypes(findFromSynonymsByType(polypeptide.getFeatureSynonyms()));
 	}
 	
 	private void populateUsingFeature(TranscriptDTO ret, Feature feature) {
@@ -381,8 +412,10 @@ public class DTOFactory {
 		logger.info("** About to set feature pubs");
 		populateFromFeaturePubs(ret, feature);
 		
+		logger.info("** About to set last modified");
 		populateLastModified(ret, feature);
 		
+		logger.info("** About to set synonyms for " + feature.getUniqueName());
 		ret.setTranscriptSynonymsByTypes(findFromSynonymsByType(feature.getFeatureSynonyms()));
 		
 	}
@@ -717,6 +750,9 @@ public class DTOFactory {
 			Collection<FeatureSynonym> synonymCollection) {
 		HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
 		for (FeatureSynonym featSynonym : synonymCollection) {
+			
+			logger.info("Synonym" + featSynonym.getSynonym().getName());
+			
 			if (!featSynonym.isCurrent()) {
 				continue;
 			}
