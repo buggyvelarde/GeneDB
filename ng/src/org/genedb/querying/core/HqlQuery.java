@@ -172,7 +172,10 @@ public abstract class HqlQuery implements PagedQuery {
     
     protected String restrictQuery(String hql, Map<String,String> map) {
     	for (String key : map.keySet()) {
-    		hql = hql.replace("@" + key + "@", map.get(key));
+    		String val = map.get(key);
+    		if (val == null)
+    			continue;
+    		hql = hql.replace("@" + key + "@", val);
     	}
     	return hql;
     }
