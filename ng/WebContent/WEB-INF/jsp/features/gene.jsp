@@ -41,8 +41,8 @@
     <script type="text/javascript" src="${wa}/js/genome.js"></script>
     <script type="text/javascript" src="${wa}/js/samFlag.js"></script></format:header>
     
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
     
+    <script type="text/javascript" src="${wa}/js/chromosoml.js"></script>
     
     <style>
         

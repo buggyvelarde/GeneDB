@@ -5,18 +5,35 @@
 <format:header title="Date Search" />
 <format:page>
 <br>
+
+<script>
+
+$(function() {
+
+	$("#date").datepicker({
+	    maxDate: '+0D', 
+	    dateFormat: 'yyyy/mm/dd',  
+	    selectedDate: "${date}"
+	     
+	});
+
+});
+
+</script>
+
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="${actionName}" method="GET">
             <table>
                 <tr>
-                    <td colspan="3">
+                    <td width=180>
+                        <b>Organism:</b><br>
+                        <db:simpleselect selection="${taxonNodeName}" />
+                        <br><font color="red"><form:errors path="taxons" /></font>
                         <font color="red"><form:errors path="*" /></font>
                     </td>
-                </tr>
-                <tr>
-                  <td>Date:</td>
                   <td>
+                    <b>Date:</b><br>
                     <form:input id="date" path="date"/> (YYYY/MM/DD)
                   </td>
                 </tr>

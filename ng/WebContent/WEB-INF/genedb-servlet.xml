@@ -233,13 +233,13 @@
     =========================
   -->
   
-  <!-- which one of these should we move over to? 
+   
    
   <bean name="date" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
-  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
+  <!-- <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" /> -->
   <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
   <bean name="annotationStatus" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
-   -->
+   
     
     <bean name="controlledCuration" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />  
 
@@ -291,9 +291,7 @@
             <!-- these are of no obvious use  -->
             <!-- <entry key="nameProduct" value-ref="nameProduct" /> -->
             
-            
-            
-            <!-- <entry key="date" value-ref="date" /> -->
+            <entry key="date" value-ref="date" /> 
             <entry key="geneLocation" value-ref="geneLocation" />
             <entry key="proteinTargetingSeq" value-ref="proteinTargetingSeq" />
             <entry key="proteinNumTM" value-ref="proteinNumTM" />
@@ -321,12 +319,12 @@
         </entry>
         <entry key-ref="org.genedb.querying.core.NumericQueryVisibility.PRIVATE">
           <map>
-            <!-- <entry key="annotationStatus" value-ref="annotationStatus" /> -->
+            <entry key="annotationStatus" value-ref="annotationStatus" />
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
             <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
             
             <!-- <entry key="dateCount" value-ref="dateCount" /> -->
-            <!-- <entry key="geneByDb" value-ref="geneByDb" /> -->
+            <entry key="geneByDb" value-ref="geneByDb" /> 
             
             <entry key="suggest" value-ref="suggest" />
             <entry key="topLevelFeatures" value-ref="topLevelFeatures" />

@@ -56,7 +56,7 @@ li {
 <h2>Summary</h2>
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 
-<c:if test="${dto.properGeneName}">
+<c:if test="${dto.geneName}">
   <tr>
     <th>Gene Name</th><td>${dto.geneName}</td>
   </tr>
@@ -68,6 +68,11 @@ li {
     <c:choose>
     <c:when test="${dto.anAlternateTranscript}">
       <misc:formatSystematicName name="${dto.uniqueName}"/> (one splice form of <misc:formatSystematicName name="${dto.geneName}"/>)
+      <c:forEach var="transcript" items="${gene.transcripts}">
+        <ul>
+            <li><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a></li>
+        </ul>
+    </c:forEach>
     </c:when>
     <c:otherwise>
       <misc:formatSystematicName name="${geneUniaueName}"/>
