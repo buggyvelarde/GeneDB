@@ -174,7 +174,7 @@
 
 
 
-
+<div id="col-2-1">
 
 
 <br />
@@ -182,7 +182,7 @@
     <jsp:include page="geneDetails.jsp"/>
 </div>
 
-
+</div>
  
 
 </format:page>

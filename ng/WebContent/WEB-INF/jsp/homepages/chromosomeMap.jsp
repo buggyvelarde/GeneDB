@@ -6,7 +6,7 @@
 <format:header title="Chromosome view" />
 <format:page>
 
-<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/chromosoml.js"/>"></script>
+<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml.js"/>"></script>
 
 <center><h2>High-Level map of ${full} region ${region}</h2></center>
 
