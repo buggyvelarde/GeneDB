@@ -62,10 +62,11 @@ public class TranscriptDTO implements Serializable {
     private List<String> publications;
     private short strand;
     private List<String> geneSynonyms;
-    private Map<String, List<String>> geneSynonymsByTypes;
-    private List<String> transcriptSynonyms;
-    private Map<String, List<String>> transcriptSynonymsByTypes;
-    private Map<String, List<String>> proteinSynonymsByTypes;
+    private Map<String, List<String>> synonymsByTypes;
+//    private Map<String, List<String>> geneSynonymsByTypes;
+    //private List<String> transcriptSynonyms;
+//    private Map<String, List<String>> transcriptSynonymsByTypes;
+//    private Map<String, List<String>> proteinSynonymsByTypes;
     private String topLevelFeatureDisplayName;
     private int topLevelFeatureLength;
     private String topLevelFeatureType;
@@ -101,14 +102,14 @@ public class TranscriptDTO implements Serializable {
         return algorithmData;
     }
 
-    public Map<String, List<String>> getProteinSynonymsByTypes() {
-		return proteinSynonymsByTypes;
-	}
-
-	public void setProteinSynonymsByTypes(
-			Map<String, List<String>> proteinSynonymsByTypes) {
-		this.proteinSynonymsByTypes = proteinSynonymsByTypes;
-	}
+//    public Map<String, List<String>> getProteinSynonymsByTypes() {
+//		return proteinSynonymsByTypes;
+//	}
+//
+//	public void setProteinSynonymsByTypes(
+//			Map<String, List<String>> proteinSynonymsByTypes) {
+//		this.proteinSynonymsByTypes = proteinSynonymsByTypes;
+//	}
 
 	public List<String> getClusterIds() {
         return listOrEmptyList(clusterIds);
@@ -217,28 +218,36 @@ public class TranscriptDTO implements Serializable {
         return listOrEmptyList(publications);
     }
 
-    public List<String> getGeneSynonyms() {
-        return listOrEmptyList(geneSynonyms);
+//    public List<String> getGeneSynonyms() {
+//        return listOrEmptyList(geneSynonyms);
+//    }
+    
+    public void setSynonymsByTypes(Map<String, List<String>> synonymsByTypes) {
+    	this.synonymsByTypes = synonymsByTypes;
     }
-
+    
     public Map<String, List<String>> getSynonymsByTypes() {
-        Map<String, List<String>> ret = Maps.newHashMap();
-        if (geneSynonymsByTypes != null) {
-            ret.putAll(geneSynonymsByTypes);
-        }
-        if (transcriptSynonymsByTypes != null) {
-            ret.putAll(transcriptSynonymsByTypes);
-        }
-        return ret;
+    	return synonymsByTypes;
+//        Map<String, List<String>> ret = Maps.newHashMap();
+//        if (geneSynonymsByTypes != null) {
+//            ret.putAll(geneSynonymsByTypes);
+//        }
+//        if (transcriptSynonymsByTypes != null) {
+//            ret.putAll(transcriptSynonymsByTypes);
+//        }
+//        if (proteinSynonymsByTypes != null) {
+//            ret.putAll(transcriptSynonymsByTypes);
+//        }
+//        return ret;
     }
 
-    public List<String> getTranscriptSynonyms() {
-        return listOrEmptyList(transcriptSynonyms);
-    }
-
-    public Map<String, List<String>> getTranscriptSynonymsByTypes() {
-        return transcriptSynonymsByTypes;
-    }
+//    public List<String> getTranscriptSynonyms() {
+//        return listOrEmptyList(transcriptSynonyms);
+//    }
+//
+//    public Map<String, List<String>> getTranscriptSynonymsByTypes() {
+//        return transcriptSynonymsByTypes;
+//    }
 
     public String getTopLevelFeatureDisplayName() {
         return topLevelFeatureDisplayName;
@@ -393,17 +402,17 @@ public class TranscriptDTO implements Serializable {
         this.geneSynonyms = geneSynonyms;
     }
 
-    public void setGeneSynonymsByTypes(Map<String, List<String>> geneSynonymsByTypes) {
-        this.geneSynonymsByTypes = geneSynonymsByTypes;
-    }
+//    public void setGeneSynonymsByTypes(Map<String, List<String>> geneSynonymsByTypes) {
+//        this.geneSynonymsByTypes = geneSynonymsByTypes;
+//    }
 
-    public void setTranscriptSynonyms(List<String> transcriptSynonyms) {
-        this.transcriptSynonyms = transcriptSynonyms;
-    }
+//    public void setTranscriptSynonyms(List<String> transcriptSynonyms) {
+//        this.transcriptSynonyms = transcriptSynonyms;
+//    }
 
-    public void setTranscriptSynonymsByTypes(Map<String, List<String>> transcriptSynonymsByTypes) {
-        this.transcriptSynonymsByTypes = transcriptSynonymsByTypes;
-    }
+//    public void setTranscriptSynonymsByTypes(Map<String, List<String>> transcriptSynonymsByTypes) {
+//        this.transcriptSynonymsByTypes = transcriptSynonymsByTypes;
+//    }
 
     public void setTopLevelFeatureDisplayName(String topLevelFeatureDisplayName) {
         this.topLevelFeatureDisplayName = topLevelFeatureDisplayName;

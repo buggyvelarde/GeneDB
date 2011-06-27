@@ -83,7 +83,7 @@ public class DtoDb {
         args.put("obsolete_names", new DtoStringArrayField(dto.getObsoleteNames()));
         args.put("orthologue_names", new DtoStringArrayField(dto.getOrthologueNames()));
         args.put("publications", new DtoStringArrayField(dto.getPublications()));
-        args.put("synonyms", new DtoStringArrayField(dto.getTranscriptSynonyms()));
+        //args.put("synonyms", new DtoStringArrayField(dto.getTranscriptSynonyms()));
 
         args.put("dbx_ref_dtos", createArrayField(dto.getDbXRefDTOs(), DBXRefType.class, "dbxreftype"));
         args.put("algorithm_data", getBytes(dto.getAlgorithmData()));
@@ -273,7 +273,7 @@ public class DtoDb {
             ret.setObsoleteNames(sqlArrayAsListString(rs, "obsolete_names"));
             ret.setOrthologueNames(sqlArrayAsListString(rs, "orthologue_names"));
             ret.setPublications(sqlArrayAsListString(rs, "publications"));
-            ret.setTranscriptSynonyms(sqlArrayAsListString(rs, "synonyms"));
+  //          ret.setTranscriptSynonyms(sqlArrayAsListString(rs, "synonyms"));
 
 
 
@@ -287,7 +287,7 @@ public class DtoDb {
             ret.setIms(objectFromSerializedStream(rs, "image_map_summary", ImageMapSummary.class));
             ret.setPolypeptideProperties(objectFromSerializedStream(rs, "polypeptide_properties", PeptideProperties.class));
             ret.setProducts(objectFromSerializedStream(rs, "products", List.class));
-            ret.setTranscriptSynonymsByTypes(objectFromSerializedStream(rs, "synonyms_by_types", Map.class));
+//            ret.setTranscriptSynonymsByTypes(objectFromSerializedStream(rs, "synonyms_by_types", Map.class));
 
             return ret;
         }
@@ -354,7 +354,7 @@ public class DtoDb {
             ret.put("obsoleteNames", td.getObsoleteNames());
             ret.put("orthologueNames", td.getOrthologueNames());
             ret.put("publications", td.getPublications());
-            ret.put("synonyms", td.getTranscriptSynonyms());
+//            ret.put("synonyms", td.getTranscriptSynonyms());
 
             // Special types
             ret.put("algoritmData", td.getAlgorithmData());

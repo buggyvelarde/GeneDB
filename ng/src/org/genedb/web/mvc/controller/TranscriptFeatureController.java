@@ -118,6 +118,9 @@ public class TranscriptFeatureController {
     	return dto;
     }
     
+    // make this false for debugging...
+    private static final boolean saveToCache = true;
+    
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
 	public ModelAndView getByName(NameLookupBean nlb, @PathVariable("name") String name) throws Exception {
 		
@@ -136,7 +139,7 @@ public class TranscriptFeatureController {
 		
 		if (gene != null) {
 			
-			GeneDTO gdto =(GeneDTO) getDtoByName(gene);
+			GeneDTO gdto = (GeneDTO) getDtoByName(gene);
 				
 			for (TranscriptDTO tdto : gdto.getTranscripts()) {
 				logger.info(tdto.getUniqueName() + " == " + name);
@@ -167,17 +170,21 @@ public class TranscriptFeatureController {
 				}
 			}
 			
-			
+			// it's the GeneDTO that we want to cache if possible (contains everything else)
+			if (saveToCache)
+				saveDto(gdto);
 				
 			
 		} else {
 			logger.info("No gene, using a dto of the feature.");
 			dto = getDtoByName(feature);
+			if (saveToCache)
+				saveDto(dto);
 		}
 		
 		
 		
-		saveDto(dto);
+		
 		
 		
 		

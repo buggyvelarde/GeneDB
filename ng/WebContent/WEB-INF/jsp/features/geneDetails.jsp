@@ -118,8 +118,10 @@ li {
 </c:if>
 
 
-<c:if test="${!empty dto.proteinSynonymsByTypes}">
-  <c:forEach var="type" items="${dto.proteinSynonymsByTypes}">
+
+
+<c:if test="${!empty dto.synonymsByTypes}">
+  <c:forEach var="type" items="${dto.synonymsByTypes}">
   <tr>
     <th>${type.key}</th>
     <td>
@@ -264,6 +266,7 @@ div.comment {
 <c:set var="hasAlgorithmData" value="${fn:length(dto.algorithmData) > 0}"/>
 <c:choose>
   <c:when test="${hasAlgorithmData}">
+    <format:genePageSection>
     <format:algorithmPredictions algData="${dto.algorithmData}"/>
     <div id="col-4-2">
       <div class="sub-grey-3-4-top"></div>
@@ -273,6 +276,7 @@ div.comment {
       <div class="sub-grey-3-4-bot"></div>
     </div><!-- end internal column -right -->
     <br class="clear" />
+    </format:genePageSection>
   </c:when>
   <c:otherwise>
     <format:genePageSection>
@@ -302,7 +306,121 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
+
+
+
   <%-- Domain Information --%>
+<c:if test="${fn:length(dto.domainInformation) > 0}">
+<br>
+<format:genePageSection><h2>Protein map</h2>
+        <c:set var="proteinMapCount" value="0" scope="page" />
+        <c:set var="proteinMapWidth" value="875" scope="page" />
+        <c:set var="proteinMapDomainHeight" value="15" scope="page" />
+        <c:set var="proteinMapDomainHeightSpace" value="5" scope="page" />
+        <c:set var="proteinMapBaseWidth" value="${(dto.max - dto.min) / 3}" scope="page" />
+        
+        <script>
+        var urls = {};
+        var subsections = {};
+        </script>
+        
+        <div id='proteinMap' style="position:relative; width:${proteinMapWidth}px;border-bottom:1px solid black;margin:30px 0px;">
+	        <c:forEach var="subsection" varStatus="status" items="${dto.domainInformation}" >
+	               
+	               <div class='proteinMapDomainSection' id='subsectionhit-${proteinMapCount}' title='${subsection.uniqueName} - ${subsection.description}' style="font-size:small;text-align:right;  background: rgb(222,222,222) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace) - (proteinMapDomainHeightSpace/2)  }px; height: ${ (fn:length(subsection.subfeatures) + 1 ) * (proteinMapDomainHeight+proteinMapDomainHeightSpace) }px; width: ${proteinMapWidth }px; " > ${subsection.uniqueName} </div>
+	               
+	               
+	               <c:if test="${subsection.url != null}">
+                        <script>
+                        urls["subsectionhit-${proteinMapCount}"] = "${subsection.url}"; 
+                        </script>
+                    </c:if>
+                   
+                   <c:set var="proteinMapCountSubsection" value="${proteinMapCount}" scope="page" />
+	               <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+	               
+	               
+	             <c:forEach var="hit" items="${subsection.subfeatures}"  varStatus="substatus" >
+                    
+	                <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='${hit.uniqueName} - ${hit.description}' style="background: rgb(${hit.color.blue},${hit.color.green},${hit.color.blue}) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( hit.fmin / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (hit.fmax - hit.fmin) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div>
+	                
+	                <c:if test="${hit.url != null}">
+		                <script>
+		                urls["hit-${proteinMapCount}"] = "${hit.url}"; 
+		                subsections["hit-${proteinMapCount}"] = "subsectionhit-${proteinMapCountSubsection}";
+				        </script>
+			        </c:if>
+	                <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+	                
+	             </c:forEach>
+	        </c:forEach>
+	        
+	        <c:forEach var="i" begin="0" end="${proteinMapBaseWidth}" step="100" varStatus="istatus">
+                <div style="position:absolute; bottom:-20px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; ">${i}</div>
+            </c:forEach>
+            
+            <c:forEach var="i" begin="50" end="${proteinMapBaseWidth}" step="50" varStatus="istatus">
+                <div style="position:absolute; height:5px; border-left:1px solid black; bottom:-5px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; "></div>
+            </c:forEach>
+            
+            
+        
+        </div>
+        
+        
+        <script>
+	        $(document).ready(function() { 
+	        	$('#proteinMap').css("height", parseInt("${(proteinMapCount) * (proteinMapDomainHeight+proteinMapDomainHeightSpace)}"));
+	        	
+	        	var darkBackground = "rgb(100,100,100)";
+	        	var lightBackground = "rgb(222,222,222)";
+	        	
+	        	$('.proteinMapDomain,.proteinMapDomainSection').click(function(e) {
+	        		window.location = urls[e.target.id];
+	        	});
+	        	
+	        	$('.proteinMapDomain').hover(function(e) {
+	        		$(this).stop().fadeTo('slow', 1);
+	        		var subsection = subsections[e.target.id];
+	        		
+	        		$("#" + subsection).stop().animate({
+                        backgroundColor: darkBackground,
+                        color : lightBackground
+                    }, 'slow');
+	        		
+	        	}, function(e) {
+	        		$(this).stop().fadeTo('fast', 0.5);
+	        		var subsection = subsections[e.target.id];
+	        		$("#" + subsection).stop().animate({
+                        backgroundColor: lightBackground,
+                        color : darkBackground
+                    }, 'slow');
+	        		
+	        	}).fadeTo('fast', 0.5);
+	        	
+	        	$('.proteinMapDomainSection').hover(function(e) {
+                    $(this).stop().animate({
+                        backgroundColor: darkBackground,
+                        color : lightBackground
+                    }, 'slow');
+                    
+                }, function(e) {
+                	$(this).stop().animate({
+                        backgroundColor: lightBackground,
+                        color : darkBackground
+                    }, 'slow');
+                });
+	        	
+	        });
+        </script>
+        
+        <br>
+        
+</format:genePageSection>
+</c:if>
+
+    
+
 <c:if test="${fn:length(dto.domainInformation) > 0}">
   <format:genePageSection>
   <h2>Domain Information</h2>
@@ -356,14 +474,14 @@ ${dto.ims.imageMap}
       <tr><td>${clusterId}</td><td><a href="<misc:url value="/Query/proteinMatchClusterOrthologue?clusterName=${clusterId}&extraParam=extraExtra" />">Look up others in cluster</a></td></tr>
     </c:forEach>
     <tr><td></td><td></td></tr>
-    <tr><th>Curated Orthologues</th><td>
     
-    <c:forEach items="${orthologues}" var="orthologue">
-        <a href="<misc:url value="/gene/${orthologue}" />" >${orthologue}</a> 
-    </c:forEach>
-    
-    
+    <c:if test="${!empty orthologues}">
+        <tr><th>Curated Orthologues</th><td>
+        <c:forEach items="${orthologues}" var="orthologue">
+            <a href="<misc:url value="/gene/${orthologue}" />" >${orthologue}</a> 
+        </c:forEach>
     </td></tr>
+    </c:if>
   </table>
   </format:genePageSection>
 </c:if>

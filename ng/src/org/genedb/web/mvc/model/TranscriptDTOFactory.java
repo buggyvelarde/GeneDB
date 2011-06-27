@@ -594,11 +594,11 @@ public class TranscriptDTOFactory {
         }
         Collection<FeatureSynonym> featureSynonyms = transcript.getFeatureSynonyms();
         //Get the map of lists of synonyms
-        ret.setTranscriptSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+//        ret.setTranscriptSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
 
         featureSynonyms = gene.getFeatureSynonyms();
         //Get the map of lists of synonyms
-        ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+//        ret.setGeneSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
 
         if (transcript instanceof ProductiveTranscript) {
 
@@ -609,7 +609,7 @@ public class TranscriptDTOFactory {
         		featureSynonyms = polypeptide.getFeatureSynonyms();
         		
             	//Get the map of lists of synonyms
-            	ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
+//            	ret.setProteinSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
         	}
         	
         }

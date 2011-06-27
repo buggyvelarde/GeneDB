@@ -243,73 +243,100 @@ public class DTOFactory {
 	
 	public TranscriptDTO make(Feature feature) {
 		
-		TranscriptDTO ret = new TranscriptDTO();
+		TranscriptDTO featureDTO = new TranscriptDTO();
 		logger.info("Populating feature... " + feature.getClass() + " : " + feature.getUniqueName());
 		
-		populateUsingFeature(ret, feature);
+		populateUsingFeature(featureDTO, feature);
 		
-		logger.info("generated " + ret.getUniqueName());
+		logger.info("generated " + featureDTO.getUniqueName());
 		
-		return ret;
+		logger.info("** About to set synonyms for " + feature.getUniqueName());
+		SynonymDTO synonymDTO = new SynonymDTO();
+		synonymDTO.addSynonyms(feature.getFeatureSynonyms());
+		featureDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
+		
+		return featureDTO;
 	}
 	
 	public GeneDTO make(AbstractGene gene) {
-		GeneDTO gdto = new GeneDTO();
+		GeneDTO geneDTO = new GeneDTO();
 		
 		String uniqueName = gene.getUniqueName();
 		String name = gene.getName();
 		
-		gdto.setGeneName(name);
-		gdto.setUniqueName(uniqueName);
+		geneDTO.setGeneName(name);
+		geneDTO.setUniqueName(uniqueName);
+		
+		SynonymDTO synonymDTO = new SynonymDTO();
+		
+		logger.info("** About to set synonyms for " + gene.getUniqueName());
+		synonymDTO.addSynonyms(gene.getFeatureSynonyms());
+		geneDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
+		
+		// gdto.setGeneSynonymsByTypes(findFromSynonymsByType(gene.getFeatureSynonyms()));
 		
 //		if (gene.getNonObsoleteTranscripts().size()>1) {
 //			gdto.setAnAlternateTranscript(true);
-//        }
+//      }
 		
 		// if there is a transcript, return its details
 		if (gene.getTranscripts().size() > 0) {
 			
-			gdto.setAnAlternateTranscript(true);
+			geneDTO.setAnAlternateTranscript(true);
 			
 			for (Transcript transcript : gene.getTranscripts()) {
 				
-				TranscriptDTO tdto = new TranscriptDTO();
-				gdto.transcripts.add(tdto);
+				TranscriptDTO transcriptDTO = new TranscriptDTO();
+				geneDTO.transcripts.add(transcriptDTO);
 				
-				tdto.setUniqueName(transcript.getUniqueName());
-				tdto.setGeneName(name);
+				transcriptDTO.setUniqueName(transcript.getUniqueName());
+				transcriptDTO.setGeneName(name);
+				
+				logger.info("** About to set synonyms for " + transcript.getUniqueName());
+				synonymDTO.addSynonyms(transcript.getFeatureSynonyms());
+				transcriptDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
 				
 				Polypeptide polypeptide = transcript.getPolypeptide();
 				if (polypeptide != null) {
 					
-					PolypeptideDTO pdto = new PolypeptideDTO();
-					tdto.setPolypeptide(pdto);
+					logger.info("Populating transcript using polypeptide " + polypeptide.getUniqueName());
 					
-					pdto.setUniqueName(polypeptide.getUniqueName());
-					pdto.setGeneName(name);
+					PolypeptideDTO polypeptideDTO = new PolypeptideDTO();
+					transcriptDTO.setPolypeptide(polypeptideDTO);
 					
-					logger.info("Populating transcript using polypeptide");
+					polypeptideDTO.setUniqueName(polypeptide.getUniqueName());
+					polypeptideDTO.setGeneName(name);
 					
-					populateUsingFeature(tdto, polypeptide);
-					populateUsingPolypeptide(tdto, polypeptide);
+					populateUsingFeature(transcriptDTO, polypeptide);
+					populateUsingPolypeptide(transcriptDTO, polypeptide);
+					
+					logger.info("** About to set synonyms for " + polypeptide.getUniqueName());
+					synonymDTO.addSynonyms(polypeptide.getFeatureSynonyms());
+					polypeptideDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
+					
+					
+					
+					
 					
 				} else {
 					
-					logger.info("No polypeptide, populating using transcript");
-					populateUsingFeature(tdto, transcript);
+					logger.info("No polypeptide, populating using transcript " + transcript.getUniqueName());
+					populateUsingFeature(transcriptDTO, transcript);
 					
 				}
 			}
 		} else {
 			
 			logger.info("No transcripts, populating using gene");
-			populateUsingFeature(gdto, gene);
+			populateUsingFeature(geneDTO, gene);
 			
 		}
 		
-		logger.info("generated " + gdto.getUniqueName());
 		
-		return gdto;
+		
+		logger.info("generated " + geneDTO.getUniqueName());
+		
+		return geneDTO;
 	}
 
 //	public TranscriptDTO make(Transcript transcript, AbstractGene gene) {
@@ -373,7 +400,8 @@ public class DTOFactory {
 		ret.setProteinCoding(true);
 		
 		// Get the map of lists of synonyms
-		ret.setProteinSynonymsByTypes(findFromSynonymsByType(polypeptide.getFeatureSynonyms()));
+		
+		
 	}
 	
 	private void populateUsingFeature(TranscriptDTO ret, Feature feature) {
@@ -395,14 +423,15 @@ public class DTOFactory {
 		ret.setControlledCurations(populateFromFeatureCvTermsIncludingCount(feature,
 				"CC_"));
 		logger.info("** About to set from bio. process");
-		ret.setGoBiologicalProcesses(populateFromFeatureCvTerms(feature,
+		ret.setGoBiologicalProcesses(populateFromFeatureCvTermsIncludingCount(feature,
 				"biological_process"));
 		logger.info("** About to set from mol. function");
-		ret.setGoMolecularFunctions(populateFromFeatureCvTerms(feature,
+		ret.setGoMolecularFunctions(populateFromFeatureCvTermsIncludingCount(feature,
 				"molecular_function"));
 		logger.info("** About to set from cell. component");
-		ret.setGoCellularComponents(populateFromFeatureCvTerms(feature,
+		ret.setGoCellularComponents(populateFromFeatureCvTermsIncludingCount(feature,
 				"cellular_component"));
+		
 		logger.info("** About to set from feature dbxref");
 		populateFromFeatureDbXrefs(ret, feature);
 
@@ -415,8 +444,10 @@ public class DTOFactory {
 		logger.info("** About to set last modified");
 		populateLastModified(ret, feature);
 		
-		logger.info("** About to set synonyms for " + feature.getUniqueName());
-		ret.setTranscriptSynonymsByTypes(findFromSynonymsByType(feature.getFeatureSynonyms()));
+		
+		
+		
+		
 		
 	}
 	
@@ -738,7 +769,8 @@ public class DTOFactory {
 ////
 ////		}
 //	}
-
+	
+	
 	/**
 	 * Create lists of synonyms, grouped by the synonym type. (Only current
 	 * synonyms are included in the lists.)
@@ -746,59 +778,107 @@ public class DTOFactory {
 	 * @param synonyms
 	 * @return a map from the type to a list of synonyms
 	 */
-	private Map<String, List<String>> findFromSynonymsByType(
-			Collection<FeatureSynonym> synonymCollection) {
-		HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
-		for (FeatureSynonym featSynonym : synonymCollection) {
+	class SynonymDTO {
+		
+		private Map<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
+		
+		Map<String, List<String>> addSynonyms (Collection<FeatureSynonym> synonymCollection) {
 			
-			logger.info("Synonym" + featSynonym.getSynonym().getName());
-			
-			if (!featSynonym.isCurrent()) {
-				continue;
+			for (FeatureSynonym featSynonym : synonymCollection) {
+				
+				logger.info("Synonym : " + featSynonym.getSynonym().getName());
+				
+				if (!featSynonym.isCurrent()) {
+					continue;
+				}
+				
+				Synonym synonym = featSynonym.getSynonym();
+				String typeName = formatSynonymTypeName(synonym.getType().getName());
+				List<String> synonymsOfType = synonymsByType.get(typeName);
+				if (synonymsOfType == null) {
+					synonymsOfType = new ArrayList<String>();
+					synonymsByType.put(typeName, synonymsOfType);
+				}
+				synonymsOfType.add(synonym.getName());
 			}
-			Synonym synonym = featSynonym.getSynonym();
-			String typeName = formatSynonymTypeName(synonym.getType().getName());
-			List<String> filtered = synonymsByType.get(typeName);
-			if (filtered == null) {
-				filtered = new ArrayList<String>();
-				synonymsByType.put(typeName, filtered);
-			}
-			filtered.add(synonym.getName());
-		}
 
-		if (synonymsByType.size() > 0) {
+			if (synonymsByType.size() > 0) {
+				return synonymsByType;
+			}
+			return null;
+		}
+		
+		Map<String, List<String>> getSynonyms() {
 			return synonymsByType;
 		}
-		return null;
-	}
+		
+		/**
+		 * Re-format the synonym type name
+		 * 
+		 * @param rawName
+		 * @return
+		 */
+		private String formatSynonymTypeName(String rawName) {
 
-	/**
-	 * Re-format the synonym type name
-	 * 
-	 * @param rawName
-	 * @return
-	 */
-	private String formatSynonymTypeName(String rawName) {
+			char formattedName[] = rawName.toCharArray();
+			for (int i = 0; i < formattedName.length; ++i) {
 
-		char formattedName[] = rawName.toCharArray();
-		for (int i = 0; i < formattedName.length; ++i) {
+				// Replace underscores with spaces
+				if (formattedName[i] == '_') {
+					formattedName[i] = ' ';
 
-			// Replace underscores with spaces
-			if (formattedName[i] == '_') {
-				formattedName[i] = ' ';
+					// Replace first char lowercase to a uppercase char
+				} else if (i == 0 && Character.isLowerCase(formattedName[i])) {
+					formattedName[i] = Character.toUpperCase(formattedName[i]);
 
-				// Replace first char lowercase to a uppercase char
-			} else if (i == 0 && Character.isLowerCase(formattedName[i])) {
-				formattedName[i] = Character.toUpperCase(formattedName[i]);
-
-				// Replace any occurrence of a lowercase char preceeded a space
-				// with a upper case char
-			} else if (i > 0 && formattedName[i - 1] == ' '
-					&& Character.isLowerCase(formattedName[i])) {
-				formattedName[i] = Character.toUpperCase(formattedName[i]);
+					// Replace any occurrence of a lowercase char preceeded a space
+					// with a upper case char
+				} else if (i > 0 && formattedName[i - 1] == ' '
+						&& Character.isLowerCase(formattedName[i])) {
+					formattedName[i] = Character.toUpperCase(formattedName[i]);
+				}
 			}
+			return String.valueOf(formattedName).trim();
 		}
-		return String.valueOf(formattedName).trim();
+
 	}
+	
+	
+	
+//	/**
+//	 * Create lists of synonyms, grouped by the synonym type. (Only current
+//	 * synonyms are included in the lists.)
+//	 * 
+//	 * @param synonyms
+//	 * @return a map from the type to a list of synonyms
+//	 */
+//	private Map<String, List<String>> findFromSynonymsByType(
+//			Collection<FeatureSynonym> synonymCollection,
+//			HashMap<String, List<String>> synonymsByType) {
+////		HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
+//		for (FeatureSynonym featSynonym : synonymCollection) {
+//			
+//			logger.info("Synonym : " + featSynonym.getSynonym().getName());
+//			
+//			if (!featSynonym.isCurrent()) {
+//				continue;
+//			}
+//			Synonym synonym = featSynonym.getSynonym();
+//			String typeName = formatSynonymTypeName(synonym.getType().getName());
+//			List<String> synonymsOfType = synonymsByType.get(typeName);
+//			if (synonymsOfType == null) {
+//				synonymsOfType = new ArrayList<String>();
+//				synonymsByType.put(typeName, synonymsOfType);
+//			}
+//			synonymsOfType.add(synonym.getName());
+//		}
+//
+//		if (synonymsByType.size() > 0) {
+//			return synonymsByType;
+//		}
+//		return null;
+//	}
+
+	
 
 }
