@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
-import org.genedb.web.mvc.model.TranscriptDTO;
+import org.genedb.web.mvc.model.FeatureDTO;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.Synonym;
@@ -25,7 +25,7 @@ public class GeneDetailFieldValueExctractor {
 	
 	private boolean isTranscript = false;
 	private TranscriptDTOAdaptor adaptor;
-	private TranscriptDTO dto;
+	private FeatureDTO dto;
 	
 	private int featureId;
 	private String systematicId;

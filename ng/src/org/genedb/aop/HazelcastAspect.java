@@ -5,7 +5,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.genedb.web.mvc.model.TranscriptDTO;
+import org.genedb.web.mvc.model.FeatureDTO;
 import org.gmod.schema.mapped.Feature;
 
 import com.hazelcast.core.Hazelcast;
@@ -25,7 +25,7 @@ public class HazelcastAspect {
 		
 		Feature feature = (Feature ) args[0];
 		
-		TranscriptDTO dto = (TranscriptDTO) Hazelcast.getMap(dtoMapName).get(feature.getUniqueName());
+		FeatureDTO dto = (FeatureDTO) Hazelcast.getMap(dtoMapName).get(feature.getUniqueName());
 		
 		if (dto != null) {
 			logger.info("***** Found " + feature.getUniqueName() + " in Hazelcast distributed map!");
@@ -39,7 +39,7 @@ public class HazelcastAspect {
 	
 	@AfterReturning(pointcut="execution(* saveDto(..))", returning="retVal")
 	public void putIntoHazelcast(Object retVal) {
-		TranscriptDTO dto = (TranscriptDTO)retVal;
+		FeatureDTO dto = (FeatureDTO)retVal;
 		
 		logger.info("***** Storing  " + dto.getUniqueName());
 		Hazelcast.getMap(dtoMapName).put(dto.getUniqueName(), dto);

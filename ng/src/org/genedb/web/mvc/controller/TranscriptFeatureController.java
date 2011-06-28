@@ -27,6 +27,7 @@ import org.genedb.util.Pair;
 //import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.DTOFactory;
+import org.genedb.web.mvc.model.FeatureDTO;
 import org.genedb.web.mvc.model.GeneDTO;
 import org.genedb.web.mvc.model.PolypeptideDTO;
 //import org.genedb.web.mvc.model.ResultsCacheFactory;
@@ -40,6 +41,7 @@ import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.Around;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -82,47 +84,48 @@ public class TranscriptFeatureController {
     private String formView;
     private String geneView;
     private String geneDetailsView;
-    private Set<String> validExtensions = Sets.newHashSet();
+    //private Set<String> validExtensions = Sets.newHashSet();
     private int cacheHit = 0;
     private int cacheMiss = 0;
-
-    private BerkeleyMapFactory bmf;
-    private ModelBuilder modelBuilder;
-    private HistoryManagerFactory hmFactory;
-
-    //private ResultsCacheFactory resultsCacheFactory;
     
-    DTOFactory factory=new DTOFactory();
+    private HistoryManagerFactory hmFactory;
+    
+    
+    private DTOFactory dtoFactory;
+    
+    public void setDtoFactory(DTOFactory dtoFactory) {
+    	this.dtoFactory = dtoFactory;
+    }
 
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
        
     
-    public TranscriptDTO getDtoByName(Feature feature) {
-		
-		logger.info("Getting dto " + feature.getUniqueName());
-		logger.info("Feature type = " + feature.getClass());
-		
-		if (feature instanceof AbstractGene) {
-			return factory.make((AbstractGene) feature);
-		}
-		
-		return factory.make(feature);
-		
-		
-	}
-	    
-    public TranscriptDTO saveDto(TranscriptDTO dto) {
-    	logger.info("Saving dto " + dto.getUniqueName());
-    	return dto;
-    }
+//    public FeatureDTO getDtoByName(Feature feature) {
+//		
+//		logger.info("Getting dto " + feature.getUniqueName());
+//		logger.info("Feature type = " + feature.getClass());
+//		
+//		if (feature instanceof AbstractGene) {
+//			return factory.make((AbstractGene) feature);
+//		}
+//		
+//		return factory.make(feature);
+//		
+//		
+//	}
+//	    
+//    public FeatureDTO saveDto(FeatureDTO dto) {
+//    	logger.info("Saving dto " + dto.getUniqueName());
+//    	return dto;
+//    }
     
     // make this false for debugging...
     private static final boolean saveToCache = true;
     
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
-	public ModelAndView getByName(NameLookupBean nlb, @PathVariable("name") String name) throws Exception {
+	public ModelAndView getByName(NameLookupBean nlb, HttpSession session, @PathVariable("name") String name) throws Exception {
 		
 		logger.info("name : " + name);
 		
@@ -135,11 +138,11 @@ public class TranscriptFeatureController {
             return new ModelAndView("redirect:/QueryList");
         }
 		
-		TranscriptDTO dto = null;
+		FeatureDTO dto = null;
 		
 		if (gene != null) {
 			
-			GeneDTO gdto = (GeneDTO) getDtoByName(gene);
+			GeneDTO gdto = (GeneDTO) dtoFactory.getDtoByName(gene);
 				
 			for (TranscriptDTO tdto : gdto.getTranscripts()) {
 				logger.info(tdto.getUniqueName() + " == " + name);
@@ -172,53 +175,26 @@ public class TranscriptFeatureController {
 			
 			// it's the GeneDTO that we want to cache if possible (contains everything else)
 			if (saveToCache)
-				saveDto(gdto);
+				dtoFactory.saveDto(gdto);
 				
 			
 		} else {
 			logger.info("No gene, using a dto of the feature.");
-			dto = getDtoByName(feature);
+			dto = dtoFactory.getDtoByName(feature);
 			if (saveToCache)
-				saveDto(dto);
+				dtoFactory.saveDto(dto);
 		}
 		
 		
+		HistoryManager hm = hmFactory.getHistoryManager(session);
+        HistoryItem autoBasket = hm.getHistoryItemByType(HistoryType.AUTO_BASKET);
+        logger.debug(String.format("Basket is '%s'", autoBasket));
+        hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
+        if (nlb.isAddToBasket()) {
+        	hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+        	// Add message here
+        }
 		
-		
-		
-		
-		
-		//TranscriptDTO dto = fetcher.getDtoByName(name); // (TranscriptDTO) Hazelcast.getMap("dto").get(name);
-//		
-//		if (dto == null) {
-//			
-//			if (feature instanceof AbstractGene) {
-//				GeneDTO gdto = factory.make((AbstractGene) feature);
-//				for (Transcript transcript : gene.getTranscripts()) {
-//					TranscriptDTO tdto = factory.make(transcript);
-//					gdto.getTranscripts().add(tdto);
-//				}
-//				dto = gdto;
-//			} else if (feature instanceof Transcript) {
-//				TranscriptDTO tdto = factory.make((Transcript) feature);
-//
-//				Polypeptide polypeptide = ((Transcript) feature)
-//						.getPolypeptide();
-//
-//				if (polypeptide != null) {
-//					PolypeptideDTO pdto = factory.make(polypeptide);
-//					tdto.setPolypeptide(pdto);
-//					logger.info(pdto);
-//					dto = tdto;
-//				}
-//
-//			} else if (feature instanceof Polypeptide) {
-//				dto = factory.make((Polypeptide) feature);
-//			}
-//			
-//			Hazelcast.getMap("dto").put(name, dto);
-//			
-//		}
 		
 		HashMap<String, Object> model = Maps.newHashMap();
 		model.put("taxonNodeName", feature.getOrganism().getCommonName());
@@ -243,43 +219,17 @@ public class TranscriptFeatureController {
         }
         model.put("orthologues", publicOrthologues);
         
-//        // get the hierarachy
-//		//GeneDTO geneDTO = factory.make(gene);
-//		for (Transcript transcript : gene.getTranscripts()) {
-//			
-//			//TranscriptDTO tdto = factory.make(transcript);
-//			//geneDTO.getTranscripts().add(tdto);
-//			//logger.info(tdto);
-//			//logger.info(tdto.getTypeDescription());
-//			//geneDTO.setTypeDescription(tdto.getTypeDescription());
-//			//logger.info(geneDTO.getTypeDescription());
-//			
-//			Polypeptide polypeptide = transcript.getPolypeptide();
-//			
-////			if (polypeptide == null) {
-////				continue;
-////			}
-////			
-////			PolypeptideDTO pdto = factory.make(polypeptide);
-////			tdto.setPolypeptide(pdto);
-////			logger.info(pdto);
-//		}
-//		
-		
-//
-//		//model.put("dtos", dtos);
-		
 		logger.info("isDetailsOnly? " + nlb.isDetailsOnly());
 		
 		String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 		logger.info("viewName? " + viewName);
 		
 		ModelAndView mav = new ModelAndView(viewName, model);
-		//mav.addObject("sequenceDao", sequenceDao);
 		return mav;
 
 	}
     
+    /*
     @RequestMapping(method=RequestMethod.GET, value="/transcript/{name}")
     public ModelAndView lookUpFeature(HttpServletRequest request,
             HttpServletResponse response,
@@ -326,7 +276,7 @@ public class TranscriptFeatureController {
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 
-        TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
+        FeatureDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
 
         if (dto == null) {
             cacheMiss++;
@@ -402,6 +352,7 @@ public class TranscriptFeatureController {
         mav.addObject("sequenceDao", sequenceDao);
         return mav;
     }
+    */
 
     /**
      * This is to help verify if the current session key used to access the GeneSummary search results is still alive
@@ -426,7 +377,6 @@ public class TranscriptFeatureController {
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
-        factory.setSequenceDao(sequenceDao);
     }
 
     public void setGeneView(String geneView) {
@@ -437,9 +387,7 @@ public class TranscriptFeatureController {
         this.geneDetailsView = geneDetailsView;
     }
 
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
-    }
+    
 
 
     @ManagedAttribute(description="The no. of times the controller found the entry in the cache")
@@ -512,9 +460,6 @@ public class TranscriptFeatureController {
     }
 
 
-    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
-        this.bmf = bmf;
-    }
 
     public String getFormView() {
         return formView;
@@ -532,8 +477,8 @@ public class TranscriptFeatureController {
 //        this.resultsCacheFactory = resultsCacheFactory;
 //    }
 
-	public void setValidExtensions(Set<String> validExtensions) {
-		this.validExtensions = validExtensions;
-	}
+//	public void setValidExtensions(Set<String> validExtensions) {
+//		this.validExtensions = validExtensions;
+//	}
 
 }

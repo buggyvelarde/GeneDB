@@ -24,6 +24,7 @@ import org.genedb.util.Pair;
 import org.genedb.util.SequenceUtils;
 
 import org.gmod.schema.feature.AbstractExon;
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
@@ -50,6 +51,7 @@ import com.google.common.collect.Maps;
  *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
+ * @author gv1
  */
 @Controller
 @RequestMapping("/featureSeq")
@@ -72,13 +74,38 @@ public class FeatureSequenceController {
         }
 
         String viewName = geneSequenceView;
-
-        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
         Map<String, Object> model = Maps.newHashMap();
-
-        model.put("uniqueName", transcript.getUniqueName());
+        
+        Transcript transcript = null;
+        
+        if (feature instanceof Transcript) {
+        	
+        	model.put("uniqueName", transcript.getUniqueName());
+        	transcript = (Transcript) feature;
+        	
+        	
+        } else {
+        	
+        	AbstractGene gene = sequenceDao.getGene(feature);
+            if (gene == null) {
+//            	model.put("uniqueName", feature.getUniqueName());
+//            	model.put("gene_sequence", feature.getResidues());
+//            	return new ModelAndView(viewName, model);
+            	return new ModelAndView("redirect:/feature/notFound.jsp");
+            }
+        	
+        	model.put("uniqueName", gene.getUniqueName());
+        	transcript = gene.getFirstTranscript();
+        	if (transcript == null) {
+//            	model.put("gene_sequence", feature.getResidues());
+//            	return new ModelAndView(viewName, model);
+            	return new ModelAndView("redirect:/feature/notFound.jsp");
+            }
+        }
+        
+        
+        
         model.put("coords", transcript.getExons());
-
 
         // ---------------------------------------------
         model.put("unspliced", transcript.getGene().getResidues());
@@ -150,11 +177,11 @@ public class FeatureSequenceController {
 
 
 
-    private ModelBuilder modelBuilder;
-
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
-    }
+//    private ModelBuilder modelBuilder;
+//
+//    public void setModelBuilder(ModelBuilder modelBuilder) {
+//        this.modelBuilder = modelBuilder;
+//    }
 
     public static class FeatureSequenceBean {
         private String name;

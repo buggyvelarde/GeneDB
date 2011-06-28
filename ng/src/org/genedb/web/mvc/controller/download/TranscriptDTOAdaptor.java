@@ -8,6 +8,7 @@ import org.genedb.db.domain.objects.PolypeptideRegion;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.web.mvc.model.DbXRefDTO;
 import org.genedb.web.mvc.model.FeatureCvTermDTO;
+import org.genedb.web.mvc.model.FeatureDTO;
 import org.genedb.web.mvc.model.TranscriptDTO;
 import org.springframework.util.StringUtils;
 
@@ -17,13 +18,13 @@ public class TranscriptDTOAdaptor {
 
 	private static final Logger logger = Logger.getLogger(TranscriptDTOAdaptor.class);
 
-	private TranscriptDTO dto;
+	private FeatureDTO dto;
 
 	private String fieldDelim;
 
 	private Map<String, List<String>> mapping;
 
-	public TranscriptDTOAdaptor(TranscriptDTO dto, String fieldDelim) {
+	public TranscriptDTOAdaptor(FeatureDTO dto, String fieldDelim) {
 		this.dto = dto;
 		this.fieldDelim = fieldDelim;
 		mapping = dto.getSynonymsByTypes();
@@ -54,25 +55,30 @@ public class TranscriptDTOAdaptor {
 
 	public String getInterpro() {
 		List<String> accessions = Lists.newArrayList();
-		List<PolypeptideRegionGroup> regions = dto.getDomainInformation();
-		for (PolypeptideRegionGroup region : regions) {
-			accessions.add(region.getUniqueName());
-			for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
-				accessions.add(polypeptideRegion.getUniqueName());
+		if (dto instanceof TranscriptDTO) {
+			List<PolypeptideRegionGroup> regions = ((TranscriptDTO)dto).getDomainInformation();
+			for (PolypeptideRegionGroup region : regions) {
+				accessions.add(region.getUniqueName());
+				for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
+					accessions.add(polypeptideRegion.getUniqueName());
+				}
 			}
 		}
+		
 		return StringUtils.collectionToDelimitedString(accessions, fieldDelim);
 	}
 
 	public String getPfam() {
 		List<String> accessions2 = Lists.newArrayList();
-		List<PolypeptideRegionGroup> regions2 = dto.getDomainInformation();
-		for (PolypeptideRegionGroup region : regions2) {
-			accessions2.add(region.getUniqueName());
-			for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
-				accessions2.add(polypeptideRegion.getUniqueName());
+		if (dto instanceof TranscriptDTO) {
+			List<PolypeptideRegionGroup> regions2 = ((TranscriptDTO)dto).getDomainInformation();
+			for (PolypeptideRegionGroup region : regions2) {
+				accessions2.add(region.getUniqueName());
+				for (PolypeptideRegion polypeptideRegion : region.getSubfeatures()) {
+					accessions2.add(polypeptideRegion.getUniqueName());
+				}
+	
 			}
-
 		}
 		return StringUtils.collectionToDelimitedString(accessions2, fieldDelim);
 	}
@@ -98,7 +104,10 @@ public class TranscriptDTOAdaptor {
 	}
 
 	public String getIsoelectricPoint() {
-		return dto.getPolypeptideProperties().getIsoelectricPoint();
+		if (dto instanceof TranscriptDTO) {
+			return ((TranscriptDTO)dto).getPolypeptideProperties().getIsoelectricPoint() + fieldDelim;
+		}
+		return null;
 	}
 
 	public String getLocation() {
@@ -106,7 +115,10 @@ public class TranscriptDTOAdaptor {
 	}
 
 	public String getMolWeight() {
-		return dto.getPolypeptideProperties().getMass() + fieldDelim;
+		if (dto instanceof TranscriptDTO) {
+			return ((TranscriptDTO)dto).getPolypeptideProperties().getMass() + fieldDelim;
+		}
+		return null;
 	}
 
 	public String getNumTM() {

@@ -267,15 +267,8 @@ div.comment {
 <c:choose>
   <c:when test="${hasAlgorithmData}">
     <format:genePageSection>
-    <format:algorithmPredictions algData="${dto.algorithmData}"/>
-    <div id="col-4-2">
-      <div class="sub-grey-3-4-top"></div>
-        <div class="light-grey-nopad">
-          <format:peptideProperties pepProps="${dto.polypeptideProperties}"/>
-        </div>
-      <div class="sub-grey-3-4-bot"></div>
-    </div><!-- end internal column -right -->
-    <br class="clear" />
+        <format:algorithmPredictions algData="${dto.algorithmData}"/>
+        <format:peptideProperties pepProps="${dto.polypeptideProperties}"/>
     </format:genePageSection>
   </c:when>
   <c:otherwise>
@@ -285,7 +278,7 @@ div.comment {
   </c:otherwise>
 </c:choose>
 
-<c:if test="${dto.ims != null}">
+<%-- <c:if test="${dto.ims != null}">
 <format:genePageSection>
 <h2>Protein map</h2>
 ${dto.ims.imageMap}
@@ -305,14 +298,15 @@ ${dto.ims.imageMap}
 <![endif]>
 </format:genePageSection>
 </c:if>
-
+ --%>
 
 
 
   <%-- Domain Information --%>
-<c:if test="${fn:length(dto.domainInformation) > 0}">
+<c:if test="${fn:length(dto.domainInformation) > 0 || hasAlgorithmData || fn:length(dto.membraneStructureComponents) > 0 }">
 <br>
-<format:genePageSection><h2>Protein map</h2>
+<format:genePageSection>
+<h2>Protein map</h2>
         <c:set var="proteinMapCount" value="0" scope="page" />
         <c:set var="proteinMapWidth" value="875" scope="page" />
         <c:set var="proteinMapDomainHeight" value="15" scope="page" />
@@ -342,7 +336,7 @@ ${dto.ims.imageMap}
 	               
 	             <c:forEach var="hit" items="${subsection.subfeatures}"  varStatus="substatus" >
                     
-	                <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='${hit.uniqueName} - ${hit.description}' style="background: rgb(${hit.color.blue},${hit.color.green},${hit.color.blue}) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( hit.fmin / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (hit.fmax - hit.fmin) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div>
+	                <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='${hit.uniqueName} - ${hit.description}' style="background: rgb(${hit.color.red},${hit.color.green},${hit.color.blue}) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( hit.fmin / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (hit.fmax - hit.fmin) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div>
 	                
 	                <c:if test="${hit.url != null}">
 		                <script>
@@ -355,8 +349,64 @@ ${dto.ims.imageMap}
 	             </c:forEach>
 	        </c:forEach>
 	        
+	        
+	        <c:if test="${hasAlgorithmData}">
+	           
+	           <div class='proteinMapDomainSection' id='subsectionhit-${proteinMapCount}' title='TMHMM' style="font-size:small;text-align:right;  background: rgb(222,222,222) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace) - (proteinMapDomainHeightSpace/2)  }px; height: ${ (fn:length(dto.algorithmData) + 1) * (proteinMapDomainHeight+proteinMapDomainHeightSpace) }px; width: ${proteinMapWidth }px; " > Algorithm Data </div>
+	           <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+	           
+                <c:if test="${dto.algorithmData.TMHMM != null}">
+                     <c:forEach var="helix" varStatus="status" items="${dto.algorithmData.TMHMM}">
+                         <c:set var="t" value="${fn:split(helix,'-')}" scope="page" />
+                         <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='TMHMM - ${helix}' style="background: blue; cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( t[0] / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (t[1]-t[0]) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div> 
+                    </c:forEach>
+                    <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+                </c:if>
+                
+                <c:if test="${dto.algorithmData.SignalP != null}">
+                    <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='Signal P' style="background: green; cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( 1 / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (dto.algorithmData.SignalP.cleavageSite) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div>
+                    <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+                </c:if>
+                
+                <c:if test="${dto.algorithmData.DGPI != null && dto.algorithmData.DGPI.anchored}">
+                    <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='DGPI' style="background: orange; cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; left: ${ ( dto.algorithmData.DGPI.location / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (proteinMapBaseWidth -  dto.algorithmData.DGPI.location) / proteinMapBaseWidth ) * proteinMapWidth  }px; height:15px; " >&nbsp;</div>
+                    <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+                </c:if>
+                
+            </c:if>
+            
+            <c:if test="${dto.membraneStructureComponents != null }">
+                <c:if test="${fn:length(dto.membraneStructureComponents) > 0}" >
+                    
+                    <div class='proteinMapDomainSection' id='subsectionhit-${proteinMapCount}' title='Membrane' style="font-size:small;text-align:right;  background: rgb(222,222,222) ;  cursor:pointer;position:absolute;top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace) - (proteinMapDomainHeightSpace/2)  }px; height: ${ (2) * (proteinMapDomainHeight+proteinMapDomainHeightSpace) }px; width: ${proteinMapWidth }px; " > Membrane </div>
+                    <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+                
+                    <c:forEach var="component" varStatus="status" items="${dto.membraneStructureComponents}">
+                        <c:choose>
+                            
+                            <c:when test="${component.compartment == 'cytoplasmic' }">
+                                <c:set var="componentStyle" value="height:1px; top: ${(proteinMapCount) * (proteinMapDomainHeight + proteinMapDomainHeightSpace) + 14}px;" scope="page"/>
+                            </c:when>
+                            <c:when test="${component.compartment == 'noncytoplasmic' }">
+                                <c:set var="componentStyle" value="height:1px; top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px; " scope="page"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="componentStyle" value="height:15px; top: ${proteinMapCount * (proteinMapDomainHeight + proteinMapDomainHeightSpace)}px;" scope="page"/>
+                            </c:otherwise>
+                            
+                        </c:choose>
+                    
+                        <div class='proteinMapDomain' id='hit-${proteinMapCount}' title='${component.uniqueName}' style="${componentStyle} background: blue; cursor:pointer;position:absolute; left: ${ ( component.fmin / proteinMapBaseWidth ) * proteinMapWidth  }px; width: ${ ( (component.fmax - component.fmin) / proteinMapBaseWidth ) * proteinMapWidth  }px;  " >&nbsp;</div>  
+                    </c:forEach>
+                    <c:set var="proteinMapCount" value="${proteinMapCount + 1}" scope="page"/>
+                </c:if>
+                
+            </c:if>
+            
+            
+	        
 	        <c:forEach var="i" begin="0" end="${proteinMapBaseWidth}" step="100" varStatus="istatus">
-                <div style="position:absolute; bottom:-20px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; ">${i}</div>
+                <div style="font-size:x-small;position:absolute; bottom:-20px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; ">${i}</div>
             </c:forEach>
             
             <c:forEach var="i" begin="50" end="${proteinMapBaseWidth}" step="50" varStatus="istatus">
@@ -372,11 +422,15 @@ ${dto.ims.imageMap}
 	        $(document).ready(function() { 
 	        	$('#proteinMap').css("height", parseInt("${(proteinMapCount) * (proteinMapDomainHeight+proteinMapDomainHeightSpace)}"));
 	        	
-	        	var darkBackground = "rgb(100,100,100)";
+	        	var darkBackground = "rgb(0,0,0)";
 	        	var lightBackground = "rgb(222,222,222)";
 	        	
+	        	var darkColor = "rgb(0,0,0)";
+	        	var lightColor = "rgb(255,255,255)";
+	        	
 	        	$('.proteinMapDomain,.proteinMapDomainSection').click(function(e) {
-	        		window.location = urls[e.target.id];
+	        		if (e.target.id in urls)
+	        		    window.location = urls[e.target.id];
 	        	});
 	        	
 	        	$('.proteinMapDomain').hover(function(e) {
@@ -385,7 +439,7 @@ ${dto.ims.imageMap}
 	        		
 	        		$("#" + subsection).stop().animate({
                         backgroundColor: darkBackground,
-                        color : lightBackground
+                        color : lightColor
                     }, 'slow');
 	        		
 	        	}, function(e) {
@@ -393,7 +447,7 @@ ${dto.ims.imageMap}
 	        		var subsection = subsections[e.target.id];
 	        		$("#" + subsection).stop().animate({
                         backgroundColor: lightBackground,
-                        color : darkBackground
+                        color : darkColor
                     }, 'slow');
 	        		
 	        	}).fadeTo('fast', 0.5);
@@ -401,13 +455,13 @@ ${dto.ims.imageMap}
 	        	$('.proteinMapDomainSection').hover(function(e) {
                     $(this).stop().animate({
                         backgroundColor: darkBackground,
-                        color : lightBackground
+                        color : lightColor
                     }, 'slow');
                     
                 }, function(e) {
                 	$(this).stop().animate({
                         backgroundColor: lightBackground,
-                        color : darkBackground
+                        color : darkColor
                     }, 'slow');
                 });
 	        	

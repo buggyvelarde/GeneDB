@@ -40,11 +40,11 @@ import org.springframework.web.servlet.ModelAndView;
 //import org.genedb.querying.history.HistoryType;
 //import org.genedb.util.Pair;
 //import org.genedb.web.mvc.model.BerkeleyMapFactory;
-import org.genedb.web.mvc.model.TranscriptDTOFactory;
+//import org.genedb.web.mvc.model.TranscriptDTOFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.Polypeptide;
+//import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 

@@ -13,8 +13,12 @@ import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.MembraneStructure;
+import org.gmod.schema.feature.MembraneStructureComponent;
 import org.gmod.schema.feature.NcRNA;
+import org.gmod.schema.feature.NonCytoplasmicRegion;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
 import org.gmod.schema.feature.ProductiveTranscript;
@@ -38,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -52,16 +57,18 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@Component
 public class DTOFactory {
 
 	private transient Logger logger = Logger
 			.getLogger(DTOFactory.class);
 	
+	@Autowired
 	private SequenceDao sequenceDao;
 	
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
+//	public void setSequenceDao(SequenceDao sequenceDao) {
+//		this.sequenceDao = sequenceDao;
+//	}
 
 	private Map<String, Object> prepareAlgorithmData(Polypeptide polypeptide) {
 		Map<String, Object> aData = new HashMap<String, Object>();
@@ -168,7 +175,7 @@ public class DTOFactory {
 
 	private List<String> prepareTMHMMData(Polypeptide polypeptide) {
 		List<String> tmhmmData = new ArrayList<String>();
-
+		
 		for (TransmembraneRegion transmembraneRegion : polypeptide
 				.getRegions(TransmembraneRegion.class)) {
 			tmhmmData.add(String.format("%d-%d", 1 + transmembraneRegion
@@ -177,6 +184,43 @@ public class DTOFactory {
 		}
 
 		return tmhmmData;
+	}
+	
+	private List<MembraneStructureComponentDTO> prepareMembraneStructureData(Polypeptide polypeptide) {
+		List<MembraneStructureComponentDTO> memDTOs = new ArrayList<MembraneStructureComponentDTO>();
+		
+		MembraneStructure membraneStructure = polypeptide.getMembraneStructure();
+		if (membraneStructure == null ) {
+			return memDTOs;
+		}
+		
+		for (MembraneStructureComponent component: membraneStructure.getComponents()) {
+			
+			MembraneStructureComponentDTO memDTO = new MembraneStructureComponentDTO();
+			memDTOs.add(memDTO);
+			
+			memDTO.fmax = component.getFmax();
+			memDTO.fmin = component.getFmin();
+			memDTO.uniqueName = component.getUniqueName();
+			
+            if (component instanceof CytoplasmicRegion) {
+            	memDTO.compartment = "cytoplasmic";
+                
+            }
+            else if (component instanceof NonCytoplasmicRegion) {
+            	memDTO.compartment = "noncytoplasmic";
+            }
+            else if (component instanceof TransmembraneRegion) {
+            	memDTO.compartment = "transmembrane";
+            }
+            else {
+                throw new IllegalStateException(String.format("Unknown membrane structure component (%s)",
+                    component.getClass()));
+            }
+        }
+		
+		return memDTOs;
+		
 	}
 
 	private <S> void putIfNotEmpty(Map<S, ? super Collection<?>> map, S key,
@@ -241,9 +285,30 @@ public class DTOFactory {
 //		return make((Feature)gene);
 //	}
 	
-	public TranscriptDTO make(Feature feature) {
+	
+	public FeatureDTO getDtoByName(Feature feature) {
 		
-		TranscriptDTO featureDTO = new TranscriptDTO();
+		logger.info("Getting dto " + feature.getUniqueName());
+		logger.info("Feature type = " + feature.getClass());
+		
+		if (feature instanceof AbstractGene) {
+			return make((AbstractGene) feature);
+		}
+		
+		return make(feature);
+		
+	}
+	    
+    public FeatureDTO saveDto(FeatureDTO dto) {
+    	logger.info("Saving dto " + dto.getUniqueName());
+    	return dto;
+    }
+    
+    
+	
+	private FeatureDTO make(Feature feature) {
+		
+		FeatureDTO featureDTO = new TranscriptDTO();
 		logger.info("Populating feature... " + feature.getClass() + " : " + feature.getUniqueName());
 		
 		populateUsingFeature(featureDTO, feature);
@@ -258,7 +323,7 @@ public class DTOFactory {
 		return featureDTO;
 	}
 	
-	public GeneDTO make(AbstractGene gene) {
+	private GeneDTO make(AbstractGene gene) {
 		GeneDTO geneDTO = new GeneDTO();
 		
 		String uniqueName = gene.getUniqueName();
@@ -301,21 +366,22 @@ public class DTOFactory {
 					
 					logger.info("Populating transcript using polypeptide " + polypeptide.getUniqueName());
 					
-					PolypeptideDTO polypeptideDTO = new PolypeptideDTO();
-					transcriptDTO.setPolypeptide(polypeptideDTO);
+					// not sure if we should be using a polypeptide DTO
+					//PolypeptideDTO polypeptideDTO = new PolypeptideDTO();
+					//transcriptDTO.setPolypeptide(polypeptideDTO);
 					
-					polypeptideDTO.setUniqueName(polypeptide.getUniqueName());
-					polypeptideDTO.setGeneName(name);
+					//polypeptideDTO.setUniqueName(polypeptide.getUniqueName());
+					//polypeptideDTO.setGeneName(name);
 					
 					populateUsingFeature(transcriptDTO, polypeptide);
 					populateUsingPolypeptide(transcriptDTO, polypeptide);
 					
 					logger.info("** About to set synonyms for " + polypeptide.getUniqueName());
 					synonymDTO.addSynonyms(polypeptide.getFeatureSynonyms());
-					polypeptideDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
+					//polypeptideDTO.setSynonymsByTypes(synonymDTO.getSynonyms());
 					
 					
-					
+					transcriptDTO.setMembraneStructureComponents(prepareMembraneStructureData(polypeptide));
 					
 					
 				} else {
@@ -404,7 +470,7 @@ public class DTOFactory {
 		
 	}
 	
-	private void populateUsingFeature(TranscriptDTO ret, Feature feature) {
+	private void populateUsingFeature(FeatureDTO ret, Feature feature) {
 		
 		ret.setUniqueName(feature.getUniqueName());
 		
@@ -455,7 +521,7 @@ public class DTOFactory {
 
 	
 
-	private void populateLastModified(TranscriptDTO ret,
+	private void populateLastModified(FeatureDTO ret,
 			Feature feature) {
 		Timestamp date = feature.getTimeLastModified();
 
@@ -464,7 +530,7 @@ public class DTOFactory {
 		}
 	}
 
-	private void populateOrganismDetails(TranscriptDTO ret,
+	private void populateOrganismDetails(FeatureDTO ret,
 			Feature feature) {
 		ret.setOrganismCommonName(feature.getOrganism().getCommonName());
 		ret.setOrganismHtmlShortName(feature.getOrganism()
@@ -511,7 +577,7 @@ public class DTOFactory {
 		return domainInfo;
 	}
 
-	private void populateFromFeatureRelationships(TranscriptDTO transcriptDTO,
+	private void populateFromFeatureRelationships(FeatureDTO transcriptDTO,
 			Feature polypeptide) {
 
 		List<String> clusterIds = Lists.newArrayList();
@@ -536,7 +602,7 @@ public class DTOFactory {
 
 	}
 
-	private void populateFromFeatureDbXrefs(TranscriptDTO transcriptDTO,
+	private void populateFromFeatureDbXrefs(FeatureDTO transcriptDTO,
 			Feature polypeptide) {
 		List<DbXRefDTO> dbXRefDTOs = new ArrayList<DbXRefDTO>();
 		for (FeatureDbXRef fdx : polypeptide.getFeatureDbXRefs()) {
@@ -558,7 +624,7 @@ public class DTOFactory {
 		}
 	}
 
-	private void populateFromFeaturePubs(TranscriptDTO transcriptDTO,
+	private void populateFromFeaturePubs(FeatureDTO transcriptDTO,
 			Feature feature) {
 		List<String> pubNames = new ArrayList<String>();
 		for (FeaturePub fp : feature.getFeaturePubs()) {
@@ -652,7 +718,7 @@ public class DTOFactory {
 		return null;
 	}
 	
-	private void populateType(TranscriptDTO ret, Feature feature) {
+	private void populateType(FeatureDTO ret, Feature feature) {
 		String type = feature.getType().getName();
 		
 		if (feature instanceof Polypeptide) {
@@ -677,7 +743,7 @@ public class DTOFactory {
 //		ret.setTypeDescription(type);
 //	}
 
-	private void populateParentDetails(TranscriptDTO ret, Feature gene) {
+	private void populateParentDetails(FeatureDTO ret, Feature gene) {
 		FeatureLoc top = gene.getRankZeroFeatureLoc();
 		ret.setMin(top.getFmin());
 		ret.setMax(top.getFmax());
@@ -690,7 +756,7 @@ public class DTOFactory {
 		ret.setTopLevelFeatureLength(topLevelFeature.getSeqLen());
 	}
 
-	private void populateFromFeatureProps(TranscriptDTO ret, Feature feature) {
+	private void populateFromFeatureProps(FeatureDTO ret, Feature feature) {
 		Assert.notNull(feature);
 		ret.setNotes(stringListFromFeaturePropList(feature, "feature_property",
 				"comment"));

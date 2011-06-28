@@ -49,7 +49,7 @@ public class BasketController {
 
     private SequenceDao sequenceDao;
     private HistoryManagerFactory hmFactory;
-    private ModelBuilder modelBuilder;
+    //private ModelBuilder modelBuilder;
 
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
     protected void addFeatureToBasket(
@@ -66,14 +66,14 @@ public class BasketController {
             return;
         }
 
-        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
-        if (transcript == null) {
-            // If feature isn't transcript redirect - include model
-            // is it part of a gene
-            logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
-            //be.reject("no.results");
-            return;
-        }
+//        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
+//        if (transcript == null) {
+//            // If feature isn't transcript redirect - include model
+//            // is it part of a gene
+//            logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
+//            //be.reject("no.results");
+//            return;
+//        }
             logger.trace("dto cache hit for '"+feature.getUniqueName());
             HistoryManager hm = hmFactory.getHistoryManager(session);
             hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
@@ -82,9 +82,9 @@ public class BasketController {
         return;
     }
 
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
-    }
+//    public void setModelBuilder(ModelBuilder modelBuilder) {
+//        this.modelBuilder = modelBuilder;
+//    }
 
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;

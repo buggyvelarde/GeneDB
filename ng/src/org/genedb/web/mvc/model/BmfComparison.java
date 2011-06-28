@@ -52,7 +52,7 @@ public class BmfComparison {
             StoredMap<Integer, TranscriptDTO> dtoMap) throws IOException {
 
         for (Map.Entry<Integer, TranscriptDTO> entry : dtoMap.entrySet()) {
-            TranscriptDTO dto = entry.getValue();
+            FeatureDTO dto = entry.getValue();
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             ObjectOutput out = new ObjectOutputStream(buffer);
             out.writeObject(dto);

@@ -31,7 +31,7 @@ public class TranscriptDTOAnalyzer2 {
         StoredMap<Integer, TranscriptDTO> dtoMap = bmf.getDtoMap();
         int total = 0;
         for (StoredMap.Entry<Integer, TranscriptDTO> entry : dtoMap.entrySet()) {
-            TranscriptDTO t = entry.getValue();
+            FeatureDTO t = entry.getValue();
             String key = t.getOrganismCommonName();
             if (args != null && args.length>=2  && key.equals(args[1])) {
                 System.err.println("" + entry.getKey() + " : "+ t.getUniqueName());
