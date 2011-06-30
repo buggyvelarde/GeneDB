@@ -19,7 +19,7 @@ package org.genedb.web.mvc.controller.download;
 //
 //@Controller
 //@RequestMapping("/ResultsNavigator")
-public class ResultsNavigatorController {
+//public class ResultsNavigatorController {
 //    private static final Logger logger = Logger.getLogger(ResultsNavigatorController.class);
 //
 //    //@Autowired
@@ -76,4 +76,4 @@ public class ResultsNavigatorController {
 //        return ret;
 //    }
 //
-}
+//}

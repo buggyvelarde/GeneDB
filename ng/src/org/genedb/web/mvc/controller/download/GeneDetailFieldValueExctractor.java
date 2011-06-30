@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.tmpquery.GeneDetail;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
+import org.genedb.web.mvc.model.DTOFactory;
 import org.genedb.web.mvc.model.FeatureDTO;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -20,11 +20,11 @@ public class GeneDetailFieldValueExctractor {
 	private String fieldInternalSeparator;
 	private String blankField;
 	private GeneDetail entry;
-	private BerkeleyMapFactory bmf;
+	//private BerkeleyMapFactory bmf;
 	private SequenceDao sequenceDao;
 	
-	private boolean isTranscript = false;
-	private TranscriptDTOAdaptor adaptor;
+	
+	//private FeatureDTOAdaptor adaptor;
 	private FeatureDTO dto;
 	
 	private int featureId;
@@ -33,10 +33,9 @@ public class GeneDetailFieldValueExctractor {
 	private Feature feature;
 	private Map<String, Feature> features;
 	
-	public GeneDetailFieldValueExctractor(GeneDetail entry, BerkeleyMapFactory bmf, SequenceDao sequenceDao, Map<String,Feature>features, String fieldInternalSeparator, String blankField) {
+	public GeneDetailFieldValueExctractor(GeneDetail entry, SequenceDao sequenceDao, Map<String,Feature>features, String fieldInternalSeparator, String blankField) {
 		
 		this.entry = entry;
-		this.bmf = bmf;
 		this.sequenceDao = sequenceDao;
 		
 		this.features = features;
@@ -49,28 +48,26 @@ public class GeneDetailFieldValueExctractor {
 		
 		// logger.error(systematicId);
 		
-		if (entry.getType().equals("mRNA")) {
-			isTranscript = true;
-		}
+		
 	}
 	
 	public String getFieldValue (OutputOption outputOption) {
 		
 		// try first to fetch from lucene because it's faster
+		String source = "lucene";
 		String fieldValue = getFieldValue(entry, outputOption);
 		
-		String source = "lucene";
-		
+		/*
+		 * NOTE this is commented out because the download processes run on the farm, and we don't want to be starting up cluster nodes everywhere...
+		 * must think if this is necessary anyway.
+		 * */
+//		if (fieldValue == null) {
+//			source = "dto";
+//			fieldValue = getFieldValue(getAdaptor(), outputOption);
+//		}
 		if (fieldValue == null) {
-			if (isTranscript) {
-				// use the DTO if it's a transcript
-				source = "transcript";
-				fieldValue = getFieldValue(getAdaptor(), outputOption);
-			} else {				
-				// fall back on feature (for pseudogenes, etc.), slow but no other way left to get the info
-				source = "feature";
-				fieldValue = getFieldValue(getFeature(), outputOption);
-			}
+			source = "hibernate";
+			fieldValue = getFieldValue(getFeature(), outputOption);
 		}
 		
 		fieldValue = (fieldValue == null || fieldValue.equals("")) ? blankField : fieldValue;
@@ -188,80 +185,80 @@ public class GeneDetailFieldValueExctractor {
 	
 	
 	
-	/**
-	 * Gets field values for transcripts. Because this gets called several times for each transcript, 
-	 * and in each case an adaptor is needed, this method takes an adaptor parameter rather than 
-	 * the transcript itself, so as to be able to reuse the same adaptor instance. 
-	 * @param adaptor
-	 * @param outputOption
-	 * @return
-	 */
-	private String getFieldValue(TranscriptDTOAdaptor adaptor, OutputOption outputOption) {
-		String fieldValue = null;
-		
-		if (adaptor != null) {
-			
-			switch (outputOption) {
-			case CHROMOSOME:
-				fieldValue =  adaptor.getContig();
-				break;
-			case EC_NUMBERS:
-				fieldValue = adaptor.getEc();
-				break;
-			case GENE_TYPE:
-				fieldValue = adaptor.getType();
-				break;
-			case GO_IDS:
-				fieldValue = adaptor.getGO();
-				break;
-			case GPI_ANCHOR:
-				fieldValue = adaptor.getGpiAnchor();
-				break;
-			case INTERPRO_IDS:
-				fieldValue = adaptor.getInterpro();
-				break;
-			case ISOELECTRIC_POINT:
-				fieldValue = adaptor.getIsoelectricPoint();
-				break;
-			case LOCATION:
-				fieldValue = adaptor.getLocation();
-				break;
-			case MOL_WEIGHT:
-				fieldValue = adaptor.getMolWeight();
-				break;
-			case NUM_TM_DOMAINS:
-				fieldValue = adaptor.getNumTM();
-				break;
-			case ORGANISM:
-				fieldValue = adaptor.getOrganism();
-				break;
-			case PFAM_IDS:
-				fieldValue = adaptor.getPfam();
-				break;
-			case PREV_SYS_ID:
-				fieldValue = adaptor.getPrevIds();
-				break;
-			case PRIMARY_NAME:
-				fieldValue = adaptor.getPrimaryName();
-				break;
-			case PRODUCT:
-				fieldValue = adaptor.getProduct();
-				break;
-			case SIG_P:
-				fieldValue = adaptor.isSigP();
-				break;
-			case SYNONYMS:
-				fieldValue = adaptor.getSynonyms();
-				break;
-			case SYS_ID:
-				fieldValue = adaptor.getId();
-				break;
-			}
-			
-		}
-		
-		return fieldValue;
-	}
+//	/**
+//	 * Gets field values for transcripts. Because this gets called several times for each transcript, 
+//	 * and in each case an adaptor is needed, this method takes an adaptor parameter rather than 
+//	 * the transcript itself, so as to be able to reuse the same adaptor instance. 
+//	 * @param adaptor
+//	 * @param outputOption
+//	 * @return
+//	 */
+//	private String getFieldValue(FeatureDTOAdaptor adaptor, OutputOption outputOption) {
+//		String fieldValue = null;
+//		
+//		if (adaptor != null) {
+//			
+//			switch (outputOption) {
+//			case CHROMOSOME:
+//				fieldValue =  adaptor.getContig();
+//				break;
+//			case EC_NUMBERS:
+//				fieldValue = adaptor.getEc();
+//				break;
+//			case GENE_TYPE:
+//				fieldValue = adaptor.getType();
+//				break;
+//			case GO_IDS:
+//				fieldValue = adaptor.getGO();
+//				break;
+//			case GPI_ANCHOR:
+//				fieldValue = adaptor.getGpiAnchor();
+//				break;
+//			case INTERPRO_IDS:
+//				fieldValue = adaptor.getInterpro();
+//				break;
+//			case ISOELECTRIC_POINT:
+//				fieldValue = adaptor.getIsoelectricPoint();
+//				break;
+//			case LOCATION:
+//				fieldValue = adaptor.getLocation();
+//				break;
+//			case MOL_WEIGHT:
+//				fieldValue = adaptor.getMolWeight();
+//				break;
+//			case NUM_TM_DOMAINS:
+//				fieldValue = adaptor.getNumTM();
+//				break;
+//			case ORGANISM:
+//				fieldValue = adaptor.getOrganism();
+//				break;
+//			case PFAM_IDS:
+//				fieldValue = adaptor.getPfam();
+//				break;
+//			case PREV_SYS_ID:
+//				fieldValue = adaptor.getPrevIds();
+//				break;
+//			case PRIMARY_NAME:
+//				fieldValue = adaptor.getPrimaryName();
+//				break;
+//			case PRODUCT:
+//				fieldValue = adaptor.getProduct();
+//				break;
+//			case SIG_P:
+//				fieldValue = adaptor.isSigP();
+//				break;
+//			case SYNONYMS:
+//				fieldValue = adaptor.getSynonyms();
+//				break;
+//			case SYS_ID:
+//				fieldValue = adaptor.getId();
+//				break;
+//			}
+//			
+//		}
+//		
+//		return fieldValue;
+//	}
 	
 	/**
 	 * Gets the field value for any Feature. Used when the feature in question is not a transcript. 
@@ -311,25 +308,25 @@ public class GeneDetailFieldValueExctractor {
 	
 	
 	
-	private TranscriptDTOAdaptor getAdaptor() {
-		
-		if (dto == null) {
-			dto = bmf.getDtoMap().get(featureId);
-		}
-		
-		// if the dto is still null, then trying to make generate adaptor will raise an exception, 
-		if (dto == null) {
-			return null;
-		}
-		
-		//logger.debug(this.systematicId + " -- " + dto);
-		
-		if (adaptor == null) {
-			adaptor = new TranscriptDTOAdaptor(dto, fieldInternalSeparator);
-		}
-		
-		return adaptor;
-	}
+//	private FeatureDTOAdaptor getAdaptor() {
+//		
+//		if (dto == null) {
+//			dto = dtoFactory.getDtoByName(feature);
+//		}
+//		
+//		// if the dto is still null, then trying to make generate adaptor will raise an exception, 
+//		if (dto == null) {
+//			return null;
+//		}
+//		
+//		//logger.debug(this.systematicId + " -- " + dto);
+//		
+//		if (adaptor == null) {
+//			adaptor = new FeatureDTOAdaptor(dto, fieldInternalSeparator);
+//		}
+//		
+//		return adaptor;
+//	}
 	
 	
 	public Feature getFeature() {

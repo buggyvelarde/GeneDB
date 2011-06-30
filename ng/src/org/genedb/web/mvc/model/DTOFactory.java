@@ -5,24 +5,16 @@ import org.genedb.db.domain.objects.DatabasePolypeptideRegion;
 import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.db.domain.objects.SimpleRegionGroup;
-import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.ImageCreationException;
-import org.genedb.web.gui.ImageMapSummary;
-import org.genedb.web.gui.ProteinMapDiagram;
-import org.genedb.web.gui.RenderedDiagramFactory;
-import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
 import org.gmod.schema.feature.MembraneStructure;
 import org.gmod.schema.feature.MembraneStructureComponent;
-import org.gmod.schema.feature.NcRNA;
+
 import org.gmod.schema.feature.NonCytoplasmicRegion;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
-import org.gmod.schema.feature.ProductiveTranscript;
-import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.SignalPeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TransmembraneRegion;
@@ -41,11 +33,9 @@ import org.gmod.schema.mapped.Synonym;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;

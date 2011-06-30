@@ -132,10 +132,10 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/gene/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+    <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/web-artemis/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/genedb/*</url-pattern>
@@ -162,10 +162,10 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/IdList</url-pattern>
      </servlet-mapping>
-    <servlet-mapping>
+    <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Image/*</url-pattern>
-     </servlet-mapping>
+     </servlet-mapping> -->
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Orthologs/*</url-pattern>
@@ -190,10 +190,10 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Results/*</url-pattern>
      </servlet-mapping>
-     <servlet-mapping>
+     <!-- <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ResultsNavigator/*</url-pattern>
-     </servlet-mapping>
+     </servlet-mapping> -->
      <servlet-mapping>
        <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDistributor/*</url-pattern>

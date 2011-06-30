@@ -23,29 +23,17 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
-import org.genedb.util.Pair;
-//import org.genedb.web.mvc.controller.download.ResultEntry;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.DTOFactory;
 import org.genedb.web.mvc.model.FeatureDTO;
 import org.genedb.web.mvc.model.GeneDTO;
-import org.genedb.web.mvc.model.PolypeptideDTO;
-//import org.genedb.web.mvc.model.ResultsCacheFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.Exon;
-import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
-import org.aspectj.lang.annotation.Around;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,19 +41,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.hazelcast.core.Hazelcast;
-import com.sleepycat.collections.StoredMap;
 
 /**
  * Looks up a feature by unique name

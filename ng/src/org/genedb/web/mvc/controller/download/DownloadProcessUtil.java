@@ -20,7 +20,6 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneDetail;
 import org.genedb.querying.tmpquery.IdsToGeneDetailQuery;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -39,7 +38,7 @@ public class DownloadProcessUtil {
 	
 	private SequenceDao sequenceDao;
     private JavaMailSender mailSender;
-    private BerkeleyMapFactory bmf;
+    //private BerkeleyMapFactory bmf;
     
     private static final String DATE_FORMAT_NOW = "yyyy.MM.dd.HH.mm.ss";
     
@@ -58,13 +57,13 @@ public class DownloadProcessUtil {
     }
     
     
-    public void setBmf(BerkeleyMapFactory bmf) {
-        this.bmf = bmf;
-    }
-    
-    public BerkeleyMapFactory getBmf() {
-    	return bmf;
-    }
+//    public void setBmf(BerkeleyMapFactory bmf) {
+//        this.bmf = bmf;
+//    }
+//    
+//    public BerkeleyMapFactory getBmf() {
+//    	return bmf;
+//    }
     
     
     public void setSequenceDao(SequenceDao sequenceDao) {

@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.tmpquery.GeneDetail;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.gmod.schema.mapped.Feature;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -101,11 +100,11 @@ public abstract class FormatBase {
 		this.footerContentStart = footerContentStart;
 	}
 	
-	private BerkeleyMapFactory bmf;
-    
-    public void setBmf(BerkeleyMapFactory bmf) {
-        this.bmf = bmf;
-    }
+//	private BerkeleyMapFactory bmf;
+//    
+//    public void setBmf(BerkeleyMapFactory bmf) {
+//        this.bmf = bmf;
+//    }
     
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
@@ -240,7 +239,7 @@ public abstract class FormatBase {
 	abstract public void formatFooter() throws IOException;
 	
 	protected GeneDetailFieldValueExctractor getExtractor(GeneDetail entry) {
-		return new GeneDetailFieldValueExctractor(entry, bmf, sequenceDao, features, fieldInternalSeparator, blankField);
+		return new GeneDetailFieldValueExctractor(entry, sequenceDao, features, fieldInternalSeparator, blankField);
 	}
 	
 	protected List<String> getFieldValues(GeneDetailFieldValueExctractor extractor, List<OutputOption> outputOptions) {

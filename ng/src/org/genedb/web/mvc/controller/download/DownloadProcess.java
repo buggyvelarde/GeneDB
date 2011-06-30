@@ -17,7 +17,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.GeneDetail;
-import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -50,7 +49,7 @@ public class DownloadProcess {
 	
 	String url;
 	
-	private BerkeleyMapFactory bmf;
+	//private BerkeleyMapFactory bmf;
 	private SequenceDao sequenceDao;
 	
     private DownloadProcessUtil util;
@@ -247,7 +246,7 @@ public class DownloadProcess {
 		this.url = args.getUrl();
 		
 		this.util = util;
-		bmf = util.getBmf();
+		
 		sequenceDao = util.getSequenceDao();
 	}
     
@@ -310,7 +309,7 @@ public class DownloadProcess {
 		this.description = description;
 		
 		this.util = util;
-		bmf = util.getBmf();
+		
 		sequenceDao = util.getSequenceDao();
 		
 		this.url = url;
@@ -328,7 +327,6 @@ public class DownloadProcess {
 		
 		FormatExcel excelFormatter = new FormatExcel();
     	
-    	excelFormatter.setBmf(bmf);
     	excelFormatter.setFieldInternalSeparator(fieldInternalSeparator);
     	excelFormatter.setOutputOptions(outputOptions);
     	
@@ -351,7 +349,6 @@ public class DownloadProcess {
 		
 		FormatCSV csvFormatter = new FormatCSV();
         
-        csvFormatter.setBmf(bmf);
         csvFormatter.setBlankField(blankField);
         csvFormatter.setHeader(includeHeader);
         csvFormatter.setFieldInternalSeparator(fieldInternalSeparator);
@@ -377,7 +374,6 @@ public class DownloadProcess {
 		
 		FormatHTML htmlFormatter = new FormatHTML();
         
-        htmlFormatter.setBmf(bmf);
         htmlFormatter.setBlankField(blankField);
         htmlFormatter.setHeader(includeHeader);
         htmlFormatter.setFieldInternalSeparator(fieldInternalSeparator);
@@ -401,7 +397,6 @@ public class DownloadProcess {
 		
 		FormatFASTA fastaFormatter = new FormatFASTA();
         
-        fastaFormatter.setBmf(bmf);
         fastaFormatter.setBlankField(blankField);
         fastaFormatter.setHeader(includeHeader);
         fastaFormatter.setFieldInternalSeparator(fieldInternalSeparator);

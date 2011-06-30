@@ -184,7 +184,7 @@
         <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
                 
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+        <!-- <property name="bmf" ref="berkeleyReadOnlyMapFactory" /> -->
         <property name="queryFactory" ref="queryFactory" />
         <property name="mailSender" ref="mailSender" />
         <property name="transactionTemplate" ref="transactionTemplate"/>
@@ -340,7 +340,7 @@
     =========================
   -->
 
-
+<!-- 
   <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
     <property name="rootDirectory" value="${cacheDirectory}" />
     <property name="readOnly" value="true" />
@@ -356,7 +356,7 @@
 
   <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
-  </bean>
+  </bean> -->
 
   <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
     <property name="cvDao" ref="cvDao" />
@@ -508,9 +508,9 @@
     <property name="resultsCacheFactory" ref="resultsCacheFactory" />
   </bean> -->
 
-  <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
+  <!-- <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
-  </bean>
+  </bean> -->
     
     <!-- <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" ></bean> -->
     
@@ -561,10 +561,10 @@
     value="org.gmod.schema.mapped.Feature" /> </bean> </list> </property> </bean>
   -->
 
-  <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
+<!--   <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
   </bean>
-
+ -->
 
   <!--<bean id="FeatureDownloadController" class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
     --><!--
