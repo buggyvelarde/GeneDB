@@ -1,6 +1,6 @@
 <%@ tag display-name="results" body-content="scriptless"%>
 <%@ attribute name="name"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting"%>

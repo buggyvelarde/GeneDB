@@ -3,7 +3,7 @@
 <%@ attribute name="organism" type="java.lang.String" required="true" %>
 <%@ attribute name="cvName" type="java.lang.String" %>
 <%@ attribute name="title" required="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>

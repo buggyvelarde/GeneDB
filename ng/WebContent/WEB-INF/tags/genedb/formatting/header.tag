@@ -2,7 +2,7 @@
 <%@ attribute name="name"%>
 <%@ attribute name="organism"%>
 <%@ attribute name="title"  required="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="misc" uri="misc" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">

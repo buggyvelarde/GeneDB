@@ -2,7 +2,7 @@
         body-content="empty" %>
 <%@ attribute name="list" required="true" %>
 <%@ attribute name="separator" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <c:set var="sep" value=", " />
 <c:if test="${!empty separator}">

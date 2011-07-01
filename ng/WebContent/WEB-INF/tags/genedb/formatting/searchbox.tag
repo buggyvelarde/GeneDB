@@ -1,6 +1,6 @@
 <%@ tag display-name="searchbox"
         body-content="scriptless" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <div class="fieldset">
 		<div class="legend">Quick Search</div>
