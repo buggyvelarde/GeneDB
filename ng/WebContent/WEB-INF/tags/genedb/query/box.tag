@@ -1,7 +1,7 @@
 <%@ tag display-name="box"
         body-content="scriptless" %>
 <%@ attribute name="nest" type="java.lang.Boolean" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="query" tagdir="/WEB-INF/tags/genedb/query" %>
 
 <c:set var="colour" value="#CC0000" />

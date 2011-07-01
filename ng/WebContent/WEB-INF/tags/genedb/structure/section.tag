@@ -5,7 +5,7 @@
 <%@ attribute name="collapsed" type="java.lang.Boolean" %>
 <%@ attribute name="collapsible" type="java.lang.Boolean" %>
 <%@ attribute name="hideIfEmpty" type="java.lang.Boolean" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 <c:set var="contextPath"><misc:c:url value="/"/></c:set>

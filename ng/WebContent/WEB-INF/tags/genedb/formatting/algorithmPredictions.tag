@@ -1,6 +1,6 @@
 <%@ tag display-name="go-section" body-content="empty"%>
 <%@ attribute name="algData" type="java.util.Map" required="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="db" uri="db" %>
 
