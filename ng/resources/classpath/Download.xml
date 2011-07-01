@@ -53,7 +53,7 @@
   <bean name="idsToGeneSummary" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
   <bean name="idsToGeneDetail" class="org.genedb.querying.tmpquery.IdsToGeneDetailQuery" scope="prototype" />
   <bean name="quickSearch" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
-  <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" />
+  <!-- <bean name="dateCount" class="org.genedb.querying.tmpquery.DateCountQuery" scope="prototype" /> -->
   <bean name="geneByDb" class="org.genedb.querying.tmpquery.GenesByDbQuery" scope="prototype" />
   <bean name="curation" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
   <bean name="suggest" class="org.genedb.querying.tmpquery.SuggestQuery" scope="prototype" />
@@ -98,7 +98,7 @@
             <entry key="idsToGeneSummary" value-ref="idsToGeneSummary" />
             <entry key="idsToGeneDetail" value-ref="idsToGeneDetail" />
             <entry key="quickSearch" value-ref="quickSearch" />
-            <entry key="dateCount" value-ref="dateCount" />
+            <!-- <entry key="dateCount" value-ref="dateCount" /> -->
             <entry key="geneByDb" value-ref="geneByDb" />
             <entry key="suggest" value-ref="suggest" />
           </map>
