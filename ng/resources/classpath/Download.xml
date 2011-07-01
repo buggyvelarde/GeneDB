@@ -11,7 +11,7 @@
     <bean id="downloadProcessUtil" class="org.genedb.web.mvc.controller.download.DownloadProcessUtil">
         <property name="downloadTmpFolder"><value>${download.tmpFolder}</value></property>
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="bmf" ref="berkeleyReadOnlyMapFactory" />
+        <!-- <property name="bmf" ref="berkeleyReadOnlyMapFactory" /> -->
         <property name="queryFactory" ref="queryFactory" />
         <property name="mailSender" ref="mailSender" />
         <property name="transactionTemplate" ref="transactionTemplate" />
@@ -24,10 +24,10 @@
     </bean>
     
     
-  <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+  <!-- <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
     <property name="rootDirectory" value="${cacheDirectory}" />
     <property name="readOnly" value="true" />
-  </bean>
+  </bean> -->
   
   
   <!--
