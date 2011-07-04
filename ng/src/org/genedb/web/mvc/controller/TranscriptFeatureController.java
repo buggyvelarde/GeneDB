@@ -189,6 +189,16 @@ public class TranscriptFeatureController {
 			model.put("gene", gene);
 		}
 		
+		int stepNumber = 10;
+		
+		int diff = (dto.getMax() - dto.getMin()) / 3; // divide by 3 for amino acids
+		int stepsUncorrected = diff / stepNumber;
+		double log = Math.log10(stepsUncorrected);
+		double round = Math.ceil(log);
+		double step = Math.pow(10, round);
+		
+		logger.info(String.format("%s ... %s ...  %s ... %s  ... %s", diff, stepsUncorrected, log, round, step));
+		model.put("proteinMapStep", step);
 		
 		List<String> publicOrthologues = new ArrayList<String>();
         for (String ortho : dto.getOrthologueNames()) {

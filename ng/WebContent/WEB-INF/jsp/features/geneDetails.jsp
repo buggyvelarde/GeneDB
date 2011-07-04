@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
+<%@ taglib prefix="misc" uri="misc" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -405,11 +406,11 @@ ${dto.ims.imageMap}
             
             
 	        
-	        <c:forEach var="i" begin="0" end="${proteinMapBaseWidth}" step="100" varStatus="istatus">
+	        <c:forEach var="i" begin="0" end="${proteinMapBaseWidth}" step="${proteinMapStep}" varStatus="istatus">
                 <div style="font-size:x-small;position:absolute; bottom:-20px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; ">${i}</div>
             </c:forEach>
             
-            <c:forEach var="i" begin="50" end="${proteinMapBaseWidth}" step="50" varStatus="istatus">
+            <c:forEach var="i" begin="50" end="${proteinMapBaseWidth}" step="${proteinMapStep/2}" varStatus="istatus">
                 <div style="position:absolute; height:5px; border-left:1px solid black; bottom:-5px; left: ${ ( i / proteinMapBaseWidth ) * proteinMapWidth  }px; "></div>
             </c:forEach>
             
@@ -473,6 +474,13 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
+<c:if test="${fn:length(dto.domainInformation) > 0 || hasAlgorithmData || fn:length(dto.membraneStructureComponents) > 0 }">
+<br>
+<format:genePageSection>
+<h2>Protein map</h2>
+        <misc:protein_map dto="${dto}"/>
+</format:genePageSection>
+</c:if>
     
 
 <c:if test="${fn:length(dto.domainInformation) > 0}">
