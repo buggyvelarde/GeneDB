@@ -47,7 +47,7 @@
 			root="http://oss.sonatype.org/content/repositories/releases"
 			m2compatible="true" />
 		<ibiblio name="sonatype2"
-			root="https://oss.sonatype.org/content/groups/public"
+			root="http://oss.sonatype.org/content/groups/public"
 			m2compatible="true" />
 		<chain name="main" dual="true">
 			<resolver ref="shared" />
