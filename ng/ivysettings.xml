@@ -46,12 +46,17 @@
 		<ibiblio name="sonatype"
 			root="http://oss.sonatype.org/content/repositories/releases"
 			m2compatible="true" />
+		<ibiblio name="sonatype2"
+			root="https://oss.sonatype.org/content/groups/public"
+			m2compatible="true" />
 		<chain name="main" dual="true">
 			<resolver ref="shared" />
-			<resolver ref="public" />
+			<!-- let's not rely on maven central 
+				<resolver ref="public" /> -->
 			<resolver ref="spring" />
 			<resolver ref="jboss" />
 			<resolver ref="sonatype" />
+			<resolver ref="sonatype2" />
 		</chain>
 		<chain name="default" returnFirst="true">
 			<resolver ref="local" />
