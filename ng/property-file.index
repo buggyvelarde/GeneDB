@@ -6,8 +6,8 @@ dbname=nightly
 dbuser=genedb
 dbpassword=genedb
 
-lucene.indexDirectory=/nfs/pathdb/index/lucene
-cacheDirectory=/nfs/pathdb/index/cache
+lucene.indexDirectory=/nfs/pathdb/index2/lucene
+cacheDirectory=/nfs/pathdb/index2/cache
 diagram.fontFile=file:///nfs/pathdb/f011004t.ttf
 resultsCacheDirectory=/tmp/results_index
 
