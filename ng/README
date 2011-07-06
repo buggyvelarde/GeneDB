@@ -1,0 +1,69 @@
+# Behind a proxy
+To build behind a proxy, make sure your ant opts are set, as follows :
+
+export ANT_OPTS="-Dhttp.proxyHost=wwwcache.sanger.ac.uk -Dhttp.proxyPort=3128" 
+
+# Default build
+The default build :
+
+  $ ant 
+
+should be sufficient to set you up in Eclipse. 
+
+# Building a jar 
+To build ng.jar, it's 
+
+  $ ant fulljar 
+
+# Property files
+Property file names need to be prefixed with "property-file.", e.g. property-file.gv1-public. You need to setup property files for different 
+deployments, be they tomcat or command line installers. 
+
+# Tomcat
+
+To deploy to a tomcat, make sure it's shutdown first, then  
+
+  $ ant -Dconfig=gv1-public final-deploy 
+
+in this case we're using the property-file.gv1-public property file. 
+
+# Run ant loader tasks
+
+    ant -f build-apps.xml -Dconfig=gv1-osx -Dmerge.lucene.destination=/Users/gv1/Desktop/lucene/merged/ -Dmerge.lucene.origin=/Users/gv1/Desktop/lucene/organisms/ runMergeLuceneIndices
+
+Sometimes you get this exception, after a clean, if you haven't been web-deploying, but are trying to run some of the command-line tools....
+
+  [java] Exception in thread "main" org.springframework.beans.factory.BeanInitializationException: Could not load properties; nested exception 
+         is java.io.FileNotFoundException: class path resource [project.properties] cannot be opened because it does not exist
+
+I found this restored the relevant file:
+
+  ant -f build-apps.xml -Dconfig=beta replace
+  ant fulljar
+
+# Install loader shell scripts
+To install the loaders :
+
+  ant -Dconfig=gv1 install
+
+# Run loader shell scripts
+To run the loaders, make sure this is set first : 
+
+  export GENEDB_HOME=/home/gv1/bin/genedb
+
+and then :
+
+  chado_load organism -g Chlamydia -s "trachomatis UCH-1/L2b" -a CtrachomatisUCH1 -n CtrachomatisUCH1 -D localhost:5437/pathogens_test -U pathdb
+  chado_load phylonode -D localhost:5437/pathogens_test -U pathdb insert Chlamydia CtrachomatisUCH1
+  chado_load embl -o CtrachomatisUCH1 -t chromosome -D localhost:5437/pathogens_test -U pathdb ~/Documents/Misc/chlamydia/Ct_london.embl_UCH1.embl
+
+# Unit testing
+
+To run all the tests : 
+
+   ant -Dhttp.proxyHost=wwwcache.sanger.ac.uk -Dhttp.proxyPort=3128 -Dsource.url=jdbc:postgresql://localhost:5433/pathogens -Dsource.password=pathdb -Dsource.username=pathdb -f build-test.xml run-db-tests 
+
+To run a single test : 
+
+   ant -f build-test.xml download-test 
+
