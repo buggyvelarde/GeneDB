@@ -88,6 +88,24 @@ public class Polypeptide extends Region {
         return transcript;
     }
     
+    @Transient
+    public AbstractGene getGene() {
+    	if (transcript == null) {
+    		return null;
+    	}
+    	return transcript.getGene();
+    }
+    
+    @Transient
+    @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String getGeneUniqueName() {
+        AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getUniqueName();
+        }
+        return null;
+    }
+    
 
     @Transient
     public List<String> getProducts() {
