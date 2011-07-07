@@ -9,6 +9,9 @@ import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +42,13 @@ public abstract class AbstractGene extends TopLevelFeature {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-
+    
+    @Transient
+    @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String getGeneUniqueName() {
+    	return getUniqueName();
+    }
+    
     private transient Transcript firstTranscripts;
 
 

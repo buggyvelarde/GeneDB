@@ -68,7 +68,7 @@ public class Transcript extends Region {
     public Integer getColourId() {
         return null;
     }
-
+    
     public AbstractGene getGene() {
         if (gene != null) {
             return gene;
@@ -134,7 +134,11 @@ public class Transcript extends Region {
     @Transient
     @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
     public String getGeneUniqueName() {
-        return getGene().getUniqueName();
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getUniqueName();
+        }
+        return null;
     }
 
     /**
