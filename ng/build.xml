@@ -59,7 +59,7 @@
 	<target name="clean-all">
 		<echo message="Deleting ${lib.dir}/*.jar"/>
 		<echo message="Deleting ${lib.dir}/license-*.txt"/>
-		<delete>
+		<delete failonerror="false" >
 			<fileset dir="${lib.dir}">
 				<include name="*.jar"/>
 				<include name="license-*.txt"/>
@@ -68,7 +68,7 @@
 		</delete>
 		<echo message="Deleting ${classes.dir}/*.class"/>
 		<echo message="Deleting ${classes.dir}/*.properties"/>
-		<delete>
+		<delete failonerror="false">
 			<fileset dir="${classes.dir}">
 				<include name="**/*.class"/>
 				<include name="**/*.properties"/>
