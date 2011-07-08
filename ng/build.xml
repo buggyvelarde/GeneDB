@@ -398,7 +398,7 @@
 		<delete dir="${webartemisdir}" failonerror="false"/>
 	</target>
     	
-	<target name="git-get-web-artemis" if="usegithub">
+	<target name="git-get-web-artemis" unless="usesvn">
 		<mkdir dir="${webartemisdir}" />
 		<exec executable="git" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
 			<arg value="clone" />
@@ -406,7 +406,7 @@
 		</exec>
 	</target>
 
-	<target name="svn-get-web-artemis" unless="usegithub">
+	<target name="svn-get-web-artemis" if="usesvn">
 		<!-- we use svn export to not pull in .svn folders -->
 		<exec executable="svn" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
 			<arg value="export" />
