@@ -402,7 +402,7 @@
 		<mkdir dir="${webartemisdir}" />
 		<exec executable="git" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
 			<arg value="clone" />
-			<arg value="git@github.com/sanger-pathogens/Web-Artemis.git" />
+			<arg value="git@github.com:sanger-pathogens/Web-Artemis.git" />
 		</exec>
 	</target>
 
