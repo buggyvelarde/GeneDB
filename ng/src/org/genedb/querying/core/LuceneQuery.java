@@ -126,6 +126,29 @@ public abstract class LuceneQuery implements PagedQuery {
     }
     
     
+    public String getGeneUniqueNameOrUniqueName(Document document) {
+    	
+    	String documentUniqueName = document.get("uniqueName");
+    	String geneName = document.get("gene");
+    	
+    	if (geneName == null) {
+    		return documentUniqueName;
+    	}
+    	
+    	String alternateTranscriptNumberString = document.get("alternateTranscriptNumber");
+    	logger.warn("alternative transcripts for " + geneName + " (" + documentUniqueName + ") : " + alternateTranscriptNumberString );
+    	if (alternateTranscriptNumberString != null && alternateTranscriptNumberString.length() > 0) {
+    		int alternateTranscriptNumber = Integer.parseInt(alternateTranscriptNumberString);
+        	
+        	if (alternateTranscriptNumber > 1) {
+        		return documentUniqueName;
+        	}
+    	}
+    	
+    	return geneName;
+    	
+    }
+    
 	
 	protected Pager<String> uniqueNamePager = new Pager<String>() {
 		@Override public String convert(Document doc) {
@@ -187,7 +210,10 @@ public abstract class LuceneQuery implements PagedQuery {
 //                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
 //                //T t = convertDocumentToReturnType(document, clazz);
 //                Object t = convertDocumentToReturnType(document);
+                
+                //String name = getGeneUniqueNameOrUniqueName(document);
                 names.add(document.get("uniqueName"));
+                
             }
             Collections.sort(names);
 

@@ -22,16 +22,20 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
 
     private List<String> ids;
 
-    protected GeneSummary getGeneSummary(Document document) {
-        GeneSummary ret = new GeneSummary(
-                document.get("uniqueName"), // systematic
-                document.get("organism.commonName"), // taxon-name,
-                document.get("product"), // product
-                document.get("chr"), // toplevename
-                Integer.parseInt(document.get("start")) // leftpos
-                );
-        return ret;
-    }
+//    protected GeneSummary getGeneSummary(Document document) {
+//    	String displayId = getGeneUniqueNameOrUniqueName(document);
+//        GeneSummary ret = new GeneSummary(
+//        		displayId,
+//                document.get("uniqueName"), // systematic
+//                document.get("organism.commonName"), // taxon-name,
+//                document.get("product"), // product
+//                document.get("chr"), // toplevename
+//                Integer.parseInt(document.get("start")) // leftpos
+//                );
+//        return ret;
+//    }
+    
+   
     
     @Override
     public String getQueryDescription() {
@@ -78,7 +82,9 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
     }
     
     protected GeneSummary docToGeneSummary(Document doc) {
+    	String displayId = getGeneUniqueNameOrUniqueName(doc);
 		return new GeneSummary(
+				displayId,
 				doc.get("uniqueName"), // systematic
 				doc.get("organism.commonName"), // taxon-name,
 				doc.get("product"), // product

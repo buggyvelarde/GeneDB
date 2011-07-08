@@ -1,5 +1,6 @@
 package org.genedb.querying.tmpquery;
 
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
@@ -10,7 +11,11 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @QueryClass(
         title="Coding and pseudogenes by protein length",
@@ -83,6 +88,17 @@ public class GoQuery extends OrganismLuceneQuery {
     @Override
     protected String[] getParamNames() {
         return new String[] {"search"};
+    }
+    
+    @Override
+    public Map<String, Object> prepareModelData() {
+    	List<String> taxonNames = new ArrayList<String>();
+    	for (TaxonNode t : taxons.getNodes()) {
+    		taxonNames.add(t.getLabel());
+    	}
+    	Map<String, Object> m = new HashMap<String,Object>();
+    	m.put("taxonNames", taxonNames);
+    	return Collections.emptyMap();
     }
 
 }
