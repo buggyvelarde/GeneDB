@@ -108,7 +108,7 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
-    public int getAlternateTranscriptNumber() {
+    public int alternateTranscriptNumber() {
     	AbstractGene gene = getGene();
         if (gene != null) {
         	return gene.getNonObsoleteTranscripts().size();
@@ -118,10 +118,10 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
-    public List<String> getAlternateTranscripts() {
+    public List<String> alternateTranscripts() {
     	AbstractGene gene = getGene();
     	if (gene != null) {
-    		return gene.getAlternateTranscripts();
+    		return gene.alternateTranscripts();
     	}
     	return new ArrayList<String>();
     }

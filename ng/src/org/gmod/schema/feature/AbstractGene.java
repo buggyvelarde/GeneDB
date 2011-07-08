@@ -90,13 +90,13 @@ public abstract class AbstractGene extends TopLevelFeature {
     
     @Transient
     @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
-    public int getAlternateTranscriptNumber() {
+    public int alternateTranscriptNumber() {
     	return getNonObsoleteTranscripts().size();
     }
     
     @Transient
     @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
-    public List<String> getAlternateTranscripts() {
+    public List<String> alternateTranscripts() {
     	List<String> alternateTranscripts = new ArrayList<String>();
     	for (Transcript t : getNonObsoleteTranscripts()) {
     		alternateTranscripts.add(t.getUniqueName());
