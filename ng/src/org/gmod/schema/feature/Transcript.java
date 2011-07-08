@@ -154,12 +154,12 @@ public class Transcript extends Region {
     
     @Transient
     @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
-    public List<String> alternateTranscripts() {
+    public String alternateTranscripts() {
     	AbstractGene gene = getGene();
     	if (gene != null) {
     		return gene.alternateTranscripts();
     	}
-    	return new ArrayList<String>();
+    	return null;
     }
 
     /**
