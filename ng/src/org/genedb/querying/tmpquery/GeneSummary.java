@@ -29,9 +29,10 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
         setSystematicId(systematicId);
     }
 
-    public GeneSummary(String systematicId, String taxonDisplayName,
+    public GeneSummary(String displayId, String systematicId, String taxonDisplayName,
             String product, String topLevelFeatureName, int left) {
-        setSystematicId(systematicId);
+    	this.displayId = displayId;
+    	this.systematicId = systematicId;
         this.taxonDisplayName = taxonDisplayName;
         setProduct(product);
         this.topLevelFeatureName = topLevelFeatureName;
@@ -44,18 +45,18 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
 
     public void setSystematicId(String systematicId) {
         this.systematicId = systematicId;
-        String munged = removeSuffix(systematicId, ":pep");
-        munged = removeSuffix(munged, ":mRNA");
-        munged = removeSuffix(munged, ":pseudogenic_transcript");
-        this.displayId = munged;
+//        String munged = removeSuffix(systematicId, ":pep");
+//        munged = removeSuffix(munged, ":mRNA");
+//        munged = removeSuffix(munged, ":pseudogenic_transcript");
+//        this.displayId = munged;
     }
 
-    private String removeSuffix(String original, String suffix) {
-        if (original.endsWith(suffix)) {
-            return original.substring(0, original.length()-suffix.length());
-        }
-        return original;
-    }
+//    private String removeSuffix(String original, String suffix) {
+//        if (original.endsWith(suffix)) {
+//            return original.substring(0, original.length()-suffix.length());
+//        }
+//        return original;
+//    }
 
     public String getTaxonDisplayName() {
         return taxonDisplayName;
