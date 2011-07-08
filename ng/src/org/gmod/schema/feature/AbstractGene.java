@@ -87,6 +87,22 @@ public abstract class AbstractGene extends TopLevelFeature {
 
         return ret;
     }
+    
+    @Transient
+    @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
+    public int getAlternateTranscriptNumber() {
+    	return getNonObsoleteTranscripts().size();
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
+    public List<String> getAlternateTranscripts() {
+    	List<String> alternateTranscripts = new ArrayList<String>();
+    	for (Transcript t : getNonObsoleteTranscripts()) {
+    		alternateTranscripts.add(t.getUniqueName());
+    	}
+    	return alternateTranscripts;
+    }
 
     @Transient
     public Transcript getFirstTranscript() {

@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
@@ -139,6 +140,26 @@ public class Transcript extends Region {
         	return gene.getUniqueName();
         }
         return null;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
+    public int getAlternateTranscriptNumber() {
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getNonObsoleteTranscripts().size();
+        }
+        return 0;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
+    public List<String> getAlternateTranscripts() {
+    	AbstractGene gene = getGene();
+    	if (gene != null) {
+    		return gene.getAlternateTranscripts();
+    	}
+    	return new ArrayList<String>();
     }
 
     /**

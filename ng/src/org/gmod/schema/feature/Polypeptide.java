@@ -106,6 +106,26 @@ public class Polypeptide extends Region {
         return null;
     }
     
+    @Transient
+    @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
+    public int getAlternateTranscriptNumber() {
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getNonObsoleteTranscripts().size();
+        }
+        return 0;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
+    public List<String> getAlternateTranscripts() {
+    	AbstractGene gene = getGene();
+    	if (gene != null) {
+    		return gene.getAlternateTranscripts();
+    	}
+    	return new ArrayList<String>();
+    }
+    
 
     @Transient
     public List<String> getProducts() {
