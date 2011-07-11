@@ -235,7 +235,9 @@ div.comment {
   </db:hyperlinkDbs>
   </format:genePageSection>
 </c:if>
+<c:if test="${(fn:length(dto.controlledCurations) > 0) || ({fn:length(dto.goBiologicalProcesses) + fn:length(dto.goMolecularFunctions) + fn:length(dto.goCellularComponents) > 0)}">
 <h2 style="padding-top:0px;margin-top:0px;">Curation</h2>
+</c:if>
 <%-- Controlled Curation Section --%>
 <c:if test="${fn:length(dto.controlledCurations) > 0}">
   <format:genePageSection id="controlCur">
