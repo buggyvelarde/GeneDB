@@ -90,10 +90,10 @@ public class Polypeptide extends Region {
     
     @Transient
     public AbstractGene getGene() {
-    	if (transcript == null) {
+    	if (getTranscript() == null) {
     		return null;
     	}
-    	return transcript.getGene();
+    	return getTranscript().getGene();
     }
     
     @Transient
