@@ -276,9 +276,9 @@
 			<fileset dir="${ng.directory}/lib-repos/artemis">
 				<include name="artemis_mac_20100311.jar"/>
 			</fileset>
-			<!--<fileset dir="${ng.directory}/lib-repos/hazelcast">
-        <include name="hazelcast-all-1.9.3.jar"/>
-      </fileset>-->
+			<fileset dir="${ng.directory}/lib-repos/hazelcast">
+        		<include name="hazelcast-all-1.9.3.jar"/>
+      		</fileset>
 		</copy>
 		<!--
     <delete file="${imported.basedir.web}/lib/com.springsource.com.thoughtworks.xstream-1.2.2.jar" />
