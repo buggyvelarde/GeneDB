@@ -474,14 +474,6 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
-<c:if test="${fn:length(dto.domainInformation) > 0 || hasAlgorithmData || fn:length(dto.membraneStructureComponents) > 0 }">
-<br>
-<format:genePageSection>
-<h2>Protein map</h2>
-        <misc:protein_map dto="${dto}"/>
-</format:genePageSection>
-</c:if>
-    
 
 <c:if test="${fn:length(dto.domainInformation) > 0}">
   <format:genePageSection>
