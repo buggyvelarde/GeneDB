@@ -126,6 +126,12 @@ public class Polypeptide extends Region {
     	return null;
     }
     
+    @Transient
+    @Field(name = "residues", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String residues() {
+    	return this.getResidues();
+    }
+    
 
     @Transient
     public List<String> getProducts() {
