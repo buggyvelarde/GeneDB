@@ -272,6 +272,7 @@
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
   <bean name="topLevelFeatures" class="org.genedb.querying.tmpquery.TopLevelFeaturesQuery" scope="prototype" />
   <bean name="proteinMatchClusterOrthologue" class="org.genedb.querying.tmpquery.ProteinMatchClusterOrthologueQuery" scope="prototype" />
+  <bean name="motif" class="org.genedb.querying.tmpquery.MotifQuery" scope="prototype" />
 
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
@@ -308,6 +309,8 @@
             <entry key="pfam" value-ref="pfam" />
             <entry key="curation" value-ref="curation" />
             <entry key="dbxref" value-ref="dbxref" />
+            
+            <entry key="motif" value-ref="motif" />
             
             <entry key="quickSearch" value-ref="quickSearch" />
             

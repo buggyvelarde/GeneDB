@@ -99,6 +99,7 @@ public class Polypeptide extends Region {
     @Transient
     @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
     public String getGeneUniqueName() {
+    	logger.warn("Getting gene name");
         AbstractGene gene = getGene();
         if (gene != null) {
         	return gene.getUniqueName();
@@ -108,7 +109,7 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
-    public int alternateTranscriptNumber() {
+    public int getAlternateTranscriptNumber() {
     	AbstractGene gene = getGene();
         if (gene != null) {
         	return gene.getNonObsoleteTranscripts().size();
@@ -118,7 +119,7 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
-    public String alternateTranscripts() {
+    public String getAlternateTranscripts() {
     	AbstractGene gene = getGene();
     	if (gene != null) {
     		return gene.alternateTranscripts();
@@ -126,11 +127,6 @@ public class Polypeptide extends Region {
     	return null;
     }
     
-    @Transient
-    @Field(name = "residues", index = Index.UN_TOKENIZED, store = Store.YES)
-    public String residues() {
-    	return this.getResidues();
-    }
     
 
     @Transient
@@ -350,12 +346,20 @@ public class Polypeptide extends Region {
     @Transient
     @Field(name="signalP", index=Index.UN_TOKENIZED, store=Store.NO)
     public boolean isSignalP() {
+    	logger.warn("Getting signal P");
         if (hasProperty("genedb_misc", "SignalP_prediction")
         || hasProperty("genedb_misc", "signal_peptide_probability")
         || hasProperty("genedb_misc", "signal_anchor_probability")) {
             return true;
         }
         return false;
+    }
+    
+    @Transient
+    @Field(index=Index.UN_TOKENIZED, store=Store.YES)
+    public String getSequenceResidues() {
+    	logger.warn("SEQUENCE!" + getResidues());
+    	return getResidues();
     }
 
 
