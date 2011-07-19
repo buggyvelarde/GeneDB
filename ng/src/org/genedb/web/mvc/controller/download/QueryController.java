@@ -14,6 +14,7 @@ import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.QueryHistoryItem;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
+import org.genedb.querying.tmpquery.MotifQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.util.Pair;
@@ -233,6 +234,13 @@ public class QueryController extends AbstractGeneDBFormController{
         	logger.info("Fetching quick search taxons");
         	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults().getTaxonGroup());
         }
+
+    	if (queryName.equals("motif")) {
+    		MotifQuery motifQuery = (MotifQuery) query;
+    		logger.info("motif query, let's get motif results for " + bounds.page + " " + bounds.length);
+    		List motifs = motifQuery.getMotifResults(bounds.page, bounds.length);
+    		model.addAttribute("motifs", motifs);
+    	}
     	
     	if (results.size() == 1) {
     		
@@ -267,6 +275,7 @@ public class QueryController extends AbstractGeneDBFormController{
 			model.addAttribute("suggestions", sResults);
 			
         }
+    	
         
 		return "search/" + queryName;
         

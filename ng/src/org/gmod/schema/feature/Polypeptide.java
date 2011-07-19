@@ -356,7 +356,7 @@ public class Polypeptide extends Region {
     }
     
     @Transient
-    @Field(index=Index.NO_NORMS, store=Store.NO)
+    @Field(index=Index.UN_TOKENIZED, store=Store.YES)
     public String getSequenceResidues() {
     	//logger.warn("SEQUENCE!" + getResidues());
     	return getResidues();
