@@ -174,6 +174,8 @@ public class MotifQuery extends OrganismLuceneQuery {
 			this.start = start;
 			this.end = end;
 			this.displayId = displayId;
+			this.pre = pre;
+			this.post = post;
 		}
 		
 	}
