@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<format:header title="Product Search" />
+<format:header title="Motif Search" />
 <format:page>
 <br>
 
@@ -12,7 +12,7 @@
             <table>
                 <tr>
                     <td width=180>
-                        <br><big><b>Motif Search:&nbsp;</b></big>
+                        <br><b>Motif Search:&nbsp;</b>
                     </td>
                     <td width=180>
                         <b>Organism:</b>

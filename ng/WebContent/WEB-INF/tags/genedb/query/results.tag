@@ -9,7 +9,9 @@
 
 
 
-
+<c:if test="${motifs != null}">
+!!!!!!!!!!!!
+</c:if>
 
 <c:if test="${not empty resultsSize}">
     <div id="col-2-1">
@@ -45,7 +47,16 @@
                  </c:if>
                 
             </display:column>
-
+            
+            <c:if test="${motifs != null}">
+                <display:column title="Motif Match Coordinates">
+                   <c:out value='${motifs[row.displayId].start}'/>-<c:out value='${motifs[row.displayId].end}'/> 
+                </display:column>
+                <display:column title="Motif Match">
+                   <c:out value='${motifs[row.displayId].pre}'/> - <span style="color:red;"> <c:out value='${motifs[row.displayId].match}'/> </span> - <c:out value='${motifs[row.displayId].post}'/> 
+                </display:column>
+            </c:if> 
+            
         </display:table>
     </div>
 </c:if>

@@ -1,6 +1,8 @@
 package org.genedb.querying.tmpquery;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,7 @@ import org.apache.lucene.search.regex.RegexQuery;
 
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryParam;
+import org.genedb.querying.core.LuceneQuery.Pager;
 
 
 public class MotifQuery extends OrganismLuceneQuery {
@@ -101,6 +104,8 @@ public class MotifQuery extends OrganismLuceneQuery {
 		return new String[] {"search"};
 	}
 	
+	
+	
 	public class MotifDetail {
 		
 		String residues;
@@ -113,7 +118,31 @@ public class MotifQuery extends OrganismLuceneQuery {
 		String residues;
 		int start;
 		int end;
+		String displayId;
+		String pre;
+		String post;
 		
+		public String getPre() {
+			return pre;
+		}
+		public void setPre(String pre) {
+			this.pre = pre;
+		}
+		public String getPost() {
+			return post;
+		}
+		public void setPost(String post) {
+			this.post = post;
+		}
+
+		
+		
+		public String getDisplayId() {
+			return displayId;
+		}
+		public void setDisplayId(String displayId) {
+			this.displayId = displayId;
+		}
 		public String getMatch() {
 			return match;
 		}
@@ -139,20 +168,21 @@ public class MotifQuery extends OrganismLuceneQuery {
 			this.end = end;
 		}
 		
-		public MotifResult(String match, String residues, int start, int end) {
+		public MotifResult(String displayId, String match, String residues, int start, int end, String pre, String post) {
 			this.match = match;
 			this.residues = residues;
 			this.start = start;
 			this.end = end;
+			this.displayId = displayId;
 		}
 		
 	}
 	
 	protected Pager<MotifResult> motifResultPager = new Pager<MotifResult>() {
 		
-		
-		
 		@Override public MotifResult convert(Document document) {
+			
+			String displayId = getGeneUniqueNameOrUniqueName(document);
 			
 			String residues = document.get("sequenceResidues");
 			logger.info(residues);
@@ -160,27 +190,32 @@ public class MotifQuery extends OrganismLuceneQuery {
 			Matcher m = pattern.matcher(residues);
 			m.find();
 			
-			String id = m.group();
+			String match = m.group();
 			int start = m.start();
 			int end = m.end();
 			
-			logger.info(String.format("%s %d-%d", id, start, end));
+			logger.info(String.format("%s %d-%d", match, start, end));
 			
 			String newResidues = residues.substring(0, start) + "*" + residues.substring(start, end) + "*" + residues.substring(end);
-			String newResidues2 = residues.substring(0, start) + "*" + id + "*" + residues.substring(end);
+			String newResidues2 = residues.substring(0, start) + "*" + match + "*" + residues.substring(end);
 			String newResidues3 = residues.substring(0, start) + "*" + actualSearch + "*" + residues.substring(end);
 			
 			logger.info(newResidues);
 			logger.info(newResidues2);
 			logger.info(newResidues3);
 			
-			return new MotifResult(id, residues, start, end);
+			return new MotifResult(displayId, match, residues, start, end, residues.substring(0, start), residues.substring(end));
 			
 		}
 	};
 	
-	public List<MotifResult> getMotifResults(int page, int length) throws QueryException {
-		return motifResultPager.getResults(page, length);
+	public Map<String,MotifResult> getMotifResults(int page, int length) throws QueryException {
+		List<MotifResult> motifResults = motifResultPager.getResults(page, length);
+		Map<String, MotifResult> map = new HashMap<String,MotifResult>();
+		for (MotifResult mr : motifResults) {
+			map.put(mr.getDisplayId(), mr);
+		}
+		return map;
 	}
 
 }

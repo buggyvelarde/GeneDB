@@ -238,7 +238,7 @@ public class QueryController extends AbstractGeneDBFormController{
     	if (queryName.equals("motif")) {
     		MotifQuery motifQuery = (MotifQuery) query;
     		logger.info("motif query, let's get motif results for " + bounds.page + " " + bounds.length);
-    		List motifs = motifQuery.getMotifResults(bounds.page, bounds.length);
+    		Map motifs = motifQuery.getMotifResults(bounds.page, bounds.length);
     		model.addAttribute("motifs", motifs);
     	}
     	
@@ -280,6 +280,16 @@ public class QueryController extends AbstractGeneDBFormController{
 		return "search/" + queryName;
         
 
+    }
+    
+    private List<GeneSummary> motifSummaries (MotifQuery query, List<String> ids) throws QueryException {
+    	IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery("idsToGeneSummary", NumericQueryVisibility.PRIVATE);
+    	idsToGeneSummary.setIds(ids);
+    	List<GeneSummary> summaries = idsToGeneSummary.getResultsSummaries();
+    	for (GeneSummary summary : summaries) {
+    		logger.info(summary.getDisplayId());
+    	}
+    	return summaries;
     }
     
     private List<GeneSummary> summaries (List<String> ids) throws QueryException {
