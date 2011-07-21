@@ -87,6 +87,8 @@ public class MotifQuery extends OrganismLuceneQuery {
 		queries.add(r);
 		
 		
+		
+		
 	}
 
 	@Override
@@ -104,13 +106,10 @@ public class MotifQuery extends OrganismLuceneQuery {
 		return new String[] {"search"};
 	}
 	
-	
-	
-	public class MotifDetail {
-		
-		String residues;
-		String formattedResidues;
-		
+	public Map<String,Object> prepareModelData() {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("search", search);
+		return map;
 	}
 	
 	public class MotifResult {
@@ -201,12 +200,26 @@ public class MotifQuery extends OrganismLuceneQuery {
 			String newResidues = residues.substring(0, start) + "*" + residues.substring(start, end) + "*" + residues.substring(end);
 			String newResidues2 = residues.substring(0, start) + "*" + match + "*" + residues.substring(end);
 			String newResidues3 = residues.substring(0, start) + "*" + actualSearch + "*" + residues.substring(end);
-			
 			logger.info(newResidues);
 			logger.info(newResidues2);
 			logger.info(newResidues3);
 			
-			return new MotifResult(displayId, match, residues, start, end, residues.substring(0, start), residues.substring(end));
+			String pre = residues.substring(0, start);
+			
+			int len = 30; 
+			
+			if (pre.length() > len) {
+				int i = pre.length() - len;
+				pre = pre.substring(i);
+			}
+			
+			String post = residues.substring(end);
+			
+			if (post.length() > len) {
+				post = post.substring(0, len);
+			}
+			
+			return new MotifResult(displayId, match, residues, start, end, pre, post);
 			
 		}
 	};

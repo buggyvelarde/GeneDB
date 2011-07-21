@@ -46,10 +46,13 @@
             </display:column>
             
             <c:if test="${motifs != null}">
-                <display:column title="Motif Match Coordinates">
-                   <c:out value='${motifs[row.displayId].start}'/>-<c:out value='${motifs[row.displayId].end}'/> 
-                    <br/>
-                   <c:out value='${motifs[row.displayId].pre}'/> - <span style="color:red;"> <c:out value='${motifs[row.displayId].match}'/> </span> - <c:out value='${motifs[row.displayId].post}'/> 
+                <display:column title="Motif">
+                    <div style="text-align:center;font-family:monospace;"> 
+                        ... <c:out value='${motifs[row.displayId].pre}'/> - <span style="color:red;"> <c:out value='${motifs[row.displayId].match}'/> </span> - <c:out value='${motifs[row.displayId].post}'/> ...
+                        <br/>
+                        <c:out value='${motifs[row.displayId].start}'/> - <span style="color:grey;"> <c:out value='${search}'/> </span> - <c:out value='${motifs[row.displayId].end}'/>
+
+                   </div> 
                 </display:column>
             </c:if> 
             
