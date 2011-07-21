@@ -46,12 +46,12 @@
             </display:column>
             
             <c:if test="${motifs != null}">
+                <display:column title="Match">
+                    <c:out value='${motifs[row.displayId].start}'/>-<c:out value='${motifs[row.displayId].end}'/>
+                </display:column>
                 <display:column title="Motif">
-                    <div style="text-align:center;font-family:monospace;"> 
-                        ... <c:out value='${motifs[row.displayId].pre}'/> - <span style="color:red;"> <c:out value='${motifs[row.displayId].match}'/> </span> - <c:out value='${motifs[row.displayId].post}'/> ...
-                        <br/>
-                        <c:out value='${motifs[row.displayId].start}'/> - <span style="color:grey;"> <c:out value='${search}'/> </span> - <c:out value='${motifs[row.displayId].end}'/>
-
+                    <div style="text-align:center;font-family:monospace;word-wrap: break-word;width:430px;"> 
+                        <c:out value='${motifs[row.displayId].pre}'/><span style="color:#AB2219;"><c:out value='${motifs[row.displayId].match}'/></span><c:out value='${motifs[row.displayId].post}'/>
                    </div> 
                 </display:column>
             </c:if> 

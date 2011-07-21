@@ -210,13 +210,13 @@ public class MotifQuery extends OrganismLuceneQuery {
 			
 			if (pre.length() > len) {
 				int i = pre.length() - len;
-				pre = pre.substring(i);
+				pre = "..." + pre.substring(i);
 			}
 			
 			String post = residues.substring(end);
 			
 			if (post.length() > len) {
-				post = post.substring(0, len);
+				post = post.substring(0, len) + "...";
 			}
 			
 			return new MotifResult(displayId, match, residues, start, end, pre, post);
