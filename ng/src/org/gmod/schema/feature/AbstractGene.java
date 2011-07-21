@@ -1,5 +1,6 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.genedb.db.loading.EmblLocation;
 
 import org.gmod.schema.mapped.Feature;
@@ -9,6 +10,7 @@ import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
@@ -102,6 +104,16 @@ public abstract class AbstractGene extends TopLevelFeature {
     		alternateTranscripts.append(t.getUniqueName());
     	}
     	return alternateTranscripts.toString();
+    }
+    
+    @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsSpaceSeparatedString() {
+    	if (getFirstTranscript() != null) {
+    		return getFirstTranscript().getProductsAsSpaceSeparatedString();
+    	}
+    	return null;
     }
 
     @Transient

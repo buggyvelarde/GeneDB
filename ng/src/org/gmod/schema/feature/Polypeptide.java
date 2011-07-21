@@ -406,7 +406,6 @@ public class Polypeptide extends Region {
         if (products == null) {
             return null;
         }
-        
         return StringUtils.collectionToDelimitedString(products, " ");
     }
 
