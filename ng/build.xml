@@ -198,7 +198,7 @@
 			<arg value="ci-web" />
 			<arg value="stop" />
 		</exec>
-		<sleep seconds="5" />
+		<sleep minutes="1" />
 		<delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
 		<mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
 		<exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
@@ -224,7 +224,9 @@
 	<target name="check.lib-uptodate" depends="init" if="ivy-timestamp-exists">
 		<uptodate property="lib-uptodate" srcfile="${ng.directory}/ivy.xml" targetfile="${lib.dir}/ivy.timestamp.txt" />
 	</target>
-
+    
+    	
+    <!--<setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128" /> -->
 
 	<target name="populate-lib-dirs" depends="check.lib-uptodate" unless="lib-uptodate">
 		<ivy:settings file="${ng.directory}/ivysettings.xml" />
