@@ -663,7 +663,7 @@
                 	time-to-live-seconds="0"
                     max-idle-seconds="60" 
                     eviction-policy="LRU" 
-                    max-size="5000"
+                    max-size="2000"
                     invalidate-on-change="true" />
         
             </hz:map>
