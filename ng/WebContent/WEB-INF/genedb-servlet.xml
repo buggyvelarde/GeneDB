@@ -632,7 +632,7 @@
 	<!-- the following can be used for spring configuration (when hazelcast is upgraded - has been tested with hazelcast-1.9.3) -->
 	<hz:hazelcast id="instance">
         <hz:config>
-            <hz:group name="genedb-${dbname}" password="${dbhost}:${dbport}/${dbname}"/>
+            <hz:group name="genedb-${dbhost}-${dbport}-${dbname}" password="genedb-${dbhost}-${dbport}-${dbname}"/>
             <hz:properties>
                 <hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
                 <hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
