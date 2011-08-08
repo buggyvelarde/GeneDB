@@ -632,7 +632,7 @@
 	<!-- the following can be used for spring configuration (when hazelcast is upgraded - has been tested with hazelcast-1.9.3) -->
 	<hz:hazelcast id="instance">
         <hz:config>
-            <hz:group name="genedb" password="genedb"/>
+            <hz:group name="genedb-${dbname}" password="${dbhost}:${dbport}/${dbname}"/>
             <hz:properties>
                 <hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
                 <hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
@@ -651,9 +651,9 @@
                     
             <hz:map 
             	name="map" 
-            	backup-count="1" 
-            	max-size="0"
-                eviction-percentage="30" 
+            	backup-count="0" 
+            	max-size="100"
+                eviction-percentage="25" 
                 read-backup-data="true" 
                 cache-value="true"
                 eviction-policy="NONE" 
@@ -663,7 +663,7 @@
                 	time-to-live-seconds="0"
                     max-idle-seconds="60" 
                     eviction-policy="LRU" 
-                    max-size="2000"
+                    max-size="100"
                     invalidate-on-change="true" />
         
             </hz:map>
