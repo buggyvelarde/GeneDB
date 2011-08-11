@@ -7,7 +7,7 @@
 <misc:url value="/includes/scripts/web-artemis" var="wa"/>
 <misc:url value="/" var="base"/>
 
-<format:header title="Feature: ${dto.uniqueName}">
+<format:header title="Feature: ${uniqueName}" >
         
 	<link rel="stylesheet" type="text/css" href="${wa}/css/superfish.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="${wa}/css/tablesorter.css" media="screen">
@@ -21,6 +21,7 @@
 
     <script type="text/javascript" src="${wa}/js/popup.js"></script>
     <script type="text/javascript" src="${wa}/js/jquery.contextMenu-1.01/jquery.contextMenu.js"></script>
+    <script type="text/javascript" src="${wa}/js/jquery-ajax-queue_1.0.js"></script>
 
     <script type="text/javascript" src="${wa}/js/observerable.js"></script>
     <script type="text/javascript" src="${wa}/js/utility.js"></script>
@@ -69,75 +70,18 @@
             z-index:100;
         }
         
+        .hiddenRow {
+            display:none;
+        }
         
         
     </style>
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GenePage.js"/>"></script>
     <script>
-        $(document).ready(function() { 
-        	
-        	var topLevelFeatureLength = parseInt("${dto.topLevelFeatureLength}");
-            var max = 100000;
-            var needsSlider = true;
-            if (max > topLevelFeatureLength) {
-                max = topLevelFeatureLength;
-                //needsSlider = false;
-            }
-            var zoomMaxRatio = max / parseInt("${dto.topLevelFeatureLength}");
-        	
-        	$("#chromosome-map").ChromosomeMap({
-                region : "${dto.topLevelFeatureUniqueName}", 
-                overideUseCanvas : false,
-                bases_per_row: parseInt("${dto.topLevelFeatureLength}"),
-                row_height : 10,
-                row_width : 870,
-                overideUseCanvas : true,
-                loading_interval : 100000,
-                axisLabels : false,
-                row_vertical_space_sep : 10
-            });
-        	
-        	$('#webartemis').WebArtemis({
-                source : "${dto.topLevelFeatureUniqueName}",
-                start : "${dto.min-1000}",
-                bases : "${dto.max-dto.min +2000}",
-                showFeatureList : false,
-                width : 950,
-                directory : "${wa}",
-                showOrganismsList : false,
-                webService : "/services",
-                draggable : false,
-                mainMenu : false, 
-                zoomMaxRatio : zoomMaxRatio
-            });
-            
-        	if (needsSlider) {
-        		
-        		$('#chromosome-map-slider').ChromosomeMapSlider({
-                    windowWidth : 870,
-                    max : parseInt("${dto.topLevelFeatureLength}"), 
-                    observers : [new ChromosomeMapToWebArtemis()],
-                    pos : "${dto.min-1000}",
-                    width : "${dto.max-dto.min +2000}"
-                });
-        		
-	            setTimeout(function() { 
-	                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver("${dto.topLevelFeatureUniqueName}", "${dto.min-1000}", "${dto.max-dto.min +2000}"));
-	                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
-	            }, 500);
-        	}
-        	
-        	$('.wacontainer').hover(
-        		function(e) {
-        			$("#web-artemis-link-container").show();        			
-        		}, function(e) {
-        			$("#web-artemis-link-container").hide();
-        		}
-        	);
-        	
-        	
-            
-    	});
+    $(document).ready(function() {
+    	genePage("${uniqueName}", "${wa}");
+    });
     </script>
    
 
@@ -178,9 +122,49 @@
 
 
 <br />
-<div id="geneDetails">
+<%-- <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
+</div> --%>
+
+
+
+<h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
+<div id="col-4-1">
+
+<div class="main-grey-3-4-top"></div>
+<div class="light-grey">
+<span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
+
+
+<tr id="geneNameRow" class="hiddenRow">
+  <th>Gene Name</th><td id="geneNameField"></td>
+</tr>
+
+<tr >
+  <th>Systematic Name</th>
+  <td id="systematicName"></td> 
+</tr>
+
+
+<tr><th>Feature Type</th><td id="featureType"></td></tr>
+
+
+<tr id="productRow"><th>Product</th><td id="productField"></td></tr>
+
+<tr id="previousSystematicRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="previousSystematicField"></td></tr>
+<tr id="synonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="synonymField"></td></tr>
+<tr id="productSynonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="productSynonymField"></td></tr>
+
+
+</table>
+
+
+
 </div>
+<div class="main-grey-3-4-bot"></div>
+</div><!-- end internal column -left -->
 
 </div>
  
