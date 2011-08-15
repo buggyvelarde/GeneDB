@@ -42,6 +42,29 @@ function genePage(uniqueName, webArtemisPath) {
         	
         	var poly_info = new PolypeptideInfo(info.peptideName, {service:info.service});
         	
+        	poly_info.getDbxrefs(function(features){
+        		$.log(features);
+        		
+        		$.each(features, function(n,feature) {
+        			
+        			var dbxrefs = feature.dbxrefs;
+        			
+        			$.each(dbxrefs, function(m,dbxref){
+        				$.log(dbxref);
+                        
+        				//<li> <a href="${dbxref.urlPrefix}${dbxref.accession}${urlSuffix}">${dbxref.accession}</a> (<db:dbName db="${dbxref.dbName}"/>) </li>
+        				
+        				var href = dbxref.urlprefix + dbxref.accession;
+        				var a = dbxref.accession ;
+        				var db = (dbxref.description) ? dbxref.description : dbxref.database ;
+        				
+        				$('#dbxrefField').append("<li><a href='" + href + "' >" + a + "</a> (" + db + ")</li>");
+        				
+        			});
+        		});
+        		
+        	});
+        	
         	poly_info.getProducts(function(features){
         		$.log(features);
         		
@@ -124,7 +147,7 @@ function genePage(uniqueName, webArtemisPath) {
             			$("#productSynonymField").append(" " + syn);
             			product_synonyms++;
             		}
-            			
+            		
             		$.log(synonym.synonym, synonym.synonymtype, synonym.is_current);
             	});
             	
@@ -154,71 +177,70 @@ function genePage(uniqueName, webArtemisPath) {
         
         
         
+        $("#regionField").append(info.regionInfo.type.name + " " + info.regionInfo.uniqueName + "; " + info.feature.fmin + "-" + info.feature.fmax);
         
         
-        
-        
-        
-		
-		var topLevelFeatureLength = parseInt(info.sequenceLength);
-        var max = 100000;
-        var needsSlider = true;
-        if (max > topLevelFeatureLength) {
-            max = topLevelFeatureLength;
-            //needsSlider = false;
-        }
-        var zoomMaxRatio = max / parseInt(info.sequenceLength);
-        
-        $("#chromosome-map").ChromosomeMap({
-            region : info.feature.region, 
-            overideUseCanvas : false,
-            bases_per_row: parseInt(info.sequenceLength),
-            row_height : 10,
-            row_width : 870,
-            overideUseCanvas : true,
-            loading_interval : 100000,
-            axisLabels : false,
-            row_vertical_space_sep : 10,
-            web_service_root : info.service
-        });
-        
-        $('#webartemis').WebArtemis({
-            source : info.feature.region,
-            start : info.feature.fmin-1000,
-            bases : info.feature.fmax-info.feature.fmin +2000,
-            showFeatureList : false,
-            width : 950,
-            directory : webArtemisPath,
-            showOrganismsList : false,
-            webService : info.service,
-            draggable : false,
-            mainMenu : false, 
-            zoomMaxRatio : zoomMaxRatio
-        });
-        
-        if (needsSlider) {
-            
-            $('#chromosome-map-slider').ChromosomeMapSlider({
-                windowWidth : 870,
-                max : parseInt(info.sequenceLength), 
-                observers : [new ChromosomeMapToWebArtemis()],
-                pos : info.feature.fmin-1000,
-                width : info.feature.fmax-info.feature.fmin +2000
-            });
-            
-            setTimeout(function() { 
-                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver(info.feature.region, info.feature.fmin-1000, info.feature.fmin +2000));
-                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
-            }, 500);
-        }
-        
-        $('.wacontainer').hover(
-            function(e) {
-                $("#web-artemis-link-container").show();                    
-            }, function(e) {
-                $("#web-artemis-link-container").hide();
-            }
-        );
+//        
+//		
+//		var topLevelFeatureLength = parseInt(info.sequenceLength);
+//        var max = 100000;
+//        var needsSlider = true;
+//        if (max > topLevelFeatureLength) {
+//            max = topLevelFeatureLength;
+//            //needsSlider = false;
+//        }
+//        var zoomMaxRatio = max / parseInt(info.sequenceLength);
+//        
+//        $("#chromosome-map").ChromosomeMap({
+//            region : info.feature.region, 
+//            overideUseCanvas : false,
+//            bases_per_row: parseInt(info.sequenceLength),
+//            row_height : 10,
+//            row_width : 870,
+//            overideUseCanvas : true,
+//            loading_interval : 100000,
+//            axisLabels : false,
+//            row_vertical_space_sep : 10,
+//            web_service_root : info.service
+//        });
+//        
+//        $('#webartemis').WebArtemis({
+//            source : info.feature.region,
+//            start : info.feature.fmin-1000,
+//            bases : info.feature.fmax-info.feature.fmin +2000,
+//            showFeatureList : false,
+//            width : 950,
+//            directory : webArtemisPath,
+//            showOrganismsList : false,
+//            webService : info.service,
+//            draggable : false,
+//            mainMenu : false, 
+//            zoomMaxRatio : zoomMaxRatio
+//        });
+//        
+//        if (needsSlider) {
+//            
+//            $('#chromosome-map-slider').ChromosomeMapSlider({
+//                windowWidth : 870,
+//                max : parseInt(info.sequenceLength), 
+//                observers : [new ChromosomeMapToWebArtemis()],
+//                pos : info.feature.fmin-1000,
+//                width : info.feature.fmax-info.feature.fmin +2000
+//            });
+//            
+//            setTimeout(function() { 
+//                $('#webartemis').WebArtemis('addObserver', new GeneDBPageWebArtemisObserver(info.feature.region, info.feature.fmin-1000, info.feature.fmin +2000));
+//                $('#webartemis').WebArtemis('addObserver', new WebArtemisToChromosomeMap('#chromosome-map-slider'));
+//            }, 500);
+//        }
+//        
+//        $('.wacontainer').hover(
+//            function(e) {
+//                $("#web-artemis-link-container").show();                    
+//            }, function(e) {
+//                $("#web-artemis-link-container").hide();
+//            }
+//        );
         
 		
 	}

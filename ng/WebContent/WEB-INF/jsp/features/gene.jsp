@@ -155,8 +155,9 @@
 
 <tr id="previousSystematicRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="previousSystematicField"></td></tr>
 <tr id="synonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="synonymField"></td></tr>
-<tr id="productSynonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="productSynonymField"></td></tr>
-
+<tr id="productSynonymRow" class="hiddenRow"><th>Product Synonym Id</th><td id="productSynonymField"></td></tr>
+<tr id="regionRow" ><th>Location</th><td id="regionField"></td></tr>
+<tr id="dbxrefRow" ><th>See Also</th><td id="dbxrefField"></td></tr>
 
 </table>
 
