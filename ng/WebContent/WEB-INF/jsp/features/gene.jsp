@@ -138,26 +138,17 @@
 <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 
 
-<tr id="geneNameRow" class="hiddenRow">
-  <th>Gene Name</th><td id="geneNameField"></td>
-</tr>
-
-<tr >
-  <th>Systematic Name</th>
-  <td id="systematicName"></td> 
-</tr>
-
-
+<tr id="geneNameRow" class="hiddenRow"><th>Gene Name</th><td id="geneNameField"></td></tr>
+<tr ><th>Systematic Name</th><td id="systematicName"></td> </tr>
 <tr><th>Feature Type</th><td id="featureType"></td></tr>
-
-
-<tr id="productRow"><th>Product</th><td id="productField"></td></tr>
-
+<tr id="productRow" class="hiddenRow"><th>Product</th><td id="productField"></td></tr>
 <tr id="previousSystematicRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="previousSystematicField"></td></tr>
 <tr id="synonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="synonymField"></td></tr>
 <tr id="productSynonymRow" class="hiddenRow"><th>Product Synonym Id</th><td id="productSynonymField"></td></tr>
 <tr id="regionRow" ><th>Location</th><td id="regionField"></td></tr>
-<tr id="dbxrefRow" ><th>See Also</th><td id="dbxrefField"></td></tr>
+<tr id="dbxrefRow" class="hiddenRow" ><th>See Also</th><td id="dbxrefField"></td></tr>
+<tr id="plasmodbRow" class="hiddenRow" ><th>PlasmoDB</th><td id="plasmodbField"></td></tr>
+<tr id="tritrypdbRow" class="hiddenRow" ><th>TriTrypDB</th><td id="tritrypdbField"></td></tr>
 
 </table>
 

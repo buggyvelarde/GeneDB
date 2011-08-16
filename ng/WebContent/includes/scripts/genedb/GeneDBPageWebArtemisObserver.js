@@ -11,18 +11,22 @@ function GeneDBPageWebArtemisObserver(source,start,bases) {
 
 	function reloadDetails(name) {
 	    
+		$.log(name);
+		
 	    if (loading || name ==  null || name == loadedFeatureName) {
 	    	return;
 	    }
 	    
 	    loading = true;
-
-	    $("#geneDetails").fadeTo("slow", 0.4).load(encodeURIComponent(name)+"?detailsOnly=true", null, function () {
-	    	loadedFeatureName = name;
-	    	document.title = "Gene element "+name+" - GeneDB";
-	    	$("#geneDetails").stop().fadeTo("fast", 1);
-	        loading = false;
-	   }); 
+	    
+	    
+//	    
+//	    $("#geneDetails").fadeTo("slow", 0.4).load(encodeURIComponent(name)+"?detailsOnly=true", null, function () {
+//	    	loadedFeatureName = name;
+//	    	document.title = "Gene element "+name+" - GeneDB";
+//	    	$("#geneDetails").stop().fadeTo("fast", 1);
+//	        loading = false;
+//	   }); 
 	   
 	} 
 	
