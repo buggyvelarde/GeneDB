@@ -1,4 +1,4 @@
-function GeneDBPageWebArtemisObserver(source,start,bases) {
+function GeneDBPageWebArtemisObserver(source,start,bases, doReload) {
 	
 	var loading = false;
 	var loadedFeatureName = "";
@@ -11,7 +11,7 @@ function GeneDBPageWebArtemisObserver(source,start,bases) {
 
 	function reloadDetails(name) {
 	    
-		$.log(name);
+		$.log("reloadDetails :" , [loading, name, loadedFeatureName]);
 		
 	    if (loading || name ==  null || name == loadedFeatureName) {
 	    	return;
@@ -19,7 +19,9 @@ function GeneDBPageWebArtemisObserver(source,start,bases) {
 	    
 	    loading = true;
 	    
+	    $.log("reload " + name);
 	    
+	    doReload(name, onReload);
 //	    
 //	    $("#geneDetails").fadeTo("slow", 0.4).load(encodeURIComponent(name)+"?detailsOnly=true", null, function () {
 //	    	loadedFeatureName = name;
@@ -30,20 +32,26 @@ function GeneDBPageWebArtemisObserver(source,start,bases) {
 	   
 	} 
 	
+	function onReload(info) {
+		loading = false;
+		document.title = "Gene element " + info.uniqueName + " - GeneDB";
+		$.log("reload complete, must show now");
+	}
+	
     this.redraw = function redraw(start, end) {
-    	//console.log("REDRAW DETECTED " + start + " " + end);
+    	$.log("REDRAW DETECTED " + start + " " + end);
     	changeLink(source, start, end - start);
     };
     this.select = function(feature, fDisplay) {
     	if (feature == loadedFeatureName) {
     		return;
     	}
-    	//console.log("SELECT DETECTED " + feature + " ON DISPLAY ");
-    	$.historyLoad(feature);
-    	//reloadDetails(feature);
+    	$.log("SELECT DETECTED " + feature + " ON DISPLAY ");
+    	//$.historyLoad(feature);
+    	reloadDetails(feature);
 	};
 	
-	$.historyInit(reloadDetails);
+	//$.historyInit(reloadDetails);
     changeLink(source,start,bases);
 };
 

@@ -40,10 +40,20 @@
     <script type="text/javascript" src="${wa}/js/featureList.js"></script>
     <script type="text/javascript" src="${wa}/js/navigate.js"></script>
     <script type="text/javascript" src="${wa}/js/genome.js"></script>
-    <script type="text/javascript" src="${wa}/js/samFlag.js"></script></format:header>
+    <script type="text/javascript" src="${wa}/js/samFlag.js"></script>
     
     
-    <script type="text/javascript" src="${wa}/js/chromosoml.js"></script>
+    
+    </format:header>
+    
+    
+    
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/json2.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/underscore.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/backbone.js"></script>
+    
+    
+    <script type="text/javascript" src="${wa}/js/chromosoml/chromosoml.js"></script>
     
     <style>
         
@@ -70,13 +80,16 @@
             z-index:100;
         }
         
-        .hiddenRow {
+        .hideable {
             display:none;
         }
         
         
     </style>
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
+    
+    
+    
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GenePage.js"/>"></script>
     <script>
     $(document).ready(function() {
@@ -91,6 +104,7 @@
     <img src="<misc:url value="/includes/image/loading.gif"/>">
     Loading Gene Details...
 </div> --%>
+
 
 
 
@@ -120,13 +134,7 @@
 
 <div id="col-2-1">
 
-
 <br />
-<%-- <div id="geneDetails">
-    <jsp:include page="geneDetails.jsp"/>
-</div> --%>
-
-
 
 <h2 style="padding-top:0px;margin-top:0px;">General Information</h2>
 <div id="col-4-1">
@@ -135,30 +143,122 @@
 <div class="light-grey">
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
 <h2>Summary</h2>
-<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
 
-
-<tr id="geneNameRow" class="hiddenRow"><th>Gene Name</th><td id="geneNameField"></td></tr>
-<tr ><th>Systematic Name</th><td id="systematicName"></td> </tr>
-<tr><th>Feature Type</th><td id="featureType"></td></tr>
-<tr id="productRow" class="hiddenRow"><th>Product</th><td id="productField"></td></tr>
-<tr id="previousSystematicRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="previousSystematicField"></td></tr>
-<tr id="synonymRow" class="hiddenRow"><th>Previous Systematic Id</th><td id="synonymField"></td></tr>
-<tr id="productSynonymRow" class="hiddenRow"><th>Product Synonym Id</th><td id="productSynonymField"></td></tr>
-<tr id="regionRow" ><th>Location</th><td id="regionField"></td></tr>
-<tr id="dbxrefRow" class="hiddenRow" ><th>See Also</th><td id="dbxrefField"></td></tr>
-<tr id="plasmodbRow" class="hiddenRow" ><th>PlasmoDB</th><td id="plasmodbField"></td></tr>
-<tr id="tritrypdbRow" class="hiddenRow" ><th>TriTrypDB</th><td id="tritrypdbField"></td></tr>
-
-</table>
-
-
+<table class="sequence-table" cellspacing="4" cellpadding="0" border="0" id="GeneSummary" /></table>
 
 </div>
 <div class="main-grey-3-4-bot"></div>
 </div><!-- end internal column -left -->
 
+<br class="clear" /><br />
+
+<div class="hideable" id=Properties ></div>
+
+
+
 </div>
+
+
+
+<!-- 
+
+<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
+
+	<tr id="geneNameRow" class="hideable">
+		<th>Gene Name</th>
+		<td class="erasable" id="geneNameField"></td>
+	</tr>
+	<tr>
+		<th>Systematic Name</th>
+		<td class="erasable" id="systematicName"></td>
+	</tr>
+	<tr>
+		<th>Feature Type</th>
+		<td class="erasable" id="featureType"></td>
+	</tr>
+	<tr id="productRow" class="hideable">
+		<th>Product</th>
+		<td class="erasable" id="productField"></td>
+	</tr>
+	<tr id="previousSystematicRow" class="hideable">
+		<th>Previous Systematic Id</th>
+		<td class="erasable" id="previousSystematicField"></td>
+	</tr>
+	<tr id="synonymRow" class="hideable">
+		<th>Previous Systematic Id</th>
+		<td class="erasable" id="synonymField"></td>
+	</tr>
+	<tr id="productSynonymRow" class="hideable">
+		<th>Product Synonym Id</th>
+		<td class="erasable" id="productSynonymField"></td>
+	</tr>
+	<tr id="regionRow">
+		<th>Location</th>
+		<td class="erasable" id="regionField"></td>
+	</tr>
+	<tr id="dbxrefRow" class="hideable">
+		<th>See Also</th>
+		<td class="erasable" id="dbxrefField"></td>
+	</tr>
+	<tr id="plasmodbRow" class="hideable">
+		<th>PlasmoDB</th>
+		<td class="erasable" id="plasmodbField"></td>
+	</tr>
+	<tr id="tritrypdbRow" class="hideable">
+		<th>TriTrypDB</th>
+		<td class="erasable" id="tritrypdbField"></td>
+	</tr>
+
+</table>
+ -->
+
+<%-- 
+<div class="hideable" id="comments" >
+<format:genePageSection>
+  <h2>Comments</h2>
+  
+  <div class="hideable" id="notesRow">Notes<ul class="erasable" id="notesField"></ul></div>
+  <div class="hideable" id="commentsRow">Comments<ul class="erasable" id="commentsField"></ul></div>
+  <div class="hideable" id="curationRow">Curation<ul class="erasable" id="curationField"></ul></div>
+  <div class="hideable" id="publicationsRow">Key information on this gene is available from <span class="erasable" id="publicationsField"></span></div>
+  
+</format:genePageSection>
+  </div>
+
+<br class="clear" /><br />
+
+<div class="hideable" id="controlledCurationRow">
+<format:genePageSection id="controlCur">
+  <h2>Phenotype</h2>
+<div class="erasable" id="controlledcurationField"></div>
+</format:genePageSection>
+</div>
+
+<br class="clear" /><br />
+
+<div class="hideable" id="go">
+<format:genePageSection >
+<h2>Gene Ontology</h2>
+<table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
+	<tr class="hideable" id="biologicalProcessRow">
+	  <th>Biological Process</th>
+	  <td id="biologicalProcessField" class="erasable term"></td>
+	</tr>
+	<tr class="hideable" id="molecularFunctionRow">
+      <th>Molecular Function</th>
+      <td id="molecularFunctionField" class="erasable term"></td>
+    </tr>
+    <tr class="hideable" id="cellularComponentRow">
+      <th>Cellular Component</th>
+      <td id="cellularComponentField" class="erasable term"></td>
+    </tr>
+</table>
+</format:genePageSection>
+</div> --%>
+
+
+
+
  
 
 </format:page>
