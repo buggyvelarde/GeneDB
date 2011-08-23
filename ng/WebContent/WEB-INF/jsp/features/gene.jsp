@@ -47,6 +47,7 @@
     </format:header>
     
     
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tools.min.js"></script>
     
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/json2.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/underscore.js"></script>
@@ -84,16 +85,33 @@
             display:none;
         }
         
+        .tooltip {
+	        display:none;
+	        background-color:#ffa;
+	        border:1px solid #cc9;
+	        padding:3px;
+	        font-size:13px;
+	        -moz-box-shadow: 2px 2px 11px #666;
+	        -webkit-box-shadow: 2px 2px 11px #666;
+	    }
+	   
+	    a.evidence {
+	       text-decoration:none;
+	       font-weight:bold;
+	       color:#555;
+	    }
+	        
         
     </style>
     <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
     
+    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_templates.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_models_and_views.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page.js"></script>
     
-    
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GenePage.js"/>"></script>
     <script>
     $(document).ready(function() {
-    	genePage("${uniqueName}", "${wa}");
+    	new GenePage("${uniqueName}", "${wa}");
     });
     </script>
    
@@ -144,7 +162,7 @@
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
 <h2>Summary</h2>
 
-<table class="sequence-table" cellspacing="4" cellpadding="0" border="0" id="GeneSummary" /></table>
+<table class="sequence-table" cellspacing="4" cellpadding="0" border="0" id="gene_summary" /></table>
 
 </div>
 <div class="main-grey-3-4-bot"></div>
@@ -152,8 +170,19 @@
 
 <br class="clear" /><br />
 
-<div class="hideable" id=Properties ></div>
+<div class="hideable" id="feature_properties" ></div>
 
+<br class="clear" /><br />
+
+
+<div class='full-light-grey-top'></div>
+<div class='light-grey'> 
+<div id=GeneOntology >
+<h2>Gene Ontology</h2>
+<table cellpadding="0" cellspacing="4" border="0" class="sequence-table" id="gene_ontology">
+</table>
+</div>
+<div class='full-light-grey-bot'></div><br>
 
 
 </div>
