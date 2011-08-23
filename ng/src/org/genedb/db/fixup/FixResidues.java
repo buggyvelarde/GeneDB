@@ -417,6 +417,7 @@ public class FixResidues {
             +" and transcript.type_id in (?, ?, ?, ?, ?, ?, ?, ?)"
             +" and exonloc.locgroup = 0"
             +" and exonloc.rank = 0"
+            +" order by exonloc.fmin"
         );
         Map<Integer,Transcript> transcriptsById = new HashMap<Integer,Transcript>();
         try {
