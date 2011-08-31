@@ -41,10 +41,16 @@
     <script type="text/javascript" src="${wa}/js/navigate.js"></script>
     <script type="text/javascript" src="${wa}/js/genome.js"></script>
     <script type="text/javascript" src="${wa}/js/samFlag.js"></script>
+
+
+
+
+
+</format:header>
     
-    
-    
-    </format:header>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.local.js"></script>
     
     
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tools.min.js"></script>
@@ -52,6 +58,8 @@
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/json2.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/underscore.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/backbone.js"></script>
+    
+    
     
     
     <script type="text/javascript" src="${wa}/js/chromosoml/chromosoml.js"></script>
@@ -103,7 +111,7 @@
 	        
         
     </style>
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/genedb/GeneDBPageWebArtemisObserver.js"/>"></script>
+    
     
     <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_templates.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_models_and_views.js"></script>
@@ -111,7 +119,9 @@
     
     <script>
     $(document).ready(function() {
-    	new GenePage("${uniqueName}", "${wa}");
+    	//new GenePage("${uniqueName}", "${wa}");
+    	var genePage = wa.GenePage.init("${uniqueName}");
+    	
     });
     </script>
    
@@ -160,9 +170,15 @@
 <div class="main-grey-3-4-top"></div>
 <div class="light-grey">
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
-<h2>Summary</h2>
 
-<table class="sequence-table" cellspacing="4" cellpadding="0" border="0" id="gene_summary" /></table>
+<div id="gene_summary">
+<h2>Summary</h2>
+<table class="sequence-table gene_summary_items" cellspacing="4" cellpadding="0" border="0"  />
+
+<tr id="gene_summary_dbxrefs"><th>See Also</th><td id="dbxrefs"></td></tr>  
+
+</table>
+</div>
 
 </div>
 <div class="main-grey-3-4-bot"></div>
@@ -187,6 +203,7 @@
 
 </div>
 
+</div>
 
 
 <!-- 
