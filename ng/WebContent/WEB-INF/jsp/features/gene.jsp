@@ -172,12 +172,9 @@
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
 
 <div id="gene_summary">
-<h2>Summary</h2>
-<table class="sequence-table gene_summary_items" cellspacing="4" cellpadding="0" border="0"  />
 
-<tr id="gene_summary_dbxrefs"><th>See Also</th><td id="dbxrefs"></td></tr>  
 
-</table>
+
 </div>
 
 </div>
