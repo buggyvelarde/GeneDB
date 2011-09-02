@@ -49,15 +49,19 @@
 </format:header>
     
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tmpl.js"></script>
-    <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.js"></script>
-    <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.local.js"></script>
+    <script type='text/javascript' src='${wa}/js/chromosoml/lib/knockout.js'></script>
+    <script type='text/javascript' src='${wa}/js/chromosoml/lib/koExternalTemplateEngine.js'></script>
     
     
-    <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tools.min.js"></script>
+    <!-- <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.local.js"></script> -->
+    
+    
+    <!-- <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tools.min.js"></script>
     
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/json2.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/underscore.js"></script>
-    <script type="text/javascript" src="${wa}/js/chromosoml/lib/backbone.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/backbone.js"></script> -->
     
     
     
@@ -113,8 +117,8 @@
     </style>
     
     
-    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_templates.js"></script>
-    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_models_and_views.js"></script>
+    <!-- <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_templates.js"></script>
+    <script type="text/javascript" src="${wa}/js/chromosoml/gene_page_default_models_and_views.js"></script> -->
     <script type="text/javascript" src="${wa}/js/chromosoml/gene_page.js"></script>
     
     <script>
@@ -124,6 +128,8 @@
     	
     });
     </script>
+   
+   
    
 
 <format:page >
@@ -171,11 +177,7 @@
 <div class="light-grey">
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
 
-<div id="gene_summary">
-
-
-
-</div>
+<div id="gene_summary" data-bind="template: 'summary' " ></div>
 
 </div>
 <div class="main-grey-3-4-bot"></div>
