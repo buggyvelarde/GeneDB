@@ -51,7 +51,7 @@
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tmpl.js"></script>
     <script type='text/javascript' src='${wa}/js/chromosoml/lib/knockout.js'></script>
     <script type='text/javascript' src='${wa}/js/chromosoml/lib/koExternalTemplateEngine.js'></script>
-    
+    <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tools.min.js"></script>
     
     <!-- <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.js"></script>
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/spine.local.js"></script> -->
@@ -176,31 +176,47 @@
 <div class="main-grey-3-4-top"></div>
 <div class="light-grey">
 <span class="float-right grey-text"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></span>
-
 <div id="gene_summary" data-bind="template: 'summary' " ></div>
-
 </div>
 <div class="main-grey-3-4-bot"></div>
 </div><!-- end internal column -left -->
 
 <br class="clear" /><br />
 
-<div class="hideable" id="feature_properties" ></div>
 
-<br class="clear" /><br />
+
+
+
 
 
 <div class='full-light-grey-top'></div>
 <div class='light-grey'> 
-<div id=GeneOntology >
-<h2>Gene Ontology</h2>
-<table cellpadding="0" cellspacing="4" border="0" class="sequence-table" id="gene_ontology">
-</table>
+<div  >
+<h2>Comments</h2>
+<div data-bind="template: {name:'properties', data: {curations:curations, notes:notes, comments:comments, pubs:pubs }}, visible: len([notes, comments, curations, pubs]) > 0 " ></div>
+</div>
 </div>
 <div class='full-light-grey-bot'></div><br>
 
+<br class="clear" /><br />
 
+
+
+<div class='full-light-grey-top'></div>
+<div class='light-grey'> 
+<div  >
+<h2>Gene Ontology</h2>
+<table 
+    cellpadding="0" cellspacing="4" border="0" class="sequence-table" 
+    data-bind="template: {name:'gos', data: {cellular_component:cellular_component, molecular_function:molecular_function, biological_process:biological_process }}, visible: len([cellular_component, molecular_function, biological_process]) > 0 " >
+</table>
 </div>
+</div>
+<div class='full-light-grey-bot'></div><br>
+
+<br class="clear" /><br />
+
+
 
 </div>
 
