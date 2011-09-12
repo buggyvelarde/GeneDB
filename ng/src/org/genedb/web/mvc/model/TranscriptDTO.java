@@ -22,6 +22,16 @@ public class TranscriptDTO implements Serializable {
 
     private static final long serialVersionUID = 3878466785198622703L;
 
+    private PolypeptideDTO polypeptide;
+    
+    public PolypeptideDTO getPolypeptide() {
+    	return polypeptide;
+    }
+    
+    public void setPolypeptide(PolypeptideDTO polypeptide) {
+		this.polypeptide=polypeptide;
+	}
+    
     private Map<String,Object> algorithmData;
 
     private int transcriptId;

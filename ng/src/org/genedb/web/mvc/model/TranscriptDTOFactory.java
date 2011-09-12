@@ -179,6 +179,87 @@ public class TranscriptDTOFactory {
             map.put(key, value);
         }
     }
+    
+    
+    public TranscriptDTO make(AbstractGene gene) {
+    	TranscriptDTO ret = new TranscriptDTO();
+    	
+    	
+        populateParentDetails(ret, gene);
+        ret.setOrganismCommonName(gene.getOrganism().getCommonName());
+        ret.setLastModified(gene.getTimeLastModified().getTime());
+    	
+    	return ret;
+    }
+    
+    public TranscriptDTO make(Transcript transcript) {
+    	TranscriptDTO ret = new TranscriptDTO();
+    	
+    	
+    	
+    	AbstractGene gene = transcript.getGene();
+    	populateNames(ret, transcript, gene);
+    	populateMisc(ret, transcript);
+    	
+    	ret.setProducts(populateFromFeatureCvTerms(transcript, "genedb_products"));
+		
+		logger.info(ret.getProducts());
+		
+		populateFromFeatureProps(ret, transcript);
+		logger.info(ret.getNotes());
+		logger.info(ret.getComments());
+		
+		populateFromFeaturePubs(ret, transcript);
+		
+		ret.setLastModified(transcript.getTimeLastModified().getTime());
+    	
+    	return ret;
+    }
+    
+	public TranscriptDTO make(Polypeptide polypeptide) {
+		TranscriptDTO ret = new TranscriptDTO();
+		
+		
+		
+		logger.trace("** About to set algorithm data");
+		ret.setAlgorithmData(prepareAlgorithmData(polypeptide));
+		logger.trace("** About to set p. props");
+		ret.setPolypeptideProperties(polypeptide.calculateStats());
+		logger.trace("** About to set from feature props");
+		populateFromFeatureProps(ret, polypeptide);
+
+		logger.trace("** About to set from products");
+		ret.setProducts(populateFromFeatureCvTerms(polypeptide,
+				"genedb_products"));
+		logger.trace("** About to set from CC");
+		ret.setControlledCurations(populateFromFeatureCvTerms(polypeptide,
+				"CC_"));
+		logger.trace("** About to set from bio. process");
+		ret.setGoBiologicalProcesses(populateFromFeatureCvTerms(polypeptide,
+				"biological_process"));
+		logger.trace("** About to set from mol. function");
+		ret.setGoMolecularFunctions(populateFromFeatureCvTerms(polypeptide,
+				"molecular_function"));
+		logger.trace("** About to set from cell. component");
+		ret.setGoCellularComponents(populateFromFeatureCvTerms(polypeptide,
+				"cellular_component"));
+		logger.trace("** About to set from feature dbxref");
+		populateFromFeatureDbXrefs(ret, polypeptide);
+
+		logger.trace("** About to set feature rels");
+		populateFromFeatureRelationships(ret, polypeptide);
+
+		logger.trace("** About to set feature pubs");
+		populateFromFeaturePubs(ret, polypeptide);
+
+		logger.trace("** About to set domain info");
+		ret.setDomainInformation(prepareDomainInformation(polypeptide));
+		// model.put("domainInformation", domainInformation);
+		
+		ret.setLastModified(polypeptide.getTimeLastModified().getTime());
+		
+		return ret;
+	}
 
 
     public TranscriptDTO make(Transcript transcript, DiagramCache diagramCache) {

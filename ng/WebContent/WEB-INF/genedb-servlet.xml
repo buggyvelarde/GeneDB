@@ -5,11 +5,23 @@
   xmlns:context="http://www.springframework.org/schema/context"
   xmlns:mvc="http://www.springframework.org/schema/mvc"
   xmlns:security="http://www.springframework.org/schema/security"
+  
+  xmlns:hz="http://www.hazelcast.com/schema/config"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
   	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
   	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-  	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd"
+  	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+  	
+  	http://www.hazelcast.com/schema/config
+    http://www.hazelcast.com/schema/config/hazelcast-spring.xsd
+    
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    
+  	"
   default-init-method="postConstruction">
 
   <!--
@@ -488,6 +500,17 @@
   <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
     <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
   </bean>
+    
+    <!-- <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" ></bean> -->
+    
+    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
+        <property name="sequenceDao" ref="sequenceDao" />
+        <!-- <property name="transcriptDTOFactory" ref="transcriptDTOFactory" /> -->
+        <!-- <property name="geneDetailsView" value="features/geneHierarchyDetails" /> -->
+        <property name="geneDetailsView" value="features/geneDetails" />
+        <!-- <property name="modelBuilder" ref="modelBuilder" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" /> -->
+    </bean>
 
   <bean id="TranscriptFeatureController" class="org.genedb.web.mvc.controller.TranscriptFeatureController">
     <property name="sequenceDao" ref="sequenceDao" />
@@ -570,6 +593,43 @@
   <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
     <property name="diagramCache" ref="diagramCache" />
   </bean>
+    
+    
+    <!-- the hazelcast cache -->
+    
+    <hz:hazelcast id="instance">
+        <hz:config>
+            <hz:group name="dev" password="password"/>
+            <hz:properties>
+                <hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
+                <hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
+            </hz:properties>
+            <hz:network port="5701" port-auto-increment="false">
+                <hz:join>
+                    <hz:multicast enabled="false"
+                                  multicast-group="224.2.2.3"
+                                  multicast-port="54327"/>
+                    <hz:tcp-ip enabled="true">
+                        <hz:members>10.10.1.2, 10.10.1.3</hz:members>
+                    </hz:tcp-ip>
+                </hz:join>
+            </hz:network>
+            <hz:map name="map"
+                    backup-count="2"
+                    max-size="0"
+                    eviction-percentage="30"
+                    read-backup-data="true"
+                    cache-value="true"
+                    eviction-policy="NONE"
+                    merge-policy="hz.ADD_NEW_ENTRY"/>
+        </hz:config>
+    </hz:hazelcast>
 
+    
+    <!-- configure the aspect for getting results from the hazelcast cache -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="dataAccessAspect" class="org.genedb.aop.HazelcastAspect"/>
+    
+    
 
 </beans>

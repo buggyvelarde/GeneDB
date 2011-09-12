@@ -19,6 +19,13 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
+<div><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
+<c:forEach var="transcript" items="${gene.transcripts}">
+    <div><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
+       <div><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></div>
+    </div>
+</c:forEach>
+</div>
 
 <p style="text-align:right"><span style="color: #8b031b">New!</span> View in :
 <span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
@@ -318,6 +325,7 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
+</c:if>
 
 <%-- Ortholog / Paralog Section --%>
 <c:if test="${fn:length(dto.clusterIds) + fn:length(dto.orthologueNames) > 0}">
@@ -340,7 +348,7 @@ ${dto.ims.imageMap}
   </format:genePageSection>
 </c:if>
 
-</c:if>
+
 
 <!-- <p>See this gene in <a href="<misc:url value="/gene/${dto.uniqueName}.xml" />">XML</a> or <a href="<misc:url value="/gene/${dto.uniqueName}.json" />">JSON</a> formats</p> -->
 

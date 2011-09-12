@@ -1,5 +1,6 @@
 package org.genedb.db.dao;
 
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
 import org.gmod.schema.feature.HelixTurnHelix;
@@ -102,6 +103,54 @@ public class SequenceDao extends BaseDao {
 
         return features.get(0);
     }
+    
+    public Feature getFeatureByUniqueName(String uniqueName) {
+        @SuppressWarnings("unchecked")
+        List<Feature> features = getSession().createQuery(
+            "from Feature where uniqueName=:uniqueName")
+            .setString("uniqueName", uniqueName)
+            .list();
+
+        if (features.size() == 0) {
+            logger.info(String.format("Hibernate found no feature with uniqueName '%s'",
+                uniqueName));
+            return null;
+        }
+        if (features.size() > 1) {
+            throw new RuntimeException(String.format("Found more than one feature with uniqueName '%s'",
+                uniqueName));
+        }
+
+        return features.get(0);
+    }
+    
+    public AbstractGene getGene(Feature f) {
+    	
+    	logger.info("getGene("+ f.getUniqueName() +")");
+    	
+    	if (f instanceof AbstractGene) {
+    		logger.info("      FOUND!");
+    		return (AbstractGene)f;
+    	}
+    	
+    	for (FeatureRelationship fr : f.getFeatureRelationshipsForSubjectId()) {
+    		if ((fr.getType().getName().equals("part_of") && fr.getType().getCv().getName().equals("relationship")) 
+    				|| (fr.getType().getName().equals("derives_from") && fr.getType().getCv().getName().equals("sequence"))) {
+    			
+    			AbstractGene gene = getGene(fr.getObjectFeature());
+    			if (gene != null) {
+    				return gene;
+    			}
+    			
+    		}
+    	}
+    	
+    	
+    	return null;
+    }
+    
+    
+    
 
     /**
      * Get the feature with the specified unique name and type, from the
@@ -246,6 +295,18 @@ public class SequenceDao extends BaseDao {
                 .setBoolean("not", not)
                 .list();
 
+        return list;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvName(Feature feature, CvTerm cvName, boolean not) {
+        List<FeatureCvTerm> list = getSession().createQuery(
+                        "from FeatureCvTerm fct where fct.feature=:feature and fct.cvTerm.cv.name=:cvName ")
+                .setParameter("feature", feature)
+                .setParameter("cvName", cvName)
+                .setBoolean("not", not)
+                .list();
         return list;
     }
 

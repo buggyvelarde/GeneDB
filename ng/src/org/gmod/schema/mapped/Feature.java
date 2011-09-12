@@ -586,7 +586,8 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
             return this.featureCvTerms;
         }
     }
-
+    
+    
     public void addFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         synchronized (featureCvTermsLock) {
             if (this.featureCvTerms == null) {
@@ -1487,9 +1488,22 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     }
     
     @Transient
-    private void addDbxref(List<String> dbxrefs, DbXRef dbXRef ) {
-    	dbxrefs.add(this.dbXRef.getDb().getName()+ ":" +this.dbXRef.getAccession());
-    	dbxrefs.add(this.dbXRef.getAccession());
+    private void addDbxref(List<String> dbxrefs, DbXRef dbxref ) {
+    	if (dbxref == null) {
+    		return;
+    	}
+    	if (dbxref.getAccession() == null) {
+    		return;
+    	}
+    	if (dbxref.getDb() == null) {
+    		return;
+    	}
+    	if (dbxref.getDb().getName() == null) {
+    		return;
+    	}
+    	
+    	dbxrefs.add(dbxref.getDb().getName()+ ":" +dbxref.getAccession());
+    	dbxrefs.add(dbxref.getAccession());
     }
     
     
