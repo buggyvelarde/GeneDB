@@ -44,6 +44,9 @@ public class Junction extends Feature implements Comparable<Junction>{
     private int srcFeatureId;
     
     @Transient
+    private short strand;
+    
+    @Transient
     private boolean locLoaded;
     
     private void loadLoc() {
@@ -57,6 +60,12 @@ public class Junction extends Feature implements Comparable<Junction>{
         
         if ((fmax - fmin ) != 0)
             throw new IllegalStateException("A junction's fmin must be equal to its fmax.");
+        
+        if (featureLoc.getStrand() != null) {
+            strand = featureLoc.getStrand();
+        } else {
+            strand = 0;
+        }
         
         Feature feature = featureLoc.getSourceFeature();
         if (feature != null) {
