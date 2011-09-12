@@ -395,29 +395,26 @@
 
 	<property name="javascriptprojectdir" value="${ng.directory}/WebContent/includes/scripts" />
 	<property name="webartemisdir" value="${javascriptprojectdir}/web-artemis" />
+	<property name="webartemisgituri" value="git@github.com:sanger-pathogens/Web-Artemis.git" />
+	<property name="webartemisgitbranch" value="master" />
 	
 	<target name="clean-web-artemis">
 		<delete dir="${webartemisdir}" failonerror="false"/>
 	</target>
-    	
-	<target name="git-get-web-artemis" unless="usesvn">
+    
+	<target name="git-get-web-artemis" depends="clean-web-artemis">
 		<mkdir dir="${webartemisdir}" />
+		<echo>Cloning ${webartemisgituri}</echo>
 		<exec executable="git" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
 			<arg value="clone" />
-			<arg value="git@github.com:sanger-pathogens/Web-Artemis.git" />
+			<arg value="${webartemisgituri}" />
 			<arg value="web-artemis" />
+			<arg value="-b" />
+			<arg value="${webartemisgitbranch}" />
 		</exec>
 	</target>
-
-	<target name="svn-get-web-artemis" if="usesvn">
-		<!-- we use svn export to not pull in .svn folders -->
-		<exec executable="svn" dir="${javascriptprojectdir}" failifexecutionfails="true" failonerror="true">
-			<arg value="export" />
-			<arg value="svn+ssh://svn.internal.sanger.ac.uk/repos/svn/pathsoft/psu/trunk/genlib/javascript/web-artemis" />
-		</exec>
-	</target>
-
-	<target name="get-web-artemis" depends="clean-web-artemis,svn-get-web-artemis,git-get-web-artemis" />
+	
+	<target name="get-web-artemis" depends="clean-web-artemis,git-get-web-artemis" />
 	
 	
 
