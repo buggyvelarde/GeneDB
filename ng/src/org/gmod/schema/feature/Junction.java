@@ -24,6 +24,10 @@ import javax.persistence.Transient;
 @Entity
 public class Junction extends Feature implements Comparable<Junction>{
     
+    public Junction() {
+        // empty
+    }
+    
     public Junction(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned, dateAccessioned);
