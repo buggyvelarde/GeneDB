@@ -124,7 +124,11 @@
     <script>
     $(document).ready(function() {
     	//new GenePage("${uniqueName}", "${wa}");
-    	var genePage = new wa.GenePage({uniqueName :"${uniqueName}" , webArtemisPath : "${wa}" });
+    	var genePage = new wa.GenePage({
+    		uniqueName :"${uniqueName}",
+    		webArtemisPath : "${wa}",
+    		baseLinkURL : getBaseURL()
+    	});
     	
     });
     </script>
