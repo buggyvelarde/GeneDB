@@ -62,8 +62,10 @@ public class Junction extends Feature implements Comparable<Junction>{
         fmin = featureLoc.getFmin();
         fmax = featureLoc.getFmax();
         
-        if ((fmax - fmin ) != 0)
-            throw new IllegalStateException("A junction's fmin must be equal to its fmax.");
+        // TODO ideally a Junction should have a length of zero, but this breaks writedb_entry
+        // must discuss 
+        // if ((fmax - fmin ) != 0)
+        //    throw new IllegalStateException("A junction's fmin must be equal to its fmax.");
         
         if (featureLoc.getStrand() != null) {
             strand = featureLoc.getStrand();
