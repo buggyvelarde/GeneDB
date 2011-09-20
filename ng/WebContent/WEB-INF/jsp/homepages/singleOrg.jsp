@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <format:header title="Homepage for ${fulltext}" />
 
-<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml.js"/>"></script>
+<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml/chromosoml.js"/>"></script>
 
 <format:page>
 	<br>
