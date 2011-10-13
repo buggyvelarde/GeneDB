@@ -60,25 +60,31 @@
 
 <div id="col-1-2">
 
-<h1>Workshops</h1>
+<h1>News</h1>
+<div class="light-grey-top"></div>
+<div class="light-grey">
+<p class="block-para" >&raquo; Data centre shutdown</br> 
+Due to essential maintainance, GeneDB may be down for most of this coming weekend (from the 21st to the 23rd of October). 
+</p>
+<p class="block-para">&raquo; New sequence<br>
+A new sequence version of <a href="http://www.genedb.org/Homepage/Pfalciparum" ><i>P. falciparum</i> 3D7</a> is now available on GeneDB!
+</p>
+</div>
+<div class="light-grey-bot"></div>
+
+
+<h1>Web services</h1>
 <div class="baby-blue-top"></div>
 <div class="baby-blue">
-
-
 <p>
-
-Upcoming workshop (Hinxton, 3-7 October) :
-
-<br>
-
-&raquo; <a href="http://www.genedb.org/workshops/Working%20with%20Parasite%20Database%20Resources%202011.pdf">Working with Parasite Database Resources</a>
+are now available for GeneDB : <br />
+&raquo; <a href="http://www.genedb.org/services">Web services</a>
 </p>
-
-
 </div>
 <div class="baby-blue-bot"></div>
 
 <h1>Sequence searches</h1>
+
 <div class="light-grey-top"></div>
 <div class="light-grey">
 <p class="block-para">Blast <br />

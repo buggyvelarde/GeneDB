@@ -19,13 +19,6 @@ should be obtained before publishing analyses of the sequence/open reading frame
 <br />
 </c:if>
 
-<div><a href="./${gene.uniqueName}">${gene.uniqueName}</a>
-<c:forEach var="transcript" items="${gene.transcripts}">
-    <div><a href="./${transcript.uniqueName}">${transcript.uniqueName}</a>
-       <div><a href="./${transcript.polypeptide.uniqueName}">${transcript.polypeptide.uniqueName}</a></div>
-    </div>
-</c:forEach>
-</div>
 
 <p style="text-align:right"><span style="color: #8b031b">New!</span> View in :
 <span style="font-weight:bold;padding:10px 20px 10px 20px;" class="ui-state-default ui-corner-all"   >
@@ -60,8 +53,35 @@ should be obtained before publishing analyses of the sequence/open reading frame
       <misc:formatSystematicName name="${geneUniaueName}"/>
     </c:otherwise>
     </c:choose>
+    <span id="previous_systematic_ids"></span>
     </td>
 </tr>
+
+<script>function syn(features, element) {
+    $.ajax({
+        url:'http://www.genedb.org/services/features/synonyms.json',
+        type: 'GET',
+        dataType: 'jsonp',
+        data: {'features' : features},
+        success: function(result) {
+            var previous_systematic_ids = []
+            for (i in result) {
+                for (s in result[i].synonyms) {
+                    var synonym = result[i].synonyms[s];
+		    if (! synonym.hasOwnProperty('is_current'))
+			continue;
+		    if (synonym.is_current != true)
+			continue;
+                    if (synonym.synonymtype == "previous_systematic_id")
+                        previous_systematic_ids.push(synonym.synonym);
+                }
+            }
+            $(element).append("(previously known as :  " + previous_systematic_ids.join(", ") + ")");
+        }
+    });
+}</script> 
+
+<script>$(function(){syn("${geneUniaueName}", "#previous_systematic_ids");});</script>
 
 <tr><th>Feature Type</th><td>${dto.typeDescription}</td></tr>
 
@@ -325,7 +345,6 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
-</c:if>
 
 <%-- Ortholog / Paralog Section --%>
 <c:if test="${fn:length(dto.clusterIds) + fn:length(dto.orthologueNames) > 0}">
@@ -333,7 +352,7 @@ ${dto.ims.imageMap}
   <h2>Orthologues and Paralogues</h2>
   <table cellpadding="0" cellspacing="4" border="0" class="sequence-table">
     <c:forEach items="${dto.clusterIds}" var="clusterId">
-      <tr><td>${clusterId}</td><td><a href="<misc:url value="/Query/proteinMatchClusterOrthologue?clusterName=${clusterId}&extraParam=extraExtra" />">Look up others in cluster</a></td></tr>
+      <tr><td>${clusterId}</td><td><a href="<misc:url value="/Orthologs/${clusterId}" />">Look up others in cluster</a></td></tr>
     </c:forEach>
     <tr><td></td><td></td></tr>
     <tr><th>Curated Orthologues</th><td>
@@ -348,7 +367,7 @@ ${dto.ims.imageMap}
   </format:genePageSection>
 </c:if>
 
-
+</c:if>
 
 <!-- <p>See this gene in <a href="<misc:url value="/gene/${dto.uniqueName}.xml" />">XML</a> or <a href="<misc:url value="/gene/${dto.uniqueName}.json" />">JSON</a> formats</p> -->
 
