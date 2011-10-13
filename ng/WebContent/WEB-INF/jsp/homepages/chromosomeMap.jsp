@@ -53,9 +53,20 @@ $(function(){
     	overideUseCanvas : true,
     	loading_interval : 100000,
     	click : function(event) {
-    		if (event.target.title) {
+    		/* if (event.target.title) {
     			window.location = getBaseURL() + "gene/" + event.target.title;
-    		}
+    		} */
+    		$.ajax({
+                url: "/services/feature/isoform.json",
+                type: 'GET',
+                dataType: 'jsonp',
+                data: {
+                    'uniqueName' : event.target.title
+                },
+                success: function(isoform) {
+                    window.location = getBaseURL() + "gene/" + isoform.uniqueName;
+                }
+            });
        }
     });
     
