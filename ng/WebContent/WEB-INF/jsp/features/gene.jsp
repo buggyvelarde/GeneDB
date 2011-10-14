@@ -45,6 +45,7 @@
     <script type="text/javascript" src="${wa}/js/chromosoml/lib/jquery.tmpl.js"></script>
     <script type='text/javascript' src='${wa}/js/chromosoml/lib/knockout.js'></script>
     <script type='text/javascript' src='${wa}/js/chromosoml/lib/koExternalTemplateEngine.js'></script>
+    <script type='text/javascript' src='${wa}/js/chromosoml/lib/jquery.history.js'></script>
     
     
     <script type="text/javascript" src="${wa}/js/chromosoml/chromosoml.js"></script>
