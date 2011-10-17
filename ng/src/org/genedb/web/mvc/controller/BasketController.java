@@ -31,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,11 +55,12 @@ public class BasketController {
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
     protected void addFeatureToBasket(
             @PathVariable("name") String name,
+            @RequestParam(value="historyType", required=true) HistoryType historyType,
             HttpSession session,
             HttpServletResponse response
     ) throws Exception {
 
-        logger.debug("Trying to find NamedFeature of '"+name+"'");
+        logger.info("Trying to store in basket " + name + ", history type " + historyType + " for session " + session.getId());
 
         Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
         if (feature == null) {
@@ -74,9 +76,10 @@ public class BasketController {
 //            //be.reject("no.results");
 //            return;
 //        }
-            logger.trace("dto cache hit for '"+feature.getUniqueName());
+            //logger.trace("dto cache hit for '"+feature.getUniqueName());
+        
             HistoryManager hm = hmFactory.getHistoryManager(session);
-            hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+            hm.addHistoryItem(historyType, feature.getUniqueName());
                 // Add messag
             response.setStatus(HttpServletResponse.SC_OK);
         return;
