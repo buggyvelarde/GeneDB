@@ -5,7 +5,9 @@ import org.genedb.querying.core.PagedQuery;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HistoryItem implements Serializable {
 	
@@ -25,8 +27,9 @@ public class HistoryItem implements Serializable {
     public void setQuery(PagedQuery query) {
         this.query = query;
     }
-
-    protected List<String> ids = new ArrayList<String>();
+    
+    // we only want unique values here...
+    protected Set<String> ids = new HashSet<String>();
 
     private HistoryType historyType = HistoryType.QUERY;
     
@@ -38,33 +41,33 @@ public class HistoryItem implements Serializable {
     public HistoryItem(String name) {
         this.name = name;
         this.internalName = name;
-        this.ids = new ArrayList<String>(1);
+        this.ids = new HashSet<String>(1);
     }
 
     public HistoryItem(String name, List<String> ids) {
         this.name = name;
         this.internalName = name;
-        this.ids = ids;
+        this.ids = new HashSet<String>(ids);
     }
 
     public HistoryItem(String name, String id) {
         this.name = name;
         this.internalName = name;
-        this.ids = new ArrayList<String>();
+        this.ids = new HashSet<String>();
         this.ids.add(id);
     }
 
     public HistoryItem(HistoryItem historyItem) {
         this.name = historyItem.name;
-        this.ids = new ArrayList<String>(historyItem.getIds());
+        this.ids = new HashSet<String>(historyItem.getIds());
     }
     
     public List<String> getIds() {
-        return ids;
+        return new ArrayList<String>(ids);
     }
 
     public void setIds(List<String> ids) {
-        this.ids = ids;
+        this.ids = new HashSet<String>(ids);
     }
 
     public String getName() {
