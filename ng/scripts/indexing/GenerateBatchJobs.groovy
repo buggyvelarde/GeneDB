@@ -91,6 +91,8 @@ def cacheClassPath = new File(classPathFileLocation).getText();
 
 List jobList = new ArrayList();
 
+def java = "/software/pathogen/external/applications/java/jdk1.6.0_14-64bit/bin";
+
 for (org in orgs) {
 
     def execLine
@@ -100,13 +102,13 @@ for (org in orgs) {
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
-		execLine="java -server -Djava.awt.headless=true -Xmx2900m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
+		execLine="${java} -server -Djava.awt.headless=true -Xmx2900m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
         break;
 
     case "DTO":
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
 		// -XX:+HeapDumpOnOutOfMemoryError
-		execLine="java -server -Djava.awt.headless=true -Xmx2900m -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
+		execLine="${java} -server -Djava.awt.headless=true -Xmx2900m -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
         new File("${baseDir}/output/${org}").mkdir()
         break;
 
