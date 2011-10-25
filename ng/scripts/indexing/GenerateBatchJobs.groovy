@@ -91,7 +91,7 @@ def cacheClassPath = new File(classPathFileLocation).getText();
 
 List jobList = new ArrayList();
 
-def java = "/software/pathogen/external/applications/java/jdk1.6.0_14-64bit/bin";
+def java = "/software/pathogen/external/applications/java/jdk1.6.0_14-64bit/bin/java";
 
 for (org in orgs) {
 
