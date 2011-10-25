@@ -102,13 +102,13 @@ for (org in orgs) {
     case "Lucene":
         new File("${baseDir}/output/${org}").mkdir()
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _LuceneIndex "
-		execLine="${java} -server -Djava.awt.headless=true -Xmx2900m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
+		execLine="${java} -server -Djava.awt.headless=true -Xmx3900m  -classpath ${cacheClassPath}  org.genedb.web.mvc.model.PopulateLuceneIndices -o ${org} -i ${baseDir}/output/${org} ${dbname} "
         break;
 
     case "DTO":
         // execLine="ant -f build-apps.xml -Dconfig=${config} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches "
 		// -XX:+HeapDumpOnOutOfMemoryError
-		execLine="${java} -server -Djava.awt.headless=true -Xmx2900m -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
+		execLine="${java} -server -Djava.awt.headless=true -Xmx3900m -classpath ${cacheClassPath} org.genedb.web.mvc.model.PopulateCaches -o ${org} --globalFileRoot ${baseDir}/output/${org} "
         new File("${baseDir}/output/${org}").mkdir()
         break;
 
@@ -145,7 +145,7 @@ for (org in orgs) {
 		}
 	}
 	
-	def processExecLine = "bsub -q ${queueName} -R 'select[mem>3000] rusage[mem=3000]' -M 3000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
+	def processExecLine = "bsub -q ${queueName} -R 'select[mem>4000] rusage[mem=4000]' -M 4000000 -o ${outFileName} -e ${errFileName} ${scriptName}"
 	println processExecLine 
     Process p = ["ssh", "pcs4a", processExecLine].execute()
     def sout = new StringBuffer()
