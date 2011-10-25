@@ -76,7 +76,8 @@ should be obtained before publishing analyses of the sequence/open reading frame
                         previous_systematic_ids.push(synonym.synonym);
                 }
             }
-            $(element).append("(previously known as :  " + previous_systematic_ids.join(", ") + ")");
+	    if (previous_systematic_ids.length > 0)
+                $(element).append("(previously known as :  " + previous_systematic_ids.join(", ") + ")");
         }
     });
 }</script> 
