@@ -149,12 +149,11 @@ if(!String.prototype.startsWith){
 			this.loadSequence=function(options, success) {
 				
 				$.ajax({
-			        url: settings.web_service_root + "regions/sequence.json",
+			        url: settings.web_service_root + "regions/sequenceLength.json",
 			        type: 'GET',
 			        dataType: 'json',
 			        data: {
-			            'region' : settings.region,
-			            'metadata_only' : true
+			            'region' : settings.region
 			        },
 			        success: success
 				});
