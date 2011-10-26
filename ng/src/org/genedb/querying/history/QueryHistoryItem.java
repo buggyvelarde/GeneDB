@@ -1,5 +1,6 @@
 package org.genedb.querying.history;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class QueryHistoryItem extends HistoryItem {
     		
 			
     	}
-        return (List<String>) ids;
+        return new ArrayList<String>(ids);
     }
 	
 	@Override
