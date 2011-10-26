@@ -80,8 +80,9 @@ public class FeatureSequenceController {
         
         if (feature instanceof Transcript) {
         	
+            transcript = (Transcript) feature;
         	model.put("uniqueName", transcript.getUniqueName());
-        	transcript = (Transcript) feature;
+        	
         	
         	
         } else {
