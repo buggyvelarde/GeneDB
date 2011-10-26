@@ -24,6 +24,7 @@
 <div class="baby-blue-top"></div>
 <div id="search" class="baby-blue">
 <form action="<misc:url value="/Query/quickSearch"/>" name="quicksearch" method="get">
+
 <table cellpadding="0" cellspacing="0" width="100%" class="search-table">
 <tr>
 <td>
