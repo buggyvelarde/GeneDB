@@ -92,7 +92,7 @@
             var genePage = new wa.GenePage({
                 uniqueName : "${uniqueName}",
                 webArtemisPath : "${wa}",
-                baseLinkURL : getBaseURL(),
+                baseLinkURL : '<misc:url value="/"/>',
                 observers : [ new Basket() ]
             });
 
