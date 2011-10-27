@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 
 @Entity
 @FeatureType(cv="sequence", term="sequence_alteration")
-public abstract class SequenceAlteration extends Feature {
+public class SequenceAlteration extends Feature {
 
     public SequenceAlteration() {
         super();
