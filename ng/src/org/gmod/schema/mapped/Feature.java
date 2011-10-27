@@ -1462,7 +1462,8 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     public String getDbxrefsAsSpaceSeparatedString() {
     	List<String> dbxrefs = new ArrayList<String>();
     	
-    	addDbxref(dbxrefs, this.dbXRef);
+    	if (this.dbXRef != null)
+    	    addDbxref(dbxrefs, this.dbXRef);
     	
     	for (FeatureDbXRef fdbx : this.getFeatureDbXRefs()) {
     		addDbxref(dbxrefs, fdbx.getDbXRef());
