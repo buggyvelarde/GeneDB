@@ -4,6 +4,8 @@ import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
+import org.genedb.db.taxon.TaxonNodeList;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.PagedQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
@@ -15,12 +17,15 @@ import org.genedb.querying.history.QueryHistoryItem;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.querying.tmpquery.MotifQuery;
+import org.genedb.querying.tmpquery.OrganismLuceneQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.util.Pair;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -51,6 +56,9 @@ public class QueryController extends AbstractGeneDBFormController{
 	private QueryFactory queryFactory;
 
     private HistoryManagerFactory hmFactory;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
     
     public static final int DEFAULT_LENGTH = 30;
 
@@ -177,6 +185,17 @@ public class QueryController extends AbstractGeneDBFormController{
             	logger.error(error);
             }
             return "search/"+queryName;
+        }
+        
+        /*
+         * Bodge to make sure organism lucene queries have a taxon.
+         * */
+        if (query instanceof OrganismLuceneQuery) {
+            OrganismLuceneQuery oq = (OrganismLuceneQuery) query;
+            if (oq.getTaxons() == null ) {
+                TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+                oq.setTaxons(new TaxonNodeList(tnm.getTaxonNodeByString("Root", false)));
+            }
         }
         
         // Validate initialised form
