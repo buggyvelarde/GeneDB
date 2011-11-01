@@ -170,7 +170,7 @@
 			<![CDATA[
           try {
               downloadAndGrep("${args[0]}/${args[1]}Homepage", "Viruses")
-              downloadAndGrep("${args[0]}/${args[1]}gene/PF07_0048:pep", "Duffy")
+              downloadAndGrep("${args[0]}/${args[1]}gene/PF3D7_0711700", "gene_page")
           }
           catch (Exception exp) {
              System.err.println(exp)
