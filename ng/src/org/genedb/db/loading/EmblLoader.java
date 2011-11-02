@@ -1281,10 +1281,10 @@ class EmblLoader {
                         goInstance.setRef(value);
                         /* TODO: Temp fix to avoid duplicate pubdbxref entries,
                          * fix properly later using the object manager: nds*/
-                        Pattern DBXREF_PATTERN = Pattern.compile("\\S+:(\\S+)");
+                        Pattern DBXREF_PATTERN = Pattern.compile("(\\w+):(\\w+)");
                         Matcher matcher = DBXREF_PATTERN.matcher(value);
-                        if(matcher.matches()){
-                            seenPubAccessions.add(matcher.group(1));
+                        if(matcher.matches() && (matcher.group(1).equalsIgnoreCase("PMID") || matcher.group(1).equalsIgnoreCase("PUBMED"))){
+                            seenPubAccessions.add(matcher.group(2));
                         }
                     } else if (key.equals("autocomment")){
                         comment = value;
@@ -1295,7 +1295,6 @@ class EmblLoader {
                     try {
                         featureUtils.createGoEntries(focalFeature, goInstance, comment /*"From EMBL file"*/, (DbXRef) null);
                     } catch (DataError e) {
-                        logger.error("Error loading GO term: " + e.getMessage());
                     }
                 } else {
                     featureUtils.createGoEntries(focalFeature, goInstance, comment /*"From EMBL file" */, (DbXRef) null);
@@ -1361,21 +1360,28 @@ class EmblLoader {
 
 
          */
-        private final Pattern similarityPattern = Pattern.compile(
-            "(\\w+|\\w+ +\\w+ +v[\\d.]+);" +                                // 1.     Algorithm, e.g. fasta, blastp
-            "\\s*(\\w+):([\\w.]+)" +                                            // 2,3.   Primary dbxref, e.g. SWALL:Q26723
-            "(?:\\s+\\((\\w+):([\\w.]+(?:,\\s*(?:\\w+:)?[\\w.]+)*)\\))?;" +     // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
-            "\\s*([^;]+)?;" +                                                   // 6.     Organism name
-            "\\s*([^;]+)?;" +                                                   // 7.     Product name
-            "\\s*([^;]+)?;" +                                                   // 8.     Gene name
-            "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                                // 9.     Optional match length
-            "\\s*(?:id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +                        // 10.    Optional degree of identity (percentage)
-            "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +            // 11.    Optional ungapped identity (percentage)
-            "\\s*E\\(\\)=(\\d*(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                // 12.    E-value
-            "\\s*(?:score=(\\d+))?;" +                                          // 13.    Optional score
-            "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                               // 14.    Optional overlap length (integer)
-            "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                         // 15,16. Optional query location
-            "\\s*(?:subject\\s+(\\d+)-\\s*?(\\d+) aa)?");                       // 17,18. Optional subject location
+        
+        /* Edited regex below to understand decimal points in the raw score, and
+         * forward slashed & hyphens in db names and accessions. Matching this
+         * using one long regex like the one below is probably not sustainable.
+         * TODO: Find better alternative
+         * nds, 26 Oct 2011
+         */
+        private final Pattern similarityPattern = Pattern.compile(   
+        "(\\w+|\\w+ +\\w+ +v[\\d.]+);" +                                                        // 1.     Algorithm, e.g. fasta, blastp
+        "\\s*([\\w+\\-/]+):([\\-\\w.]+)" +                                                      // 2,3.   Primary dbxref, e.g. SWALL:Q26723
+        "(?:\\s+\\(([\\w+\\-/]+):([\\-\\w.]+(?:,\\s*(?:[\\w+\\-/]+:)?[\\-\\w.]+)*)\\))?;" +     // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
+        "\\s*([^;]+)?;" +                                                                       // 6.     Organism name
+        "\\s*([^;]+)?;" +                                                                       // 7.     Product name
+        "\\s*([^;]+)?;" +                                                                       // 8.     Gene name
+        "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                                                    // 9.     Optional match length
+        "\\s*(?:id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +                                            // 10.    Optional degree of identity (percentage)
+        "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +                                // 11.    Optional ungapped identity (percentage)
+        "\\s*E\\(\\)=(\\d*(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                                    // 12.    E-value
+        "\\s*(?:score=(\\d+\\.*\\d*))?;" +                                                      // 13.    Optional score
+        "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                                                   // 14.    Optional overlap length (integer)
+        "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                                             // 15,16. Optional query location
+       "\\s*(?:subject\\s+(\\d+)-\\s*?(\\d+) aa)?");                                            // 17,18. Optional subject location
 
         protected void processSimilarityQualifiers() throws DataError {
             for (String similarityString: feature.getQualifierValues("similarity")) {
@@ -2020,29 +2026,47 @@ class EmblLoader {
 
         logger.debug(String.format("Loading %s for '%s' at %s", utrType, uniqueName, utrLocation));
 
-        Transcript transcript = transcriptsByUniqueName.get(uniqueName);
+        Transcript transcript = transcriptsByUniqueName.get(uniqueName); //Straightforward case; Transcript found by name
         
-        /* Sometimes the UTR locus tag will have the gene name as is the case with Schisto v5.
-         * In order to deal with that, I'm looking for transcripts that look like the gene 
-         * name here even though, technically, the UTR locus tag is meant to have the transcript.
-         * Also, we cannot make this "prediction" if there are multiple transcripts
-         * nds, 16th Nov 2010
+        /* Due to the various forms of old-fashioned transcript names (:mRNA, .\d:mRNA etc) it is not always
+         * straightforward figuring out what the transcript should be for a UTR. We do a little guesswork here
+         * to find the gene name and then look for a corresponding transcript from the list we have seen already.
+         * This does not work for alternatively spliced genes where several transcripts match up to the gene name.
+         * Revisit this after Smansoni has been loaded.
+         * nds, 16th Nov 2010 & 26th Sep 2011
          */
                 
         if(transcript == null){
-            List<String> possibleTranscriptNames = new ArrayList<String>();
-            
+            List<String> possibleTranscriptNames = new ArrayList<String>();          
             String possibleGeneName; //trying to figure out what the gene name is
             
-            if(uniqueName.matches("\\S+\\.\\d:mRNA")){ //@$$! Need to escape the .!
-                possibleGeneName = uniqueName.substring(0,uniqueName.length()-7);
+            //Various Transcript patterns
+            Pattern withNumberAndMrna = Pattern.compile("(\\S+)\\.\\d+:mRNA");
+            Pattern withOnlyMrna      = Pattern.compile("(\\S+):mRNA"); 
+            Matcher matcher1 = withNumberAndMrna.matcher(uniqueName);
+            Matcher matcher2 = withOnlyMrna.matcher(uniqueName);
+            if(matcher1.matches() ){
+                possibleGeneName = matcher1.group(1); 
+            }else if(matcher2.matches()){
+                possibleGeneName = matcher2.group(1);
+            }else{            
+                possibleGeneName = uniqueName;
+            }
+            
+            //if(uniqueName.matches("\\S+\\.\\d:mRNA")){ //@$$! Need to escape the .!
+            /*    possibleGeneName = uniqueName.substring(0,uniqueName.length()-7);
             }else if(uniqueName.matches("\\S+:mRNA")){
                 possibleGeneName = uniqueName.substring(0,uniqueName.length()-5);
             }else{
                 possibleGeneName = uniqueName;                
-            }
+            } */
           
+            System.out.println("The possible gene name is " + possibleGeneName);
+            
+            
             for(String s: transcriptsByUniqueName.keySet()){
+                
+                System.out.println("Transcript " + s);    
                 
                 if(s.matches(possibleGeneName.concat(".\\d")) || s.matches(possibleGeneName.concat(".\\d:mRNA"))){
                     possibleTranscriptNames.add(s);
