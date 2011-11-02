@@ -316,7 +316,7 @@ public class QueryController extends AbstractGeneDBFormController{
     	idsToGeneSummary.setIds(ids);
     	List<GeneSummary> summaries = idsToGeneSummary.getResultsSummaries();
     	for (GeneSummary summary : summaries) {
-    		logger.info(summary.getDisplayId());
+    		logger.info(summary.getDisplayId() + " ... " + summary.getProduct());
     	}
     	return summaries;
     }

@@ -39,10 +39,7 @@
                         taxonNameType="HTML_SHORT" /> </i>
             </display:column>
             <display:column title="Product">
-                 <c:if test="${row.product}">
-                     ${row.product}
-                 </c:if>
-                
+                ${row.product}
             </display:column>
             
             <c:if test="${motifs != null}">
