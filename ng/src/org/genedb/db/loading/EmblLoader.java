@@ -1367,6 +1367,7 @@ class EmblLoader {
          * TODO: Find better alternative
          * nds, 26 Oct 2011
          */
+        
         private final Pattern similarityPattern = Pattern.compile(   
         "(\\w+|\\w+ +\\w+ +v[\\d.]+);" +                                                        // 1.     Algorithm, e.g. fasta, blastp
         "\\s*([\\w+\\-/]+):([\\-\\w.]+)" +                                                      // 2,3.   Primary dbxref, e.g. SWALL:Q26723
