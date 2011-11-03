@@ -358,8 +358,14 @@ public class Polypeptide extends Region {
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.YES)
     public String getSequenceResidues() {
+        String residues = getResidues();
+        // remove any trailing stars
+        if ((residues.length() > 1) && (residues.endsWith("*"))) {
+            int max_index = residues.length() - 1;
+            residues = residues.substring(0, max_index  - 1);
+        }
     	//logger.warn("SEQUENCE!" + getResidues());
-    	return getResidues();
+    	return residues;
     }
 
 
