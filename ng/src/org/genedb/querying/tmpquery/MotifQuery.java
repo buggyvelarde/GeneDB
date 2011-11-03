@@ -3,6 +3,7 @@ package org.genedb.querying.tmpquery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,26 @@ public class MotifQuery extends OrganismLuceneQuery {
 	
 	private static Logger logger = Logger.getLogger(MotifQuery.class);
 	
+	private static Map<Character,String> PROTEIN_GROUP_MAP;
+	
+	static {
+        
+        PROTEIN_GROUP_MAP = new HashMap<Character, String>();
+        PROTEIN_GROUP_MAP.put('B', "[AGS]");          //tiny
+        PROTEIN_GROUP_MAP.put('Z', "[ACDEGHKNQRST]"); //turnlike
+        PROTEIN_GROUP_MAP.put('0', "[DE]");           //acidic
+        PROTEIN_GROUP_MAP.put('1', "[ST]");           //alcohol
+        PROTEIN_GROUP_MAP.put('2', "[ILV]");          //aliphatic
+        PROTEIN_GROUP_MAP.put('3', "[FHWY]");         //aromatic
+        PROTEIN_GROUP_MAP.put('4', "[HKR]");          //basic
+        PROTEIN_GROUP_MAP.put('5', "[DEHKR]");        //charged
+        PROTEIN_GROUP_MAP.put('6', "[AFILMVWY]");     //hydrophobic
+        PROTEIN_GROUP_MAP.put('7', "[DEHKNQR]");      //hydrophilic
+        PROTEIN_GROUP_MAP.put('8', "[CDEHKNQRST]");   //polar
+        PROTEIN_GROUP_MAP.put('9', "[ACDGNPSTV]");    //small
+        
+        
+    }
 	
 	@QueryParam(
             order=1,
@@ -54,7 +75,12 @@ public class MotifQuery extends OrganismLuceneQuery {
 	protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
 		logger.info(search);
 		
-		actualSearch = search;
+		actualSearch = new String(search);
+		for (Entry<Character, String> entry : PROTEIN_GROUP_MAP.entrySet()) {
+            logger.info(Character.toString(entry.getKey()) + "  " + entry.getValue());
+            actualSearch = actualSearch.replaceAll(Character.toString(entry.getKey()), entry.getValue());
+            logger.info(actualSearch);
+        }
 		pattern = Pattern.compile(actualSearch);
 		
 		// let's ignore any motifs smaller than 2 characters
@@ -70,7 +96,7 @@ public class MotifQuery extends OrganismLuceneQuery {
 			actualSearch.replaceFirst("\\.\\*", starter);
 		}
 		else if (! search.startsWith("^") && !search.startsWith(starter)) {
-			actualSearch = starter + search;
+			actualSearch = starter + actualSearch;
 		}
 		
 		logger.info(String.format("%s  ----- > %s", search, actualSearch));
