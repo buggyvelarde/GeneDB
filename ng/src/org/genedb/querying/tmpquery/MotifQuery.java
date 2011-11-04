@@ -14,6 +14,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.regex.JakartaRegexpCapabilities;
 import org.apache.lucene.search.regex.JavaUtilRegexCapabilities;
 import org.apache.lucene.search.regex.RegexQuery;
 
@@ -88,14 +89,16 @@ public class MotifQuery extends OrganismLuceneQuery {
 			throw new RuntimeException("Sorry, cannot handle motifs under 3 characters long.");
 		}
 			
-		String starter = "[A-Z]+";
-		if (actualSearch.startsWith(".+") ) {
-			actualSearch.replaceFirst("\\.\\+", starter);
-		}
-		else if (actualSearch.startsWith(".*")) {
-			actualSearch.replaceFirst("\\.\\*", starter);
-		}
-		else if (! search.startsWith("^") && !search.startsWith(starter)) {
+		String starter = ".*";
+//		if (actualSearch.startsWith(".+") ) {
+//			actualSearch.replaceFirst("\\.\\+", starter);
+//		}
+//		else if (actualSearch.startsWith(".*")) {
+//			actualSearch.replaceFirst("\\.\\*", starter);
+//		}
+//		else
+		
+		if (! search.startsWith("^") && !search.startsWith(starter)) {
 			actualSearch = starter + actualSearch;
 		}
 		
@@ -106,6 +109,8 @@ public class MotifQuery extends OrganismLuceneQuery {
 		RegexQuery r = new RegexQuery(new Term("sequenceResidues",actualSearch));
 		
 		JavaUtilRegexCapabilities capabilites = new JavaUtilRegexCapabilities();
+		//JakartaRegexpCapabilities c = new JakartaRegexpCapabilities();
+		
 		r.setRegexImplementation(capabilites);
 		// logger.info("max results " + maxResults);
 		logger.info(r.getRegexImplementation().getClass().toString());
