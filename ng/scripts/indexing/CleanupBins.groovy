@@ -189,9 +189,10 @@ def Cvterm getTopLevelFeatureCvtermId(Sql sql) {
 def promoteContigToTopLevel (Feature bin, Feature feature, Cvterm topLevelType, Boolean generated, Sql sql ) {
 	
 	def residues = bin.residues.substring(feature.fmin, feature.fmax)
-	
+	def seqlen = residues.length();
+    
 	sql.execute("""
-		UPDATE feature set residues = ${residues}
+		UPDATE feature set residues = ${residues}, seqlen = ${seqlen}
 			WHERE feature_id = ${feature.feature_id}
 	""")
 	

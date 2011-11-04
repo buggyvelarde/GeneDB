@@ -162,15 +162,6 @@
     	</attribute>
 	</tag> --> 
 	
-	<tag>
-        <name>protein_map</name>
-        <tag-class>org.genedb.web.tags.misc.ProteinMapTag</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>dto</name>
-            <rtexprvalue>true</rtexprvalue>
-            <required>true</required>
-        </attribute>
-    </tag>
+	
 
 </taglib>

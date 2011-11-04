@@ -90,15 +90,15 @@ public class GoQuery extends OrganismLuceneQuery {
         return new String[] {"search"};
     }
     
-    @Override
-    public Map<String, Object> prepareModelData() {
-    	List<String> taxonNames = new ArrayList<String>();
-    	for (TaxonNode t : taxons.getNodes()) {
-    		taxonNames.add(t.getLabel());
-    	}
-    	Map<String, Object> m = new HashMap<String,Object>();
-    	m.put("taxonNames", taxonNames);
-    	return Collections.emptyMap();
-    }
+//    @Override
+//    public Map<String, Object> prepareModelData() {
+//    	List<String> taxonNames = new ArrayList<String>();
+//    	for (TaxonNode t : taxons.getNodes()) {
+//    		taxonNames.add(t.getLabel());
+//    	}
+//    	Map<String, Object> m = new HashMap<String,Object>();
+//    	m.put("taxonNames", taxonNames);
+//    	return Collections.emptyMap();
+//    }
 
 }

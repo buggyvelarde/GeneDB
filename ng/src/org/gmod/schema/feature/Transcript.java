@@ -161,6 +161,16 @@ public class Transcript extends Region {
     	}
     	return null;
     }
+    
+    @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsSpaceSeparatedString() {
+    	if (getPolypeptide() != null) {
+    		return getPolypeptide().getProductsAsSpaceSeparatedString();
+    	}
+    	return null;
+    }
 
     /**
      * Change the gene associated with this transcript.

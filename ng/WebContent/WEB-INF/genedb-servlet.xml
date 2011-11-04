@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:util="http://www.springframework.org/schema/util"
-  xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:mvc="http://www.springframework.org/schema/mvc"
-  xmlns:security="http://www.springframework.org/schema/security"
-  
-  
-  xmlns:aop="http://www.springframework.org/schema/aop"
-  
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+<beans 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	
+	
+  xsi:schemaLocation="
+  	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
   	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
   	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-  	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
   	
   	
+  	
+  	"
+  default-init-method="postConstruction">
+    
+    <!--   hazelcast and others, now unused  -->
+    <!-- 
+    
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:hz="http://www.hazelcast.com/schema/config"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    
+    
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+    
+    http://www.hazelcast.com/schema/config 
+    http://www.hazelcast.com/schema/config/hazelcast-spring.xsd
     
     http://www.springframework.org/schema/aop
     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
     
-  	"
-  default-init-method="postConstruction">
     
-    <!--  when hazelcast can be upgraded (currently using 1.9), we can ad its namespace to schema configuration  -->
-    <!-- 
-    xmlns:hz="http://www.hazelcast.com/schema/config" 
-    xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-spring.xsd"
      -->
      
      
@@ -266,6 +275,7 @@
   <bean name="dbxref" class="org.genedb.querying.tmpquery.DbxrefQuery" scope="prototype" />
   <bean name="topLevelFeatures" class="org.genedb.querying.tmpquery.TopLevelFeaturesQuery" scope="prototype" />
   <bean name="proteinMatchClusterOrthologue" class="org.genedb.querying.tmpquery.ProteinMatchClusterOrthologueQuery" scope="prototype" />
+  <bean name="motif" class="org.genedb.querying.tmpquery.MotifQuery" scope="prototype" />
 
   <!-- this does not currently implement query, so it can't be called from QueryFactory -->
   <bean name="changedGeneFeatures" class="org.genedb.querying.tmpquery.ChangedGeneFeaturesQuery">
@@ -302,6 +312,8 @@
             <entry key="pfam" value-ref="pfam" />
             <entry key="curation" value-ref="curation" />
             <entry key="dbxref" value-ref="dbxref" />
+            
+            <entry key="motif" value-ref="motif" />
             
             <entry key="quickSearch" value-ref="quickSearch" />
             
@@ -611,51 +623,56 @@
     
     
     <!-- the hazelcast cache -->
-    <bean id="instance" class="com.hazelcast.core.Hazelcast"
+    <!-- <bean id="instance" class="com.hazelcast.core.Hazelcast"
 		factory-method="newHazelcastInstance">
 		<constructor-arg>
 			<bean class="com.hazelcast.config.Config">
                 
 			</bean>
 		</constructor-arg>
-	</bean>
+	</bean>  --> 
 	
 	<!-- the following can be used for spring configuration (when hazelcast is upgraded - has been tested with hazelcast-1.9.3) -->
 	<!-- <hz:hazelcast id="instance">
         <hz:config>
-            <hz:group name="dev" password="password"/>
+            <hz:group name="genedb-${dbhost}-${dbport}-${dbname}" password="genedb-${dbhost}-${dbport}-${dbname}"/>
             <hz:properties>
                 <hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
                 <hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
             </hz:properties>
-            <hz:network port="5701" port-auto-increment="false">
+            <hz:network port="5701" port-auto-increment="true">
+            	
                 <hz:join>
-                    <hz:multicast enabled="false"
+                    <hz:multicast enabled="true"
                                   multicast-group="224.2.2.3"
                                   multicast-port="54327"/>
-                    <hz:tcp-ip enabled="true">
+                    <hz:tcp-ip enabled="false">
                         <hz:members>10.10.1.2, 10.10.1.3</hz:members>
                     </hz:tcp-ip>
                 </hz:join>
-                    </hz:network>
+            </hz:network>
                     
-            <hz:map name="map" backup-count="2" max-size="0"
-                eviction-percentage="30" read-backup-data="true" cache-value="true"
-                eviction-policy="NONE" merge-policy="hz.ADD_NEW_ENTRY">
-        
-                <hz:near-cache time-to-live-seconds="0"
-                    max-idle-seconds="60" eviction-policy="LRU" max-size="5000"
-                    invalidate-on-change="true" />
-        
+            <hz:map 
+                name="map" 
+                backup-count="0" 
+                max-size="100"
+            	eviction-percentage="25" 
+            	read-backup-data="true"
+            	cache-value="true" 
+            	eviction-policy="LRU"
+            	merge-policy="hz.ADD_NEW_ENTRY" 
+            	>
+                
+
             </hz:map>
-                            
+
         </hz:config>
-    </hz:hazelcast> -->
+    </hz:hazelcast>  -->
 	
     
     <!-- configure the aspect for getting results from the hazelcast cache -->
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
-    <bean id="dataAccessAspect" class="org.genedb.aop.HazelcastAspect"/>
+    <!-- <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="dataAccessAspect" class="org.genedb.aop.HazelcastAspect"/> -->
     
     
 

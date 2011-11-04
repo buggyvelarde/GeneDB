@@ -58,7 +58,7 @@ $(function(){
 	        	              var prehit = (i == 0) ? prehit_default : ""; 
 	        	              arr.push({
 	        	                  "label" : prehit + '<b>' + result['@displayId'] + "</b> - " + result['@product'],
-	        	                  "value" : result['@systematicId']
+	        	                  "value" : result['@displayId']
 	        	              });
         	              }
         	              arr.push({                                     // add a 'See all x hits' option (same as clicking on search button)
@@ -69,7 +69,7 @@ $(function(){
     	            	  var result = response.results.hits;
     	            	  arr.push({
                               "label" : prehit_default + '<b>' + result['@displayId'] + "</b> - " + result['@product'],
-                              "value" : result['@systematicId']
+                              "value" : result['@displayId']
                           });
     	              }
 	              }

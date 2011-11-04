@@ -27,7 +27,10 @@
         <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.1.1.GA" />
         <dependency org="org.hibernate" name="com.springsource.org.hibernate.validator" rev="3.1.0.GA" />
         
-        <dependency org="com.hazelcast" name="hazelcast" rev="1.9"/>
+        <dependency org="org.apache.lucene" name="lucene-regex" rev="2.4.1"/>
+        
+        <!-- <dependency org="com.hazelcast" name="hazelcast" rev="1.9.3.1"/> -->
+        <!-- <dependency org="com.hazelcast" name="hazelcast-spring" rev="1.9.3.1"/> -->
     
         <dependency org="org.aopalliance" name="com.springsource.org.aopalliance" rev="1.0.0" />
     

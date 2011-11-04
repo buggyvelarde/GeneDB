@@ -9,7 +9,7 @@
 <div id="col-2-1">
     <c:if test="${!empty protein}">
     <format:genePageSection id="proteinSequence">
-        <h2>Protein</h2>
+        <h2>Protein <c:if test="${pseudogenic == true}">(<span style="color:#C00008">Warning: conceptual protein that was constructed as pseudogene</span>)</c:if></h2>
         <br><a href="<misc:url value="/SequenceDistributor/${uniqueName}/PROTEIN/OMNIBLAST" />">Send to GeneDB omniBLAST</a>
         <a href="<misc:url value="/SequenceDistributor/${uniqueName}/PROTEIN/BLAST" />">Send to GeneDB BLAST</a>
         <a href="<misc:url value="/SequenceDistributor/${uniqueName}/PROTEIN/NCBI_BLAST" />">Send to BLAST at NCBI</a>

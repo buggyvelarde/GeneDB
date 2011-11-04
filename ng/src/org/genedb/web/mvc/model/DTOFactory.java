@@ -579,7 +579,22 @@ public class DTOFactory {
 		for (FeatureRelationship featureRelationship : filtered) {
 			Feature f = featureRelationship.getObjectFeature();
 			if (f.getType().getName().equals("protein_match")) {
-				clusterIds.add(f.getUniqueName());
+				
+				int count = 0;
+				for (FeatureRelationship fr2 : f.getFeatureRelationshipsForObjectId()) {
+					if (fr2.getType().getName().equals("orthologous_to")) {
+						logger.info("found orthologue in cluster" + f.getUniqueName() + " : " + fr2.getSubjectFeature().getUniqueName());
+						count++;
+					}
+				}
+				
+				logger.info("Found a total of " + count + " in cluster");
+				
+				if (count > 1) {
+					logger.info("More than one other in cluster ... worth adding!");
+					clusterIds.add(f.getUniqueName());
+				}
+					
 			} else {
 				if (f.getType().getName().equals("polypeptide")) {
 					orthologueNames.add(f.getUniqueName());

@@ -90,15 +90,16 @@ public class Polypeptide extends Region {
     
     @Transient
     public AbstractGene getGene() {
-    	if (transcript == null) {
+    	if (getTranscript() == null) {
     		return null;
     	}
-    	return transcript.getGene();
+    	return getTranscript().getGene();
     }
     
     @Transient
     @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
     public String getGeneUniqueName() {
+    	logger.warn("Getting gene name");
         AbstractGene gene = getGene();
         if (gene != null) {
         	return gene.getUniqueName();
@@ -108,7 +109,7 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
-    public int alternateTranscriptNumber() {
+    public int getAlternateTranscriptNumber() {
     	AbstractGene gene = getGene();
         if (gene != null) {
         	return gene.getNonObsoleteTranscripts().size();
@@ -118,13 +119,14 @@ public class Polypeptide extends Region {
     
     @Transient
     @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
-    public String alternateTranscripts() {
+    public String getAlternateTranscripts() {
     	AbstractGene gene = getGene();
     	if (gene != null) {
     		return gene.alternateTranscripts();
     	}
     	return null;
     }
+    
     
 
     @Transient
@@ -344,12 +346,28 @@ public class Polypeptide extends Region {
     @Transient
     @Field(name="signalP", index=Index.UN_TOKENIZED, store=Store.NO)
     public boolean isSignalP() {
+    	logger.warn("Getting signal P");
         if (hasProperty("genedb_misc", "SignalP_prediction")
         || hasProperty("genedb_misc", "signal_peptide_probability")
         || hasProperty("genedb_misc", "signal_anchor_probability")) {
             return true;
         }
         return false;
+    }
+    
+    @Transient
+    @Field(index=Index.UN_TOKENIZED, store=Store.YES)
+    public String getSequenceResidues() {
+        String residues = getResidues();
+        if (residues != null) {
+            if ((residues.length() > 1) && (residues.endsWith("*"))) {
+                // remove any trailing stars
+                int max_index = residues.length() - 1;
+                residues = residues.substring(0, max_index  - 1);
+            }
+        }
+    	//logger.warn("SEQUENCE!" + getResidues());
+    	return residues;
     }
 
 
@@ -396,7 +414,6 @@ public class Polypeptide extends Region {
         if (products == null) {
             return null;
         }
-        
         return StringUtils.collectionToDelimitedString(products, " ");
     }
 
