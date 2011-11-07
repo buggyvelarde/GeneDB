@@ -17,16 +17,19 @@ Options:
   -c childLevel type, possible values are:
   	-c contig (default)
   	-c supercontig
-  -x createMissingContigs=no
+  -x createMissingContigs=no (default)
     Do not create any child level features (usually contigs) that cannot be found
   -x overwriteExisting=yes
     If a child level feature cannot be found, create it.
-  -x mode=1
+  -x mode=1 (default)
     Most common scenario. Loads in a new assembly. Deletes any existing toplevelfeatures and creates
     new ones using the scaffolding information in the agp files. This is the default.
   -x mode=2
   	Rare, but can happen. Creates childlevel features and gaps and maps them onto already existing
   	toplevel features.
+  -x putUnusedContigsInBin=no (default)
+  	Put any unused child features (in mode 1) in a bin toplevel feature. Will look for a toplevel
+  	feature of the type specified with a name like '%bin%'. Default no.
    	
 USAGE
     standard_options
@@ -38,6 +41,8 @@ loaderHelp() {
 The AGP loader will load one or several AGP files, for the same organism,
 into the database. 
 Some important things to note:
+
+ * The coordinates in the AGP file are _not_ interbase. The loader will convert them to interbase.
 
  * The systematic IDs in the AGP file have to match the uniquenames in the database.
    For example, in mode 1, the contigs (or other child level features) will be searched for
@@ -81,6 +86,8 @@ doLoad() {
             createMissingContigs=no)      ;;
             mode=1)                       ;;
             mode=2)                       ;;
+            putUnusedContigsInBin=yes)    ;;
+            putUnusedContigsInBin=no)     ;;
            
             *) loaderUsage >&2
                exit 1
@@ -95,7 +102,7 @@ doLoad() {
     done
     shift $[ $OPTIND - 1 ]
     
-    if [-z "$organism" ]; then
+    if [ -z "$organism" ]; then
         loaderUsage >&2
         exit 1
     fi
