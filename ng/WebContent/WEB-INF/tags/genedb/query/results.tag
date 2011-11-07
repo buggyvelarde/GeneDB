@@ -43,8 +43,10 @@
             </display:column>
             
             <c:if test="${motifs != null}">
-                <display:column title="Match">
-                    <c:out value='${motifs[row.displayId].start}'/>-<c:out value='${motifs[row.displayId].end}'/>
+                <display:column title="Match" >
+                    <div style="text-align:center;">
+                        <c:out value='${motifs[row.displayId].start}'/>-<c:out value='${motifs[row.displayId].end}'/>
+                    </div>
                 </display:column>
                 <display:column title="Motif">
                     <div style="text-align:center;font-family:monospace;word-wrap: break-word;width:430px;"> 
