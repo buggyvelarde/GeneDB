@@ -21,8 +21,10 @@ import java.sql.SQLException;
 /**
  * Retrieves and validates the arguments sent into the AGPLoader and calls the load method 
  * 
+ * More documentation:
+ * 
  * @author nds
- *
+ * @contact path-help@sanger.ac.uk
  */
 
 public class LoadAGP extends FileProcessor{
@@ -34,15 +36,17 @@ public class LoadAGP extends FileProcessor{
      * determine how the loader will function.
      * <ul>
      *   <li> <code>load.organismCommonName</code> 
-     *   <li> <code>load.mode</code> can be set to <b>1</b> (load all the contigs and gaps)
-     *                  or <b>2</b> (load the top level features, not the contigs and gaps).
+     *   <li> <code>load.mode</code> can be set to <b>1</b> (create a toplevel feature, and add contig & gap locations on it)
+     *                  or <b>2</b> (create contig and gap features based on an existing toplevel feature).
      *   <li> <code>load.topLevel</code> tells the loader if the top level feature(s) we need to deal with for this organism is a 
-     *          chromosome or supercontig. The default will be a chromosome. 
-     *   <li> <code>load.childLevel</code> tells the loader what the child level features are (usually contigs, occassional supercontigs when
+     *          chromosome or supercontig. The default will be a supercontig. 
+     *   <li> <code>load.childLevel</code> tells the loader what the child level features are (usually contigs, occasionally supercontigs when
      *          they are assembled into chromosomes). The default will be a contig. 
      *   <li> <code>load.createMissingContigs</code> tells the loader if it should create missing contigs in mode 1 where, in theory, all the contigs
      *   should already be in the database. In some cases, however, like Tcongolense it is ok to create contigs when they cannot be found as there are
-     *   no contig features in the database for it anyway. </li>        
+     *   no contig features in the database for it anyway. Default is no.</li>        
+     *   <li> <code>load.putUnusedContigsInBin</code> tells the loader if it should put any unused child features (in mode 1) in the bin. If set to yes,
+     *   it will look for a toplevel feature of the type specified with a name like '%bin%'. Default no.
      *   <li> <code>load.AGPFile</code>
      * </ul>
      * </p>
@@ -64,20 +68,21 @@ public class LoadAGP extends FileProcessor{
             logger.warn("Ignoring command-line arguments");
         }
         
-        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        //PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
         
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String mode = getPropertyWithDefault("load.mode", "1");
-        String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "chromosome").toLowerCase();
+        String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "supercontig").toLowerCase();
         String childLevelFeatureType = getPropertyWithDefault("load.childLevel", "contig").toLowerCase();
         String createMissingContigs = getPropertyWithDefault("load.createMissingContigs", "no");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.(agp)(?:\\.gz)?");
+        String putUnusedContigsInBin = getPropertyWithDefault("load.putUnusedContigsInBin", "no");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         
         logger.info(String.format("Options: organismCommonName=%s, mode=%s, topLevel=%s, inputDirectory=%s", organismCommonName, mode, topLevelFeatureType, childLevelFeatureType, inputDirectory));
       
 
-        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, childLevelFeatureType, createMissingContigs);
+        LoadAGP loadAGP = new LoadAGP(organismCommonName, mode, topLevelFeatureType, childLevelFeatureType, createMissingContigs, putUnusedContigsInBin);
         loadAGP.processFileOrDirectory(inputDirectory, fileNamePattern);
       
     }
@@ -93,7 +98,7 @@ public class LoadAGP extends FileProcessor{
      * @param childLevelFeatureType
      * @param inputAGPFileName
      */
-    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String childLevelFeatureType, String createMissingContigs) throws IOException{
+    private LoadAGP(String organismCommonName, String mode, String topLevelFeatureType, String childLevelFeatureType, String createMissingContigs, String putUnusedContigsInBin) throws IOException{
         
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
         this.loader = applicationContext.getBean("agpLoader", AGPLoader.class);
@@ -126,18 +131,24 @@ public class LoadAGP extends FileProcessor{
             throw new RuntimeException(String.format("Unrecognised value for load.childLevel: %s", childLevelFeatureType));
         }
         
-        //Check again that both the top level and child level are not set to supercontig!
+        //Check again that both the top level and child level are not set to be the same type of feature!
         if(childLevelFeatureType.equals(topLevelFeatureType)){
             throw new RuntimeException(String.format("Both the child level and the top level feature types are set to: %s", childLevelFeatureType));
         }
         
-        //Should the loader create contigs in mode 1 (when it expects to find all the contigs in the database)
+        //Should the loader create missing contigs 
         if(createMissingContigs.equalsIgnoreCase("yes") || createMissingContigs.equalsIgnoreCase("no")){
             loader.setCreateMissingContigs(createMissingContigs);      
         }else{
             throw new RuntimeException(String.format("Unrecognised value for load.createMissingContigs: %s", createMissingContigs));
         }
       
+        //Should the loader put any unused contigs in the bin
+        if(putUnusedContigsInBin.equalsIgnoreCase("yes") || putUnusedContigsInBin.equalsIgnoreCase("no")){
+            loader.setCreateMissingContigs(createMissingContigs);      
+        }else{
+            throw new RuntimeException(String.format("Unrecognised value for load.putUnusedContigsInBin: %s", createMissingContigs));
+        }
 
     }
 

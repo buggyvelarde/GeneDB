@@ -1,6 +1,7 @@
 #Checks if there are features with more than one colour associated with them that have the same rank
 
-select feature.feature_id
+select organism.common_name
+     , feature.feature_id
      , feature.uniquename
      , fp1.featureprop_id as fp1_featureprop_id
      , fp1.value          as colour1
@@ -11,6 +12,7 @@ select feature.feature_id
 from feature
 join featureprop fp1 using (feature_id)
 join featureprop fp2 using (feature_id)
+join organism using (organism_id)
 where fp1.featureprop_id < fp2.featureprop_id
 and fp1.type_id = fp2.type_id
 and fp2.type_id in (
@@ -19,4 +21,5 @@ and fp2.type_id in (
     where cv.name = 'genedb_misc'
     and cvterm.name = 'colour'
 )
+order by organism.common_name, feature.uniquename
 ;
