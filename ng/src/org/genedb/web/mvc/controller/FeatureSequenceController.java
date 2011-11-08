@@ -27,6 +27,8 @@ import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Pseudogene;
+import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
@@ -77,12 +79,16 @@ public class FeatureSequenceController {
         Map<String, Object> model = Maps.newHashMap();
         
         Transcript transcript = null;
+        boolean pseudogenic = false;
         
         if (feature instanceof Transcript) {
         	
+            transcript = (Transcript) feature;
         	model.put("uniqueName", transcript.getUniqueName());
-        	transcript = (Transcript) feature;
         	
+        	if (feature instanceof PseudogenicTranscript) {
+        	    pseudogenic = true;
+        	}
         	
         } else {
         	
@@ -94,6 +100,10 @@ public class FeatureSequenceController {
             	return new ModelAndView("redirect:/feature/notFound.jsp");
             }
         	
+            if (gene instanceof Pseudogene) {
+                pseudogenic = true;
+            }
+            
         	model.put("uniqueName", gene.getUniqueName());
         	transcript = gene.getFirstTranscript();
         	if (transcript == null) {
@@ -103,9 +113,8 @@ public class FeatureSequenceController {
             }
         }
         
-        
-        
         model.put("coords", transcript.getExons());
+        model.put("pseudogenic", pseudogenic);
 
         // ---------------------------------------------
         model.put("unspliced", transcript.getGene().getResidues());

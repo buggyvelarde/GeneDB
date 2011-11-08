@@ -21,6 +21,7 @@ package org.genedb.querying.core;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -31,6 +32,7 @@ import org.genedb.querying.tmpquery.GeneSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 import java.io.IOException;
@@ -126,6 +128,38 @@ public abstract class LuceneQuery implements PagedQuery {
     }
     
     
+    public String getGeneUniqueNameOrUniqueName(Document document) {
+    	
+    	String documentUniqueName = document.get("uniqueName");
+    	String geneName = document.get("gene");
+    	
+    	logger.info("uniqueName: " + documentUniqueName + " geneName:" + geneName);
+    	
+    	for (Field field : (List<Field>) document.getFields()) {
+    		logger.info(field.name() + "\t" + field.isTokenized() + "\t"
+					+ field.stringValue());
+    	}
+    	
+    	logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+    	
+    	if (geneName == null) {
+    		return documentUniqueName;
+    	}
+    	
+    	String alternateTranscriptNumberString = document.get("alternateTranscriptNumber");
+    	logger.warn("alternative transcripts for " + geneName + " (" + documentUniqueName + ") : " + alternateTranscriptNumberString );
+    	if (alternateTranscriptNumberString != null && alternateTranscriptNumberString.length() > 0) {
+    		int alternateTranscriptNumber = Integer.parseInt(alternateTranscriptNumberString);
+        	
+        	if (alternateTranscriptNumber > 1) {
+        		return documentUniqueName;
+        	}
+    	}
+    	
+    	return geneName;
+    	
+    }
+    
 	
 	protected Pager<String> uniqueNamePager = new Pager<String>() {
 		@Override public String convert(Document doc) {
@@ -187,7 +221,10 @@ public abstract class LuceneQuery implements PagedQuery {
 //                //logger.trace(StringUtils.collectionToCommaDelimitedString(document.getFields()));
 //                //T t = convertDocumentToReturnType(document, clazz);
 //                Object t = convertDocumentToReturnType(document);
+                
+                //String name = getGeneUniqueNameOrUniqueName(document);
                 names.add(document.get("uniqueName"));
+                
             }
             Collections.sort(names);
 

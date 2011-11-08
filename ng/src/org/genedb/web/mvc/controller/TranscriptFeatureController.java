@@ -107,7 +107,12 @@ public class TranscriptFeatureController {
     @RequestMapping(method=RequestMethod.GET, value="/{name}")
 	public ModelAndView getByName(NameLookupBean nlb, HttpSession session, @PathVariable("name") String name) throws Exception {
 		
-		logger.info("name : " + name);
+		logger.info("uniqueName : " + name);
+		
+		HashMap<String, Object> model = Maps.newHashMap();
+		model.put("uniqueName", name);
+		
+		/*
 		
 		Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
 		AbstractGene gene = sequenceDao.getGene(feature);
@@ -209,12 +214,16 @@ public class TranscriptFeatureController {
         }
         model.put("orthologues", publicOrthologues);
         
-		logger.info("isDetailsOnly? " + nlb.isDetailsOnly());
+        */
+        
+//		logger.info("isDetailsOnly? " + nlb.isDetailsOnly());
+//		
+//		String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+//		logger.info("viewName? " + viewName);
 		
-		String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
-		logger.info("viewName? " + viewName);
+		//ModelAndView mav = new ModelAndView(viewName, model);
 		
-		ModelAndView mav = new ModelAndView(viewName, model);
+		ModelAndView mav = new ModelAndView(geneView, model);
 		return mav;
 
 	}

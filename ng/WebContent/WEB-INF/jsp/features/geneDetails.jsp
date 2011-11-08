@@ -235,7 +235,9 @@ div.comment {
   </db:hyperlinkDbs>
   </format:genePageSection>
 </c:if>
+<c:if test="${ (fn:length(dto.controlledCurations) + fn:length(dto.goBiologicalProcesses) + fn:length(dto.goMolecularFunctions) + fn:length(dto.goCellularComponents) > 0) }">
 <h2 style="padding-top:0px;margin-top:0px;">Curation</h2>
+</c:if>
 <%-- Controlled Curation Section --%>
 <c:if test="${fn:length(dto.controlledCurations) > 0}">
   <format:genePageSection id="controlCur">
@@ -474,14 +476,6 @@ ${dto.ims.imageMap}
 </format:genePageSection>
 </c:if>
 
-<c:if test="${fn:length(dto.domainInformation) > 0 || hasAlgorithmData || fn:length(dto.membraneStructureComponents) > 0 }">
-<br>
-<format:genePageSection>
-<h2>Protein map</h2>
-        <misc:protein_map dto="${dto}"/>
-</format:genePageSection>
-</c:if>
-    
 
 <c:if test="${fn:length(dto.domainInformation) > 0}">
   <format:genePageSection>

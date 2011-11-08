@@ -105,7 +105,8 @@ public class ClassicCompatabilityController {
         if (classicOnly.contains(nickname)) {
             return CLASSIC_FULL + "Search?name=" + name + "&organism=" + nickname;
         }
-        return WWW + "gene/" + name;
+        return WWW + "Query/quickSearch?searchText=" + name + "&allNames=true&pseudogenes=true";
+        //return WWW + "gene/" + name;
     }
 
     // Menu bar search

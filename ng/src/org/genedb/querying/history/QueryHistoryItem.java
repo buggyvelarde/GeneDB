@@ -1,5 +1,7 @@
 package org.genedb.querying.history;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,7 +26,7 @@ public class QueryHistoryItem extends HistoryItem {
     		
     		if (max > 0) {
     			try {
-    				ids = query.getResults(0, max);
+    				ids = new HashSet<String>(query.getResults(0, max));
     			} catch (QueryException e) {
     				throw new RuntimeException(e);
     			}
@@ -32,7 +34,7 @@ public class QueryHistoryItem extends HistoryItem {
     		
 			
     	}
-        return ids;
+        return new ArrayList<String>(ids);
     }
 	
 	@Override

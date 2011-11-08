@@ -1,5 +1,6 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.analyzers.AllNamesAnalyzer;
 import org.genedb.db.loading.EmblLocation;
 
 import org.gmod.schema.mapped.Feature;
@@ -9,6 +10,10 @@ import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +44,13 @@ public abstract class AbstractGene extends TopLevelFeature {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-
+    
+    @Transient
+    @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String getGeneUniqueName() {
+    	return getUniqueName();
+    }
+    
     private transient Transcript firstTranscripts;
 
 
@@ -77,6 +88,32 @@ public abstract class AbstractGene extends TopLevelFeature {
         }
 
         return ret;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
+    public int alternateTranscriptNumber() {
+    	return getNonObsoleteTranscripts().size();
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String alternateTranscripts() {
+    	StringBuffer alternateTranscripts = new StringBuffer();
+    	for (Transcript t : getNonObsoleteTranscripts()) {
+    		alternateTranscripts.append(t.getUniqueName());
+    	}
+    	return alternateTranscripts.toString();
+    }
+    
+    @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAsSpaceSeparatedString() {
+    	if (getFirstTranscript() != null) {
+    		return getFirstTranscript().getProductsAsSpaceSeparatedString();
+    	}
+    	return null;
     }
 
     @Transient

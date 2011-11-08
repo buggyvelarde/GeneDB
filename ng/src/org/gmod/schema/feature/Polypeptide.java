@@ -88,6 +88,46 @@ public class Polypeptide extends Region {
         return transcript;
     }
     
+    @Transient
+    public AbstractGene getGene() {
+    	if (getTranscript() == null) {
+    		return null;
+    	}
+    	return getTranscript().getGene();
+    }
+    
+    @Transient
+    @Field(name = "gene", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String getGeneUniqueName() {
+    	logger.warn("Getting gene name");
+        AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getUniqueName();
+        }
+        return null;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscriptNumber", index = Index.UN_TOKENIZED, store = Store.YES)
+    public int getAlternateTranscriptNumber() {
+    	AbstractGene gene = getGene();
+        if (gene != null) {
+        	return gene.getNonObsoleteTranscripts().size();
+        }
+        return 0;
+    }
+    
+    @Transient
+    @Field(name = "alternateTranscripts", index = Index.UN_TOKENIZED, store = Store.YES)
+    public String getAlternateTranscripts() {
+    	AbstractGene gene = getGene();
+    	if (gene != null) {
+    		return gene.alternateTranscripts();
+    	}
+    	return null;
+    }
+    
+    
 
     @Transient
     public List<String> getProducts() {
@@ -306,12 +346,28 @@ public class Polypeptide extends Region {
     @Transient
     @Field(name="signalP", index=Index.UN_TOKENIZED, store=Store.NO)
     public boolean isSignalP() {
+    	logger.warn("Getting signal P");
         if (hasProperty("genedb_misc", "SignalP_prediction")
         || hasProperty("genedb_misc", "signal_peptide_probability")
         || hasProperty("genedb_misc", "signal_anchor_probability")) {
             return true;
         }
         return false;
+    }
+    
+    @Transient
+    @Field(index=Index.UN_TOKENIZED, store=Store.YES)
+    public String getSequenceResidues() {
+        String residues = getResidues();
+        if (residues != null) {
+            if ((residues.length() > 1) && (residues.endsWith("*"))) {
+                // remove any trailing stars
+                int max_index = residues.length() - 1;
+                residues = residues.substring(0, max_index  - 1);
+            }
+        }
+    	//logger.warn("SEQUENCE!" + getResidues());
+    	return residues;
     }
 
 
@@ -358,7 +414,6 @@ public class Polypeptide extends Region {
         if (products == null) {
             return null;
         }
-        
         return StringUtils.collectionToDelimitedString(products, " ");
     }
 
@@ -466,7 +521,17 @@ public class Polypeptide extends Region {
         for (PolypeptideDomain domain : this.getDomains()) {
             DbXRef dbXRef = domain.getDbXRef();
             if(dbXRef.getDb().getName().equals("Pfam")){
-                ret.append(String.format("%s %s ", dbXRef.getAccession(), dbXRef.getDescription()));
+                
+                String accession = dbXRef.getAccession();
+                String description = dbXRef.getDescription();
+                
+                ret.append(String.format("%s %s ", accession, description));
+                
+                if (accession.startsWith("PF")) {
+                    String trimmed = accession.replace("PF", "");
+                    ret.append(String.format(" %s Pf:%s Pfam:%s ", trimmed, trimmed, trimmed));
+                }
+                
             }
         }
         return ret.length() > 0 ? ret.toString() : null;

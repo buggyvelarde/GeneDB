@@ -17,32 +17,32 @@ public class HazelcastAspect {
 	
 	private static final Logger logger = Logger.getLogger(HazelcastAspect.class);
 
-	@Around("execution(* getDtoByName(..))")
-	public Object getFromHazelcast(ProceedingJoinPoint pjp) 
-		throws Throwable {
-		
-		Object[] args = pjp.getArgs();
-		
-		Feature feature = (Feature ) args[0];
-		
-		FeatureDTO dto = (FeatureDTO) Hazelcast.getMap(dtoMapName).get(feature.getUniqueName());
-		
-		if (dto != null) {
-			logger.info("***** Found " + feature.getUniqueName() + " in Hazelcast distributed map!");
-			return dto;
-		}
-		
-		logger.info("***** Could not find DTO for " + feature.getUniqueName());
-		
-		return pjp.proceed();
-	}
-	
-	@AfterReturning(pointcut="execution(* saveDto(..))", returning="retVal")
-	public void putIntoHazelcast(Object retVal) {
-		FeatureDTO dto = (FeatureDTO)retVal;
-		
-		logger.info("***** Storing  " + dto.getUniqueName());
-		Hazelcast.getMap(dtoMapName).put(dto.getUniqueName(), dto);
-	}
+//	@Around("execution(* getDtoByName(..))")
+//	public Object getFromHazelcast(ProceedingJoinPoint pjp) 
+//		throws Throwable {
+//		
+//		Object[] args = pjp.getArgs();
+//		
+//		Feature feature = (Feature ) args[0];
+//		
+//		FeatureDTO dto = (FeatureDTO) Hazelcast.getMap(dtoMapName).get(feature.getUniqueName());
+//		
+//		if (dto != null) {
+//			logger.info("***** Found " + feature.getUniqueName() + " in Hazelcast distributed map!");
+//			return dto;
+//		}
+//		
+//		logger.info("***** Could not find DTO for " + feature.getUniqueName());
+//		
+//		return pjp.proceed();
+//	}
+//	
+//	@AfterReturning(pointcut="execution(* saveDto(..))", returning="retVal")
+//	public void putIntoHazelcast(Object retVal) {
+//		FeatureDTO dto = (FeatureDTO)retVal;
+//		
+//		logger.info("***** Storing  " + dto.getUniqueName());
+//		Hazelcast.getMap(dtoMapName).put(dto.getUniqueName(), dto);
+//	}
 
 }

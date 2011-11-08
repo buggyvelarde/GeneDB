@@ -2,7 +2,9 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<format:header title="Location Search" />
+<format:header title="Location Search" >
+    <script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis" />/js/chromosoml/chromosoml.js"></script>
+</format:header>
 <format:page>
 <br />
 

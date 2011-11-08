@@ -4,6 +4,8 @@ import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
+import org.genedb.db.taxon.TaxonNodeList;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.PagedQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
@@ -14,12 +16,16 @@ import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.QueryHistoryItem;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
+import org.genedb.querying.tmpquery.MotifQuery;
+import org.genedb.querying.tmpquery.OrganismLuceneQuery;
 import org.genedb.querying.tmpquery.QuickSearchQuery;
 import org.genedb.querying.tmpquery.SuggestQuery;
 import org.genedb.util.Pair;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -50,6 +56,9 @@ public class QueryController extends AbstractGeneDBFormController{
 	private QueryFactory queryFactory;
 
     private HistoryManagerFactory hmFactory;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
     
     public static final int DEFAULT_LENGTH = 30;
 
@@ -178,6 +187,17 @@ public class QueryController extends AbstractGeneDBFormController{
             return "search/"+queryName;
         }
         
+        /*
+         * Bodge to make sure organism lucene queries have a taxon.
+         * */
+        if (query instanceof OrganismLuceneQuery) {
+            OrganismLuceneQuery oq = (OrganismLuceneQuery) query;
+            if (oq.getTaxons() == null ) {
+                TaxonNodeManager tnm = (TaxonNodeManager) applicationContext.getBean("taxonNodeManager", TaxonNodeManager.class);
+                oq.setTaxons(new TaxonNodeList(tnm.getTaxonNodeByString("Root", false)));
+            }
+        }
+        
         // Validate initialised form
         query.validate(query, errors);
         if (errors.hasErrors()) {
@@ -233,6 +253,13 @@ public class QueryController extends AbstractGeneDBFormController{
         	logger.info("Fetching quick search taxons");
         	model.addAttribute("taxonGroup", quickSearchQuery.getQuickSearchQueryResults().getTaxonGroup());
         }
+
+    	if (queryName.equals("motif")) {
+    		MotifQuery motifQuery = (MotifQuery) query;
+    		logger.info("motif query, let's get motif results for " + bounds.page + " " + bounds.length);
+    		Map motifs = motifQuery.getMotifResults(bounds.page, bounds.length);
+    		model.addAttribute("motifs", motifs);
+    	}
     	
     	if (results.size() == 1) {
     		
@@ -267,10 +294,21 @@ public class QueryController extends AbstractGeneDBFormController{
 			model.addAttribute("suggestions", sResults);
 			
         }
+    	
         
 		return "search/" + queryName;
         
 
+    }
+    
+    private List<GeneSummary> motifSummaries (MotifQuery query, List<String> ids) throws QueryException {
+    	IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery("idsToGeneSummary", NumericQueryVisibility.PRIVATE);
+    	idsToGeneSummary.setIds(ids);
+    	List<GeneSummary> summaries = idsToGeneSummary.getResultsSummaries();
+    	for (GeneSummary summary : summaries) {
+    		logger.info(summary.getDisplayId());
+    	}
+    	return summaries;
     }
     
     private List<GeneSummary> summaries (List<String> ids) throws QueryException {
@@ -278,7 +316,7 @@ public class QueryController extends AbstractGeneDBFormController{
     	idsToGeneSummary.setIds(ids);
     	List<GeneSummary> summaries = idsToGeneSummary.getResultsSummaries();
     	for (GeneSummary summary : summaries) {
-    		logger.info(summary.getDisplayId());
+    		logger.info(summary.getDisplayId() + " ... " + summary.getProduct());
     	}
     	return summaries;
     }

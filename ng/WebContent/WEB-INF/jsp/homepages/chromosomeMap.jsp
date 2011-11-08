@@ -6,7 +6,7 @@
 <format:header title="Chromosome view" />
 <format:page>
 
-<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml.js"/>"></script>
+<script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml/chromosoml.js"/>"></script>
 
 <center><h2>High-Level map of ${full} region ${region}</h2></center>
 
@@ -53,9 +53,20 @@ $(function(){
     	overideUseCanvas : true,
     	loading_interval : 100000,
     	click : function(event) {
-    		if (event.target.title) {
+    		/* if (event.target.title) {
     			window.location = getBaseURL() + "gene/" + event.target.title;
-    		}
+    		} */
+    		$.ajax({
+                url: "/services/feature/isoform.json",
+                type: 'GET',
+                dataType: 'jsonp',
+                data: {
+                    'uniqueName' : event.target.title
+                },
+                success: function(isoform) {
+                    window.location = getBaseURL() + "gene/" + isoform.uniqueName;
+                }
+            });
        }
     });
     
