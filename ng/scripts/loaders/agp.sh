@@ -19,7 +19,7 @@ Options:
   	-c supercontig
   -x createMissingContigs=no (default)
     Do not create any child level features (usually contigs) that cannot be found
-  -x overwriteExisting=yes
+  -x createMissingContigs=yes
     If a child level feature cannot be found, create it.
   -x mode=1 (default)
     Most common scenario. Loads in a new assembly. Deletes any existing toplevelfeatures and creates
