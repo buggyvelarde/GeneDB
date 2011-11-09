@@ -1,6 +1,7 @@
 package org.gmod.schema.feature;
 
 import org.genedb.db.analyzers.AllNamesAnalyzer;
+import org.genedb.db.analyzers.AlphaNumericAnalyzer;
 
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
@@ -135,6 +136,18 @@ public abstract class ProductiveTranscript extends Transcript {
     	}
     	return null;
     }
+    
+    @Transient
+    @Analyzer(impl = AlphaNumericAnalyzer.class)
+    @Field(name = "productAlphanumeric", index = Index.TOKENIZED, store = Store.YES)
+    public String getProductsAlphanumeric(){
+        Polypeptide protein = getProtein();
+        if (protein != null) {
+            return protein.getProductsAlphanumeric();
+        }
+        return null;
+    }
+    
 
     @Override
     @Transient

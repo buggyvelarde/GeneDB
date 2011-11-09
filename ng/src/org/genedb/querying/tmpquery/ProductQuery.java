@@ -43,7 +43,8 @@ public class ProductQuery extends OrganismLuceneQuery {
     public String getQueryName() {
         return "Product";
     }
-
+    
+    // TODO bring this search strategy in line with QuickSearch's
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 

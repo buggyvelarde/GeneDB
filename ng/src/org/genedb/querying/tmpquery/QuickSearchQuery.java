@@ -8,11 +8,13 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.WildcardQuery;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -21,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 public class QuickSearchQuery extends OrganismLuceneQuery {
 
@@ -55,47 +58,97 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 				"pseudogenes" };
 	}
 	
+	private static Pattern pattern = Pattern.compile( "\\W+" ); 
 
 	@Override
 	protected void getQueryTermsWithoutOrganisms(
 			List<org.apache.lucene.search.Query> queries) {
 		BooleanQuery bq = new BooleanQuery();
 
-		if (searchText.startsWith("*") || searchText.startsWith("?")) {
-			searchText = searchText.substring(1);
-		}
-
-		String tokens[] = searchText.trim().split("\\s");
+//		if (searchText.startsWith("*") || searchText.startsWith("?")) {
+//			searchText = searchText.substring(1);
+//		}
 
 		if (allNames) {
-
+		    
+		    // for names searches, non-word characters are important components of names (e.g. PC302054.00.0), so we can only split on spaces
+		    // the AllNamesAnalyzer for the allNames field used only splits on whitespace, so that's ok
+		    String tokens[] = searchText.trim().split("\\s");
+		    
+		    logger.debug("names search tokens: ");
+		    for (String token : tokens) {
+                logger.debug(token);
+            }
+            
+		    
 			if (tokens.length > 1) {
-				logger.info("phrase query");
-				PhraseQuery pq = new PhraseQuery();
-				for (String token : tokens) {
-					pq.add(new Term("allNames", token.toLowerCase()));
-				}
-				bq.add(pq, Occur.SHOULD);
+//				logger.info("phrase query");
+//				PhraseQuery pq = new PhraseQuery();
+//				for (String token : tokens) {
+//					pq.add(new Term("allNames", token.toLowerCase()));
+//				}
+//				bq.add(pq, Occur.SHOULD);
+			    
+			    BooleanQuery pbq = new BooleanQuery();
+	            for (String token : tokens) {
+	                if (token.indexOf('*') == -1) {
+	                    pbq.add(new TermQuery (new Term("allNames", token
+	                        .toLowerCase())), Occur.MUST);
+	                } else {
+	                    pbq.add(new WildcardQuery (new Term("allNames", token
+	                        .toLowerCase())), Occur.MUST);
+	                }
+	            }
+	            bq.add(pbq, Occur.SHOULD);
+			    
 			} else {
-				logger.info("wildcard query");
-				bq.add(new WildcardQuery(new Term("allNames", tokens[0]
-						.toLowerCase())), Occur.SHOULD);
+			    
+			    String token = tokens[0];
+			    
+				if (token.indexOf('*') == -1) {
+				    bq.add(new TermQuery(new Term("allNames", tokens[0]
+	                        .toLowerCase())), Occur.SHOULD);
+				} else {
+				    bq.add(new WildcardQuery(new Term("allNames", tokens[0]
+	                        .toLowerCase())), Occur.SHOULD);
+				}
+				
 			}
 
 		}
-
+		
 		if (product) {
-			if (tokens.length > 1) {
-				PhraseQuery pq = new PhraseQuery();
-				for (String token : tokens) {
-					pq.add(new Term("expandedProduct", token.toLowerCase()));
-				}
-				bq.add(pq, Occur.SHOULD);
-			} else {
-				bq.add(new WildcardQuery(new Term("expandedProduct", tokens[0]
-						.toLowerCase())), Occur.SHOULD);
-			}
-		}
+            
+		    // for product searches we split on all non-word characters (which is what's been used to tokenize the productAlphanumeric field)
+		    String tokens[] = pattern.split(searchText.trim());
+	        
+	        logger.debug("product search tokens: ");
+	        for (String token : tokens) {
+	            logger.debug(token);
+	        }
+		    
+		    BooleanQuery pbq = new BooleanQuery();
+            for (String token : tokens) {
+                // no point in wildcard queries here
+                pbq.add(new TermQuery (new Term("productAlphanumeric", token
+                        .toLowerCase())), Occur.MUST);
+            }
+            bq.add(pbq, Occur.SHOULD);
+            
+        }
+		
+//		if (product) {
+//			if (tokens.length > 1) {
+//				PhraseQuery pq = new PhraseQuery();
+//				for (String token : tokens) {
+//					pq.add(new Term("expandedProduct", token.toLowerCase()));
+//				}
+//				bq.add(pq, Occur.SHOULD);
+//			} else {
+//				bq.add(new WildcardQuery(new Term("expandedProduct", tokens[0]
+//						.toLowerCase())), Occur.SHOULD);
+//			}
+//		}
 		queries.add(bq);
 
 		// Add type restrictions
