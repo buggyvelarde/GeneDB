@@ -42,17 +42,19 @@ public class FeatureUtils implements InitializingBean {
     private SessionFactory sessionFactory;
 
     private static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GO_REF_PATTERN = Pattern.compile("GO_REF:", Pattern.CASE_INSENSITIVE);
 
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GO_KEY_ATTRIBUTION,
                    GO_KEY_RESIDUE, GO_KEY_DATE, GENEDB_AUTOCOMMENT;
     private CvTerm PUB_TYPE_UNFETCHED;
-    private Db PMID_DB;
+    private Db PMID_DB, GOREF_DB;
     private int NULL_PUB_ID;
 
     public void afterPropertiesSet() {
         logger.trace("Initialising FeatureUtils");
         objectManager.setDaos(generalDao, pubDao, cvDao);
         PMID_DB = objectManager.getExistingDbByName("PMID");
+        GOREF_DB = objectManager.getExistingDbByName("GO_REF");
 
         GO_KEY_EVIDENCE = cvDao.getExistingCvTermByNameAndCvName("evidence", "genedb_misc");
         GO_KEY_ATTRIBUTION = cvDao.getExistingCvTermByNameAndCvName("attribution", "genedb_misc");
@@ -101,6 +103,27 @@ public class FeatureUtils implements InitializingBean {
         }
         return pub;
     }
+    
+    
+    /**
+     * Create or lookup a GO_REF dbxref
+     * 
+     *
+     * @param ref the reference
+     * @return the Dbxref object
+     */
+    private DbXRef findOrCreateGoRefDbxref(String ref) {
+        String accession = ref.substring(1 + ref.indexOf(':')); // Text after first colon, or whole string if no colon
+        logger.trace(String.format("Looking for dbxref object with accession number '%s'", accession));
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(GOREF_DB, accession); //objectManager.getDbXRef("PUBMED", accession);
+        if (dbXRef == null) {
+            logger.trace(String.format("Could not find DbXRef for GO_REF:%s; creating new DbXRef", accession));
+            dbXRef = new DbXRef(GOREF_DB, accession);
+            generalDao.persist(dbXRef);         
+        } 
+        return dbXRef;
+    }
+    
 
     /**
      * Does a string look like a PubMed reference?
@@ -112,6 +135,18 @@ public class FeatureUtils implements InitializingBean {
         return PUBMED_PATTERN.matcher(xref).lookingAt();
     }
 
+    /**
+     * Does a string look like a GO_REF reference?
+     *
+     * @param xref The string to examine
+     * @return true if it looks like a GO_REF reference
+     */
+    private boolean looksLikeGoRef(String xref) {
+        return GO_REF_PATTERN.matcher(xref).lookingAt();
+       
+    }
+    
+    
     /*
      * Pre-caching the name -> id mapping is a big win compared with
      * doing a new query every time, when doing a data load. It uses a
@@ -156,9 +191,17 @@ public class FeatureUtils implements InitializingBean {
         // Reference
         String ref = go.getRef();
         Pub refPub = (Pub) session.load(Pub.class, NULL_PUB_ID);
+        DbXRef dbxref = null;
         if (ref != null && looksLikePub(ref)) {
             // The reference is a pubmed id - usual case
             refPub = findOrCreatePubFromPMID(ref);
+        } else if (ref != null && looksLikeGoRef(ref)){
+            /* The embl loader was only willing to accept PMID/PUBMED as valid
+             * dbxrefs for a GO term. However, GO_REF dbxrefs are also valid
+             * and this is why this extension was made to the code.
+             * nds, 26 Oct 2011
+             */             
+             dbxref = findOrCreateGoRefDbxref(ref);
         } else {
             logger.warn(String.format("Ignoring db_xref '%s' from GO entry", ref));
         }
@@ -173,8 +216,15 @@ public class FeatureUtils implements InitializingBean {
         logger.trace(String.format("Creating new FeatureCvTerm for GO entry (%s, %s, %s, %b, %d)",
             cvTerm, polypeptide, refPub, not, rank));
         FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
+       
         sequenceDao.persist(fct);
+        
+        //GO_REF 
+        if(dbxref!=null){
+            sequenceDao.persist(new FeatureCvTermDbXRef(fct, dbxref));
+        }
 
+        //autocomment
         sequenceDao.persist(new FeatureCvTermProp(GENEDB_AUTOCOMMENT, fct, comment, 0));
 
         // Evidence

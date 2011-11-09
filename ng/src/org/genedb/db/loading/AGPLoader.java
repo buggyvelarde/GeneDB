@@ -25,6 +25,7 @@ import org.genedb.util.SequenceUtils;
 
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
+import org.gmod.schema.feature.Supercontig;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.mapped.Feature;
@@ -60,20 +61,23 @@ import java.util.regex.Pattern;
  * 
  *It can be run in two modes (specified by the -Dload.mode option). The default is 1.
  * 
- * <p>Mode 1 <default>: Loads in a 'new' assembly. This deletes any existing chromosomes and builds news ones using the information in the AGP file.
- * It maps any existing features that were mapped onto the contigs to the new chromosomes. Any reversed contigs are dealt with and contigs that are not 
- * used in the new assembly are placed back in the bin (if there is one). One would usually expect to find all the contigs used in the assembly in the database 
- * already in this mode. If the createMissingContigs option is set to yes, however, any missing contigs are created in this mode also using information
- * from archived regions.
+ * <p>Mode 1 <default>: Loads in a 'new' assembly. This deletes any existing toplevel features with the same names (for this organism) and builds news ones 
+ * using the information in the AGP file. It maps any existing features that were mapped on the child features (e.g. contigs) to the newly created toplevel features. 
+ * Any reversed contigs are dealt with when creating the top level sequence and contigs that are not used in the new assembly are placed back in the bin (if there is one). 
+ * One would usually expect to find all the contigs used in the assembly in the database already in this mode. If the createMissingContigs option is set to yes, however, 
+ * any missing contigs are created IF there is any information about this contig hidden away as an archived feature in the bin.
  * </p>
  *
- * <p>Mode 2: Loads all the contigs and gaps specified in the AGP file (if they do not exist) as new features and maps any existing features such as genes, 
- * transcripts and exons on the chromosomes to the newly added contigs. This is useful in cases like Tcongolense where the chromosomes exist 
- * but the contigs are not loaded in properly. So, for Congolense, mode 2 would need to be run first (with the old assembly) before running this in mode 1 (with the
- * new assembly).
+ * <p>Mode 2: Loads all the child features (eg. contigs) and gaps specified in the AGP file (if they do not exist) as new features and maps any existing annotation such as genes, 
+ * transcripts and exons on the toplevel features to the newly added contigs. This is useful in some organisms where the toplevel features exist 
+ * but the contigs have not been loaded in properly. If the createMissingContig option is set to yes, the loader will create new contigs (the sequence for these contigs can
+ * be obtained by the relevant bit of sequence in the toplevel feature)
  * </p>
  * 
- * @author 
+ * More documentation: 
+ * 
+ * @author nds@sanger.ac.uk
+ * @contact path-help@sanger.ac.uk
  * 
  */
 
@@ -91,10 +95,13 @@ public class AGPLoader {
 
     /* Configurable parameters */
     private Organism organism;
-    private Class<? extends TopLevelFeature> topLevelFeatureClass = Chromosome.class; //Chromosome (default) or supercontig
-    private Class<? extends TopLevelFeature> childLevelFeatureClass = Contig.class; //Contig (default) or supercontig
+    private Class<? extends TopLevelFeature> topLevelFeatureClass = Supercontig.class; //Supercontig (default) or chromosome
+    private Class<? extends TopLevelFeature> childLevelFeatureClass = Contig.class;    //Contig (default) or supercontig
+                                                                                       //Throughout this code, the child features will be reffered to as contigs even
+                                                                                       //though they may be of another type
     private String mode ="1"; 
     private String createMissingContigs = "no"; //Default no.
+    private String putUnusedContigsInBin = "no"; //Default
     private Session session;
     private NavigableMap<Integer,Feature> contigsByStart = new TreeMap<Integer,Feature>(); //The contigs in a particular chromosome, indexed by start
     private TopLevelFeature bin = null; //Bin chromosome
@@ -118,7 +125,7 @@ public class AGPLoader {
     @Transactional(rollbackFor=DataError.class) 
     public void load(AGPFile agpFile) {
         
-        PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
+        //PropertyConfigurator.configure("resources/classpath/log4j.loader.properties"); 
         
         /* Initialising values*/
         this.setSession(SessionFactoryUtils.doGetSession(sessionFactory, false));
@@ -170,7 +177,7 @@ public class AGPLoader {
     
    /**
     * Process the top-level feature (tlf) according to the selected mode. In mode 1, if the top-level feature exists, then delete it
-    * and create a new one. In mode 2, return the top-level feature with the name specified.
+    * and create a new one. In mode 2, return the top-level feature that has the specified name.
     */
     private TopLevelFeature processTopLevel(String topLevelName, int tlfLength, List<AGPLine> agpLines) {
 
@@ -222,13 +229,15 @@ public class AGPLoader {
 
         }
         
-        /* Remap features from topLevelFeature (tlf) to contigs or vice-versa */
+        /* Remap features from topLevelFeature (tlf) to contigs (mode 2) or vice-versa (mode 1) */
         if(mode.equals("2")){
             remapFeaturesFromTLFToContigs(newTopLevelFeature); 
         }else if (mode.equals("1")){      
             newTopLevelFeature.setResidues(residue); 
             remapFeaturesFromContigsToTLF(newTopLevelFeature);
-            this.putUnusedContigsInBin(getContigsAlreadyOnTLF(), contigsByStart.values());                        
+            if(putUnusedContigsInBin.equalsIgnoreCase("yes")){
+                this.putUnusedContigsInBin(getContigsAlreadyOnTLF(), contigsByStart.values());   
+            }
         } 
         logger.info(String.format("Processed %d child features for toplevelfeature %s", contigsByStart.size(), newTopLevelFeature.getUniqueName()));
        
@@ -281,11 +290,8 @@ public class AGPLoader {
         
     /**
      * Process contigs according to the selected mode. If a contig with the specified name can be found in the database, we just make
-     * sure it is featureloc'd correctly to the toplevelfeature. If it cannot be found:
-     * In mode 2, a new one is always created.
-     * In mode 1, all contigs should (in theory) already be in the database. However, in some organisms like Congolense, it may be necessary 
-     * to create contigs even in mode 2 as the contig features have not been added properly. This is indicated by the createMissingContigs option. 
-     * If set to 'yes', a new contig is created. By parsing the name and strand in the AGP file, we can also find out if this contig needs to be reversed. 
+     * sure it is featureloc'd correctly to the toplevelfeature. If it cannot be found, a new contig is created if the 'createMissingContig' option is 
+     * set to yes.By parsing the name and strand in the AGP file, we can also find out if this contig needs to be reversed. 
      * In this case, we make use of the helper method reverseContig().
      * 
      * @param line
@@ -296,20 +302,16 @@ public class AGPLoader {
         boolean reverse_contig = false; 
      
         String uniqueName = line.getEntryName(); //Uniquename of contig
-        Pattern TURN_PATTERN = Pattern.compile("(\\S+)_turn"); //This stuff was specific to Tcongolense - please update
-        Matcher matcher = TURN_PATTERN.matcher(uniqueName);
-        if (matcher.matches()){ //Definitely reverse this contig
-            uniqueName = matcher.group(1);
-            reverse_contig = true;
-        }
+        
         if(line.getEntryStrand().equals("-")){
             uniqueName = reverseName(uniqueName);
+            reverse_contig = true;
         }
         
         Feature contig = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism.getCommonName(), Feature.class);
         
         if(contig!=null){
-            //logger.info(String.format(""));
+
             if(reverse_contig){
                 contig = reverseContig((Contig)contig);
             }
@@ -318,7 +320,7 @@ public class AGPLoader {
                 topLevelFeature.addLocatedChild(contig, line.getTopLevelStart(), line.getTopLevelEnd(), new Integer(0) /*strand*/, new Integer(0), 0, 0);
                 String toplevel = contig.getFeatureProp("genedb_misc", "top_level_seq");
                 if(toplevel!=null && toplevel.equals("true")){
-                    contig.removeFeatureProp("genedb_misc", "top_level_seq");
+                    contig.removeFeatureProp("genedb_misc", "top_level_seq"); //Contig no longer top level
                 }
                 logger.info("Found contig " + contig.getUniqueName());
             }else{
@@ -346,7 +348,6 @@ public class AGPLoader {
                 if (line.getEntryStrand().equals("-")){
                     /* If it's a contig to be reversed, perhaps the non-reversed version is in the database? */
                     String rev_uniqueName = reverseName(uniqueName);
-                    logger.info("***The reversed contig name of (while looking for non-reversed version is " + rev_uniqueName);
                     contig = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(rev_uniqueName, organism.getCommonName(), Feature.class);
                     if(contig!=null){
                         contig = reverseContig((Contig)contig);
@@ -411,10 +412,10 @@ public class AGPLoader {
      * REMAPPING FEATURES
      ***************************************************************************************************************************/    
     /**
-     * Remaps existing features on the chromosomes onto the newly added contigs (mode=2)
-     * We use the start/stop positions of the contig on the chromosome and those of the feature to locate it within the contig.
+     * Remaps existing features on the toplevel feature onto the newly added child feature (mode=2)
+     * We use the start/stop positions of the child feature on the tlf and those of the feature to locate it within the contig.
      * If we find that a feature begins in one contig and ends in another, we add two featurelocs to reflect this (both rank 0, 
-     * but different locgroups).
+     * but different locgroups) with fmin/fmax set to partial as relevant.
      */
     private void remapFeaturesFromTLFToContigs(TopLevelFeature tlf){
         logger.info("Starting to remap features from top level feature to child level features...");
@@ -498,7 +499,7 @@ public class AGPLoader {
     
     /**
      * This method does the opposite of the above. For each contig on this toplevel feature, it maps any features that are on 
-     * the contig to the chromosome. If the featureloc of the feature on the contig is partial, then it finds the second featureloc
+     * the contig to the chromosome (mode 1). If the featureloc of the feature on the contig is partial, then it finds the second featureloc
      * corresponding to this situation and calculates the appropriate fmin and fmax values for the chromosome.
      * 
      */
