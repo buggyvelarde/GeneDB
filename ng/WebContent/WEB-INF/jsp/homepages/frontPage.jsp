@@ -65,7 +65,7 @@
 <div class="light-grey">
 <p class="block-para">Data <br />
     
-&raquo; A new sequence version of <a href="http://www.genedb.org/Homepage/Tbruceibrucei927" ><i>T brucei brucei</i> 927</a> Chromosome 11 is now available on GeneDB!
+&raquo; A new sequence version of <a href="http://www.genedb.org/Homepage/Tbruceibrucei927" ><i>T. brucei brucei</i> 927</a> Chr 11 is now available on GeneDB!<br>
 &raquo; A new sequence version of <a href="http://www.genedb.org/Homepage/Pfalciparum" ><i>P. falciparum</i> 3D7</a> is now available on GeneDB!
 </p>
 </div>
