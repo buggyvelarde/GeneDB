@@ -3,14 +3,18 @@ package org.genedb.querying.tmpquery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @QueryClass(
         title="Coding and pseudogenes by protein length",
@@ -19,6 +23,8 @@ import java.util.List;
     )
 public class PfamQuery extends OrganismLuceneQuery {
 
+    private static Logger logger = Logger.getLogger(PfamQuery.class);
+    
     @QueryParam(
             order=1,
             title="The search string"
@@ -40,28 +46,41 @@ public class PfamQuery extends OrganismLuceneQuery {
     public String getQueryName() {
         return "Pfam";
     }
-
+    
+    // we're only interested in numbers here
+    Pattern pattern = Pattern.compile("[^0-9]");
+    
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-        String tokens[] = search.trim().split("\\s");
-        BooleanQuery bq = new BooleanQuery();
+        //String tokens[] = search.trim().split("\\s");
+        
 
-        if (tokens.length > 1) {
-            PhraseQuery pq = new PhraseQuery();
-            for (String token : tokens) {
-                pq.add(new Term("pfam", token));
-            }
-            bq.add(pq, Occur.SHOULD);
+        Matcher regexMatcher = pattern.matcher(search);
+        // let's get rid of anything that's NaN
+        String searchQueryString = regexMatcher.replaceAll("");
+        
+        logger.debug(String.format("searchQueryString: '%s'" , searchQueryString));
+        
+        TermQuery q = new TermQuery (new Term("pfam", searchQueryString));
+        
+//        BooleanQuery bq = new BooleanQuery();
+//
+//        if (tokens.length > 1) {
+//            PhraseQuery pq = new PhraseQuery();
+//            for (String token : tokens) {
+//                pq.add(new Term("pfam", token));
+//            }
+//            bq.add(pq, Occur.SHOULD);
+//
+//        } else {
+//            if (search.indexOf('*') == -1) {
+//                bq.add(new TermQuery(new Term("pfam",search.toLowerCase())), Occur.SHOULD);
+//            } else {
+//                bq.add(new WildcardQuery(new Term("pfam", search.toLowerCase())), Occur.SHOULD);
+//            }
+//        }
 
-        } else {
-            if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("pfam",search.toLowerCase())), Occur.SHOULD);
-            } else {
-                bq.add(new WildcardQuery(new Term("pfam", search.toLowerCase())), Occur.SHOULD);
-            }
-        }
-
-        queries.add(bq);
+        queries.add(q);
 
     }
 

@@ -215,7 +215,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             if (end > allIds.size()) {
                 end = allIds.size();
             }
-
+            
             List<Integer> thisBatch = allIds.subList(start, end);
 
             String ids = StringUtils.collectionToCommaDelimitedString(thisBatch);
@@ -270,7 +270,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
             batchCount++;
             //logger.info(String.format("Indexed '%d'pc ('%d' of '%d'), %d hours, %d mins left", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size(), hours, mins));
-            logger.debug(String.format("Indexed '%d'pc ('%d' of '%d')", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size()));
+            logger.debug(String.format("Indexed '%d' percent ('%d' of '%d')", (batchCount*batchSize)*100/allIds.size(),batchCount*batchSize, allIds.size()));
             if (failed) {
                 failedToLoad.addAll(thisBatch);
             } else {
