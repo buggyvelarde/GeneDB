@@ -54,12 +54,20 @@ public class PfamQuery extends OrganismLuceneQuery {
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         //String tokens[] = search.trim().split("\\s");
         
-
-        Matcher regexMatcher = pattern.matcher(search);
-        // let's get rid of anything that's NaN
-        String searchQueryString = regexMatcher.replaceAll("");
+        // by default, we searching exact matches to the description or the accession
+        String searchQueryString = search;
         
-        logger.debug(String.format("searchQueryString: '%s'" , searchQueryString));
+        // if there is a ":" then, there could be a number of prefixes, let's only get the numerical part
+        if (search.contains(":")) {
+            
+            // let's get rid of anything that's NaN
+            Matcher regexMatcher = pattern.matcher(search);
+            searchQueryString = regexMatcher.replaceAll("");
+            
+            logger.debug(String.format("searchQueryString: '%s'" , searchQueryString));
+        }
+        
+        
         
         TermQuery q = new TermQuery (new Term("pfam", searchQueryString));
         
