@@ -54,6 +54,8 @@ public class PfamQuery extends OrganismLuceneQuery {
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         //String tokens[] = search.trim().split("\\s");
         
+        search = search.toLowerCase().trim();
+        
         // by default, we searching exact matches to the description or the accession
         String searchQueryString = search;
         
