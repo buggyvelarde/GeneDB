@@ -54,24 +54,37 @@ public class PfamQuery extends OrganismLuceneQuery {
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         //String tokens[] = search.trim().split("\\s");
         
+        BooleanQuery bq = new BooleanQuery();
         
+        String tokens[] = search.trim().split("\\s");
         
-        // by default, we searching exact matches to the description or the accession
-        String searchQueryString = search.toLowerCase().trim();
-        
-        // if there is a ":" then, there could be a number of prefixes, let's only get the numerical part
-        if (searchQueryString.contains(":")) {
+        for (String token : tokens) {
             
-            // let's get rid of anything that's NaN
-            Matcher regexMatcher = pattern.matcher(searchQueryString);
-            searchQueryString = regexMatcher.replaceAll("");
+            // by default, we searching exact matches to the description or the accession
+            String searchQueryString = token.toLowerCase().trim();
             
-            //logger.debug(String.format("searchQueryString: '%s'" , searchQueryString));
+            // if there is a ":" then, there could be a number of prefixes, let's only get the numerical part
+            if (searchQueryString.contains(":")) {
+                
+                // let's get rid of anything that's NaN
+                Matcher regexMatcher = pattern.matcher(searchQueryString);
+                searchQueryString = regexMatcher.replaceAll("");
+                
+                //logger.debug(String.format("searchQueryString: '%s'" , searchQueryString));
+            }
+            
+            TermQuery q = new TermQuery (new Term("pfam", searchQueryString));
+            
+            bq.add(q, Occur.MUST);
+            
         }
         
         
         
-        TermQuery q = new TermQuery (new Term("pfam", searchQueryString));
+        
+        
+        
+        
         
 //        BooleanQuery bq = new BooleanQuery();
 //
@@ -90,7 +103,7 @@ public class PfamQuery extends OrganismLuceneQuery {
 //            }
 //        }
 
-        queries.add(q);
+        queries.add(bq);
 
     }
 
