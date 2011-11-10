@@ -529,6 +529,7 @@ public class Polypeptide extends Region {
     }
 
     @Transient
+    @Analyzer(impl = AllNamesAnalyzer.class)
     @Field(index=Index.TOKENIZED, store=Store.YES)
     public String getPfam(){
         List<String> pfams = new ArrayList<String>();
