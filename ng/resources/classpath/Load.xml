@@ -150,6 +150,9 @@
        
     <bean id="renameFeatures" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.RenameFeature" />
+    
+    <bean id="phosphopeptideLoader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.PhosphopeptideLoader" />
 
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.genedb.db.loading.auxiliary.SystemPropertyOverridingDataSource">

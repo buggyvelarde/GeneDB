@@ -185,6 +185,26 @@ public class Polypeptide extends Region {
 
         return domains;
     }
+    
+    /**
+     * Returns the featurelocs of amino acid features located on the polypeptide.   
+     * 
+     * @param <T> the type of feature, must be a subclass of amino acid feature For example <code>ModifiedAminoAcidFeature.class</code>.
+     * @return a sorted set of featurelocs 
+     */
+    @Transient
+    public <T extends AminoAcid> SortedSet<FeatureLoc> getAminoAcidFeatureLocs(Class<T> type) {
+        SortedSet<FeatureLoc> aminoAcidFeatureLocs = new TreeSet<FeatureLoc>();
+        
+        for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
+            Feature domain = domainLoc.getFeature();
+            if (type.isAssignableFrom(domain.getClass())) {
+                aminoAcidFeatureLocs.add(domainLoc);
+            }
+        }
+        
+        return aminoAcidFeatureLocs;
+    }
 
     /**
      * Get the (predicted) domains of this polypeptide.
