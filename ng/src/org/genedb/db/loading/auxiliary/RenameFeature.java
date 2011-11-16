@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureSynonym;
@@ -151,6 +152,10 @@ public class RenameFeature extends Loader {
 	
 	private void renameFeatureAndStorePreviousSystematicIds(Session session, CvTerm previousSystematicIdType, Feature feature, String newUniqueName) {
 		
+	    if (! (feature instanceof AbstractGene)) {
+            return;
+        }
+	    
 		if (newUniqueNames.contains(newUniqueName)) {
     		logger.error(String.format("The newUniqueName '%s' has already been encountered. Skipping.", newUniqueName));
     		return;
@@ -181,8 +186,10 @@ public class RenameFeature extends Loader {
 			Synonym synonym = getOrCreateSynonym(session, oldUniqueName, previousSystematicIdType);
 			
 			FeatureSynonym featureSynonym = feature.addSynonym(synonym);
-			// must be set to false for it to be considered a previous systematic id
-			featureSynonym.setCurrent(false);
+			
+			// must be set to true for it to be shown on genedb
+			featureSynonym.setCurrent(true);
+			
 			session.persist(featureSynonym);
 			
 			
