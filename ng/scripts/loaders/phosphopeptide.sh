@@ -45,5 +45,5 @@ doLoad() {
 
     java $database_properties -Dlog4j.configuration=log4j.loader.properties \
         org.genedb.db.loading.auxiliary.Load phosphopeptideLoader \
-        --delimiter="$delimiter" --matchPrefixOnly="$delete" "$@"
+        --delimiter="$delimiter" --delete="$delete" "$@"
 }

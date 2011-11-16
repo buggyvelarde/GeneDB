@@ -153,6 +153,9 @@
     
     <bean id="phosphopeptideLoader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.PhosphopeptideLoader" />
+    
+    <bean id="clonedGenomicInsertLoader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.ClonedGenomicInsertLoader" />
 
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.genedb.db.loading.auxiliary.SystemPropertyOverridingDataSource">
