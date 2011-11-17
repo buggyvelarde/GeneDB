@@ -1359,8 +1359,8 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
         session.persist(target);
 
         target.addFeatureProp(similarity.getOrganismName(), "feature_property", "organism", 0);
-        target.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 0);
-        target.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 0);
+        target.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 2);
+        target.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 1);
 
         this.addLocatedChild  (match, similarity.getQueryStart() - 1,  similarity.getQueryEnd(),
             0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
