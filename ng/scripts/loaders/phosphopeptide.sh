@@ -25,7 +25,7 @@ USAGE
 }
 
 doLoad() {
-    delimiter='\t'
+    delimiter=','
     delete=false
     
     OPTIND=0
