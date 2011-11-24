@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.ModifiedAminoAcidFeature;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.hibernate.Session;
@@ -39,26 +42,46 @@ public class PhosphopeptideLoader extends Loader {
             position = Integer.parseInt(split[1]);
 
         }
+        
+        public String toString() {
+            return String.format("%s(%s)", geneName, position);
+        }
     }
 
     @Override
     protected void doLoad(InputStream inputStream, Session session) throws IOException {
-
+        
+        logger.info("Loading .... " +  inputStream);
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
-
+        
         LinkedHashMap<String, List<Instruction>> instructions = new LinkedHashMap<String, List<Instruction>>();
+        
+        
 
         // to catch any format errors prior to loading, preparse the file
         while ((line = reader.readLine()) != null) {
+            
+            logger.info(String.format("%s ... %s ... %s ... %s", line, line.length(),  line.contains(delimiter), delimiter));
+            
             if (line.length() > 0 && line.contains(delimiter)) {
-
-                Instruction instruction = new Instruction(line);
-
-                if (!instructions.containsKey(instruction.geneName)) {
-                    instructions.put(instruction.geneName, new ArrayList<Instruction>());
+                
+                logger.info(line);
+                
+                try {
+                    Instruction instruction = new Instruction(line);
+    
+                    if (!instructions.containsKey(instruction.geneName)) {
+                        instructions.put(instruction.geneName, new ArrayList<Instruction>());
+                    }
+                    instructions.get(instruction.geneName).add(instruction);
+                    
+                    logger.info(instruction);
+                
+                } catch (NumberFormatException nfe) {
+                    logger.warn(String.format("Could not extract position from line '%s'", line));
                 }
-                instructions.get(instruction.geneName).add(instruction);
 
             }
         }
@@ -67,7 +90,7 @@ public class PhosphopeptideLoader extends Loader {
 
             for (Instruction instruction : geneInstructions.getValue()) {
                 Feature feature = sequenceDao.getFeatureByUniqueName(instruction.geneName, Feature.class);
-
+                logger.info(feature);
                 if (feature == null) {
                     logger.warn(String.format("%s is not a feature, skipping", instruction.geneName));
                     continue;
@@ -86,6 +109,10 @@ public class PhosphopeptideLoader extends Loader {
 
             }
         }
+        
+        session.flush();
+        session.clear();
+        
     }
 
     private void createOrDestroy(Session session, Instruction instruction, AbstractGene gene) {
@@ -119,7 +146,9 @@ public class PhosphopeptideLoader extends Loader {
 
                     session.delete(loc);
                     session.delete(maaf);
-                    return;
+                    
+                    // we don't return, there may be more than one at the same position
+                    //return;
                 }
             }
         }
@@ -128,9 +157,15 @@ public class PhosphopeptideLoader extends Loader {
         if (!found && !delete) {
 
             logger.info(String.format("Creating %s %s", instruction.geneName, instruction.position));
-
-            ModifiedAminoAcidFeature maaf = new ModifiedAminoAcidFeature();
-            FeatureLoc floc = new FeatureLoc(polypeptide, maaf, instruction.position, false, instruction.position, false, (short) 0, 0, 0, 0);
+            
+//            Db db = generalDao.getDbByName("Phosphopeptides");
+//            
+//            if (db == null) {
+//                db = new Db("phosphopeptides", "phosphopeptides on GeneDB", String urlPrefix, String url)
+//            }
+//            
+            ModifiedAminoAcidFeature maaf = new ModifiedAminoAcidFeature(polypeptide.getOrganism(), polypeptide.getUniqueName() + ":modified_aa:" + instruction.position, false, false, new Timestamp(new Date().getTime()));
+            FeatureLoc floc = new FeatureLoc(polypeptide, maaf, instruction.position, false, instruction.position + 1, false, (short) 0, 0, 0, 0);
 
             session.persist(maaf);
             session.persist(floc);

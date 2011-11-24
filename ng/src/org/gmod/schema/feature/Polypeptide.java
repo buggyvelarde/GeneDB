@@ -193,8 +193,8 @@ public class Polypeptide extends Region {
      * @return a sorted set of featurelocs 
      */
     @Transient
-    public <T extends AminoAcid> SortedSet<FeatureLoc> getAminoAcidFeatureLocs(Class<T> type) {
-        SortedSet<FeatureLoc> aminoAcidFeatureLocs = new TreeSet<FeatureLoc>();
+    public <T extends AminoAcid> List<FeatureLoc> getAminoAcidFeatureLocs(Class<T> type) {
+        List<FeatureLoc> aminoAcidFeatureLocs = new ArrayList<FeatureLoc>();
         
         for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
             Feature domain = domainLoc.getFeature();
