@@ -473,7 +473,7 @@
   <!-- fix residues -->
   <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
-    <target name="fix-residues-verbose" depends="fulljar" if="verbose">
+    <target name="fix-residues-verbose" depends="fulljar, replace" if="verbose">
         <java fork="true" failonerror="true" classpathref="run-classpathref" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg line="${organism}"/>
