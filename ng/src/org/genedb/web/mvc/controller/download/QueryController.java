@@ -210,16 +210,22 @@ public class QueryController extends AbstractGeneDBFormController{
         // Initialise model data 
         populateModelData(model, query);
         
-        item = hm.addQueryHistoryItem(key, query );
+        logger.info(String.format("Adding %s with key %s to history manager", query, key));
+        item = hm.addQueryHistoryItem(key, query);
+        
+        
         
         model.addAttribute("query", query);
         
         
         Bounds bounds = getQueryBounds(request);
-        logger.info("Query page " + bounds.page + ", length " + bounds.length);
+        
         
         int start = bounds.page * bounds.length;
-        int end = start + bounds.length;
+        int end = start + bounds.length -1 ;
+        
+        //logger.info("Query page " + bounds.page + ", length " + bounds.length);
+        logger.info(String.format("Page: %s, Length: %s, Start-End: %s-%s", bounds.page, bounds.length, start, end));
         
         List<String> ids = query.getResults(start, end);
         
@@ -229,13 +235,21 @@ public class QueryController extends AbstractGeneDBFormController{
         
         logger.info(ids.size());
         
-        for (String id : ids) {
-    		logger.info(id);
-    	}
+//        for (String id : ids) {
+//    		logger.info(id);
+//    	}
         
         List<GeneSummary> results = summaries(ids);
         
         logger.info(results.size());
+        
+        
+//        QueryHistoryItem qhi = hm.getQueryHistoryItem(key);
+//        logger.info(String.format("Fished history item? %s", qhi));
+//        
+//        List<String> uniqueNames = qhi.getIds();
+//        logger.info(qhi.getIds().size());
+//        logger.info(qhi.getIds());
         
         // Suppress item in results
         // suppressResultItem(suppress, results);

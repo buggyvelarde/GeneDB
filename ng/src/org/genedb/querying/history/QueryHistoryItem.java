@@ -22,16 +22,17 @@ public class QueryHistoryItem extends HistoryItem {
 		// only generate ids if not done before, or if the query returns 0 results it's unlikely to be expensive
     	if (ids.size() == 0) {
     		
-    		int max = query.getTotalResultsSize() -1;
+    		int maxIndex = query.getTotalResultsSize() -1;
     		
-    		if (max > 0) {
+    		if (maxIndex >= 0) {
     			try {
-    				ids = new HashSet<String>(query.getResults(0, max));
+    				ids = new HashSet<String>(query.getResults(0, maxIndex));
+    				logger.info(" ids ");
+    				logger.info(ids);
     			} catch (QueryException e) {
     				throw new RuntimeException(e);
     			}
     		}
-    		
 			
     	}
         return new ArrayList<String>(ids);

@@ -133,21 +133,21 @@ public abstract class LuceneQuery implements PagedQuery {
     	String documentUniqueName = document.get("uniqueName");
     	String geneName = document.get("gene");
     	
-    	logger.info("uniqueName: " + documentUniqueName + " geneName:" + geneName);
+    	//logger.info("uniqueName: " + documentUniqueName + " geneName:" + geneName);
     	
-    	for (Field field : (List<Field>) document.getFields()) {
-    		logger.info(field.name() + "\t" + field.isTokenized() + "\t"
-					+ field.stringValue());
-    	}
+//    	for (Field field : (List<Field>) document.getFields()) {
+//    		logger.info(field.name() + "\t" + field.isTokenized() + "\t"
+//					+ field.stringValue());
+//    	}
     	
-    	logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+    	//logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
     	
     	if (geneName == null) {
     		return documentUniqueName;
     	}
     	
     	String alternateTranscriptNumberString = document.get("alternateTranscriptNumber");
-    	logger.warn("alternative transcripts for " + geneName + " (" + documentUniqueName + ") : " + alternateTranscriptNumberString );
+    	//logger.warn("alternative transcripts for " + geneName + " (" + documentUniqueName + ") : " + alternateTranscriptNumberString );
     	if (alternateTranscriptNumberString != null && alternateTranscriptNumberString.length() > 0) {
     		int alternateTranscriptNumber = Integer.parseInt(alternateTranscriptNumberString);
         	
@@ -180,10 +180,13 @@ public abstract class LuceneQuery implements PagedQuery {
 	public int getTotalResultsSize() {
     	// this might have already been calculated by a pager
     	// no need to count them more than once (query parameters should not change)
+        // logger.info( this + " totalResultSize " + totalResultSize);
     	if (totalResultSize == -1) {
+    	    logger.info( this + " looking up");
     		TopDocs topDocs = lookupInLucene();
     		totalResultSize = topDocs.totalHits;
     	}
+    	// logger.info( this + " totalResultSize " + totalResultSize);
         return totalResultSize;
 	}
 	
