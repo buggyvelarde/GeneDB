@@ -19,9 +19,11 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.ModifiedAminoAcidFeature;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 import org.hibernate.Session;
 
 public class PhosphopeptideLoader extends Loader {
@@ -30,6 +32,7 @@ public class PhosphopeptideLoader extends Loader {
     private int                 n         = 0;
     private String              delimiter = ",";
     private boolean delete = false;
+    private CvTerm propType;
 
     private class Instruction {
         private String  geneName;
@@ -85,7 +88,9 @@ public class PhosphopeptideLoader extends Loader {
 
             }
         }
-
+        
+        propType = cvDao.getCvTermByNameAndCvName("phosphate binding", "molecular_function");
+        
         for (Entry<String, List<Instruction>> geneInstructions : instructions.entrySet()) {
 
             for (Instruction instruction : geneInstructions.getValue()) {
@@ -161,14 +166,17 @@ public class PhosphopeptideLoader extends Loader {
 //            Db db = generalDao.getDbByName("Phosphopeptides");
 //            
 //            if (db == null) {
-//                db = new Db("phosphopeptides", "phosphopeptides on GeneDB", String urlPrefix, String url)
+//                db = new Db("phosphopeptides", "phosphopeptides on GeneDB", delimiter, delimiter);
 //            }
-//            
-            ModifiedAminoAcidFeature maaf = new ModifiedAminoAcidFeature(polypeptide.getOrganism(), polypeptide.getUniqueName() + ":modified_aa:" + instruction.position, false, false, new Timestamp(new Date().getTime()));
-            FeatureLoc floc = new FeatureLoc(polypeptide, maaf, instruction.position, false, instruction.position + 1, false, (short) 0, 0, 0, 0);
+            
+            ModifiedAminoAcidFeature maaf = new ModifiedAminoAcidFeature(polypeptide.getOrganism(), polypeptide.getUniqueName() + ":phosphopeptide:" + instruction.position, false, false, new Timestamp(new Date().getTime()));
+            FeatureLoc floc = new FeatureLoc(polypeptide, maaf, instruction.position, false, instruction.position, false, (short) 0, 0, 0, 0);
+            
+            FeatureProp prop = new FeatureProp(maaf, propType, "Phosphopeptide position at " + instruction.position, 0);
 
             session.persist(maaf);
             session.persist(floc);
+            session.persist(prop);
         }
 
         if (n % 50 == 1) {
