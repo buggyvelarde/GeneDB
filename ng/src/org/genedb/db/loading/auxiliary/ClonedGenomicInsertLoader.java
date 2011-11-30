@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -98,7 +100,7 @@ public class ClonedGenomicInsertLoader extends Loader {
                     
                     Organism organism = regionFeature.getOrganism();
                     
-                    ClonedGenomicInsert insert = new ClonedGenomicInsert(organism, id, false, false, null);
+                    ClonedGenomicInsert insert = new ClonedGenomicInsert(organism, id, false, false, new Timestamp(new Date().getTime()));
                     FeatureLoc floc = new FeatureLoc(regionFeature, insert, fmin, false, fmax, false, strand, phase, 0, 0);
                     
                     logger.info(String.format("Creating %s/%s %s-%s", insert.getUniqueName(), regionFeature.getUniqueName(), floc.getFmin(), floc.getFmax()));

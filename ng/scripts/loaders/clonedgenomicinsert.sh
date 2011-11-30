@@ -1,7 +1,7 @@
 #!/bin/bash
 
 summary() {
-    echo "add phosphopeptides to polypeptides"
+    echo "add cloned genomic inserts from a GFF file"
 }
 
 loaderHelp() {
@@ -17,7 +17,7 @@ HELP
 
 loaderUsage() {
     cat <<USAGE
-Usage: `basename $0` renamefeatures [-p]  [-d delimiter] <file>
+Usage: `basename $0` clonedgenomicinsert [-p]  [-d delimiter] <file>
 Options:
   -d deleteall
     If set, will delete all features of type 'cloned_genomic_insert'. 
