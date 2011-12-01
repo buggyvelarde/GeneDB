@@ -278,7 +278,7 @@ public class QueryController extends AbstractGeneDBFormController{
     	if (results.size() == 1) {
     		
     		GeneSummary geneSummary = results.get(0);
-    		return "redirect:/gene/" + geneSummary.getSystematicId();
+    		return "redirect:/gene/" + geneSummary.getDisplayId();
     		
     	} else if (results.size() > 0) {
         	
