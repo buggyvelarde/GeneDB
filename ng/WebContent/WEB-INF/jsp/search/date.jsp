@@ -12,9 +12,9 @@ $(function() {
 
 	$("#date").datepicker({
 	    maxDate: '+0D', 
-	    dateFormat: 'yyyy/mm/dd',  
-	    selectedDate: "${date}"
-	     
+	    selectedDate: "${date}",
+	    // using a dateFormat of dd/mm/yyyy doesn't appear to work, counter intuitively, this one does!
+	    dateFormat: "dd/mm/yy" 
 	});
 
 });
@@ -34,7 +34,7 @@ $(function() {
                     </td>
                   <td>
                     <b>Date:</b><br>
-                    <form:input id="date" path="date"/> (YYYY/MM/DD)
+                    <input id='date' name="date" type="text" value="${date}"> (DD/MM/YYYY/)
                   </td>
                 </tr>
                 <tr>

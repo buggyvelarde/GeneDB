@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller.download;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -11,6 +13,7 @@ import org.genedb.querying.core.Query;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.TaxonQuery;
 //import org.genedb.web.mvc.model.ResultsCacheFactory;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -138,7 +141,7 @@ public class AbstractGeneDBFormController {
     protected Errors initialiseQueryForm(Query query, ServletRequest request){
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
-        //binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("dd/MM/yyyy"), false, 10));
         //binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
         //ConversionService conversionService;
         binder.setConversionService(conversionService);

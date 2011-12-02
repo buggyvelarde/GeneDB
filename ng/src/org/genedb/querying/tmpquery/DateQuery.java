@@ -104,7 +104,7 @@ public class DateQuery extends OrganismHqlQuery {
         Map<String, Object> map  = new HashMap<String, Object>();
         String dateString = "";
         if (date != null) {
-        	SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy/MM/dd" );
+        	SimpleDateFormat dateFormat = new SimpleDateFormat( "dd/MM/yyyy" );
         	dateString = dateFormat.format(date);
         }
         map.put("date", dateString);
