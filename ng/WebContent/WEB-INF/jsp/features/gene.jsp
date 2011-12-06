@@ -164,14 +164,6 @@ a.evidence {
 
  <div class="wacontainer">
   <div id="webartemis"></div>
-  <div id="web-artemis-link-container" style="display: none;
- position: absolute;
- right: 20px;
- top: 30px;">
-   <a title="View this region in a new Web-Artemis window" target="web-artemis" id="web-artemis-link"><span style="color: rgb(139, 3, 27);"><img
-     src="<misc:url value="/includes/image/popup-web-artemis.png"/>" border="0"
-    > </span> </a>
-  </div>
  </div>
 
  <div style="width: 200px;
