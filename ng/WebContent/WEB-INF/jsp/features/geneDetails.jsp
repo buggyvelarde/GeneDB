@@ -5,6 +5,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<!-- 
+NOTE!!!!!!!!! this is not used any more (the equivalent code can be found in Web-Artemis' chromosoml gene_page template)
+-->
+
 <c:if test='${dto.organismCommonName == "Pchabaudi"}'>
 <br />
 <P>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated
