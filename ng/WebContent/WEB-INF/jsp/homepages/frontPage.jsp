@@ -65,7 +65,7 @@
 <div class="light-grey">
 <p class="block-para">Data <br />
 
-&raquo; A new <a href="http://nar.oxfordjournals.org/content/early/2011/11/23/nar.gkr1032.abstract">GeneDB publication</a> is now available to access online!
+&raquo; A new <a href="http://nar.oxfordjournals.org/content/early/2011/11/23/nar.gkr1032.abstract">GeneDB publication</a> is now available to access online! <br>
 &raquo; Version 2 of  <a href="http://www.genedb.org/Homepage/PfalciparumIT" ><i>P. falciparum</i> IT</a> is now available on GeneDB! <br> 
 &raquo; A new sequence version of <a href="http://www.genedb.org/Homepage/Tbruceibrucei927" ><i>T. brucei brucei</i> 927</a> Chr 11 is now available on GeneDB!<br>
 &raquo; A new sequence version of <a href="http://www.genedb.org/Homepage/Pfalciparum" ><i>P. falciparum</i> 3D7</a> is now available on GeneDB!
