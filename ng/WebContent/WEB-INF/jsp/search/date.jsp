@@ -38,13 +38,13 @@ $(function() {
                   </td>
                 </tr>
                 <tr>
-                  <td>Created:</td>
+                  <td>Modified (unchecked) / Created (checked) :</td>
                   <td>
                     <form:checkbox id="created" path="created"/>
                   </td>
                 </tr>
                 <tr>
-                  <td>After:</td>
+                  <td>Before (unchecked) / After (checked) :</td>
                   <td>
                     <form:checkbox id="after" path="after"/>
                   </td>
