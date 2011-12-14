@@ -3,15 +3,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <format:header title="Location Search" >
-    <script type="text/javascript" src="<misc:url value="/includes/scripts/web-artemis" />/js/chromosoml/chromosoml.js"></script>
+    <script type="text/javascript" 
+        src="<misc:url value="/includes/scripts/web-artemis/js/chromosoml/chromosoml.js"/>"></script>
+    <script type="text/javascript"
+        src="<misc:url value="/includes/scripts/genedb/geneLocation.js"/>"></script>
 </format:header>
 <format:page>
 <br />
 
-<script type="text/javascript"
-    src="<misc:url value="/includes/scripts/genedb/chromosoml.js"/>"></script>
-<script type="text/javascript"
-    src="<misc:url value="/includes/scripts/genedb/geneLocation.js"/>"></script>
 
 
 
@@ -41,6 +40,13 @@
 <script>
 
 $(function(){
+    
+    
+    // safari and chrome select the fist option, even if it's not enabled...
+    $('select#geneLocationTaxons option:enabled:first').attr('selected', 'selected');
+    // $.log($('select#geneLocationTaxons option:selected'));
+
+    
 	$('.spinner').CallStatusSpinner({
         height : 11.5,
         width : 50,

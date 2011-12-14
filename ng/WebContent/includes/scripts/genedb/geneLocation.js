@@ -123,14 +123,14 @@ $(function(){
 			
 			
 			function resetSlider(val1, val2, min, max) {
-				$.log(val1,val2,min,max);
+				// $.log(val1,val2,min,max);
 				
 				val1 = parseInt(val1);
 				val2 = parseInt(val2);
 				min = parseInt(min);
 				max = parseInt(max);
 				
-				$.log(val1,val2,min,max);
+				// $.log(val1,val2,min,max);
 				
 				if (val2 < 1 || val2 <= val1 || val2 > max) {
 					val2 = max;
@@ -144,7 +144,7 @@ $(function(){
 					val1 = 1;
 				}
 				
-				$.log(val1,val2,min,max);
+				// $.log(val1,val2,min,max);
 				
 				$("#slider-range").slider({
 					range : true,
