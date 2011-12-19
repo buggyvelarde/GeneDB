@@ -157,6 +157,11 @@
     <bean id="clonedGenomicInsertLoader" parent="auxiliaryLoader"
         class="org.genedb.db.loading.auxiliary.ClonedGenomicInsertLoader" />
 
+    <bean id="locationLoader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.LocationLoader" />
+
+
+
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.genedb.db.loading.auxiliary.SystemPropertyOverridingDataSource">
         <property name="maxWait" value="5"/>
