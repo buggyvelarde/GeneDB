@@ -240,18 +240,19 @@ public class TaxonNodeManager implements InitializingBean {
 		}
 		return StringUtils.collectionToDelimitedString(orgNames, ":");
 	}
-
-	public List<String> getAllOrgNamesUnlessRoot(TaxonNodeList taxonNodeList) {
-		if (taxonNodeList.getNodes().size() == 1 && taxonNodeList.getNodes().get(0).isRoot()) {
-			return null;
-		}
-		List<String> ret = Lists.newArrayList();
-		if (taxonNodeList.getNodes().size() > 0) {
-			for (TaxonNode tn : taxonNodeList.getNodes()) {
-				ret.addAll(tn.getAllChildrenNames());
-			}
-		}
-		return ret;
-	}
+	
+	// the method below had been removed because we now need to filter on organisms that aren't public
+//	public List<String> getAllOrgNamesUnlessRoot(TaxonNodeList taxonNodeList) {
+//		if (taxonNodeList.getNodes().size() == 1 && taxonNodeList.getNodes().get(0).isRoot()) {
+//			return null;
+//		}
+//		List<String> ret = Lists.newArrayList();
+//		if (taxonNodeList.getNodes().size() > 0) {
+//			for (TaxonNode tn : taxonNodeList.getNodes()) {
+//				ret.addAll(tn.getAllChildrenNames());
+//			}
+//		}
+//		return ret;
+//	}
 
 }

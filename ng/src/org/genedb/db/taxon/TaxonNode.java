@@ -43,6 +43,15 @@ public class TaxonNode implements Serializable {
     private boolean childrenPopulated = false;
     private Map<String, String> appDetails = Maps.newHashMap();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
+    private boolean genedbPublic = false;
+
+    public boolean isGenedbPublic() {
+        return genedbPublic;
+    }
+
+    public void setGenedbPublic(boolean genedbPublic) {
+        this.genedbPublic = genedbPublic;
+    }
 
     public TaxonNode(Phylonode phylonode) {
         this.phylonode = phylonode;
@@ -84,6 +93,11 @@ public class TaxonNode implements Serializable {
                 	if ("app_www_homePage_content".equals(phylonodeProp.getType().getName())) {
                 		webLinkable = true;
                 	}
+                }
+                
+                String isPublic = org.getPropertyValue("genedb_misc", "genedb_public");
+                if (isPublic != null && isPublic.equals("yes")) {
+                    genedbPublic = true;
                 }
             }
         }
@@ -162,8 +176,19 @@ public class TaxonNode implements Serializable {
 
         List<TaxonNode> immediateChildren = getChildren();
         for (TaxonNode child : immediateChildren) {
-            ret.add(child);
-            ret.addAll(child.getAllChildren());
+            
+            boolean add = false;
+            if (! child.isOrganism()) { // if it's not an organism, then add
+                add = true;
+            } else if (child.genedbPublic) { // if it's an organism, only add if public
+                add = true;
+            }
+            
+            if (add) {
+                ret.add(child);
+                ret.addAll(child.getAllChildren());
+            }
+            
         }
         Collections.sort(ret, new Comparator<TaxonNode>() {
             @Override

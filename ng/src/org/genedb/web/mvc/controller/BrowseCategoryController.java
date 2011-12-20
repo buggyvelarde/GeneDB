@@ -83,7 +83,9 @@ public class BrowseCategoryController extends BaseController {
             TaxonNode root = taxonNodeManager.getTaxonNodeForLabel("Root");
             taxons = new TaxonNodeList(root);
         }
-        List<String> orgNames = taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
+        
+        // using getNamesListForTaxons() because we want to filter out organisms that are not public
+        List<String> orgNames = taxonNodeManager.getNamesListForTaxons(taxons); // taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
         String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
 
         List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames, true);

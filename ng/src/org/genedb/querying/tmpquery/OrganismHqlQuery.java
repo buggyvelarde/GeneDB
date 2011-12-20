@@ -56,7 +56,7 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
                 names.addAll(node.getAllChildrenNames());
             }
             query.setParameterList("organismList", names);
-            System.err.println(StringUtils.collectionToDelimitedString(names, " "));
+            //System.err.println(StringUtils.collectionToDelimitedString(names, " "));
         }
     }
 

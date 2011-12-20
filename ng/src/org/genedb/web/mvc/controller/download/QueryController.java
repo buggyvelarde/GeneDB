@@ -507,51 +507,51 @@ public class QueryController extends AbstractGeneDBFormController{
         }
     }
     
-    class MyPaginatedList<T> implements PaginatedList {
-    	
-    	private int fullListSize;
-    	private List<T> list;
-    	private int objectsPerPage;
-    	private int pageNumber;
-    	private String searchId;
-    	private String sortCriterion;
-    	private SortOrderEnum sortDirection;
-    	
-		@Override
-		public int getFullListSize() {
-			return fullListSize;
-		}
-
-		@Override
-		public List<T> getList() {
-			return list;
-		}
-
-		@Override
-		public int getObjectsPerPage() {
-			return objectsPerPage;
-		}
-
-		@Override
-		public int getPageNumber() {
-			return pageNumber;
-		}
-
-		@Override
-		public String getSearchId() {
-			return searchId;
-		}
-
-		@Override
-		public String getSortCriterion() {
-			return sortCriterion;
-		}
-
-		@Override
-		public SortOrderEnum getSortDirection() {
-			return sortDirection;
-		}
-    	
-    }
+//    class MyPaginatedList<T> implements PaginatedList {
+//    	
+//    	private int fullListSize;
+//    	private List<T> list;
+//    	private int objectsPerPage;
+//    	private int pageNumber;
+//    	private String searchId;
+//    	private String sortCriterion;
+//    	private SortOrderEnum sortDirection;
+//    	
+//		@Override
+//		public int getFullListSize() {
+//			return fullListSize;
+//		}
+//
+//		@Override
+//		public List<T> getList() {
+//			return list;
+//		}
+//
+//		@Override
+//		public int getObjectsPerPage() {
+//			return objectsPerPage;
+//		}
+//
+//		@Override
+//		public int getPageNumber() {
+//			return pageNumber;
+//		}
+//
+//		@Override
+//		public String getSearchId() {
+//			return searchId;
+//		}
+//
+//		@Override
+//		public String getSortCriterion() {
+//			return sortCriterion;
+//		}
+//
+//		@Override
+//		public SortOrderEnum getSortDirection() {
+//			return sortDirection;
+//		}
+//    	
+//    }
     
 }
