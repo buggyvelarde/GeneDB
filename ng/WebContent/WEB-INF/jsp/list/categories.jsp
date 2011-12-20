@@ -7,6 +7,46 @@
 <format:page>
 <br>
 
+<div id="geneDetails">
+  <format:genePageSection id="browseCategory" className="whiteBox">
+    <form:form action="category" commandName="${actionName}" method="get">
+            <table>
+                <tr>
+                    <td width=180>
+                        <br><big><b>Controlled Curation:&nbsp;</b></big>
+                    </td>
+                    <td width=180>
+                        <b>Organism!${taxonNodeName}:</b>
+                        <br><db:simpleselect selection="${taxonNodeName}"/>
+                        <br><font color="red"><form:errors path="taxons" /></font>
+                    </td>
+                    <td width=180>
+                        <b>Browse Category:</b>
+                        <br>
+                            <select name="category" >
+                                <c:forEach var="cat" items="${categories}">
+                                    <option <c:if test="${ category == cat }"> selected </c:if> >  ${cat}</option>
+                                </c:forEach>
+                            </select>
+                        <br><font color="red"><form:errors path="category" /></font>
+                    </td>
+                    <td>
+                        <br><input type="submit" value="Submit" />
+                    </td>
+                </tr>
+                <c:if test="${noResultFound}">
+                    <tr>
+                        <td></td>
+                        <td colspan=2><font color="red">No Result Found.</td>
+                        <td></td>
+                    </tr>
+                </c:if>
+            </table>
+
+        </form:form>
+    </format:genePageSection>
+</div>
+
 <misc:url value="/Search" var="url">
 	<spring:param name="organism" value="${organism}" />
 	<spring:param name="category" value="${category}" />

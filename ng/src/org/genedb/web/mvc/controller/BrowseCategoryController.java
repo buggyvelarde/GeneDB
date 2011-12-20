@@ -55,7 +55,7 @@ public class BrowseCategoryController extends BaseController {
 
     private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
 
-    private String formView = "jsp:search/browseCategory";
+    //private String formView = "jsp:search/browseCategory";
     private String successView = "jsp:list/categories";
 
     private TaxonNodeManager taxonNodeManager;
@@ -66,17 +66,21 @@ public class BrowseCategoryController extends BaseController {
         binder.setConversionService(conversionService);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView setUpForm() {
-    	ModelAndView mav = new ModelAndView(formView);
+    //@RequestMapping(method = RequestMethod.GET)
+    public ModelAndView setUpForm(TaxonNodeList taxons) {
+    	ModelAndView mav = new ModelAndView(successView);
     	populateMav(mav);
+    	List<String> orgNames = taxonNodeManager.getNamesListForTaxons(taxons); // taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
+        String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
+    	mav.addObject("taxonNodeName", displayName);
+    	mav.addObject("orgNames", orgNames);
         return mav;
     }
 
 
     public ModelAndView listCategory(HttpSession session,
-        @PathVariable BrowseCategory category,
-        @RequestParam("taxons") TaxonNodeList taxons,
+        BrowseCategory category,
+        TaxonNodeList taxons,
         String format) {
 
         if (taxons==null) {
@@ -86,58 +90,74 @@ public class BrowseCategoryController extends BaseController {
         
         // using getNamesListForTaxons() because we want to filter out organisms that are not public
         List<String> orgNames = taxonNodeManager.getNamesListForTaxons(taxons); // taxonNodeManager.getAllOrgNamesUnlessRoot(taxons);
-        String displayName = taxonNodeManager.getSingleStringVersion(orgNames);
-
+        String displayName = taxons.getNodes().get(0).getLabel(); //taxonNodeManager.getSingleStringVersion(orgNames);
+        
+//        logger.info(orgNames);
+//        logger.info(displayName);
+        //logger.info(taxons.getNodes().get(0).getLabel());
+        
         List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames, true);
 
         if (results.isEmpty()) {
             logger.info("result is null");
 
-            ModelAndView mav = new ModelAndView(formView);
+            ModelAndView mav = new ModelAndView(successView);
             populateMav(mav);
             mav.addObject("noResultFound", true);
             mav.addObject("category", category.name());
-            mav.addObject("taxons", displayName);
+            mav.addObject("taxonNodeName", displayName);
             return mav;
         }
 
+        
         // Go to list results page
         ModelAndView mav = new ModelAndView(successView);
         populateMav(mav);
         //mav.addObject("categories", BrowseCategory.values());
         mav.addObject("results", results);
         mav.addObject("category", category.name());
-        mav.addObject("taxons", displayName);
+        mav.addObject("taxonNodeName", displayName);
         mav.addObject("orgNames", orgNames);
+        
+        
         return mav;
     }
 
-
-    @RequestMapping(method= RequestMethod.GET, value="/{category}", params="taxons")
-    public ModelAndView listCategoryAsHtml(HttpSession session,
-        @PathVariable BrowseCategory category,
-        @RequestParam("taxons") TaxonNodeList taxons) {
-
-    	return listCategory(session, category, taxons, "jsp");
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView listCategoryAsHtml(
+            HttpSession session, 
+            @RequestParam(value = "category", required = false) BrowseCategory category, 
+            @RequestParam(value = "taxons", required=false) TaxonNodeList taxons) {
+        
+//        logger.info("category");
+//        logger.info(category);
+//        
+//        logger.info("taxons");
+//        logger.info(taxons);
+        
+        if (category == null) {
+            return setUpForm(taxons);
+        }
+        
+        return listCategory(session, category, taxons, "jsp");
     }
 
-
-    @RequestMapping(method= RequestMethod.GET, value="/{category}.json", params="taxons")
-    public ModelAndView listCategoryAsJson(HttpSession session,
-        @PathVariable BrowseCategory category,
-        @RequestParam("taxons") TaxonNodeList taxons) {
-
-    	return listCategory(session, category, taxons, "json");
-    }
-
-
-    @RequestMapping(method= RequestMethod.GET, value="/{category}.xml", params="taxons")
-    public ModelAndView listCategoryAsXml(HttpSession session,
-        @PathVariable BrowseCategory category,
-        @RequestParam("taxons") TaxonNodeList taxons) {
-
-    	return listCategory(session, category, taxons, "xml");
-    }
+//    @RequestMapping(method= RequestMethod.GET, value="/{category}.json", params="taxons")
+//    public ModelAndView listCategoryAsJson(HttpSession session,
+//        @PathVariable BrowseCategory category,
+//        @RequestParam("taxons") TaxonNodeList taxons) {
+//
+//    	return listCategory(session, category, taxons, "json");
+//    }
+//
+//
+//    @RequestMapping(method= RequestMethod.GET, value="/{category}.xml", params="taxons")
+//    public ModelAndView listCategoryAsXml(HttpSession session,
+//        @PathVariable BrowseCategory category,
+//        @RequestParam("taxons") TaxonNodeList taxons) {
+//
+//    	return listCategory(session, category, taxons, "xml");
+//    }
 
 
 //    @RequestMapping(method= RequestMethod.GET, value="/{category}/{cvterm}", params="taxons")
@@ -181,6 +201,7 @@ public class BrowseCategoryController extends BaseController {
     	List<String> names = Lists.newArrayList();
 		for (BrowseCategory bc : BrowseCategory.values()) {
 			names.add(bc.name());
+			//logger.info(bc.name());
 		}
         mav.addObject("categories", names);
 	}
@@ -190,9 +211,9 @@ public class BrowseCategoryController extends BaseController {
         this.cvDao = cvDao;
     }
 
-    public void setFormView(String formView) {
-        this.formView = formView;
-    }
+//    public void setFormView(String formView) {
+//        this.formView = formView;
+//    }
 
     public void setSuccessView(String successView) {
         this.successView = successView;
