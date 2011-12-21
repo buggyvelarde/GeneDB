@@ -24,14 +24,22 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
             title="Organism(s) to search"
     )
     protected TaxonNodeList taxons;
+    
+    
+    /*
+     * A filter to make sure only public organisms are searched.
+     */
+    private final String publicSelector = " select op.organism from OrganismProp op where op.cvTerm.name = 'genedb_public' and op.value = 'yes' ";
+    private final String publicFilter = " and f.organism in ( "+ publicSelector +" )  ";
 
 
     @Override
     protected String getOrganismHql() {
+        
         if (taxons==null || taxons.getNodeCount()==0) {
-            return " " ;
+            return publicFilter ;
         }
-        return "and f.organism.abbreviation in (:organismList)";
+        return publicFilter + " and f.organism.abbreviation in (:organismList) ";
     }
 
 
