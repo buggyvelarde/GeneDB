@@ -114,7 +114,7 @@
 </td>
 
 <td valign="top" align="right">
-<p>Comments/Questions: <a href="mailto:genedb-help@sanger.ac.uk">Email us</a>
+<p>Comments/Questions: <a id="contact" href="znvygb:trarqo-uryc@fnatre.np.hx">Email us</a>
 <%--
 <a href="<misc:url value="/Feedback" />">Curator/Data</a> or
 <a href="<misc:url value="/Feedback" />">website</a> | Version 4.98</p>

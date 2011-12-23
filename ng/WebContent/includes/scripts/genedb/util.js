@@ -57,6 +57,18 @@ $.extend( proto, {
 })( jQuery );
 
 
+function scramble (text) {
+    var text2 = text.replace(/[a-z0-9]/ig, function(chr) {
+        var cc = chr.charCodeAt(0);
+        if (cc >= 65 && cc <= 90) cc = 65 + ((cc - 52) % 26);
+        else if (cc >= 97 && cc <= 122) cc = 97 + ((cc - 84) % 26);
+        else if (cc >= 48 && cc <= 57) cc = 48 + ((cc - 43) % 10);
+        return String.fromCharCode(cc);
+    });
+    return text2;
+}
+
+
 
 
 /**
@@ -191,5 +203,14 @@ $(function(){
 
 	  }
     
+	$("#nav > li")
+        .mouseover(function(){$(this).addClass("over");})
+        .mouseout (function(){$(this).removeClass("over");});
+	
+	$("a#contact").attr("href", scramble($("a#contact").attr("href")));
     
 });
+
+
+
+  
